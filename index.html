@@ -5,77 +5,156 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="img/BeeReady_Logo_negyzet_atlatszo.PNG">
-  <title>BeeReady</title>
   <link rel="stylesheet" href="style.css">
-  
-  
+  <title>BeeReady</title>
 </head>
 
 <body>
-  <div class="login-card">
-    <h1>BeeReady</h1>
-    <hr>
-    <form id="regform">
-      <div class="input-group">
-        <input type="email" id="email" placeholder="" required>
-        <label for="email">E-mail</label>
+  <div class="main">
+    <div class="card">
+      <h1>BeeReady</h1> <!--fejléc mindig itt marad-->
+      <hr>
+
+      <!--regisztráció felület (alaphelyzetben megjelenik)-->
+      <div class="login" style="display: block;">
+        <h2>Regisztráció</h2>
+        <p class="switch">Van már fiókod? >> <a href="#" onclick="login_signin()">Bejelentkezés</a>
+        </p>
+        <form>
+          <div class="input-group">
+            <input type="text" id="username" placeholder="Felhasználónév" required>
+          </div>
+          <div class="input-group">
+            <input type="password" id="password" placeholder="Jelszó" required>
+          </div>
+          <div class="input-group">
+            <input type="email" id="email" placeholder="E-mail cím" required>
+          </div>
+        </form>
+        <button type="submit" class="signin-btn">Fiók létrehozása</button>
       </div>
-      <div class="input-group">
-        <input type="password" id="password" placeholder=" " required>
-        <label for="password">Jelszó</label>
+
+      <!--bejelentkezés felület (alaphelyzetben nem jelenik meg)-->
+      <div class="signin" style="display: none;">
+        <h2>Bejelentkezés</h2>
+        <p class="switch">Vissza >> <a href="#" onclick="login_signin()">Regisztráció</a>
+        </p>
+        <form>
+          <div class="input-group">
+            <input type="text" id="username" placeholder="Felhasználónév" required>
+          </div>
+          <div class="input-group">
+            <input type="password" id="password" placeholder="Jelszó" required>
+          </div>
+          <div class="options">
+            <div class="wrap">
+              <input type="checkbox" id="stay">
+              <label for="stay">Maradj bejelentkezve</label>
+            </div>
+            <a href="#" onclick="forget_Password()">Elfelejtettem a jelszavam</a>
+          </div>
+        </form>
+        <button type="submit" class="login-btn">Bejelentkezés</button>
       </div>
-      <button type="submit" class="login-btn" onclick="">Regisztráció</button>      
-    </form>
-    <form id="loginform">
-      <div class="input-group">
-        <input type="email" id="loginemail" placeholder="" required>
-        <label for="loginemail">E-mail</label>
+
+      <!--elfelejtett jelszó felület (alaphelyzetben nem jelenik meg)-->
+      <div class="forget_password_div" style="display: none;">
+        <h2>Elfelejtettem a jelszavam</h2>
+        <p class="switch">Vissza >> <a href="#" onclick="login_signin()">Regisztráció</a></p>
+        <form>
+          <div class="input-group">
+            <input type="email" id="email" placeholder="E-mail cím" required>
+          </div>
+        </form>
+        <button type="submit" class="forget_password_button">Jelszó küldése</button>
       </div>
-      <div class="input-group">
-        <input type="password" id="loginpassword" placeholder=" " required>
-        <label for="loginpassword">Jelszó</label>
-      </div>
-      <button type="submit" class="login-btn" onclick="">Bejelentkezés</button>
-      <p id="uzenet"></p>
-    </form>
-    
-  
-  <script>
-    let uzenet = document.getElementById("uzenet")
-    document.getElementById("regform").addEventListener("submit", async function(e) {
-      e.preventDefault();
-
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      const response = await fetch("http://localhost:4000/regisztracio", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      message = await response.json()
-      uzenet.innerHTML = message.message
-      
-    });
-    document.getElementById("loginform").addEventListener("submit", async function(e) {
-      e.preventDefault();
-
-      const email = document.getElementById("loginemail").value;
-      const password = document.getElementById("loginpassword").value;
-
-      const response = await fetch("http://localhost:4000/bejelentkezes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      message = await response.json()
-      uzenet.innerHTML = message.message
-      
-    });
-    
-
-  </script>
-  <script src="sql.js"></script>
+    </div>
+  </div>
 </body>
+
+<script>
+  const card = document.querySelector('.card');
+  const loginDiv = document.querySelector('.login');
+  const signinDiv = document.querySelector('.signin');
+  const forgetDiv = document.querySelector('.forget_password_div');
+
+  // Ha az „Elfelejtettem a jelszavam”-ra rákattintunk, a másik két div eltűnik, viszont a másik kettő cserélgeti egymást
+  function login_signin() {
+    const isLoginVisible = loginDiv.style.display === 'block' || loginDiv.style.display === '';
+
+    card.classList.remove('fade-in');
+    card.classList.add('fade-out');
+
+    setTimeout(() => {
+      if (isLoginVisible) {
+        loginDiv.style.display = 'none';
+        signinDiv.style.display = 'block';
+        forgetDiv.style.display = 'none';
+      } else {
+        signinDiv.style.display = 'none';
+        loginDiv.style.display = 'block';
+        forgetDiv.style.display = 'none';
+      }
+
+      card.classList.remove('fade-out');
+      card.classList.add('fade-in');
+    }, 200);
+  }
+
+  function forget_Password() {
+    let isFPassVisible = loginDiv.style.display === 'block' || loginDiv.style.display === '';
+
+    card.classList.remove('fade-in');
+    card.classList.add('fade-out');
+
+    setTimeout(() => {
+      if (isFPassVisible) {
+        loginDiv.style.display = 'none';
+        signinDiv.style.display = 'block';
+        forgetDiv.style.display = 'none';
+      } else {
+        signinDiv.style.display = 'none';
+        loginDiv.style.display = 'none';
+        forgetDiv.style.display = 'block';
+      }
+
+      card.classList.remove('fade-out');
+      card.classList.add('fade-in');
+    }, 200);
+  }
+
+  let uzenet = document.getElementById("uzenet")
+  document.getElementById("regform").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const response = await fetch("http://localhost:4000/regisztracio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    message = await response.json()
+    uzenet.innerHTML = message.message
+
+  });
+  document.getElementById("loginform").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("loginemail").value;
+    const password = document.getElementById("loginpassword").value;
+
+    const response = await fetch("http://localhost:4000/bejelentkezes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    message = await response.json()
+    uzenet.innerHTML = message.message
+
+  });
+
+</script>
 
 </html>
