@@ -1,8 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: "Comfortaa", sans-serif;
-  background-image: url("./img/Login_background.png");
+  background-image: url("img/hatter_atlatszo2.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -11,55 +10,40 @@ body {
   align-items: center;
   height: 100vh;
   backdrop-filter: blur(3px);
+  font-size: 1rem;
 }
 
-/* ---- Központi konténer ---- */
-.login-card {
-  background-color: rgba(255, 255, 255, 0.434);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
-  width: 420px;
-  padding: 40px;
+.main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: fadeIn 1s ease;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.card {
+  background-color: rgba(255, 255, 255, 0.568);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  width: 18rem;
+  padding: 40px;
+  animation: fadeIn 1.5s ease;
 }
 
-/* ---- Cím ---- */
-.login-card h1 {
-  font-family: "Caveat", cursive;
-  font-size: 52px;
-  color: #000;
-  margin-bottom: 10px;
+.card h1,
+.card h2 {
+  text-align: center;
 }
 
-hr {
-  width: 70%;
-  border: none;
-  border-top: 2px solid #000;
-  margin: 10px 0 30px;
-}
-
-/* ---- Input mezők ---- */
 .input-group {
   position: relative;
-  width: 100%;
+  width: 90%;
   margin-bottom: 24px;
+}
+
+.input-group input:focus {
+  border-color: #f1b43c;
+  box-shadow: 0 0 12px #f1b43c88;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .input-group input {
@@ -75,38 +59,11 @@ hr {
   transition: 0.3s;
 }
 
-.input-group input:focus {
-  border-color: #f1b43c;
-  box-shadow: 0 0 12px #f1b43c88;
-  background-color: rgba(255, 255, 255, 0.5);
+label {
+  text-align: center;
 }
 
-/* ---- Lebegő címke ---- */
-.input-group label {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #333;
-  font-size: 0.95rem;
-  pointer-events: none;
-  transition: 0.25s ease;
-  background-color: rgba(255, 255, 255, 0.3);
-  padding: 0 4px;
-  border-radius: 4px;
-}
-
-.input-group input:focus+label,
-.input-group input:not(:placeholder-shown)+label {
-  top: -8px;
-  left: 10px;
-  font-size: 0.75rem;
-  color: #f1b43c;
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-/* ---- Gomb ---- */
-.login-btn {
+button {
   background-color: #f1b43c;
   color: #000;
   font-weight: bold;
@@ -120,7 +77,119 @@ hr {
   box-shadow: 0 0 8px #f1b43c66;
 }
 
-.login-btn:hover {
-  background-color: #ffcd4d;
-  box-shadow: 0 0 14px #f1b43caa;
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  color: #000;
+}
+
+.options div {
+  gap: 6px;
+}
+
+.options a,
+.options div {
+  margin-left: 10pt;
+}
+
+.options input[type="checkbox"] {
+  accent-color: #f1b43c;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.options label {
+  cursor: pointer;
+  color: #000;
+}
+
+a {
+  color: #aa802b;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #916000;
+}
+
+.switch {
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+.wrap {
+  display: flex;
+  align-items: center;
+}
+
+.wrap input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #f1b43c;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease-in;
+}
+
+.wrap input[type="checkbox"]:checked {
+  background-color: #f1b43c;
+}
+
+.wrap input[type="checkbox"]:checked::after {
+  content: "✔";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.wrap label {
+  cursor: pointer;
+  font-size: 1rem;
+  user-select: none;
 }
