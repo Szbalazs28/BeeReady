@@ -1,0 +1,23 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.main_grid{
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    height: 100vh;
+    gap: 10px;
+    border: 1px solid black;
+    background-color: antiquewhite;
+}
+
+.workspace{
+    background-color: aliceblue;
+    margin: 5px;
+    border-radius: 3rem;
+    border: 1px solid black;
+
+}

@@ -1,0 +1,27 @@
+.navbar div:first-child {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.nav_items_div {
+    width: 100%;
+    justify-content: center;
+    margin: auto;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar img {
+    height: 4rem;
+}
+
+.nav_items {
+    width: 100%;
+    border: 1px solid black;
+    cursor: pointer;
+    padding: 5px;
+    font-size: xx-large;
+    font-weight: bold;
+
+}
