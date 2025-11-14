@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="img/BeeReady_Logo_negyzet_atlatszo.PNG">
+    <link rel="stylesheet" href="/css/container.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <title>BeeReady</title>
+</head>
+
+<body>
+    <div class="main_grid">
+
+        <!--navbar-->
+        <nav class="navbar">
+            <div class="logo">
+                <img src="img/BeeReady_Logo_negyzet_atlatszo.PNG" alt="">
+                <h1>BeeReady</h1>
+            </div>
+            <div class="nav_items_div">
+                <div onclick="navbar_click('mainpage')" class="nav_items active">fooldal</div>
+                <div onclick="navbar_click('flashcards')" class="nav_items">tanulokartyak</div>
+                <div onclick="navbar_click('classrooms')" class="nav_items">termek</div>
+                <div onclick="navbar_click('chat')" class="nav_items">chat</div>
+                <div onclick="navbar_click('profile')" class="nav_items nav_profil">
+                    <div class="profil_img">
+                        <img src="img/profil.png" alt="">
+                    </div>
+                    <span class="profil_nev">Felhasznalo</span>
+                </div>
+            </div>
+        </nav>
+
+        <!--foooldal-->
+        <main class="workspace" id="fooldal">
+            <section id="tasks">Feladatok</section>
+            <aside id="chat">chat</aside>
+            <div id="calendar">naptar</div>
+            <div id="to-do">to-do </div>
+        </main>
+
+        <!--profil kezeles-->
+        <main class="account" id="felhasznalo" style="display: none;">
+
+        </main>
+    </div>
+    <script src="/js/navbar.js"></script>
+    <script src="/js/sql.js"></script>
+</body>
+
+</html>
