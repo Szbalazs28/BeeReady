@@ -1,23 +1,38 @@
-body{
+body {
     margin: 0;
     padding: 0;
 }
 
-.main_grid{
-    margin: 0;
-    padding: 0;
+.main_grid {
     display: grid;
-    grid-template-columns: 1fr 8fr;
+    grid-template-columns: 260px 1fr;
     height: 100vh;
-    gap: 10px;
-    border: 1px solid black;
-    background-color: antiquewhite;
+    background-color: #F8F8F8;
+
 }
 
-.workspace{
-    background-color: aliceblue;
+.workspace {
     margin: 5px;
-    border-radius: 3rem;
-    border: 1px solid black;
+    background: #fff;
+    border-radius: 2rem;
+    border: 1px solid #ddd;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 3fr 2fr;
+    gap: 1rem;
+}
 
+.workspace *{
+    border: 1px solid #ddd;
+    border-radius: 1rem;
+}
+
+.workspace section {
+    grid-column: 1/3;
+} 
+
+.workspace aside {
+    grid-column: 3;
+    grid-row: 1/3;
 }
