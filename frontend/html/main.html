@@ -20,33 +20,37 @@
                 <h1>BeeReady</h1>
             </div>
             <div class="nav_items_div">
-                <div onclick="navbar_click('mainpage')" class="nav_items active">fooldal</div>
-                <div onclick="navbar_click('flashcards')" class="nav_items">tanulokartyak</div>
-                <div onclick="navbar_click('classrooms')" class="nav_items">termek</div>
-                <div onclick="navbar_click('chat')" class="nav_items">chat</div>
-                <div onclick="navbar_click('profile')" class="nav_items nav_profil">
+                <div onclick="navbar_click('fooldal', 1)" value="fooldal" class="nav_items active">Főoldal</div>
+                <div onclick="navbar_click('tanulokartyak',2)" value="tanulokartyak" class="nav_items">Tanulókártyák
+                </div>
+                <!-- <div onclick="navbar_click('classrooms')" class="nav_items">termek</div> -->
+                <div onclick="navbar_click('chat',3)" value="chat" class="nav_items">Chat</div>
+                <div onclick="navbar_click('felhasznalo',4)" value="felhasznalo" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img src="img/profil.png" alt="">
                     </div>
-                    <span class="profil_nev">Felhasznalo</span>
+                    <span class="profil_nev">Felhasználó</span>
                 </div>
             </div>
         </nav>
+        <div class="fodiv">
+            <!--foooldal-->
+            <div class="workspace mainelem" id="fooldal">
+                <section id="tasks">Feladatok</section>
+                <aside id="chat">chat</aside>
+                <div id="calendar">naptar</div>
+                <div id="to-do">to-do </div>
+            </div>
 
-        <!--foooldal-->
-        <main class="workspace" id="fooldal">
-            <section id="tasks">Feladatok</section>
-            <aside id="chat">chat</aside>
-            <div id="calendar">naptar</div>
-            <div id="to-do">to-do </div>
-        </main>
+            <!--profil kezeles-->
+            <div class="account dnone mainelem" id="felhasznalo">
 
-        <!--profil kezeles-->
-        <main class="account" id="felhasznalo" style="display: none;">
+            </div>
+        </div>
 
-        </main>
+
     </div>
-    <script src="../../backend/javascript/navbar.js"></script>    
+    <script src="../../backend/javascript/navbar.js"></script>
 </body>
 
 </html>
