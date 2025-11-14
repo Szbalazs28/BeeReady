@@ -55,8 +55,23 @@ app.post("/regisztracio", async (req, res) => {
         res.json({ message: "Ez az email már létezik" });
       }
       else {
-        con.query("INSERT INTO adatok (email, password) VALUES (?,?)", [elemek.email, password])
-        res.json({ message: "Sikeres regisztráció!" });
+        con.query("SELECT username FROM adatok WHERE username= ?", [elemek.username], (err, result) => {
+          if (err) {
+            console.error("Lekérdezési hiba:", err);
+            return res.status(500).json({ message: "Adatbázis hiba." });
+          }
+          else {
+            if (result.length > 0) {
+              console.error("Ilyen felhasználónévvel már regisztráltak...")
+              res.json({ message: "Ez a felhasználónév már létezik" });
+            }
+            else {
+              con.query("INSERT INTO adatok (username, email, password) VALUES (?,?,?)", [elemek.username ,elemek.email, password])
+              res.json({ message: "Sikeres regisztráció!" });
+            }
+          }
+        })
+
       }
     }
 
@@ -76,14 +91,14 @@ app.post("/bejelentkezes", async (req, res) => {
       if (result.length > 0) {
         let egyezike = await bcrypt.compare(elemek.password, result[0].password)
         if (egyezike) {
-          res.json({ message: "Sikeres bejelentkezés!" })
+          res.json({success: true, redirect: "./main.html"})
         }
         else {
-          res.json({ message: "Hibás jelszó!" })
+          res.json({success: false, message: "Hibás jelszó!" })
         }
       }
       else {
-        res.json({ message: "Nem található emailcím!" })
+        res.json({success: false, message: "Nem található emailcím!" })
       }
     }
 
