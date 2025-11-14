@@ -1,0 +1,61 @@
+.account {
+    margin: auto;
+}
+
+.account_div {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    height: 20rem;
+    border: 1px solid #ddd;
+    border-radius: 2rem;
+    width: 50rem;
+    text-align: center;
+    align-items: center;
+}
+
+.account_inputs{
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+  position: relative;
+  width: 90%;
+  margin-bottom: 24px;
+}
+
+.input-group input:focus {
+  border-color: #f1b43c;
+  box-shadow: 0 0 12px #f1b43c88;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  outline: none;
+  font-size: 1rem;
+  color: #000;
+  transition: 0.3s;
+}
+
+.profil_img_div{
+    display: flex;
+    align-items: center;      
+    gap: 12px;                 
+    font-size: 1.3rem;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.profil_img_div .profil_img img {
+    height: 10rem;
+    width: 10rem;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    object-fit: cover;
+}
