@@ -27,13 +27,10 @@ con.connect(function (err) {
   });
 });
 
-
-
-
-
 app.get("/adatok", (req, res) => {
   res.json(adatok)
 })
+
 let saltRounds = 12
 
 async function titkositas(password) {
@@ -80,6 +77,8 @@ app.post("/regisztracio", async (req, res) => {
 
 })
 
+let username_jelenleg = ""
+
 app.post("/bejelentkezes", async (req, res) => {
   let elemek = req.body
   con.query("SELECT * FROM adatok WHERE email = ?", [elemek.email], async (err, result) => {
@@ -91,6 +90,7 @@ app.post("/bejelentkezes", async (req, res) => {
       if (result.length > 0) {
         let egyezike = await bcrypt.compare(elemek.password, result[0].password)
         if (egyezike) {
+          username_jelenleg = result[0].username
           res.json({success: true, redirect: "./main.html"})
         }
         else {
@@ -105,6 +105,12 @@ app.post("/bejelentkezes", async (req, res) => {
 
   })
 
+})
+
+app.get("/szerkesztes", async (req,res) => {
+  con.query("SELECT email FROM adatok WHERE username = ?", [username_jelenleg], async (err, result) =>{
+    res.json({username: username_jelenleg, email: result[0].email})
+  })
 })
 
 app.use(express.static('public'));
