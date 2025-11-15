@@ -49,11 +49,21 @@
             <div class="account dnone mainelem" id="felhasznalo">
                 <div class="account_div">
                     <div class="profil_img_div">
-                        <div class="profil_img">
+                        <div class="profil_img" id="prof_img">
                             <img src="../img/allatos_profilkepek/farkas.webp" alt="">
                         </div>
                         <div class="account_buttons">
-                            <button class="accont-button">mentés</button>
+                            <button class="account_button">mentés</button>
+                        </div>
+                    </div>
+                    <div class="modal dnone" id="profil_modal">
+                        <div class="modal_content">
+                            <div class="avatar_options">
+                                <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/sarkany.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
+                            </div>
+                            <button class="account_button" id="close">Bezár</button>
                         </div>
                     </div>
                     <div class="account_inputs input-group">
@@ -68,7 +78,8 @@
                         <div class="account_border_div">
 
                             <label for="jelenlegijelszo">jelenlegi jelszó</label>
-                            <input type="password" id="szerkjelenlegijelszo" name="jelenlegijelszo" placeholder="Jelenlegi jelszava">
+                            <input type="password" id="szerkjelenlegijelszo" name="jelenlegijelszo"
+                                placeholder="Jelenlegi jelszava">
                         </div>
                         <div class="account_border_div">
                             <label for="ujjelszo">új jelszó</label>
