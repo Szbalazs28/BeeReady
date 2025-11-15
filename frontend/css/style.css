@@ -24,7 +24,8 @@ body {
   backdrop-filter: blur(10px);
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
   border-radius: 16px;
-  width: 18rem;
+  width:fit-content;
+  min-width: 20rem;
   padding: 40px;
   animation: fadeIn 1.5s ease;
 }
@@ -108,6 +109,30 @@ button {
   cursor: pointer;
   color: #000;
 }
+
+#regform{
+  display: flex;
+  flex-direction: row;
+}
+
+.profil_img_div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.3rem;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.profil_img_div .profil_img img {
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  object-fit: cover;
+}
+
 
 a {
   color: #aa802b;
