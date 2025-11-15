@@ -26,7 +26,7 @@
                 </div>
                 <!-- <div onclick="navbar_click('classrooms')" class="nav_items">termek</div> -->
                 <div onclick="navbar_click('chat',3)" value="chat" class="nav_items">Chat</div>
-                <div onclick="navbar_click('felhasznalo',4)" value="felhasznalo" class="nav_items nav_profil">
+                <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" value="felhasznalo" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img src="img/profil.png" alt="">
                     </div>
@@ -51,11 +51,12 @@
                             <img src="img/profil.png" alt="">
                         </div>
                     </div>
-                    <div class="account_inputs input-group">
-                        <input type="text" name="felh" placeholder="felhasználó">
-                        <input type="email" name="email" placeholder="email">
-                        <input type="password" name="ujjelsz" placeholder="jelszovaltoztatas">
-                    </div>
+                    <div class="account_inputs input-group">                        
+                        <input type="text"  id="szerkusername" name="felh" placeholder="Felhasználónév">
+                        <input type="email" id="szerkemail"  name="email" placeholder="E-mail">
+                        <input type="password" id="szerkujjelszo"  name="ujjelsz" placeholder="Új jelszó">
+                        <input type="password" id="szerkjelenlegijelszo"  name="jelenlegijelszo" placeholder="Jelenlegi jelszava">
+                    </div>  
                 </div>
             </div>
         </div>
@@ -63,6 +64,7 @@
 
     </div>
     <script src="../../backend/javascript/navbar.js"></script>
+    <script src="../../backend/javascript/profil_szerk.js"></script>
 </body>
 
 </html>
