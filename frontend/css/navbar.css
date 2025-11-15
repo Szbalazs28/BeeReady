@@ -5,12 +5,16 @@
     padding: 20px 10px;
 }
 
+hr{
+    width: 80%;
+    border-color: #ddd;
+    margin-bottom: 15px;
+}
 
 .navbar .logo {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 30px;
 }
 
 .navbar img {

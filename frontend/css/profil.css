@@ -6,20 +6,25 @@
   display: grid;
   grid-template-columns: 1fr 4fr;
   height: fit-content;
-  border: 1px solid #ddd;
+  /*border: 1px solid #ddd;*/
   border-radius: 2rem;
   width: 50rem;
   text-align: center;
   align-items: center;
+  background-color: #F8F8F8;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
 }
 
 .account_inputs {
   display: flex;
   flex-direction: column;
-  border-left: 1px solid #ddd;
   border-radius: 2rem;
   padding: 1rem;
   gap: 1rem;
+  justify-content: center;
+  flex-direction: flex;
+  box-shadow:-5px 0 25px -3px rgba(0, 0, 0, 0.2);
+
 }
 
 .input-group {
