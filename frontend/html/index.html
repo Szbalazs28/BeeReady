@@ -16,29 +16,34 @@
       <hr>
       <p id="uzenet"></p>
       <!--regisztráció felület (alaphelyzetben megjelenik)-->
-      <div id="regdiv"style="display: none;">
+      <div id="regdiv" style="display: none;">
 
         <h2>Regisztráció</h2>
         <p class="switch">Van már fiókod? >> <a href="#" onclick="login_signin()">Bejelentkezés</a>
         </p>
         <form id="regform">
-          <div class="input-group">
-            <input type="text" id="regusername" placeholder="Felhasználónév" required>
+          <div class="profil_img_div">
+            <div class="profil_img">
+              <img src="../img/allatos_profilkepek/farkas.webp" alt="">
+            </div>
           </div>
-          <div class="input-group">
-            <input type="email" id="regemail" placeholder="E-mail" required>
+          <div>
+            <div class="input-group">
+              <input type="text" id="regusername" placeholder="Felhasználónév" required>
+            </div>
+            <div class="input-group">
+              <input type="email" id="regemail" placeholder="E-mail" required>
+            </div>
+            <div class="input-group">
+              <input type="password" id="regpassword" placeholder="Jelszó" required>
+            </div>
+            <button type="submit" class="signin-btn">Fiók létrehozása</button>
           </div>
-          <div class="input-group">
-            <input type="password" id="regpassword" placeholder="Jelszó" required>
-          </div>
-
-          <button type="submit" class="signin-btn">Fiók létrehozása</button>
         </form>
-
       </div>
 
       <!--bejelentkezés felület (alaphelyzetben nem jelenik meg)-->
-      <div id="logdiv" >
+      <div id="logdiv">
         <h2>Bejelentkezés</h2>
         <p class="switch">Vissza >> <a href="#" onclick="login_signin()">Regisztráció</a>
         </p>

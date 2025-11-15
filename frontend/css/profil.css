@@ -1,39 +1,61 @@
 .account {
-    margin: auto;
+  margin: auto;
 }
 
 .account_div {
-    display: grid;
-    grid-template-columns: 1fr 4fr;
-    height: 20rem;
-    border: 1px solid #ddd;
-    border-radius: 2rem;
-    width: 50rem;
-    text-align: center;
-    align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  height: fit-content;
+  border: 1px solid #ddd;
+  border-radius: 2rem;
+  width: 50rem;
+  text-align: center;
+  align-items: center;
 }
 
-.account_inputs{
-    display: flex;
-    flex-direction: column;
+.account_inputs {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ddd;
+  border-radius: 2rem;
+  padding: 1rem;
+  gap: 1rem;
 }
 
 .input-group {
   position: relative;
-  width: 90%;
-  margin-bottom: 24px;
+}
+
+.account_border_div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.account_border_div label {
+  font-size: 0.9rem;
+  color: #444;
+  font-weight: bold;
+  transform: translateY(4px);
 }
 
 .input-group input:focus {
   border-color: #f1b43c;
   box-shadow: 0 0 12px #f1b43c88;
-  background-color: rgba(255, 255, 255, 0.5);
 }
 
-.input-group input {
-  width: 100%;
+.input-group div label {
+  text-align: left;
+  text-indent: 2rem;
+}
+
+.input-group div input {
+  margin: auto;
+  width: 90%;
   padding: 12px 14px;
-  border: 2px solid transparent;
+  border: none;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(4px);
@@ -43,19 +65,40 @@
   transition: 0.3s;
 }
 
-.profil_img_div{
-    display: flex;
-    align-items: center;      
-    gap: 12px;                 
-    font-size: 1.3rem;
-    padding: 12px;
-    border-radius: 10px;
+.profil_img_div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.3rem;
+  padding: 12px;
+  border-radius: 10px;
 }
 
 .profil_img_div .profil_img img {
-    height: 10rem;
-    width: 10rem;
-    border-radius: 50%;
-    border: 1px solid #ddd;
-    object-fit: cover;
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  object-fit: cover;
+}
+
+.account_buttons {
+  margin-top: 1rem;
+}
+
+.accont-button {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  background: #f1b43c;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.accont-button:hover {
+  background: #d99c2c;
 }

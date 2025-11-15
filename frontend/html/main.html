@@ -26,7 +26,8 @@
                 </div>
                 <!-- <div onclick="navbar_click('classrooms')" class="nav_items">termek</div> -->
                 <div onclick="navbar_click('chat',3)" value="chat" class="nav_items">Chat</div>
-                <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" value="felhasznalo" class="nav_items nav_profil">
+                <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" value="felhasznalo"
+                    class="nav_items nav_profil">
                     <div class="profil_img">
                         <img src="img/profil.png" alt="">
                     </div>
@@ -48,15 +49,31 @@
                 <div class="account_div">
                     <div class="profil_img_div">
                         <div class="profil_img">
-                            <img src="img/profil.png" alt="">
+                            <img src="../img/allatos_profilkepek/farkas.webp" alt="">
+                        </div>
+                        <div class="account_buttons">
+                            <button class="accont-button">mentés</button>
                         </div>
                     </div>
-                    <div class="account_inputs input-group">                        
-                        <input type="text"  id="szerkusername" name="felh" placeholder="Felhasználónév">
-                        <input type="email" id="szerkemail"  name="email" placeholder="E-mail">
-                        <input type="password" id="szerkujjelszo"  name="ujjelsz" placeholder="Új jelszó">
-                        <input type="password" id="szerkjelenlegijelszo"  name="jelenlegijelszo" placeholder="Jelenlegi jelszava">
-                    </div>  
+                    <div class="account_inputs input-group">
+                        <div class="account_border_div">
+                            <label for="felh">Felhasználónév</label>
+                            <input type="text" id="szerkusername" name="felh" placeholder="Felhasználónév">
+                        </div>
+                        <div class="account_border_div">
+                            <label for="email">Email-cim</label>
+                            <input type="email" id="szerkemail" name="email" placeholder="E-mail">
+                        </div>
+                        <div class="account_border_div">
+
+                            <label for="jelenlegijelszo">jelenlegi jelszo</label>
+                            <input type="password" id="szerkjelenlegijelszo" name="jelenlegijelszo" placeholder="Jelenlegi jelszava">
+                        </div>
+                        <div class="account_border_div">
+                            <label for="ujjelszo">uj jelszo</label>
+                            <input type="password" id="szerkujjelszo" name="ujjelszo" placeholder="Új jelszó">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
