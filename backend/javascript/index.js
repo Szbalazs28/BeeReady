@@ -3,8 +3,9 @@ const loginDiv = document.querySelector('#regdiv');
 const signinDiv = document.querySelector('#logdiv');
 const forgetDiv = document.querySelector('#forget_password_div');
 
+
 // Ha az „Elfelejtettem a jelszavam”-ra rákattintunk, a másik két div eltűnik, viszont a másik kettő cserélgeti egymást
-function login_signin() {
+function login_register() {
     const isLoginVisible = loginDiv.style.display === 'block' || loginDiv.style.display === '';
 
     card.classList.remove('fade-in');
@@ -55,17 +56,17 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     const email = document.getElementById("regemail").value;
     const password = document.getElementById("regpassword").value;
     const username = document.getElementById("regusername").value;
-    const profil_pic_url = document.getElementById("profil_pic_url").src;
+    const profil_pic_url = document.getElementById("profil_pic_url").src.split("/");
     
     const response = await fetch("http://localhost:4000/regisztracio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, profil_pic_url })
+        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length-1]}`})
     });
     message = await response.json()    
     if (message.success) {
-        uzenet.innerHTML = "Sikeres regisztráció! Átirányítás..."
-        window.location.href = message.redirect;
+        login_register();
+        uzenet.innerHTML = "Sikeres regisztráció! Jelentkezzen be!"
     }
     else{
         uzenet.innerHTML = ""
@@ -80,17 +81,18 @@ document.getElementById("regform").addEventListener("submit", async function (e)
 });
 document.getElementById("loginform").addEventListener("submit", async function (e) {
     e.preventDefault();
-
+    const stay = document.getElementById("stay").chechked;
     const email = document.getElementById("logemail").value;
     const password = document.getElementById("logpassword").value;
 
     const response = await fetch("http://localhost:4000/bejelentkezes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, stay })
     });
     message = await response.json()
     if (message.success) {
+        localStorage.setItem("token", message.token);
         window.location.href = message.redirect;
     } else {
         uzenet.innerHTML = message.message;
