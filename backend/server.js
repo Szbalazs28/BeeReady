@@ -1,10 +1,11 @@
-let mysql = require('mysql2');
-let bcrypt = require('bcrypt')
+const mysql = require('mysql2');
+const bcrypt = require('bcrypt')
+const jwt = require("jsonwebtoken")
 
 const port = 4000
-let express = require("express")
-let cors = require("cors")
-let app = express()
+const express = require("express")
+const cors = require("cors")
+const app = express()
 app.use(cors())
 app.use(express.json());
 
@@ -31,45 +32,94 @@ app.get("/adatok", (req, res) => {
   res.json(adatok)
 })
 
-let saltRounds = 12
+
 
 async function titkositas(password) {
+  const saltRounds = 12
   const hash = await bcrypt.hash(password, saltRounds)
   return hash
 }
 
+function nagybetuellenorzes(password) {
+  // Regex: /(.*[A-Z].*)/
+  // Jelentése: Bármilyen karakter (.*), amelyet követ legalább egy nagybetű ([A-Z]), 
+  // amelyet ismét bármilyen karakter (.*) követ.
+  return /[A-Z]/.test(password); 
+}
+function specialiskarakterellenorzes(password) {
+  // Regex: /[!@#$%^&*(),.?":{}|<>]|/
+  // A Regex a leggyakoribb speciális karaktereket keresi.
+  // Figyelem: Mely karaktereket tartod speciálisnak, az függ a biztonsági követelményeidtől.
+  return /[!@#$%^&*(),.?":{}|<>]/.test(password); 
+}
+
+function szamjegyellenorzes(password) {
+  // Regex: /\d/
+  // A \d (digit) a 0-9 tartományban lévő bármely számjegyet jelöli.
+  return /\d/.test(password); 
+}
+
 app.post("/regisztracio", async (req, res) => {
+  console.log(`[${new Date().toLocaleTimeString()}] /regisztracio request`)
   let elemek = req.body
   const password = await titkositas(elemek.password)
-  con.query("SELECT email FROM adatok WHERE email= ?", [elemek.email], (err, result) => {
+  con.query("SELECT email, username FROM adatok WHERE email= ? or username=?", [elemek.email, elemek.username], (err, result) => {
     if (err) {
       console.error("Lekérdezési hiba:", err);
       return res.status(500).json({ message: "Adatbázis hiba." });
     }
     else {
-      if (result.length > 0) {
-        console.error("Ilyen email címmel már regisztráltak...")
-        res.json({ message: "Ez az email már létezik" });
+      let hibak = {}      
+      if(result.length == 0){
+        if(elemek.password.length<6){
+          hibak["hossz"] = "Legalább 6 karakternek kell lennie!" 
+          
+        }
+        if(!nagybetuellenorzes(elemek.password)){
+          hibak["nagybetu"] = "Kell tartalmazzon nagybetűt!"
+          
+        }
+        if(!specialiskarakterellenorzes(elemek.password)){
+          hibak["specialis"] ="Kell tartalmazzon legalább egy speciális karaktert!"
+          
+        }
+        if(Object.keys(hibak).length==0){
+          con.query("INSERT INTO adatok (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [elemek.username ,elemek.email, password, elemek.profil_pic_url])
+          res.status(201).json({success: true, redirect: "./main.html"})
+          
+        }
+        else{
+          res.json({success: false, hibak}) // Visszaküldi a hibákat 
+        }      
       }
-      else {
-        con.query("SELECT username FROM adatok WHERE username= ?", [elemek.username], (err, result) => {
-          if (err) {
-            console.error("Lekérdezési hiba:", err);
-            return res.status(500).json({ message: "Adatbázis hiba." });
-          }
-          else {
-            if (result.length > 0) {
-              console.error("Ilyen felhasználónévvel már regisztráltak...")
-              res.json({ message: "Ez a felhasználónév már létezik" });
-            }
-            else {
-              con.query("INSERT INTO adatok (username, email, password) VALUES (?,?,?)", [elemek.username ,elemek.email, password])
-              res.json({ message: "Sikeres regisztráció!" });
-            }
-          }
-        })
+      else{
+        res.status(409).json({success: false, message: "Ilyen E-mail cím vagy Felhasználónév már létezik!"})
+      }
+      
 
-      }
+      // if (result.length > 0) {
+      //   console.error("Ilyen email címmel már regisztráltak...")
+      //   res.json({ message: "Ez az email már létezik" });
+      // }
+      // else {
+      //   con.query("SELECT username FROM adatok WHERE username= ?", [elemek.username], (err, result) => {
+      //     if (err) {
+      //       console.error("Lekérdezési hiba:", err);
+      //       return res.status(500).json({ message: "Adatbázis hiba." });
+      //     }
+      //     else {
+      //       if (result.length > 0) {
+      //         console.error("Ilyen felhasználónévvel már regisztráltak...")
+      //         res.json({ message: "Ez a felhasználónév már létezik" });
+      //       }
+      //       else {
+      //         con.query("INSERT INTO adatok (username, email, password) VALUES (?,?,?)", [elemek.username ,elemek.email, password])
+      //         res.json({ message: "Sikeres regisztráció!" });
+      //       }
+      //     }
+      //   })
+
+      //}
     }
 
   })

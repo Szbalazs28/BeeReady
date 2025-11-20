@@ -55,14 +55,27 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     const email = document.getElementById("regemail").value;
     const password = document.getElementById("regpassword").value;
     const username = document.getElementById("regusername").value;
-
+    const profil_pic_url = document.getElementById("profil_pic_url").src;
+    
     const response = await fetch("http://localhost:4000/regisztracio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ username, email, password, profil_pic_url })
     });
-    message = await response.json()
-    uzenet.innerHTML = message.message
+    message = await response.json()    
+    if (message.success) {
+        uzenet.innerHTML = "Sikeres regisztráció! Átirányítás..."
+        window.location.href = message.redirect;
+    }
+    else{
+        uzenet.innerHTML = ""
+        let hibak = message.hibak
+        let uzenet_szoveg = ""
+        for (let hiba in hibak) {
+            uzenet_szoveg += hibak[hiba] + "<br>"
+            uzenet.innerHTML = uzenet_szoveg
+        }
+    }
 
 });
 document.getElementById("loginform").addEventListener("submit", async function (e) {
