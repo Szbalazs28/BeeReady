@@ -19,14 +19,9 @@
       <div id="regdiv" style="display: none;">
 
         <h2>Regisztráció</h2>
-        <p class="switch">Van már fiókod? >> <a href="#" onclick="login_signin()">Bejelentkezés</a>
+        <p class="switch">Van már fiókod?  <a href="#" onclick="login_signin()">Bejelentkezés</a>
         </p>
         <form id="regform">
-          <div class="profil_img_div">
-            <div class="profil_img">
-              <img src="../img/allatos_profilkepek/farkas.webp" alt="">
-            </div>
-          </div>
           <div>
             <div class="input-group">
               <input type="text" id="regusername" placeholder="Felhasználónév" required>
@@ -39,13 +34,19 @@
             </div>
             <button type="submit" class="signin-btn">Fiók létrehozása</button>
           </div>
+          <div class="profil_img_div">
+            <div class="profil_img">
+              <img id="profil_pic_url" src="../img/allatos_profilkepek/farkas.webp" alt="">
+            </div>
+          </div>
+
         </form>
       </div>
 
       <!--bejelentkezés felület (alaphelyzetben nem jelenik meg)-->
       <div id="logdiv">
         <h2>Bejelentkezés</h2>
-        <p class="switch">Vissza >> <a href="#" onclick="login_signin()">Regisztráció</a>
+        <p class="switch"><a href="#" onclick="login_signin()">Regisztráció</a>
         </p>
         <form id="loginform">
           <div class="input-group">
