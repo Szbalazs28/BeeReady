@@ -1,8 +1,21 @@
-async function felhasznalo_betoltes(){
-    const response = await fetch("http://localhost:4000/szerkesztes")
-    const adat = await response.json()
-    document.getElementById("szerkusername").value = adat.username
-    document.getElementById("szerkemail").value = adat.email
+async function felhasznalo_betoltes() {
+    const token = localStorage.getItem('token');
+    const response = await fetch("http://localhost:4000/szerkesztes", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "authorization": `Bearer ${token}`
+        }
+    });
+    if (response.status === 200) {
+        const data = await response.json()
+        document.getElementById("szerkusername").value = data.username
+        document.getElementById("szerkemail").value = data.email
+        document.getElementById("szerkprofilpic").src = data.profil_pic_url
+    } else if (response.status === 401 || response.status === 403) {
+        logout();
+    }
+
 }
 
 
@@ -25,7 +38,7 @@ close.addEventListener("click", () => {
 kepek.forEach(karakter => {
     karakter.addEventListener("click", () => {
         const uj = karakter.src;
-        src.src = uj; 
-        modal.style.display = "none"; 
+        src.src = uj;
+        modal.style.display = "none";
     });
 });
