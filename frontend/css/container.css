@@ -29,10 +29,6 @@ body {
     border: 1px solid #ddd;
 }
 
-.workspace * {
-    border: 1px solid #ddd;
-    border-radius: 1rem;
-}
 
 .workspace section {
     grid-column: 1/3;

@@ -111,28 +111,29 @@ button {
 }
 
 #regform{
+  margin: auto;
+  width: 100%;
   display: flex;
   flex-direction: row;
 }
 
 .profil_img_div {
+  width: 15rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
   font-size: 1.3rem;
   padding: 12px;
   border-radius: 10px;
 }
 
 .profil_img_div .profil_img img {
-  height: 10rem;
-  width: 10rem;
+  height: 100%;
+  width: 100%;
   border-radius: 50%;
   border: 1px solid #ddd;
   object-fit: cover;
 }
-
 
 a {
   color: #aa802b;
@@ -217,4 +218,17 @@ a:hover {
   cursor: pointer;
   font-size: 1rem;
   user-select: none;
+}
+
+.alert {
+  position: fixed;
+  background: #333;
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 8px;
+  opacity: 0;
+  animation: 
+    fadeIn 0.4s forwards, 
+    fadeOut 0.4s 3s forwards;
+  font-weight: bold;
 }

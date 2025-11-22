@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/container.css">
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/profil.css">
+    <link rel="stylesheet" href="../css/chat.css">
     <title>BeeReady</title>
 </head>
 
@@ -30,7 +31,7 @@
                 <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" value="felhasznalo"
                     class="nav_items nav_profil">
                     <div class="profil_img">
-                        <img src="../img/allatos_profilkepek/farkas.webp" alt="">
+                        <img src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
                     <span class="profil_nev">Felhasználó</span>
                 </div>
@@ -40,7 +41,32 @@
             <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
                 <section id="tasks">Feladatok</section>
-                <aside id="chat">chat</aside>
+                <!--Chat-->
+                <aside id="chat">
+                    <div class="chat_header">
+                        <h1><span>Chatnev</span></h1>
+                    </div>
+                    <div class="chat_messages">
+                        <div class="chat_bubble">
+                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                            <div class="chat_text">
+                                <label>Felhasználó</label>
+                                <p>Csevegés teszt</p>
+                            </div>
+                        </div>
+                        <div class="chat_bubble mine">
+                            <div class="chat_text">
+                                <p>Csevegés teszt</p>
+                            </div>
+                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                        </div>
+                    </div>
+                    <div class="chat_input">
+                        <textarea placeholder="Aa"></textarea>
+                        <button><img src="../img/plane.png" alt="Send"></button>
+                    </div>
+                </aside>
+
                 <div id="calendar">naptar</div>
                 <div id="to-do">to-do </div>
             </div>
@@ -50,18 +76,25 @@
                 <div class="account_div">
                     <div class="profil_img_div">
                         <div class="profil_img" id="prof_img">
-                            <img id="szerkprofilpic" src="" alt="">
+                            <img id="szerkprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
                         </div>
                         <div class="account_buttons">
                             <button class="account_button">Mentés</button>
+                            <a href="../html/index.html">kijelentkezés</a>
                         </div>
                     </div>
                     <div class="modal dnone" id="profil_modal">
                         <div class="modal_content">
                             <div class="avatar_options">
                                 <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
-                                <img src="../img/allatos_profilkepek/sarkany.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/oroszlan.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
                                 <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
                             </div>
                             <button class="account_button" id="close">Bezár</button>
                         </div>

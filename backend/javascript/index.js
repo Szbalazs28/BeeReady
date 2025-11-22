@@ -66,7 +66,7 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     message = await response.json()    
     if (message.success) {
         login_register();
-        uzenet.innerHTML = "Sikeres regisztráció! Jelentkezzen be!"
+        alert("Sikeres bejelentkezés!");
     }
     else{
         uzenet.innerHTML = ""
@@ -74,7 +74,7 @@ document.getElementById("regform").addEventListener("submit", async function (e)
         let uzenet_szoveg = ""
         for (let hiba in hibak) {
             uzenet_szoveg += hibak[hiba] + "<br>"
-            uzenet.innerHTML = uzenet_szoveg
+            alert(uzenet_szoveg)
         }
     }
 
@@ -95,7 +95,39 @@ document.getElementById("loginform").addEventListener("submit", async function (
         localStorage.setItem("token", message.token);
         window.location.href = message.redirect;
     } else {
-        uzenet.innerHTML = message.message;
+        alert(message.message);
     }
+});
 
+function alert(text) {
+    const t = document.createElement("div");
+    t.className = "alert";
+    t.innerHTML = text;
+    document.body.appendChild(t);
+    setTimeout(() => {
+        t.remove();
+    }, 2500);
+}
+
+//profilvalto 
+const profilkep = document.getElementById("prof_img");
+const modal = document.getElementById("profil_modal");
+const close = document.getElementById("close");
+const kepek = document.querySelectorAll(".avatar_option");
+const src = profilkep.querySelector("img");
+
+profilkep.addEventListener("click", () => {
+    modal.style.display = "flex";
+});
+
+close.addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+kepek.forEach(karakter => {
+    karakter.addEventListener("click", () => {
+        const uj = karakter.src;
+        src.src = uj;
+        modal.style.display = "none";
+    });
 });

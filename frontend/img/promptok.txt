@@ -1,0 +1,58 @@
+🐺 RAGADOZÓK
+1. Farkas
+
+"Stylized animated wolf head, strong angular features, matte gray-blue palette, serious expression, soft shadows, clean profile icon composition with a minimal gradient background."
+
+2. Róka
+
+"Stylized animated fox head with sharp elegant shapes, matte orange and brown tones, confident look, smooth shading, simple gradient background, modern profile-picture aesthetics."
+
+3. Oroszlán
+
+"Stylized animated lion head, matte gold and brown colors, defined mane with soft shading, serious but calm expression, clean silhouette, minimal atmospheric background."
+
+4. Tigris
+
+"Stylized animated tiger head, matte orange/black/white palette, strong stripes, intense eyes, not childish, detailed shading, minimal gradient background."
+
+5. Jaguár
+
+"Stylized animated jaguar head, matte yellow and muted black spots, muscular features, clean shading, focused eyes, simple background with subtle depth."
+
+6. Medve
+
+"Stylized animated bear head, matte brown tones, heavy shape, confident expression, high-quality shadows, minimal gradient background for clarity."
+
+🦅 MADARAK
+7. Sólyom
+
+"Stylized animated falcon head, matte browns and golds, sharp elegant shapes, focused eyes, smooth shading, clean profile composition with subtle background gradient."
+
+8. Sas
+
+"Stylized animated eagle head, matte white/brown palette, strong beak shape, serious expression, high-quality shadowing, minimal atmospheric background."
+
+9. Holló
+
+"Stylized animated raven head, matte black and muted gray colors, sleek form, intense eyes, soft highlights, clean silhouette with a subtle dark gradient background."
+
+10. Bagoly
+
+"Stylized animated owl head, matte brown/cream tones, large but serious eyes, sharp feather shapes, smooth shading, minimal gradient behind the figure."
+
+🦎 HÜLLŐK
+11. Kígyó
+
+"Stylized animated snake head, matte green or muted dark tones, defined scales without over-detailing, focused expression, clean silhouette, simple gradient background."
+
+12. Kaméleon
+
+"Stylized animated chameleon head, matte teal/green colors, pronounced head crest, subtle texture, clean shadows, minimal background, modern profile-icon look."
+
+13. Gekkó
+
+"Stylized animated gecko head, matte green or brown palette, smooth shapes, expressive but mature look, soft shading, minimal atmospheric background."
+
+14. Teknős (fej)
+
+"Stylized animated turtle head, matte muted greens and browns, calm expression, subtle shell-texture hints, clean lighting, simple gradient background."

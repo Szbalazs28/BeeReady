@@ -34,10 +34,6 @@ app.get("/adatok", (req, res) => {
   res.json(adatok)
 })
 
-
-
-
-
 async function titkositas(password) {
   const saltRounds = 12
   const hash = await bcrypt.hash(password, saltRounds)
