@@ -50,7 +50,7 @@ function specialiskarakterellenorzes(password) {
   // Regex: /[!@#$%^&*(),.?":{}|<>]|/
   // A Regex a leggyakoribb speciális karaktereket keresi.
   // Figyelem: Mely karaktereket tartod speciálisnak, az függ a biztonsági követelményeidtől.
-  return /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  return /[!@#$%^&*(),.?":{}|<>_-]/.test(password);
 }
 
 function szamjegyellenorzes(password) {
