@@ -30,17 +30,14 @@
 .chat_bubble {
     position: relative;
     display: flex;
-    align-items: center;
     max-width: 70%;
     padding: 0.75rem 1rem;
     border-radius: 20px;
     background-color: #e5e7eb;
     font-size: 0.95rem;
-    border: none;
 }
 
 .chat_bubble.mine {
-    margin-left: auto;
     background-color: #f1b43c;
     color: white;
     flex-direction: row-reverse;
@@ -50,7 +47,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 0;
 }
 
 .chat_text label{
@@ -60,7 +56,6 @@
     font-weight: bold;
     font-size: 0.85rem;
     margin-bottom: 2px;
-    color: #374153;
 }
 
 .chat_text p {
@@ -77,7 +72,6 @@
 
 .chat_bubble.mine .chat_profile_pic {
     margin-left: 0.5rem;
-    margin-right: 0;
 }
 
 .chat_input {
