@@ -76,15 +76,15 @@ app.post("/regisztracio", async (req, res) => {
 
         }
         if (!nagybetuellenorzes(elemek.password)) {
-          hibak["nagybetu"] = "Kell tartalmazzon nagybetűt!"
+          hibak["nagybetu"] = "Kell tartalmaznia nagybetűt!"
 
         }
         if (!specialiskarakterellenorzes(elemek.password)) {
-          hibak["specialis"] = "Kell tartalmazzon legalább egy speciális karaktert!"
+          hibak["specialis"] = "Kell tartalmaznia legalább egy speciális karaktert!"
 
         }
         if (!szamjegyellenorzes(elemek.password)) {
-          hibak["specialis"] = "Kell tartalmazzon legalább egy számot!"
+          hibak["szam"] = "Kell tartalmaznia legalább egy számot!"
         }
         if (Object.keys(hibak).length == 0) {
           con.query("INSERT INTO adatok (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [elemek.username, elemek.email, password, elemek.profil_pic_url])
@@ -137,42 +137,110 @@ app.post("/bejelentkezes", async (req, res) => {
 })
 
 
-function authenticateToken(req, res, next) {  
+function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (token == null) {    
+  if (token == null) {
     return res.status(401).json({ message: "Hozzáférés megtagadva. Kérjük, jelentkezzen be!" });
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {      
+    if (err) {
       return res.status(403).json({ message: "A munkamenet lejárt. Jelentkezzen be újra." });
-    }    
-    req.user = user;
-    next(); 
+    }
+    else {
+      req.user = user;
+      next();
+    }
+
   });
 }
 
 
-app.get("/szerkesztes", authenticateToken, (req,res) => {    
+app.get("/szerkesztes", authenticateToken, (req, res) => {
   const email = req.user.email;
   let username = "";
   let profil_pic_url = "";
   con.query("SELECT username, profil_pic_url FROM adatok WHERE email = ?", [email], (err, result) => {
-    if(err){
-      res.status(500).json({message: "Adatbázis hiba."});
-    }  
-    else{
+    if (err) {
+      res.status(500).json({ message: "Adatbázis hiba." });
+    }
+    else {
       username = result[0].username;
       profil_pic_url = result[0].profil_pic_url;
-      res.status(200).json({username: username, email: email, profil_pic_url: profil_pic_url}); 
+      res.status(200).json({ username: username, email: email, profil_pic_url: profil_pic_url });
     }
-    
+
   });
 
-  
+
 });
+
+app.put("szerkesztes_mentes", authenticateToken, (req, res) => {
+  const email = req.user.email;
+  const ujadatok = req.body
+  let egyezike = false;
+  con.query("SELECT password FROM adatok WHERE email = ?", [email], async (err, result) => {
+    if (await bcrypt.compare(ujadatok.password, result[0].password)) {
+      egyezike = true;
+    }
+  })
+  if (egyezike) {
+    con.query("SELECT email, username FROM adatok WHERE email= ? or username=?", [elemek.email, elemek.username], (err, result) => {
+      if (err) {
+        console.error("Lekérdezési hiba:", err);
+        return res.status(500).json({ message: "Adatbázis hiba." });
+      }
+      else {
+        let hibak = {}
+        if (result.length == 0) {
+          if (elemek.password.length < 6) {
+            hibak["hossz"] = "Legalább 6 karakternek kell lennie!"
+
+          }
+          if (!nagybetuellenorzes(elemek.password)) {
+            hibak["nagybetu"] = "Kell tartalmaznia nagybetűt!"
+
+          }
+          if (!specialiskarakterellenorzes(elemek.password)) {
+            hibak["specialis"] = "Kell tartalmaznia legalább egy speciális karaktert!"
+
+          }
+          if (!szamjegyellenorzes(elemek.password)) {
+            hibak["szam"] = "Kell tartalmaznia legalább egy számot!"
+          }
+          if (Object.keys(hibak).length == 0) {
+            con.query("INSERT INTO adatok (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [elemek.username, elemek.email, password, elemek.profil_pic_url])
+            res.status(201).json({ success: true, message: "Sikeres regisztráció!" })
+
+          }
+          else {
+            res.json({ success: false, hibak }) // Visszaküldi a hibákat 
+          }
+        }
+        else {
+          res.status(409).json({ success: false, message: "Ilyen E-mail cím vagy Felhasználónév már létezik!" })
+        }
+      }
+    })
+  }
+  else {
+    res.status(401).json({ message: "Hibás jelszó!" });
+  }
+
+
+
+  con.query("UPDATE adatok SET email=?, username=?, profil_pic_url=? WHERE email=?", [ujadatok.email, ujadatok.username, ujadatok.newprofil_pic_url, email], (err, result) => {
+    if (err) {
+      res.status(500).json({ message: "Adatbázis hiba." });
+    }
+    else {
+      res.status(200).json({ message: "Sikeres mentés!" });
+    }
+  })
+
+})
 
 app.use(express.static('public'));
 app.listen(port, () => {

@@ -12,3 +12,23 @@ function navbar_click(id, sorszam) {
     document.querySelector(`.nav_items_div > div:nth-child(${sorszam})`).classList.add("active")
     document.getElementById(id).classList.remove("dnone")
 }
+
+async function kepbetoltes(){
+    const token = localStorage.getItem('token');
+    const response = await fetch("http://localhost:4000/szerkesztes", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "authorization": `Bearer ${token}`
+        }
+    });
+    if (response.status === 200) {
+        const data = await response.json()        
+        document.getElementById("navbar_profil_pic_url").src = data.profil_pic_url
+        document.getElementById("felhasznalonev").textContent = data.username
+    } else if (response.status === 401 || response.status === 403) {
+        logout();
+    }
+}
+
+window.onload = kepbetoltes()

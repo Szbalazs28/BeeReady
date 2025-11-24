@@ -42,3 +42,27 @@ kepek.forEach(karakter => {
         modal.style.display = "none";
     });
 });
+
+async function mentes() {
+    e.preventDefault();
+
+    const email = document.getElementById("szerkusername").value;
+    const password = document.getElementById("szerkpassword").value;
+    const newpassword = document.getElementById("ujjelszo").value;
+    const username = document.getElementById("szerkusername").value;
+    const newprofil_pic_url = document.getElementById("szerkprofilpic").src.split("/");
+    const profil_pic_url = document.getElementById("navbar_profil_pic_url").src;
+
+
+    const token = localStorage.getItem('token');
+    const response = await fetch("http://localhost:4000/szerkesztes_mentes", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ email, password, newpassword, username, newprofil_pic_url})
+    });
+
+    
+}

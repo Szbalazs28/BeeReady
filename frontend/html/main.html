@@ -31,9 +31,9 @@
                 <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" value="felhasznalo"
                     class="nav_items nav_profil">
                     <div class="profil_img">
-                        <img src="../img/allatos_profilkepek/ures.webp" alt="">
+                        <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
-                    <span class="profil_nev">Felhasználó</span>
+                    <span id="felhasznalonev" class="profil_nev">Felhasználó</span>
                 </div>
             </div>
         </nav>
@@ -79,7 +79,7 @@
                             <img id="szerkprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
                         </div>
                         <div class="account_buttons">
-                            <button class="account_button">Mentés</button>
+                            <button onclick="mentes()" class="account_button">Mentés</button>
                             <a href="../html/index.html">kijelentkezés</a>
                         </div>
                     </div>

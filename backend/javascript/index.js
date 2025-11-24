@@ -57,31 +57,37 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     const password = document.getElementById("regpassword").value;
     const username = document.getElementById("regusername").value;
     const profil_pic_url = document.getElementById("profil_pic_url").src.split("/");
-    
+
     const response = await fetch("http://localhost:4000/regisztracio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length-1]}`})
+        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length - 1]}` })
     });
-    message = await response.json()    
+    message = await response.json()
     if (message.success) {
         login_register();
-        alert("Sikeres bejelentkezés!");
+        alertell("Sikeres regisztráció!",2.5);
     }
-    else{
-        uzenet.innerHTML = ""
-        let hibak = message.hibak
-        let uzenet_szoveg = ""
-        for (let hiba in hibak) {
-            uzenet_szoveg += hibak[hiba] + "<br>"
-            alert(uzenet_szoveg)
+    else {
+        if (Object.keys(message).includes("message")) {
+            alertell(message.message, 2.5);
         }
+        else {
+            let ido = 0.5;
+            let tartalom = "A jelszónak: <br>"
+            for (let item in message.hibak) {
+                tartalom += `${message.hibak[item]}<br>`
+                ido++
+            }
+            alertell(tartalom,ido);
+        }
+
     }
 
 });
 document.getElementById("loginform").addEventListener("submit", async function (e) {
     e.preventDefault();
-    const stay = document.getElementById("stay").chechked;
+    const stay = document.getElementById("stay").checked;
     const email = document.getElementById("logemail").value;
     const password = document.getElementById("logpassword").value;
 
@@ -94,19 +100,24 @@ document.getElementById("loginform").addEventListener("submit", async function (
     if (message.success) {
         localStorage.setItem("token", message.token);
         window.location.href = message.redirect;
-    } else {
-        alert(message.message);
+    }else {
+        alertell(message.message, 2.5);
     }
 });
 
-function alert(text) {
+function alertell(text, time) {
+    if(time<2.5){
+        time = 2.5;
+    }
     const t = document.createElement("div");
-    t.className = "alert";
-    t.innerHTML = text;
+    t.className = "alertell";
+    let p = document.createElement("p");
+    p.innerHTML = text;
+    t.appendChild(p);
     document.body.appendChild(t);
     setTimeout(() => {
         t.remove();
-    }, 2500);
+    }, time * 1000);
 }
 
 //profilvalto 
