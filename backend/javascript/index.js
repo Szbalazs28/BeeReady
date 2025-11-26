@@ -1,25 +1,32 @@
 const card = document.querySelector('.card');
-const loginDiv = document.querySelector('#regdiv');
+const regDiv = document.querySelector('#regdiv');
 const signinDiv = document.querySelector('#logdiv');
 const forgetDiv = document.querySelector('#forget_password_div');
 
 
 // Ha az „Elfelejtettem a jelszavam”-ra rákattintunk, a másik két div eltűnik, viszont a másik kettő cserélgeti egymást
 function login_register() {
-    const isLoginVisible = loginDiv.style.display === 'block' || loginDiv.style.display === '';
+    const isRegnotVisible = regDiv.classList.contains("dnone");
 
     card.classList.remove('fade-in');
     card.classList.add('fade-out');
 
     setTimeout(() => {
-        if (isLoginVisible) {
-            loginDiv.style.display = 'none';
-            signinDiv.style.display = 'block';
-            forgetDiv.style.display = 'none';
+        if (isRegnotVisible) {
+            signinDiv.classList.add("dnone");
+            regDiv.classList.remove("dnone");
+            if(!forgetDiv.classList.contains("dnone")){
+                forgetDiv.classList.add("dnone");
+            }
         } else {
-            signinDiv.style.display = 'none';
-            loginDiv.style.display = 'block';
-            forgetDiv.style.display = 'none';
+            
+            signinDiv.classList.remove("dnone");
+            regDiv.classList.add("dnone");
+            if(!forgetDiv.classList.contains("dnone")){
+                forgetDiv.classList.add("dnone");
+            }
+
+            
         }
 
         card.classList.remove('fade-out');
@@ -28,20 +35,17 @@ function login_register() {
 }
 
 function forget_Password() {
-    let isFPassVisible = loginDiv.style.display === 'block' || loginDiv.style.display === '';
-
+    const isFPassNOTVisible = forgetDiv.classList.contains("dnone");   
     card.classList.remove('fade-in');
     card.classList.add('fade-out');
-
+                                        
     setTimeout(() => {
-        if (isFPassVisible) {
-            loginDiv.style.display = 'none';
-            signinDiv.style.display = 'block';
-            forgetDiv.style.display = 'none';
+        if (isFPassNOTVisible) {
+            signinDiv.classList.add("dnone");
+            forgetDiv.classList.remove("dnone");
         } else {
-            signinDiv.style.display = 'none';
-            loginDiv.style.display = 'none';
-            forgetDiv.style.display = 'block';
+            forgetDiv.classList.add("dnone");
+            signinDiv.classList.remove("dnone");
         }
 
         card.classList.remove('fade-out');

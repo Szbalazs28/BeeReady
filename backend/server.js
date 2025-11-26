@@ -15,9 +15,9 @@ let con = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "belepesadatok"
+  database: "BeeReady_db"
 });
-
+//Ezt ki kell majd törölni! 
 let adatok = []
 
 con.connect(function (err) {
@@ -33,7 +33,7 @@ con.connect(function (err) {
 app.get("/adatok", (req, res) => {
   res.json(adatok)
 })
-
+//IDÁIG 
 async function titkositas(password) {
   const saltRounds = 12
   const hash = await bcrypt.hash(password, saltRounds)
@@ -119,7 +119,7 @@ app.post("/bejelentkezes", async (req, res) => {
           if (elemek.stay) {
             expiresInTime = '7d'
           }
-          const token = jwt.sign({ email: result[0].email }, JWT_SECRET, { expiresIn: expiresInTime });
+          const token = jwt.sign({ id: result[0].id }, JWT_SECRET, { expiresIn: expiresInTime });
           res.json({ success: true, token, redirect: "./main.html" })
         }
         else {
@@ -159,17 +159,13 @@ function authenticateToken(req, res, next) {
 
 
 app.get("/szerkesztes", authenticateToken, (req, res) => {
-  const email = req.user.email;
-  let username = "";
-  let profil_pic_url = "";
-  con.query("SELECT username, profil_pic_url FROM adatok WHERE email = ?", [email], (err, result) => {
+  const id = req.user.id;
+  con.query("SELECT username, email, profil_pic_url FROM adatok WHERE id = ?", [id], (err, result) => {
     if (err) {
       res.status(500).json({ message: "Adatbázis hiba." });
     }
     else {
-      username = result[0].username;
-      profil_pic_url = result[0].profil_pic_url;
-      res.status(200).json({ username: username, email: email, profil_pic_url: profil_pic_url });
+      res.status(200).json({ username: result[0].username, email: result[0].email, profil_pic_url: result[0].profil_pic_url });
     }
 
   });
