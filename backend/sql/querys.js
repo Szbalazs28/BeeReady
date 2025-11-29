@@ -1,0 +1,48 @@
+const pool = require('../sql/database');
+
+async function userexists(email, username) {
+    return await pool.query("SELECT email, username FROM adatok WHERE email= ? or username=?", [email, username]);
+}
+
+async function newuser(username, email, password, profil_pic_url) {
+    await pool.query("INSERT INTO adatok (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
+}
+
+async function userbyemail(email) {
+    return await pool.query("SELECT * FROM adatok WHERE email = ?", [email]);
+}
+
+async function userbyid(id) {
+    return await pool.query("SELECT username, email, profil_pic_url, password FROM adatok WHERE id = ?", [id]);
+}
+
+async function updateuser(rows, ujadatok, kit) {
+    let valtoztatas = updatebuild(rows, ujadatok);
+    for (let i = 0; i < valtoztatas.length; i++) {
+        await pool.query(`UPDATE adatok SET ${valtoztatas[i][0]} WHERE id=?`, [valtoztatas[i][1], kit]);
+    }
+}
+
+function updatebuild(rows, ujadatok) {
+    let valtoztatas = []
+    if (rows[0].username != ujadatok.username) {
+        valtoztatas.push(["username = ? ", ujadatok.username])
+    }
+    if (rows[0].email != ujadatok.email) {
+        valtoztatas.push(["email = ? ", ujadatok.email])
+    }
+    if (rows[0].profil_pic_url != `../img/allatos_profilkepek/${ujadatok.newprofil_pic_url}`) {
+        valtoztatas.push(["profil_pic_url = ? ", `../img/allatos_profilkepek/${ujadatok.newprofil_pic_url}`])
+    }
+    return valtoztatas;
+}
+
+
+
+module.exports = {
+    userexists,
+    newuser,
+    userbyemail,
+    userbyid,
+    updateuser
+};

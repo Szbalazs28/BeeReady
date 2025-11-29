@@ -80,7 +80,7 @@
                         </div>
                         <div class="account_buttons">
                             <button onclick="mentes()" class="account_button">Mentés</button>
-                            <a href="../html/index.html">Kijelentkezés</a>
+                            <a onclick="logout()">Kijelentkezés</a>
                         </div>
                     </div>
                     <div class="modal dnone" id="profil_modal">
@@ -111,12 +111,12 @@
                         <div class="account_border_div">
 
                             <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                            <input type="password" id="szerkjelenlegijelszo" name="jelenlegijelszo"
+                            <input type="password" id="currentpassword" name="jelenlegijelszo"
                                 placeholder="Jelenlegi jelszó">
                         </div>
                         <div class="account_border_div">
                             <label for="ujjelszo">Új jelszó</label>
-                            <input type="password" id="szerkujjelszo" name="ujjelszo" placeholder="Új jelszó">
+                            <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
                         </div>
                     </div>
                 </div>
@@ -125,8 +125,8 @@
 
 
     </div>
-    <script src="../../backend/javascript/navbar.js"></script>
-    <script src="../../backend/javascript/profil_szerk.js"></script>
+    <script src="../javascript/navbar.js"></script>
+    <script src="../javascript/profil_szerk.js"></script>
 </body>
 
 </html>

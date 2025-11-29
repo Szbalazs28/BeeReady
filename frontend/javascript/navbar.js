@@ -31,4 +31,6 @@ async function kepbetoltes(){
     }
 }
 
+
+
 window.onload = kepbetoltes()

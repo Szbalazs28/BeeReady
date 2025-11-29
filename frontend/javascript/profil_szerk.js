@@ -18,6 +18,11 @@ async function felhasznalo_betoltes() {
 
 }
 
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = "../html/index.html";
+}
+
 
 
 //kep valtoztatasa (a modal/overlay fullosan mukodik)
@@ -44,25 +49,31 @@ kepek.forEach(karakter => {
 });
 
 async function mentes() {
-    e.preventDefault();
+   
 
-    const email = document.getElementById("szerkusername").value;
-    const password = document.getElementById("szerkpassword").value;
-    const newpassword = document.getElementById("ujjelszo").value;
+    const email = document.getElementById("szerkemail").value;
+    const password = document.getElementById("currentpassword").value;
+    const newpassword = document.getElementById("newpassword").value;
     const username = document.getElementById("szerkusername").value;
-    const newprofil_pic_url = document.getElementById("szerkprofilpic").src.split("/");
-    const profil_pic_url = document.getElementById("navbar_profil_pic_url").src;
+    const newprofil_pic_url = document.getElementById("szerkprofilpic").src.split("/");    
 
 
     const token = localStorage.getItem('token');
     const response = await fetch("http://localhost:4000/szerkesztes_mentes", {
-        method: "GET",
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             "authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ email, password, newpassword, username, newprofil_pic_url})
+        body: JSON.stringify({ email, password, newpassword, username, newprofil_pic_url: newprofil_pic_url[newprofil_pic_url.length - 1]})
     });
+
+    if (response.status === 200) {
+        const data = await response.json()
+        await felhasznalo_betoltes();
+        await  kepbetoltes();
+    }
+    
 
     
 }
