@@ -11,6 +11,7 @@ function navbar_click(id, sorszam) {
     })
     document.querySelector(`.nav_items_div > div:nth-child(${sorszam})`).classList.add("active")
     document.getElementById(id).classList.remove("dnone")
+    document.getElementById("navbar").classList.remove("nav_open");
 }
 
 async function kepbetoltes(){
@@ -31,6 +32,16 @@ async function kepbetoltes(){
     }
 }
 
+function toggleMenu() {
+    const navbar = document.getElementById("navbar");
+    const hamburger = document.querySelector(".hamburger");
 
+    navbar.classList.toggle("nav_open");
+    if(navbar.classList.contains("nav_open")){
+        hamburger.classList.add("dnone");
+    } else {
+        hamburger.classList.remove("dnone");
+    }
+}
 
 window.onload = kepbetoltes()
