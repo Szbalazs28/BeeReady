@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="../img/BeeReady_Logo_negyzet_atlatszo.PNG">
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/profil.css">
   <title>BeeReady</title>
 </head>
 
@@ -15,12 +16,12 @@
       <h1>BeeReady</h1>
       <hr>
       <p id="uzenet"></p>
-      <!--regisztráció felület (alaphelyzetben megjelenik)-->
-      <div id="regdiv" style="display: none;">
-
+      <!--regisztráció felület (alaphelyzetben nem jelenik meg)-->
+      <div id="regdiv" class="dnone">
         <h2>Regisztráció</h2>
-        <p class="switch">Van már fiókod?  <a href="#" onclick="login_register()">Bejelentkezés</a>
+        <p class="switch">Van már fiókod? <a href="#" onclick="login_register()">Bejelentkezés</a>
         </p>
+
         <form id="regform">
           <div>
             <div class="input-group">
@@ -35,15 +36,30 @@
             <button type="submit" class="signin-btn">Fiók létrehozása</button>
           </div>
           <div class="profil_img_div">
-            <div class="profil_img">
-              <img id="profil_pic_url" src="../img/allatos_profilkepek/farkas.webp" alt="">
+            <div class="profil_img" id="prof_img">
+              <img id="profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
             </div>
           </div>
-
+          <div class="modal" id="profil_modal">
+            <div class="modal_content" >
+              <div class="avatar_options">
+                <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/oroszlan.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
+                <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
+              </div>
+              <button type="button" class="account_button" id="close">Bezár</button>
+            </div>
+          </div>
         </form>
       </div>
 
-      <!--bejelentkezés felület (alaphelyzetben nem jelenik meg)-->
+      <!--bejelentkezés felület (alaphelyzetben megjelenik)-->
       <div id="logdiv">
         <h2>Bejelentkezés</h2>
         <p class="switch"><a href="#" onclick="login_register()">Regisztráció</a>
@@ -68,9 +84,9 @@
       </div>
 
       <!--elfelejtett jelszó felület (alaphelyzetben nem jelenik meg)-->
-      <div id="forget_password_div" style="display: none;">
+      <div id="forget_password_div" class="dnone">
         <h2>Elfelejtettem a jelszavam</h2>
-        <p class="switch">Vissza >> <a href="#" onclick="login_register()">Regisztráció</a></p>
+        <p class="switch"><a href="#" class="" onclick="forget_Password()">Bejelentkezés</a></p>
         <form>
           <div class="input-group">
             <input type="email" id="email" placeholder="E-mail cím" required>
@@ -81,7 +97,7 @@
       </div>
     </div>
   </div>
-  <script src="../../backend/javascript/index.js"></script>
+  <script src="../javascript/index.js"></script>
 </body>
 
 </html>
