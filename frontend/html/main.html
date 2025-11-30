@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/profil.css">
     <link rel="stylesheet" href="../css/chat.css">
+    <link rel="stylesheet" href="../css/mobile_view.css">
     <title>BeeReady</title>
 </head>
 
@@ -16,20 +17,27 @@
     <div class="main_grid">
 
         <!--navbar-->
-        <nav class="navbar">
+
+
+        <nav class="navbar" id="navbar">
             <div class="logo">
                 <img src="../img/BeeReady_Logo_negyzet_atlatszo.PNG" alt="">
                 <h1>BeeReady</h1>
             </div>
             <hr>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
             <div class="nav_items_div">
-                <div onclick="navbar_click('fooldal', 1)" value="fooldal" class="nav_items active">Főoldal</div>
-                <div onclick="navbar_click('tanulokartyak',2)" value="tanulokartyak" class="nav_items">Tanulókártyák
-                </div>
-                <!-- <div onclick="navbar_click('classrooms')" class="nav_items">termek</div> -->
-                <div onclick="navbar_click('chat',3)" value="chat" class="nav_items">Chat</div>
-                <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" value="felhasznalo"
-                    class="nav_items nav_profil">
+                <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
+                <div onclick="navbar_click('tanulokartyak',2)" class="nav_items">Tanulókártyák</div>
+                <div onclick="navbar_click('chat',3)" class="nav_items">Chat</div>
+
+                <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
@@ -38,38 +46,40 @@
             </div>
         </nav>
         <div class="fodiv">
+
             <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
                 <section id="tasks">Feladatok</section>
-                <!--Chat-->
-                <aside id="chat">
-                    <div class="chat_header">
-                        <h1><span>Chatnev</span></h1>
-                    </div>
-                    <div class="chat_messages">
-                        <div class="chat_bubble">
-                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
-                            <div class="chat_text">
-                                <label>Felhasználó</label>
-                                <p>Chat teszt</p>
-                            </div>
-                        </div>
-                        <div class="chat_bubble mine">
-                            <div class="chat_text">
-                                <p>Chat teszt</p>
-                            </div>
-                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
-                        </div>
-                    </div>
-                    <div class="chat_input">
-                        <textarea placeholder="Aa"></textarea>
-                        <button><img src="../img/plane.png" alt="Send"></button>
-                    </div>
-                </aside>
-
                 <div id="calendar">naptar</div>
                 <div id="to-do">to-do </div>
             </div>
+
+            <!--Chat-->
+            <div class="chat dnone mainelem" id="chat" style="display: none;">
+                <div class="chat_header">
+                    <h1><span>Chatnev</span></h1>
+                </div>
+                <div class="chat_messages">
+                    <div class="chat_bubble">
+                        <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                        <div class="chat_text">
+                            <label>Felhasználó</label>
+                            <p>Chat teszt</p>
+                        </div>
+                    </div>
+                    <div class="chat_bubble mine">
+                        <div class="chat_text">
+                            <p>Chat teszt</p>
+                        </div>
+                        <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                    </div>
+                </div>
+                <div class="chat_input">
+                    <textarea placeholder="Aa"></textarea>
+                    <button><img src="../img/plane.png" alt="Send"></button>
+                </div>
+            </div>
+
 
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
