@@ -95,12 +95,14 @@ app.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
     if(await compare(adatok.password, rows[0].password)) {
       if(adatok.newpassword!=""){
         let hibak = passwordTest(adatok.newpassword);    
-        if (Object.keys(hibak).length == 0) {
+        if (Object.keys(hibak).length == 0) {          
           const newpassword = await titkositas(adatok.newpassword)
-          //update jelszo
+          adatok.newpassword = newpassword
+          await updateuser(rows, adatok, id)      
+          res.status(200).json({success: true, message: "Sikeres mentés!"});    
         }
         else {
-          res.json({ success: false, hibak }) // Visszaküldi a hibákat 
+          res.status(403).json({ success: false, hibak }) // Visszaküldi a hibákat 
         }
       }
       else{
@@ -114,8 +116,8 @@ app.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
     }
     
   } catch (error) {
-    console.error("Hiba a szerkesztés mentése során:", error);
-    res.status(500).json({success: false, message: "Adatbázis hiba." });
+    console.error(`[${new Date().toLocaleTimeString()}] Hiba a szerkesztés mentése során: `, error);
+    res.status(500).json({success: false, message: error.message });
   }
 });
 

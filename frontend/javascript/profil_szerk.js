@@ -1,3 +1,18 @@
+function alertell(text, time) {
+    if (time < 2.5) {
+        time = 2.5;
+    }
+    const t = document.createElement("div");
+    t.className = "alertell";
+    let p = document.createElement("p");
+    p.innerHTML = text;
+    t.appendChild(p);
+    document.body.appendChild(t);
+    setTimeout(() => {
+        t.remove();
+    }, time * 1000);
+}
+
 async function felhasznalo_betoltes() {
     const token = localStorage.getItem('token');
     const response = await fetch("http://localhost:4000/szerkesztes", {
@@ -49,14 +64,13 @@ kepek.forEach(karakter => {
 });
 
 async function mentes() {
-   
+
 
     const email = document.getElementById("szerkemail").value;
     const password = document.getElementById("currentpassword").value;
     const newpassword = document.getElementById("newpassword").value;
     const username = document.getElementById("szerkusername").value;
-    const newprofil_pic_url = document.getElementById("szerkprofilpic").src.split("/");    
-
+    const newprofil_pic_url = document.getElementById("szerkprofilpic").src.split("/");
 
     const token = localStorage.getItem('token');
     const response = await fetch("http://localhost:4000/szerkesztes_mentes", {
@@ -65,15 +79,37 @@ async function mentes() {
             "Content-Type": "application/json",
             "authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ email, password, newpassword, username, newprofil_pic_url: newprofil_pic_url[newprofil_pic_url.length - 1]})
+        body: JSON.stringify({ email, password, newpassword, username, newprofil_pic_url: newprofil_pic_url[newprofil_pic_url.length - 1] })
     });
-
+    message = await response.json()
     if (response.status === 200) {
-        const data = await response.json()
         await felhasznalo_betoltes();
-        await  kepbetoltes();
+        await kepbetoltes();
+        alertell(message.message, 2.5);
     }
-    
+    else {
+        if (message.hibak && Object.keys(message.hibak).length > 0) {
+            let ido = 0.5;
+            let tartalom = "A jelszónak: <br>"
+            for (let hibaUzenet of Object.values(message.hibak)) {
+                tartalom += `${hibaUzenet}<br>`
+                ido++
+            }
+            alertell(tartalom, ido);
+        }
+        else{ 
+            if (message.message) {
+            // Ha nincs hibak objektum, de van message, azt jelenítjük meg
+            alertell(message.message, 2.5);
+            }
+            else {
+            // Ha egyik sem áll rendelkezésre, általános hibaüzenet
+            alertell("Ismeretlen hiba történt!", 2.5);
+            }
+        } 
 
-    
+    }
+
+
+
 }

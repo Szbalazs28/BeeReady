@@ -19,22 +19,42 @@ async function userbyid(id) {
 async function updateuser(rows, ujadatok, kit) {
     let valtoztatas = updatebuild(rows, ujadatok);
     for (let i = 0; i < valtoztatas.length; i++) {
-        await pool.query(`UPDATE adatok SET ${valtoztatas[i][0]} WHERE id=?`, [valtoztatas[i][1], kit]);
+        if(valtoztatas[i][0] === "username" || valtoztatas[i][0] === "email"){
+            const [exists] = await isexist(valtoztatas[i]);
+            if(exists.length > 0){
+                throw new Error(`A ${valtoztatas[i][1]} már foglalt!`);
+            }
+            else{
+                await pool.query(`UPDATE adatok SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
+            }
+        }
+        else{
+            await pool.query(`UPDATE adatok SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
+        }
+        
     }
+    
 }
 
 function updatebuild(rows, ujadatok) {
     let valtoztatas = []
     if (rows[0].username != ujadatok.username) {
-        valtoztatas.push(["username = ? ", ujadatok.username])
+        valtoztatas.push(["username", ujadatok.username])
     }
     if (rows[0].email != ujadatok.email) {
-        valtoztatas.push(["email = ? ", ujadatok.email])
+        valtoztatas.push(["email", ujadatok.email])
     }
     if (rows[0].profil_pic_url != `../img/allatos_profilkepek/${ujadatok.newprofil_pic_url}`) {
-        valtoztatas.push(["profil_pic_url = ? ", `../img/allatos_profilkepek/${ujadatok.newprofil_pic_url}`])
+        valtoztatas.push(["profil_pic_url", `../img/allatos_profilkepek/${ujadatok.newprofil_pic_url}`])
+    }
+    if(ujadatok.newpassword.length > 0){
+        valtoztatas.push(["password", ujadatok.newpassword])
     }
     return valtoztatas;
+}
+
+async function isexist(data){
+    return await pool.query(`SELECT ${data[0]} FROM adatok WHERE ${data[0]} = ?`, [data[1]]);
 }
 
 

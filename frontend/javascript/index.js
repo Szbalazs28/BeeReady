@@ -15,18 +15,18 @@ function login_register() {
         if (isRegnotVisible) {
             signinDiv.classList.add("dnone");
             regDiv.classList.remove("dnone");
-            if(!forgetDiv.classList.contains("dnone")){
+            if (!forgetDiv.classList.contains("dnone")) {
                 forgetDiv.classList.add("dnone");
             }
         } else {
-            
+
             signinDiv.classList.remove("dnone");
             regDiv.classList.add("dnone");
-            if(!forgetDiv.classList.contains("dnone")){
+            if (!forgetDiv.classList.contains("dnone")) {
                 forgetDiv.classList.add("dnone");
             }
 
-            
+
         }
 
         card.classList.remove('fade-out');
@@ -35,10 +35,10 @@ function login_register() {
 }
 
 function forget_Password() {
-    const isFPassNOTVisible = forgetDiv.classList.contains("dnone");   
+    const isFPassNOTVisible = forgetDiv.classList.contains("dnone");
     card.classList.remove('fade-in');
     card.classList.add('fade-out');
-                                        
+
     setTimeout(() => {
         if (isFPassNOTVisible) {
             signinDiv.classList.add("dnone");
@@ -70,7 +70,7 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     message = await response.json()
     if (message.success) {
         login_register();
-        alertell("Sikeres regisztráció!",2.5);
+        alertell("Sikeres regisztráció!", 2.5);
     }
     else {
         if (Object.keys(message).includes("message")) {
@@ -79,11 +79,11 @@ document.getElementById("regform").addEventListener("submit", async function (e)
         else {
             let ido = 0.5;
             let tartalom = "A jelszónak: <br>"
-            for (let item in message.hibak) {
-                tartalom += `${message.hibak[item]}<br>`
+            for (let hibaUzenet of Object.values(message.hibak)) {
+                tartalom += `${hibaUzenet}<br>`
                 ido++
             }
-            alertell(tartalom,ido);
+            alertell(tartalom, ido);
         }
 
     }
@@ -104,13 +104,13 @@ document.getElementById("loginform").addEventListener("submit", async function (
     if (message.success) {
         localStorage.setItem("token", message.token);
         window.location.href = message.redirect;
-    }else {
+    } else {
         alertell(message.message, 2.5);
     }
 });
 
 function alertell(text, time) {
-    if(time<2.5){
+    if (time < 2.5) {
         time = 2.5;
     }
     const t = document.createElement("div");
@@ -146,3 +146,4 @@ kepek.forEach(karakter => {
         modal.style.display = "none";
     });
 });
+
