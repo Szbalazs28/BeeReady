@@ -38,6 +38,10 @@ function logout() {
     window.location.href = "../html/index.html";
 }
 
+document.getElementById("szerkesztes").addEventListener("submit", function(e) {
+    e.preventDefault() 
+    mentes();
+});
 
 
 //kep valtoztatasa (a modal/overlay fullosan mukodik)
