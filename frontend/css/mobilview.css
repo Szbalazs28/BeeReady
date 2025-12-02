@@ -52,4 +52,8 @@
     .profil_img_div {
         margin: auto;
     }
+
+    .dnone{
+        display: none;
+    }
 }

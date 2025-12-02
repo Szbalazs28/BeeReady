@@ -94,7 +94,7 @@ async function mentes() {
     else {
         if (message.hibak && Object.keys(message.hibak).length > 0) {
             let ido = 0.5;
-            let tartalom = "A jelszónak: <br>"
+            let tartalom = ""
             for (let hibaUzenet of Object.values(message.hibak)) {
                 tartalom += `${hibaUzenet}<br>`
                 ido++

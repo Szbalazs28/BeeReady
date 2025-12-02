@@ -1,9 +1,15 @@
-#chat {
+.chatclass {    
     flex-direction: column;
     background: #ffffff;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     overflow: hidden;
+}
+
+.chat_div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .chat_header {
@@ -120,7 +126,7 @@ ezért kellett ide bemásolni
 */
 
 .alertell {
-  z-index: 9999; 
+  z-index: 999; 
   top: 20px;     
   left: 50%;     
   transform: translateX(-50%);

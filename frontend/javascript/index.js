@@ -78,7 +78,7 @@ document.getElementById("regform").addEventListener("submit", async function (e)
         }
         else {
             let ido = 0.5;
-            let tartalom = "A jelszónak: <br>"
+            let tartalom = ""
             for (let hibaUzenet of Object.values(message.hibak)) {
                 tartalom += `${hibaUzenet}<br>`
                 ido++
