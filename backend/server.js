@@ -125,7 +125,7 @@ app.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
               res.status(200).json({ success: true, message: "Sikeres mentés!" });
             }
             else {
-              res.status(403).json({ success: false, hibak }) // Visszaküldi a hibákat 
+              res.status(403).json({ success: false, hibak })  
             }
           }
           else {

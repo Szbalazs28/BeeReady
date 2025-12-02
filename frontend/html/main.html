@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../css/profil.css">
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="../css/mobilview.css">
+    <link rel="stylesheet" href="../css/flashcards.css">
     <title>BeeReady</title>
 </head>
 
@@ -78,7 +79,18 @@
                 </div>
             </div>
 
-
+            <!--tanulokartyak-->
+            <div class="cards dnone mainelem" id="tanulokartyak">                
+                <div class="deck_creator">
+                    <input type="text" class="newflashcard_input" id="newDeckName" placeholder="Új pakli neve (pl.: Történelem - 10. osztály)"
+                        required>
+                    <button id="createDeckButton">Pakli létrehozása</button>
+                </div>
+                <hr>
+                <div class="deck_list" id="deckList">
+                    <h3>Jelenlegi paklijaid:</h3>
+                </div>
+            </div>
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
                 <form id="szerkesztes">

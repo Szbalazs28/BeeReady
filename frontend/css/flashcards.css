@@ -1,0 +1,39 @@
+.newflashcard_input {
+    margin: auto;
+    width: 90%;
+    padding: 12px 14px;
+    border: none;
+
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    outline: none;
+    font-size: 1rem;
+    color: #000;
+    transition: 0.3s;
+}
+
+.deck_creator {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+#createDeckButton {
+    padding: 10px 16px;
+    background-color: #f1b43c;
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#createDeckButton:hover {
+    background-color: #d99c2c;
+}

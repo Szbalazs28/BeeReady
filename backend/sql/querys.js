@@ -1,19 +1,19 @@
 const pool = require('../sql/database');
 
 async function userexists(email, username) {
-    return await pool.query("SELECT email, username FROM adatok WHERE email= ? or username=?", [email, username]);
+    return await pool.query("SELECT email, username FROM users WHERE email= ? or username=?", [email, username]);
 }
 
 async function newuser(username, email, password, profil_pic_url) {
-    await pool.query("INSERT INTO adatok (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
+    await pool.query("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
 }
 
 async function userbyemail(email) {
-    return await pool.query("SELECT * FROM adatok WHERE email = ?", [email]);
+    return await pool.query("SELECT * FROM users WHERE email = ?", [email]);
 }
 
 async function userbyid(id) {
-    return await pool.query("SELECT username, email, profil_pic_url, password FROM adatok WHERE id = ?", [id]);
+    return await pool.query("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
 }
 
 async function updateuser(rows, ujadatok, kit) {
@@ -25,11 +25,11 @@ async function updateuser(rows, ujadatok, kit) {
                 throw new Error(`A ${valtoztatas[i][1]} már foglalt!`);
             }
             else{
-                await pool.query(`UPDATE adatok SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
+                await pool.query(`UPDATE users SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
             }
         }
         else{
-            await pool.query(`UPDATE adatok SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
+            await pool.query(`UPDATE users SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
         }
         
     }
@@ -54,7 +54,7 @@ function updatebuild(rows, ujadatok) {
 }
 
 async function isexist(data){
-    return await pool.query(`SELECT ${data[0]} FROM adatok WHERE ${data[0]} = ?`, [data[1]]);
+    return await pool.query(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
 
