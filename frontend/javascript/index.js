@@ -69,7 +69,8 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     });
     message = await response.json()
     if (message.success) {
-        login_register();
+        localStorage.setItem("token", message.token);
+        window.location.href = message.redirect;
         alertell("Sikeres regisztráció!", 2.5);
     }
     else {

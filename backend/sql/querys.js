@@ -6,6 +6,7 @@ async function userexists(email, username) {
 
 async function newuser(username, email, password, profil_pic_url) {
     await pool.query("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
+    return await pool.query("SELECT id FROM users WHERE email= ?", [email]);
 }
 
 async function userbyemail(email) {
