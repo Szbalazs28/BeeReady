@@ -20,15 +20,17 @@
         <!--navbar-->
         <nav class="navbar" id="navbar">
             <div class="logo">
-                <img src="../img/BeeReady_Logo_negyzet_atlatszo.PNG" alt="">
+                <img src="../img/BeeReady_Logo_negyzet_atlatszo.PNG" alt="img">
                 <h1>BeeReady</h1>
             </div>
             <hr>
 
             <div class="hamburger" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <div class="hamburder_padding">
+                    <div class="hamburger_border">
+                        <img src="../img/hamburger.png" alt="img">
+                    </div>
+                </div>
             </div>
             <div class="nav_items_div">
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
@@ -80,10 +82,10 @@
             </div>
 
             <!--tanulokartyak-->
-            <div class="cards dnone mainelem" id="tanulokartyak">                
+            <div class="cards dnone mainelem" id="tanulokartyak">
                 <div class="deck_creator">
-                    <input type="text" class="newflashcard_input" id="newDeckName" placeholder="Új pakli neve (pl.: Történelem - 10. osztály)"
-                        required>
+                    <input type="text" class="newflashcard_input" id="newDeckName"
+                        placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
                     <button id="createDeckButton">Pakli létrehozása</button>
                 </div>
                 <hr>
@@ -120,24 +122,27 @@
                                 <button class="account_button" id="close">Bezár</button>
                             </div>
                         </div>
-                        <div class="account_inputs input-group">
-                            <div class="account_border_div">
-                                <label for="felh">Felhasználónév</label>
-                                <input type="text" id="szerkusername" name="felh" placeholder="Felhasználónév" required>
-                            </div>
-                            <div class="account_border_div">
-                                <label for="email">E-mail</label>
-                                <input type="email" id="szerkemail" name="email" placeholder="E-mail" required>
-                            </div>
-                            <div class="account_border_div">
+                        <div class="account_kenyszerdiv">
+                            <div class="account_inputs input-group">
+                                <div class="account_border_div">
+                                    <label for="felh">Felhasználónév</label>
+                                    <input type="text" id="szerkusername" name="felh" placeholder="Felhasználónév"
+                                        required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="email">E-mail</label>
+                                    <input type="email" id="szerkemail" name="email" placeholder="E-mail" required>
+                                </div>
+                                <div class="account_border_div">
 
-                                <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                                <input type="password" id="currentpassword" name="jelenlegijelszo"
-                                    placeholder="Jelenlegi jelszó" required>
-                            </div>
-                            <div class="account_border_div">
-                                <label for="ujjelszo">Új jelszó</label>
-                                <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                                    <label for="jelenlegijelszo">Jelenlegi jelszó</label>
+                                    <input type="password" id="currentpassword" name="jelenlegijelszo"
+                                        placeholder="Jelenlegi jelszó" required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="ujjelszo">Új jelszó</label>
+                                    <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                                </div>
                             </div>
                         </div>
                     </div>
