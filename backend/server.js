@@ -3,24 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const {
-  authenticateToken,
-  generateToken,
-} = require("./middleware/jsonwebtoken.js");
-const {
-  passwordTest,
-  titkositas,
-  compare,
-  usernameTest,
-  emailTest,
-} = require("./data_test.js");
-const {
-  userexists,
-  newuser,
-  userbyemail,
-  userbyid,
-  updateuser,
-} = require("./sql/querys.js");
+const {authenticateToken,generateToken} = require("./middleware/jsonwebtoken.js");
+const {passwordTest,titkositas,compare,usernameTest,emailTest} = require("./data_test.js");
+const {userexists,newuser,userbyemail,userbyid,updateuser} = require("./sql/querys.js");
 
 app.use(cors());
 app.use(express.json());
@@ -47,7 +32,7 @@ app.post("/regisztracio", async (req, res) => {
               data.email,
               password,
               data.profil_pic_url
-            );            
+            );
             const token = await generateToken(user[0].id, "1h");
             res.status(200).json({ success: true, token, redirect: "./main.html" });
           } else {
@@ -131,9 +116,7 @@ app.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
               const newpassword = await titkositas(adatok.newpassword);
               adatok.newpassword = newpassword;
               await updateuser(rows, adatok, id);
-              res
-                .status(200)
-                .json({ success: true, message: "Sikeres mentés!" });
+              res.status(200).json({ success: true, message: "Sikeres mentés!" });
             } else {
               res.status(403).json({ success: false, hibak });
             }
