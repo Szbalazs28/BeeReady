@@ -39,17 +39,28 @@
 }
 
 
+.cards{
+    height: 100%;
+}
+
 #deckList {
+    flex: 1;
+    height: 60vh;
     display: flex;
     flex-direction: row;
-    gap: 16px;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    gap: 3%;    
+    row-gap: 10px;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 10px;
 }
 
 
 .deck_item {
     min-width: 200px;
+    width: 25%;
     padding: 16px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.35);
