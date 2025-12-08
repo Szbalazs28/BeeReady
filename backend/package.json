@@ -1,21 +1,22 @@
 {
   "name": "beeready",
-    "version": "1.0.0",
-    "description": "Study project",
-    "main": "server.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node server.js",
-        "dev": "nodemon"
-    },
-    "author": "Székely Balázs & Székely Hunor",
-    "license": "ISC",
-    "devDependencies": {
-        "nodemon": "^3.1.10"
-    },
+  "version": "1.0.0",
+  "description": "Study project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon"
+  },
+  "author": "Székely Balázs & Székely Hunor",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
+    "bootstrap": "^5.3.8",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",

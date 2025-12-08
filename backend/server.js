@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/regisztracio", async (req, res) => {
-  console.log(`[${new Date().toLocaleTimeString()}] /regisztracio request`);
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /regisztracio request`);
   let data = req.body;
   const usernamehibak = usernameTest(data.username);
   const emailhibak = emailTest(data.email);
@@ -53,6 +53,7 @@ app.post("/regisztracio", async (req, res) => {
 });
 
 app.post("/bejelentkezes", async (req, res) => {
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /bejelentkezes request`);
   const data = req.body;
   try {
     const [rows] = await userbyemail(data.email);
@@ -78,6 +79,7 @@ app.post("/bejelentkezes", async (req, res) => {
 });
 
 app.get("/szerkesztes", authenticateToken, async (req, res) => {
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes request`);
   const id = req.user.id;
   try {
     const [rows] = await userbyid(id);
@@ -97,6 +99,7 @@ app.get("/szerkesztes", authenticateToken, async (req, res) => {
 });
 
 app.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes_mentes request`);
   const id = req.user.id;
   const adatok = req.body;
   const usernamehibak = usernameTest(adatok.username);
@@ -138,7 +141,7 @@ app.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
     }
   }
 });
-
+app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(express.static("public"));
 app.listen(port, () => {
   console.log(`Szerver fut: http://localhost:${port}`);

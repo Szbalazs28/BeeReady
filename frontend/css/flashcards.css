@@ -37,3 +37,66 @@
 #createDeckButton:hover {
     background-color: #d99c2c;
 }
+
+
+#deckList {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+
+.deck_item {
+    min-width: 200px;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+
+.deck_item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+
+.deck_name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #000;
+}
+
+
+.deck_count {
+    font-size: 0.9rem;
+    color: #333;
+    opacity: 0.75;
+}
+
+.deck_actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.edit_deck_button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f1b43c;
+    font-weight: bold;
+    cursor: pointer;    
+}
+
+.edit_deck_button:hover {
+    background: #d99c2c;
+}

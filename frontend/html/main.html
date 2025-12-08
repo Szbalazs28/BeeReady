@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="../css/mobilview.css">
     <link rel="stylesheet" href="../css/flashcards.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+
+
     <title>BeeReady</title>
 </head>
 
@@ -89,10 +92,20 @@
                     <button id="createDeckButton">Pakli létrehozása</button>
                 </div>
                 <hr>
+                <h3>Jelenlegi paklijaid:</h3>
                 <div class="deck_list" id="deckList">
-                    <h3>Jelenlegi paklijaid:</h3>
+                    <div class="deck_item">
+                        <div class="deck_info">
+                            <span class="deck_name">Példa pakli 1</span>
+                            <span class="deck_count">32 kártya</span>
+                        </div>
+                        <div class="deck_actions">
+                            <button class="edit_deck_button">Szerkesztés</button>
+                        </div>
+                    </div>                    
                 </div>
             </div>
+
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
                 <form id="szerkesztes">
@@ -153,6 +166,7 @@
 
     </div>
     <script src="../javascript/navbar.js"></script>
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../javascript/profil_szerk.js"></script>
 </body>
 
