@@ -20,7 +20,7 @@ function navbar_click(id, sorszam) {
 
 async function kepbetoltes(){
     const token = localStorage.getItem('token');
-    const response = await fetch("http://localhost:4000/szerkesztes", {
+    const response = await fetch("http://localhost:4000/api/szerkesztes", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

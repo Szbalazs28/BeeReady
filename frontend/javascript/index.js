@@ -62,7 +62,7 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     const username = document.getElementById("regusername").value;
     const profil_pic_url = document.getElementById("profil_pic_url").src.split("/");
 
-    const response = await fetch("http://localhost:4000/regisztracio", {
+    const response = await fetch("http://localhost:4000/api/regisztracio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length - 1]}` })
@@ -96,7 +96,7 @@ document.getElementById("loginform").addEventListener("submit", async function (
     const email = document.getElementById("logemail").value;
     const password = document.getElementById("logpassword").value;
 
-    const response = await fetch("http://localhost:4000/bejelentkezes", {
+    const response = await fetch("http://localhost:4000/api/bejelentkezes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, stay })
