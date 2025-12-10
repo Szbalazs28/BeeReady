@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="../img/BeeReady_Logo_negyzet_atlatszo.PNG">
     <link rel="stylesheet" href="../css/container.css">
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/profil.css">
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="../css/mobilview.css">
-    <link rel="stylesheet" href="../css/flashcards.css">    
+    <link rel="stylesheet" href="../css/flashcards.css">
     <title>BeeReady</title>
 </head>
 
@@ -34,7 +34,7 @@
             </div>
             <div class="nav_items_div">
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
-                <div onclick="navbar_click('tanulokartyak',2)" class="nav_items">Tanulókártyák</div>
+                <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('chat',3)" class="nav_items">Chat</div>
 
                 <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" class="nav_items nav_profil">
@@ -61,7 +61,8 @@
                     </div>
                     <div class="chat_messages">
                         <div class="chat_bubble">
-                            <img alt="prfil_kep_hely" src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                            <img alt="prfil_kep_hely" src="../img/allatos_profilkepek/farkas.webp"
+                                class="chat_profile_pic">
                             <div class="chat_text">
                                 <label>Felhasználó</label>
                                 <p>Chat teszt</p>
@@ -71,7 +72,8 @@
                             <div class="chat_text">
                                 <p>Chat teszt</p>
                             </div>
-                            <img alt="prfil_kep_hely" src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                            <img alt="prfil_kep_hely" src="../img/allatos_profilkepek/farkas.webp"
+                                class="chat_profile_pic">
                         </div>
                     </div>
                     <div class="chat_input">
@@ -84,162 +86,19 @@
             <!--tanulokartyak-->
             <div class="cards dnone mainelem" id="tanulokartyak">
                 <div class="deck_creator">
-                    <input type="text" class="newflashcard_input" id="newDeckName"
-                        placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
-                    <button id="createDeckButton">Pakli létrehozása</button>
+                    <form id="flashcard_form">
+                        <input type="text" class="newflashcard_input" id="newDeckName"
+                            placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
+                        <button type="submit" id="createDeckButton">Pakli létrehozása</button>
+                    </form>
+
                 </div>
                 <hr>
                 <h3>Jelenlegi paklijaid:</h3>
                 <div class="deck_list" id="deckList">
 
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>                    
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
-                        </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
-                        </div>
-                    </div>
-                                        
                 </div>
             </div>
-
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
                 <form id="szerkesztes">
@@ -299,8 +158,9 @@
 
 
     </div>
-    <script src="../javascript/navbar.js"></script>    
     <script src="../javascript/profil_szerk.js"></script>
+    <script src="../javascript/navbar.js"></script>
+    <script src="../javascript/flashcards.js"></script>
 </body>
 
 </html>

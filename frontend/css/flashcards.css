@@ -1,6 +1,6 @@
 .newflashcard_input {
     margin: auto;
-    width: 90%;
+    width: 50vw;
     padding: 12px 14px;
     border: none;
 
@@ -110,4 +110,9 @@
 
 .edit_deck_button:hover {
     background: #d99c2c;
+}
+
+#flashcard_form{
+    display: flex;
+    gap: 10%;
 }

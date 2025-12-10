@@ -46,4 +46,4 @@ function toggleMenu() {
     }
 }
 
-window.onload = kepbetoltes()
+window.onload = kepbetoltes

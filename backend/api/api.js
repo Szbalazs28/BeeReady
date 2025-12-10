@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 
-const {authenticateToken,generateToken} = require("../middleware/jsonwebtoken.js");
-const {passwordTest,titkositas,compare,usernameTest,emailTest} = require("../data_test.js");
-const {userexists,newuser,userbyemail,userbyid,updateuser} = require("../sql/querys.js");
+const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
+const { passwordTest, titkositas, compare, usernameTest, emailTest } = require("../data_test.js");
+const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, isdeckexits } = require("../sql/querys.js");
 
 router.post("/regisztracio", async (req, res) => {
   console.log(
@@ -105,9 +105,7 @@ router.get("/szerkesztes", authenticateToken, async (req, res) => {
 });
 
 router.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
-  console.log(
-    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes_mentes request - IP: ${req.socket.remoteAddress}`
-  );
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes_mentes request - IP: ${req.socket.remoteAddress}`);
   const id = req.user.id;
   const adatok = req.body;
   const usernamehibak = usernameTest(adatok.username);
@@ -151,5 +149,40 @@ router.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
     }
   }
 });
+
+router.post("/add_deck", authenticateToken, async (req, res) => {
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /add_deck request - IP: ${req.socket.remoteAddress}`);
+  const adatok = req.body
+  const id = req.user.id
+  try {
+    if (adatok.deck_name.length > 200 || adatok.deck_name=="") {
+      res.status(409).json({ success: false, message: "Nem lehet hosszabb a név 200 karakternél és minimum 1 karakternek kell lennie!" })
+    }
+    else {
+      const [letezike] = await isdeckexits(id, adatok.deck_name)
+      if (letezike.length > 0) {
+        res.status(409).json({ success: false, message: "Ilyen nevű pakli már létezik!" })
+      }
+      else{
+        await add_deck(id, adatok.deck_name)
+        res.status(200).json({success:true, message: "Sikeres hozzáadás!"})
+      }
+    }
+  } catch (error) {
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
+
+router.post("/deck_load", authenticateToken, async (req,res) => {
+  const id = req.user.id
+  try{
+    const[rows] = await getdeck(id)
+    res.status(200).json({success: true, decks: rows})
+  }catch (error) {
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
 
 module.exports = router;

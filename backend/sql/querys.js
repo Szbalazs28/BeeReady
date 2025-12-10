@@ -17,6 +17,20 @@ async function userbyid(id) {
     return await pool.execute("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
 }
 
+async function add_deck(id, name) {
+    await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name) VALUES(?, ?)", [id, name])
+}
+
+async function isdeckexits(id,name) {
+    return  await pool.execute("SELECT deck_name FROM flashcard_deck WHERE deck_name = ? AND user_id=?", [name, id])
+    
+}
+
+async function  getdeck(id) {
+    return await pool.execute("SELECT deck_name FROM flashcard_deck WHERE user_id = ?",[id])
+}
+
+
 async function updateuser(rows, ujadatok, kit) {
     let valtoztatas = updatebuild(rows, ujadatok);
     for (let i = 0; i < valtoztatas.length; i++) {
@@ -65,5 +79,8 @@ module.exports = {
     newuser,
     userbyemail,
     userbyid,
-    updateuser
+    updateuser,
+    add_deck,
+    isdeckexits,
+    getdeck
 };
