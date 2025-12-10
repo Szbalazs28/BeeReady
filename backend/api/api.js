@@ -8,7 +8,7 @@ const {userexists,newuser,userbyemail,userbyid,updateuser} = require("../sql/que
 
 router.post("/regisztracio", async (req, res) => {
   console.log(
-    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /regisztracio request - IP: ${req.socket.address}`
+    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /regisztracio request - IP: ${req.socket.remoteAddress}`
   );
   let data = req.body;
   const usernamehibak = usernameTest(data.username);
@@ -84,7 +84,7 @@ router.post("/bejelentkezes", async (req, res) => {
 
 router.get("/szerkesztes", authenticateToken, async (req, res) => {
   console.log(
-    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes request`
+    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes request - IP: ${req.socket.remoteAddress}`
   );
   const id = req.user.id;
   try {
@@ -106,7 +106,7 @@ router.get("/szerkesztes", authenticateToken, async (req, res) => {
 
 router.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
   console.log(
-    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes_mentes request`
+    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /szerkesztes_mentes request - IP: ${req.socket.remoteAddress}`
   );
   const id = req.user.id;
   const adatok = req.body;
