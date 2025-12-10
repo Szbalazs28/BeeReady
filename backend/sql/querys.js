@@ -1,20 +1,20 @@
 const pool = require('../sql/database');
 
 async function userexists(email, username) {
-    return await pool.query("SELECT email, username FROM users WHERE email= ? or username=?", [email, username]);
+    return await pool.execute("SELECT email, username FROM users WHERE email= ? or username=?", [email, username]);
 }
 
 async function newuser(username, email, password, profil_pic_url) {
-    await pool.query("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
-    return await pool.query("SELECT id FROM users WHERE email= ?", [email]);
+    await pool.execute("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
+    return await pool.execute("SELECT id FROM users WHERE email= ?", [email]);
 }
 
 async function userbyemail(email) {
-    return await pool.query("SELECT * FROM users WHERE email = ?", [email]);
+    return await pool.execute("SELECT * FROM users WHERE email = ?", [email]);
 }
 
 async function userbyid(id) {
-    return await pool.query("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
+    return await pool.execute("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
 }
 
 async function updateuser(rows, ujadatok, kit) {
@@ -55,7 +55,7 @@ function updatebuild(rows, ujadatok) {
 }
 
 async function isexist(data){
-    return await pool.query(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
+    return await pool.execute(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
 
