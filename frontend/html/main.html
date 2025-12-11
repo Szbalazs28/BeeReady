@@ -91,12 +91,19 @@
                             placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
                         <button type="submit" id="createDeckButton">Pakli létrehozása</button>
                     </form>
-
                 </div>
                 <hr>
                 <h3>Jelenlegi paklijaid:</h3>
                 <div class="deck_list" id="deckList">
-
+                    <div class="deck_item">
+                        <div class="deck_info">
+                            <span class="deck_name">Példa pakli 1</span>
+                            <span class="deck_count">32 kártya</span>
+                        </div>
+                        <div class="deck_actions">
+                            <button class="edit_deck_button">Szerkesztés</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!--profil kezeles-->
@@ -157,6 +164,13 @@
         </div>
 
 
+    </div>
+    <div class="deck-edit-modal" id="deck_edit_modal">
+        <div class="deck-modal-content"><input type="text" class="deck_edit_input"
+                placeholder="Pakli neve (pl.: Történelem - 10. osztály)" required>
+                <button class="save_deck" onclick="save_deck(3)">Mentés</button>
+                <button class="cancel_save_deck" onclick="megse()">Mégse</button>
+        </div>
     </div>
     <script src="../javascript/profil_szerk.js"></script>
     <script src="../javascript/navbar.js"></script>

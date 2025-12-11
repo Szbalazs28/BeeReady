@@ -116,3 +116,71 @@
     display: flex;
     gap: 10%;
 }
+
+.deck-edit-modal {    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);     
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+    z-index: 1000; 
+}
+
+.deck-modal-content {
+    background-color: #fefbf5; 
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%; 
+    transform: scale(1); 
+    transition: transform 0.3s ease-out;
+}
+
+.deck_edit_input{    
+    margin: auto;
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    outline: none;
+    font-size: 1rem;
+    color: #000;
+    transition: 0.3s;
+
+}
+
+.save_deck{   
+    margin-right: 3%; 
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f1b43c;
+    font-weight: bold;
+    cursor: pointer;    
+}
+
+.save_deck:hover{
+    background: #d99c2c;
+}
+
+
+.cancel_save_deck{    
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: grey;
+    font-weight: bold;
+    cursor: pointer;    
+}
+
+.cancel_save_deck:hover{
+    background: #d99c2c;
+}

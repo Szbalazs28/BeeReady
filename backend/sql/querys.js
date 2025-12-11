@@ -22,7 +22,11 @@ async function add_deck(id, name) {
 }
 
 async function  getdeck(id) {
-    return await pool.execute("SELECT deck_name FROM flashcard_deck WHERE user_id = ?",[id])
+    return await pool.execute("SELECT deck_name, deck_id FROM flashcard_deck WHERE user_id = ?",[id])
+}
+
+async function  getdeckbydeck_id(deck_id) {
+    return await pool.execute("SELECT deck_name, deck_id FROM flashcard_deck WHERE deck_id = ?",[deck_id])
 }
 
 
@@ -76,5 +80,6 @@ module.exports = {
     userbyid,
     updateuser,
     add_deck,
-    getdeck
+    getdeck,
+    getdeckbydeck_id
 };

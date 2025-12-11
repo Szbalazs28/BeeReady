@@ -4,7 +4,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest } = require("../data_test.js");
-const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck } = require("../sql/querys.js");
+const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id } = require("../sql/querys.js");
 
 router.post("/regisztracio", async (req, res) => {
   console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /regisztracio request - IP: ${req.socket.remoteAddress}`);
@@ -150,6 +150,18 @@ router.post("/deck_load", authenticateToken, async (req, res) => {
   const id = req.user.id
   try {
     const [rows] = await getdeck(id)
+    res.status(200).json({ success: true, decks: rows })
+  } catch (error) {
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
+
+router.post("/deck_edit", authenticateToken, async (req, res) => {
+  const id = req.user.id
+  const deck_id = req.body.deck_id
+  try {
+    const [rows] = await getdeckbydeck_id(deck_id)
     res.status(200).json({ success: true, decks: rows })
   } catch (error) {
     console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
