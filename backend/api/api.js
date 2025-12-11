@@ -4,12 +4,10 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest } = require("../data_test.js");
-const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, isdeckexits } = require("../sql/querys.js");
+const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck } = require("../sql/querys.js");
 
 router.post("/regisztracio", async (req, res) => {
-  console.log(
-    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /regisztracio request - IP: ${req.socket.remoteAddress}`
-  );
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /regisztracio request - IP: ${req.socket.remoteAddress}`);
   let data = req.body;
   const usernamehibak = usernameTest(data.username);
   const emailhibak = emailTest(data.email);
@@ -25,24 +23,14 @@ router.post("/regisztracio", async (req, res) => {
           let hibak = passwordTest(data.password);
           if (Object.keys(hibak).length == 1) {
             const password = await titkositas(data.password);
-            const [user] = await newuser(
-              data.username,
-              data.email,
-              password,
-              data.profil_pic_url
-            );
+            const [user] = await newuser(data.username, data.email, password, data.profil_pic_url);
             const token = await generateToken(user[0].id, "1h");
-            res
-              .status(200)
-              .json({ success: true, token, redirect: "./main.html" });
+            res.status(200).json({ success: true, token, redirect: "./main.html" });
           } else {
             res.status(409).json({ success: false, hibak }); // Visszaküldi a hibákat
           }
         } else {
-          res.status(409).json({
-            success: false,
-            message: "Ilyen E-mail cím vagy Felhasználónév már létezik!",
-          });
+          res.status(409).json({ success: false, message: "Ilyen E-mail cím vagy Felhasználónév már létezik!" });
         }
       } catch (error) {
         console.error("Hiba a regisztráció során:", error);
@@ -53,9 +41,7 @@ router.post("/regisztracio", async (req, res) => {
 });
 
 router.post("/bejelentkezes", async (req, res) => {
-  console.log(
-    `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /bejelentkezes request - IP: ${req.socket.remoteAddress}`
-  );
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /bejelentkezes request - IP: ${req.socket.remoteAddress}`);
   const data = req.body;
   try {
     const [rows] = await userbyemail(data.email);
@@ -92,11 +78,7 @@ router.get("/szerkesztes", authenticateToken, async (req, res) => {
     if (rows.length == 0) {
       res.status(404).json({ message: "Felhasználó nem található." });
     } else {
-      res.status(200).json({
-        username: rows[0].username,
-        email: rows[0].email,
-        profil_pic_url: rows[0].profil_pic_url,
-      });
+      res.status(200).json({username: rows[0].username,email: rows[0].email,profil_pic_url: rows[0].profil_pic_url,});
     }
   } catch (error) {
     console.error("Hiba a szerkesztés során:", error);
@@ -125,9 +107,7 @@ router.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
               const newpassword = await titkositas(adatok.newpassword);
               adatok.newpassword = newpassword;
               await updateuser(rows, adatok, id);
-              res
-                .status(200)
-                .json({ success: true, message: "Sikeres mentés!" });
+              res.status(200).json({ success: true, message: "Sikeres mentés!" });
             } else {
               res.status(403).json({ success: false, hibak });
             }
@@ -140,10 +120,7 @@ router.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
           res.status(403).json({ success: false, message: "Hibás jelszó!" });
         }
       } catch (error) {
-        console.error(
-          `[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a szerkesztés mentése során: `,
-          error
-        );
+        console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a szerkesztés mentése során: `, error);
         res.status(500).json({ success: false, message: error.message });
       }
     }
@@ -155,31 +132,26 @@ router.post("/add_deck", authenticateToken, async (req, res) => {
   const adatok = req.body
   const id = req.user.id
   try {
-    if (adatok.deck_name.length > 200 || adatok.deck_name=="") {
-      res.status(409).json({ success: false, message: "Nem lehet hosszabb a név 200 karakternél és minimum 1 karakternek kell lennie!" })
+    if (adatok.deck_name.length > 200 || adatok.deck_name == "") {
+      res.status(409).json({ success: false, message: "Minimum 1 és maximum 200 karakter lehet !" })
     }
     else {
-      const [letezike] = await isdeckexits(id, adatok.deck_name)
-      if (letezike.length > 0) {
-        res.status(409).json({ success: false, message: "Ilyen nevű pakli már létezik!" })
-      }
-      else{
-        await add_deck(id, adatok.deck_name)
-        res.status(200).json({success:true, message: "Sikeres hozzáadás!"})
-      }
+      await add_deck(id, adatok.deck_name)
+      res.status(200).json({ success: true, message: "Sikeres hozzáadás!" })
     }
+
   } catch (error) {
     console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
     res.status(500).json({ success: false, message: error.message });
   }
 })
 
-router.post("/deck_load", authenticateToken, async (req,res) => {
+router.post("/deck_load", authenticateToken, async (req, res) => {
   const id = req.user.id
-  try{
-    const[rows] = await getdeck(id)
-    res.status(200).json({success: true, decks: rows})
-  }catch (error) {
+  try {
+    const [rows] = await getdeck(id)
+    res.status(200).json({ success: true, decks: rows })
+  } catch (error) {
     console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
     res.status(500).json({ success: false, message: error.message });
   }

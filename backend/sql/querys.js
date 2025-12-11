@@ -21,11 +21,6 @@ async function add_deck(id, name) {
     await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name) VALUES(?, ?)", [id, name])
 }
 
-async function isdeckexits(id,name) {
-    return  await pool.execute("SELECT deck_name FROM flashcard_deck WHERE deck_name = ? AND user_id=?", [name, id])
-    
-}
-
 async function  getdeck(id) {
     return await pool.execute("SELECT deck_name FROM flashcard_deck WHERE user_id = ?",[id])
 }
@@ -81,6 +76,5 @@ module.exports = {
     userbyid,
     updateuser,
     add_deck,
-    isdeckexits,
     getdeck
 };
