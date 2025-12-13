@@ -85,23 +85,41 @@
 
             <!--tanulokartyak-->
             <div class="cards dnone mainelem" id="tanulokartyak">
-                <div class="deck_creator">
-                    <form id="flashcard_form">
-                        <input type="text" class="newflashcard_input" id="newDeckName"
-                            placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
-                        <button type="submit" id="createDeckButton">Pakli létrehozása</button>
-                    </form>
+                <div id="decks">
+                    <div class="deck_creator">
+                        <form id="flashcard_form">
+                            <input type="text" class="newflashcard_input" id="newDeckName"
+                                placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
+                            <button type="submit" id="createDeckButton">Pakli létrehozása</button>
+                        </form>
+                    </div>
+
+                    <h3>Jelenlegi paklijaid:</h3>
+                    <div class="flashcard_container" id="deckList">
+
+                    </div>
                 </div>
-                <hr>
-                <h3>Jelenlegi paklijaid:</h3>
-                <div class="deck_list" id="deckList">
-                    <div class="deck_item">
-                        <div class="deck_info">
-                            <span class="deck_name">Példa pakli 1</span>
-                            <span class="deck_count">32 kártya</span>
+                <div id="cards" class="dnone">
+                    <div class="deck_header">
+                        <h2 id="currentDeckName">Pakli Neve Betöltés alatt...</h2>
+
+                        <div class="deck_header_actions">
+                            <button id="startStudyButton" class="action_button start_button">Indítás</button>
+                            <button id="editDeckButton" class="action_button edit_button">Szerkesztés</button>
+                            <button id="addCardButton" class="action_button add_button">Kártya hozzáadása</button>
+                            <button id="backToDecksButton" onclick="load_deck()" class="action_button back_button">Vissza a paklikhoz</button>
                         </div>
-                        <div class="deck_actions">
-                            <button class="edit_deck_button">Szerkesztés</button>
+                    </div>
+                    <div class="flashcard_container">
+                        <div class="card_item">
+                            <div class="card_info">
+                                <p class="card_def">CRC</p>
+                                <p class="card_back">Ciklikus redundencia ellenörző</p>
+                            </div>
+                            <div class="card_actions">
+                                <button class="edit_card_button">Szerkesztés</button>
+                                <button class="del_card_button">Törlés</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,16 +183,23 @@
 
 
     </div>
-    <div class="deck-edit-modal" id="deck_edit_modal">
-        <div class="deck-modal-content"><input type="text" class="deck_edit_input"
-                placeholder="Pakli neve (pl.: Történelem - 10. osztály)" required>
-                <button class="save_deck" onclick="save_deck(3)">Mentés</button>
-                <button class="cancel_save_deck" onclick="megse()">Mégse</button>
-        </div>
-    </div>
     <script src="../javascript/profil_szerk.js"></script>
     <script src="../javascript/navbar.js"></script>
     <script src="../javascript/flashcards.js"></script>
 </body>
 
 </html>
+
+<!--
+- Példa a DOM deck-re:
+<div class="deck_item">
+    <div class="deck_info">
+        <p class="deck_name">Példa pakli 1 </p>
+        <p class="deck_count">32 kártya</p>
+    </div>
+    <div class="deck_actions">
+        <button class="edit_deck_button">Szerkesztés</button>
+    </div>
+</div>
+
+-->

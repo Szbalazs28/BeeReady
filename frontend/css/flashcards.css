@@ -2,8 +2,7 @@
     margin: auto;
     width: 50vw;
     padding: 12px 14px;
-    border: none;
-
+    border: 1px solid rgb(46, 46, 46);
     border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.3);
     -webkit-backdrop-filter: blur(4px);
@@ -39,17 +38,17 @@
 }
 
 
-.cards{
+.cards {
     height: 100%;
 }
 
-#deckList {
+.flashcard_container {
     flex: 1;
-    height: 60vh;
+    height: 65vh;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 3%;    
+    gap: 3%;
     row-gap: 10px;
     min-height: 0;
     overflow-y: auto;
@@ -58,33 +57,46 @@
 }
 
 
+
+
 .deck_item {
     min-width: 200px;
     width: 25%;
     padding: 16px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.35);
+    background: rgba(241, 180, 60, 0.35);
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 12px;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     cursor: pointer;
+
+}
+
+.deck_info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
 }
 
 .deck_item:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 
 .deck_name {
+
+    width: 90%;
     font-size: 1.1rem;
     font-weight: 700;
     color: #000;
+
 }
 
 
@@ -105,43 +117,43 @@
     border-radius: 8px;
     background: #f1b43c;
     font-weight: bold;
-    cursor: pointer;    
+    cursor: pointer;
 }
 
 .edit_deck_button:hover {
     background: #d99c2c;
 }
 
-#flashcard_form{
+#flashcard_form {
     display: flex;
     gap: 10%;
 }
 
-.deck-edit-modal {    
+.deck-edit-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);     
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
-    align-items: center;    
-    z-index: 1000; 
+    align-items: center;
+    z-index: 1000;
 }
 
 .deck-modal-content {
-    background-color: #fefbf5; 
+    background-color: #fefbf5;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     max-width: 500px;
-    width: 90%; 
-    transform: scale(1); 
+    width: 90%;
+    transform: scale(1);
     transition: transform 0.3s ease-out;
 }
 
-.deck_edit_input{    
+.deck_edit_input {
     margin: auto;
     width: 100%;
     padding: 12px 14px;
@@ -157,30 +169,217 @@
 
 }
 
-.save_deck{   
-    margin-right: 3%; 
+.save_deck {
+    margin-right: 3%;
     padding: 8px 14px;
     border: none;
     border-radius: 8px;
     background: #f1b43c;
     font-weight: bold;
-    cursor: pointer;    
+    cursor: pointer;
 }
 
-.save_deck:hover{
+.save_deck:hover {
     background: #d99c2c;
 }
 
 
-.cancel_save_deck{    
+.cancel_save_deck {
     padding: 8px 14px;
     border: none;
     border-radius: 8px;
     background: grey;
     font-weight: bold;
-    cursor: pointer;    
+    cursor: pointer;
 }
 
-.cancel_save_deck:hover{
+.cancel_save_deck:hover {
     background: #d99c2c;
+}
+
+
+/*
+test
+*/
+
+.deck_header {
+    display: flex;
+    flex-direction: column;    
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+    padding: 10px;
+    border-bottom: 2px solid #f1b43c;
+}
+
+#currentDeckName {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.8rem;
+    text-align: center;
+    word-wrap: break-word;    
+    overflow-wrap: break-word;
+}
+
+.deck_header_actions {
+    display: flex;
+    flex-wrap: wrap;    
+    gap: 15px;    
+    justify-content: center;
+    width: 100%;
+}
+
+.action_button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    flex-grow: 1;    
+    max-width: 180px;    
+}
+
+.action_button:hover {
+    transform: translateY(-1px);
+}
+
+.start_button {
+    color: #000;
+    background-color:rgba(241, 180, 60, 0.35);;
+}
+
+.start_button:hover {
+    background-color: #f1b43c;
+
+}
+
+.edit_button {
+    background-color: #f1b43c;    
+    color: black;
+}
+
+.edit_button:hover {
+    background-color: #d99c2c;    
+}
+
+.add_button {
+    color: #000;
+    background-color: #f1b43c;
+    
+}
+
+.add_button:hover {
+    background-color: #d99c2c;    
+}
+
+.back_button {
+    background-color: #9e9e9e;
+    
+}
+
+.back_button:hover {
+    background-color: #797979;
+    
+}
+
+
+@media (min-width: 600px) {
+    .deck_header {
+        flex-direction: row;        
+        justify-content: space-between;
+    }
+
+    .deck_header_actions {
+        flex-wrap: nowrap;
+        gap: 10px;
+        width: auto;
+    }
+
+    #currentDeckName {
+        margin: 0;
+    }
+
+    .action_button {
+        flex-grow: 0;        
+    }
+}
+
+
+
+.card_item {
+    min-width: 200px;
+    width: 25%;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(241, 180, 60, 0.35);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    
+
+}
+
+.card_info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.card_def {
+
+    width: 90%;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #000;
+
+}
+
+
+.card_back {
+    font-size: 0.9rem;
+    color: #333;
+    opacity: 0.75;
+}
+
+
+.card_actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.edit_card_button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f1b43c;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit_card_button:hover {
+    background: #d99c2c;
+}
+
+.del_card_button{
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;    
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    background-color: rgb(0, 0, 0);
+}
+
+.del_card_button:hover{
+    background-color: white;
+    color: rgb(0, 0, 0);
 }

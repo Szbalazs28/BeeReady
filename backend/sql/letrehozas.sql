@@ -4,7 +4,7 @@ CREATE DATABASE IF NOT EXISTS `BeeReady_db`
 
 USE `BeeReady_db`;
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE IF NOT EXISTS users (
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `username` VARCHAR(100) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
@@ -12,11 +12,19 @@ CREATE TABLE IF NOT EXISTS `users` (
   `profil_pic_url` TEXT DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS 'flashcard_deck'(
+CREATE TABLE IF NOT EXISTS flashcard_deck(
 deck_id int not null AUTO_INCREMENT PRIMARY KEY,
 user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id),
 deck_name varchar(200),
 create_date TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS flashcard_card(
+card_id int not null AUTO_INCREMENT PRIMARY KEY,
+deck_id int not null, 
+FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id),
+front_text varchar(200),
+back_text TEXT
 );
 
 

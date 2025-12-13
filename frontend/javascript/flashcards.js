@@ -18,14 +18,6 @@ function build_deck(name, deck_id){
     deck_info.appendChild(deck_name)
     deck_info.appendChild(deck_count)
     deck_item.appendChild(deck_info)
-    const deck_actions = document.createElement("div")
-    deck_actions.classList.add("deck_actions")
-    const edit_deck_button = document.createElement("button")
-    edit_deck_button.onclick = () => deck_szerkesztes(deck_id);
-    edit_deck_button.classList.add("edit_deck_button")
-    edit_deck_button.textContent = "Szerkesztés"
-    deck_actions.appendChild(edit_deck_button)
-    deck_item.appendChild(deck_actions)
     deck_item.onclick = () => deck_open(deck_id)
     deck_list.appendChild(deck_item)
 }
@@ -69,7 +61,10 @@ async function  deck_szerkesztes(deck_id) {
 }
 
 async function  deck_open(deck_id) {
+    document.getElementById("decks").classList.add("dnone")
+    document.getElementById("cards").classList.remove("dnone")
     
+
 }
 
 function megse(){    
@@ -96,7 +91,15 @@ async function add_deck() {
     load_deck()
 }
 
-async function load_deck() {    
+async function load_deck() {  
+    const decks = document.getElementById("decks")
+    const cards = document.getElementById("cards")
+    if(decks.classList.contains("dnone")){
+        decks.classList.remove("dnone")
+        if(!cards.classList.contains("dnone")){
+            cards.classList.add("dnone")
+        }
+    }  
     const deck_list = document.getElementById("deckList").innerHTML = ""
     const token = localStorage.getItem('token');
     const response = await fetch("http://localhost:4000/api/deck_load", {
