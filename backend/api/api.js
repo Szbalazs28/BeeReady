@@ -4,7 +4,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest } = require("../data_test.js");
-const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id } = require("../sql/querys.js");
+const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, card_counter } = require("../sql/querys.js");
 
 router.post("/regisztracio", async (req, res) => {
   console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /regisztracio request - IP: ${req.socket.remoteAddress}`);
@@ -147,6 +147,7 @@ router.post("/add_deck", authenticateToken, async (req, res) => {
 })
 
 router.post("/deck_load", authenticateToken, async (req, res) => {
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /deck_load request - IP: ${req.socket.remoteAddress}`);
   const id = req.user.id
   try {
     const [rows] = await getdeck(id)
@@ -157,16 +158,67 @@ router.post("/deck_load", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/deck_edit", authenticateToken, async (req, res) => {
+router.post("/getdeckbydeck_id", authenticateToken, async (req, res) => {
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /getdeckbydeck_id request - IP: ${req.socket.remoteAddress}`);
   const id = req.user.id
   const deck_id = req.body.deck_id
   try {
     const [rows] = await getdeckbydeck_id(deck_id)
     res.status(200).json({ success: true, decks: rows })
   } catch (error) {
-    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli lekérése során: `, error);
     res.status(500).json({ success: false, message: error.message });
   }
 })
+
+router.post("/getcards", authenticateToken, async (req, res) => {  
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /getcards request - IP: ${req.socket.remoteAddress}`);
+  const deck_id = req.body.deck_id
+  try {
+    const [rows] = await getcards(deck_id)
+    res.status(200).json({ success: true, cards: rows })
+  } catch (error) {
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a kártyák lekérése: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
+
+router.post("/addnewcard", authenticateToken, async (req, res) => {  
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /getcards request - IP: ${req.socket.remoteAddress}`);
+  const adatok = req.body
+  try {
+    await addnewcard(adatok.deck_id, adatok.front_text, adatok.back_text)
+    res.status(200).json({ success: true, cards: rows })
+  } catch (error) {
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a kártyák lekérése: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
+
+router.post("/deletecard", authenticateToken, async (req, res) => {  
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /getcards request - IP: ${req.socket.remoteAddress}`);
+  const card_id = req.body.card_id
+  try {
+    await deletecard(card_id)
+    res.status(200).json({ success: true, message: "Sikeres törlés!" })
+  } catch (error) {
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a kártyák lekérése: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
+
+router.post("/cardcounter", authenticateToken, async (req, res) => {  
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /getcards request - IP: ${req.socket.remoteAddress}`);
+  const deck_id = req.body.deck_id
+  try {
+    const [rows] = await card_counter(deck_id)
+    const count = rows.length > 0 ? rows[0].card_count : 0
+    res.status(200).json({ success: true, message: count})
+  } catch (error) {
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a kártyák lekérése: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
+
 
 module.exports = router;

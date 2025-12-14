@@ -29,6 +29,21 @@ async function  getdeckbydeck_id(deck_id) {
     return await pool.execute("SELECT deck_name, deck_id FROM flashcard_deck WHERE deck_id = ?",[deck_id])
 }
 
+async function getcards(deck_id) {
+    return await pool.execute("SELECT front_text, back_text, card_id, deck_id FROM flashcard_card WHERE deck_id = ?",[deck_id])
+}
+
+async function addnewcard(deck_id, front_text, back_text) {
+    await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`) VALUES(?, ?, ?);", [deck_id, front_text, back_text])
+}
+
+async function deletecard(card_id) {
+    await pool.execute("DELETE FROM flashcard_card WHERE flashcard_card.card_id = ?", [card_id])
+}
+
+async function card_counter(deck_id) {
+    return await pool.execute("SELECT COUNT(*) as card_count FROM flashcard_card WHERE deck_id = ? GROUP BY deck_id;", [deck_id])
+}
 
 async function updateuser(rows, ujadatok, kit) {
     let valtoztatas = updatebuild(rows, ujadatok);
@@ -81,5 +96,9 @@ module.exports = {
     updateuser,
     add_deck,
     getdeck,
-    getdeckbydeck_id
+    getdeckbydeck_id,
+    getcards,
+    addnewcard, 
+    deletecard,
+    card_counter
 };
