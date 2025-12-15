@@ -45,6 +45,17 @@ async function card_counter(deck_id) {
     return await pool.execute("SELECT COUNT(*) as card_count FROM flashcard_card WHERE deck_id = ? GROUP BY deck_id;", [deck_id])
 }
 
+async function  updatecard(front_text, back_text, card_id) {
+    await pool.execute("UPDATE flashcard_card SET front_text=?, back_text=? WHERE card_id=?", [front_text, back_text, card_id])
+    
+}
+
+async function getcardbyid(card_id) {
+    return await pool.execute("SELECT * FROM flashcard_card WHERE card_id=?", [card_id])
+}
+
+
+
 async function updateuser(rows, ujadatok, kit) {
     let valtoztatas = updatebuild(rows, ujadatok);
     for (let i = 0; i < valtoztatas.length; i++) {
@@ -100,5 +111,7 @@ module.exports = {
     getcards,
     addnewcard, 
     deletecard,
-    card_counter
+    card_counter,
+    updatecard,
+    getcardbyid
 };

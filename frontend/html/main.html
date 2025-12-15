@@ -106,8 +106,9 @@
                         <div class="deck_header_actions">
                             <button id="startStudyButton" class="action_button start_button">Indítás</button>
                             <button id="editDeckButton" class="action_button edit_button">Szerkesztés</button>
-                            <button id="addCardButton" class="action_button add_button">Kártya hozzáadása</button>
-                            <button id="backToDecksButton" onclick="load_deck()" class="action_button back_button">Vissza a paklikhoz</button>
+                            <button id="addCardButton" onclick="add_new_card_modal('Új kártya hozzáadása')" class="action_button add_button">Kártya hozzáadása</button>
+                            <button id="backToDecksButton" onclick="load_deck()"
+                                class="action_button back_button">Vissza a paklikhoz</button>
                         </div>
                     </div>
                     <div class="flashcard_container" id="cardList">
@@ -187,6 +188,29 @@
     <script src="../javascript/navbar.js"></script>
     <script src="../javascript/flashcards.js"></script>
 </body>
+
+<!--
+<div class="deck-edit-modal" id="deck_edit_modal">
+    <div class="deck-modal-content">
+        <input type="text" class="deck_edit_input" placeholder="Kárya első oldala (pl.: Alma)" requiredvalue="">
+        <input type="textarea" class="deck_edit_input" placeholder="Kártya hátsó oldala (pl.: Édes-savanyú, ehető gyümölcs, almafán terem.)" requiredvalue="">
+        <button class="save_deck">Mentés</button>
+        <button class="cancel_save_deck">Mégse</button>
+    </div>
+</div>
+<div class="flashcard-modal" id="add_card_modal">
+    <div class="flashcard-modal-content">
+        <h3>Kártya adatai:</h3>
+        <input type="text" id="newCardFront" class="flashcard_input" placeholder="Kártya elülső oldala (pl.: Alma)" required>
+        <textarea id="newCardBack" class="flashcard_textarea" placeholder="Kártya hátsó oldala (pl.: Édes-savanyú, ehető gyümölcs, almafán terem.)" required></textarea>        
+        <div class="modal-actions">
+            <button class="save_card_button" id="saveNewCard">Mentés</button>
+            <button class="cancel_card_button" id="cancelNewCard">Mégse</button>
+        </div>
+    </div>
+</div>
+-->
+
 
 </html>
 
