@@ -1,0 +1,12 @@
+.fooldal_maindiv {
+    border-radius: 2rem;
+    text-align: center;
+    align-items: center;
+    background-color: #F8F8F8;
+    box-shadow: 0 0 25px rgba(102, 102, 102, 0.2);
+}
+
+#fooldal header {
+    background-color: #f1b43c;
+
+}
