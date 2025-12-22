@@ -37,3 +37,11 @@
 #createDeckButton:hover {
     background-color: #d99c2c;
 }
+
+.cards_header{
+    background-color: #f1b43c;
+    text-align: center;
+    padding: 2px;
+    border-radius: 2rem;
+    margin-bottom: 10px;
+}

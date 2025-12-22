@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="../css/mobilview.css">
     <link rel="stylesheet" href="../css/flashcards.css">
     <link rel="stylesheet" href="../css/fooldal.css">
+    <link rel="stylesheet" href="../css/calendar.css">
+    <link rel="stylesheet" href="../css/todo.css">
     <title>BeeReady</title>
 </head>
 
@@ -86,7 +88,19 @@
 
                 <!--to-do-->
                 <!--harom belso div, surgos, masodlagos, raer. felhasznalo tudja megadni a feladatait es besorolni ha ugy van akar a felso feladatok koze is beszurhatja-->
-                <div id="to-do" class="fooldal_maindiv">to-do </div>
+                <div id="to-do" class="fooldal_maindiv todo">
+                    <div class="todo_main todo_Important_Urgen">
+                        <h3>Sürgős</h3>
+                        <hr>
+                        <div class="todo_items">
+                            <input type="text" placeholder="Új feladat">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                    <div class="todo_main todo_Important_NotUrgen"></div>
+                    <div class="todo_main todo_NotImportant_Urgen"></div>
+                    <div class="todo_main todo_NotImportant_NotUrgen"></div>
+                </div>
             </div>
 
             <!--Chat-->
@@ -119,6 +133,9 @@
 
             <!--tanulokartyak-->
             <div class="cards dnone mainelem" id="tanulokartyak">
+                <header class="cards_header">
+                    <h2>Flashcardok</h2>
+                </header>
                 <div class="deck_creator">
                     <input type="text" class="newflashcard_input" id="newDeckName"
                         placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
