@@ -22,11 +22,21 @@ async function add_deck(id, name) {
 }
 
 async function  getdeck(id) {
-    return await pool.execute("SELECT deck_name, deck_id FROM flashcard_deck WHERE user_id = ?",[id])
+    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.front_text) AS cardcount FROM flashcard_deck JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE user_id = ? GROUP BY flashcard_deck.deck_id",[id])
 }
 
 async function  getdeckbydeck_id(deck_id) {
     return await pool.execute("SELECT deck_name, deck_id FROM flashcard_deck WHERE deck_id = ?",[deck_id])
+}
+
+async function updatedeck(deck_name, deck_id) {
+    await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
+}
+
+async function  deletedeck(deck_id) {
+    await pool.execute("DELETE FROM flashcard_card WHERE deck_id = ?", [deck_id])
+    await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ?", [deck_id])
+    
 }
 
 async function getcards(deck_id) {
@@ -113,5 +123,7 @@ module.exports = {
     deletecard,
     card_counter,
     updatecard,
-    getcardbyid
+    getcardbyid,
+    updatedeck,
+    deletedeck
 };
