@@ -1,0 +1,4 @@
+catch (err) {
+        console.error(err);
+        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+    }

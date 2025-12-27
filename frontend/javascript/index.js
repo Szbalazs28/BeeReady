@@ -102,10 +102,14 @@ document.getElementById("loginform").addEventListener("submit", async function (
         body: JSON.stringify({ email, password, stay })
     });
     message = await response.json()
-    if (message.success) {
+    if (response.status === 200) {        
         localStorage.setItem("token", message.token);
         window.location.href = message.redirect;
+    } else if (response.status === 429) {
+        // RATE LIMIT VÁLASZ
+        alertell(message.message, 5); 
     } else {
+        //Egyéb hibák (409, 500)
         alertell(message.message, 2.5);
     }
 });

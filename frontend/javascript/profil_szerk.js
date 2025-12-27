@@ -1,17 +1,4 @@
-function alertell(text, time) {
-    if (time < 2.5) {
-        time = 2.5;
-    }
-    const t = document.createElement("div");
-    t.className = "alertell";
-    let p = document.createElement("p");
-    p.innerHTML = text;
-    t.appendChild(p);
-    document.body.appendChild(t);
-    setTimeout(() => {
-        t.remove();
-    }, time * 1000);
-}
+
 
 async function felhasznalo_betoltes() {
     const token = localStorage.getItem('token');
@@ -33,10 +20,7 @@ async function felhasznalo_betoltes() {
 
 }
 
-function logout() {
-    localStorage.removeItem('token');
-    window.location.href = "../html/index.html";
-}
+
 
 document.getElementById("szerkesztes").addEventListener("submit", function(e) {
     e.preventDefault() 

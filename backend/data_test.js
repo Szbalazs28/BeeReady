@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 
 
 function passwordTest(password) {
-    let hibak = {}    
+    let hibak = {}
     hibak["alap"] = "A jelszónak meg kell felelnie a következő követelményeknek:"
     if (password.length < 6) {
         hibak["hossz"] = "Legalább 6 karakternek kell lennie!"
@@ -42,9 +42,15 @@ function szamjegyellenorzes(password) {
 }
 
 async function titkositas(password) {
-  const saltRounds = 12
-  const hash = await bcrypt.hash(password, saltRounds)
-  return hash
+    try {
+        const saltRounds = 12
+        const hash = await bcrypt.hash(password, saltRounds)
+        return hash
+    }
+    catch (err) {
+        console.error("Hiba a jelszó titkosításakor: ", err);
+    }
+
 }
 
 async function compare(password, hash) {
@@ -65,12 +71,12 @@ function usernameTest(username) {
 }
 
 function emailTest(email) {
-    let hibak = {}    
+    let hibak = {}
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if(!emailRegex.test(email)){
+    if (!emailRegex.test(email)) {
         hibak["formatum"] = "Érvénytelen e-mail formátum!"
     }
     return hibak;
 }
 
-module.exports = {passwordTest, titkositas, compare, usernameTest, emailTest};
+module.exports = { passwordTest, titkositas, compare, usernameTest, emailTest };
