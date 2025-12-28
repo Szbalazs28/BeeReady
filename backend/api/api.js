@@ -52,7 +52,9 @@ router.post("/regisztracio", async (req, res) => {
       }
     }
   }
-});router.post("/deletedeck", authenticateToken, async (req, res) =>{
+})
+
+;router.post("/deletedeck", authenticateToken, async (req, res) =>{
   const deck_id = req.body.deck_id
   try {
     await deletedeck(deck_id)

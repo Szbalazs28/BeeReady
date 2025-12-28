@@ -4,7 +4,7 @@ document.getElementById("flashcard_form").addEventListener("submit", function (e
     add_deck();
 });
 
-//PIPA
+
 function build_deck(name, deck_id, cardcount) {
     const deck_item = document.createElement('div')
     deck_item.classList.add("deck_item")
@@ -23,7 +23,7 @@ function build_deck(name, deck_id, cardcount) {
     return deck_item
 }
 
-//PIPA
+
 function build_card(front_text, back_text, card_id) {
     const card_item = document.createElement('div');
     card_item.id = `card_${card_id}`;
@@ -55,40 +55,33 @@ function build_card(front_text, back_text, card_id) {
     return card_item
 }
 
-//PIPA
+
 async function card_delete(card_id) {
     try {
         const card = document.getElementById(`card_${card_id}`);
         const token = localStorage.getItem('token');
-        const response = await fetch("http://localhost:4000/api/deletecard", {
+                
+        const result = await apiFetch("http://localhost:4000/api/deletecard", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ card_id: card_id })
-        })
-        if (response.status == 429) {
-            alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-            return;
-        }
-        const message = await response.json()
-        alertell(message.message, 2.5)
+        })                
+        alertell(result.message, 2.5)
         card.remove();
-    } catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        
+    } catch (err) {        
+        console.error(err);        
     }
-
-
-
 }
 
-//PIPA
+
 async function deck_szerkesztes(deck_id) {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch("http://localhost:4000/api/getdeckbydeck_id", {
+        const token = localStorage.getItem('token');                
+        const result = await apiFetch("http://localhost:4000/api/getdeckbydeck_id", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -96,11 +89,7 @@ async function deck_szerkesztes(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         });
-        if (response.status == 429) {
-            alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-            return;
-        }
-        const result = await response.json();
+        
         const adatok = result.decks[0];
         const card_add_modal = document.createElement("div")
         card_add_modal.classList.add('flashcard-modal')
@@ -152,13 +141,11 @@ async function deck_szerkesztes(deck_id) {
         card_add_modal.appendChild(modal_content)
         document.body.appendChild(card_add_modal)
     } catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);        
     }
-
 }
 
-//PIPA
+
 async function save_deck(deck_id) {
     try {
         const token = localStorage.getItem('token');
@@ -167,7 +154,7 @@ async function save_deck(deck_id) {
             alertell("Minimum 1 karakternek kell lennie!", 2.5)
         }
         else {
-            const response = await fetch("http://localhost:4000/api/updatedeck", {
+            const result = await apiFetch("http://localhost:4000/api/updatedeck", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -175,40 +162,29 @@ async function save_deck(deck_id) {
                 },
                 body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
             })
-            if (response.status == 429) {
-                alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-                return;
-            }
-            const message = await response.json()
-            alertell(message.message, 2.5)
+            
+            alertell(result.message, 2.5)
             cancel_flashcard_modal()
             deck_open(deck_id)
         }
     } catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);        
     }
-
 }
 
-//PIPA
+
 async function delete_deck(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch("http://localhost:4000/api/deletedeck", {
+        const result = await apiFetch("http://localhost:4000/api/deletedeck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ deck_id: deck_id })
-        })
-        if (response.status == 429) {
-            alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-            return;
-        }
-        const message = await response.json()
-        alertell(message.message, 2.5)
+        })                
+        alertell(result.message, 2.5)
         cancel_flashcard_modal()
         load_deck()
     } catch (err) {
@@ -218,7 +194,7 @@ async function delete_deck(deck_id) {
 
 }
 
-//PIPA
+
 async function deck_open(deck_id) {
     try {
         const add_new_card_button = document.getElementById("addCardButton")
@@ -227,7 +203,9 @@ async function deck_open(deck_id) {
         document.getElementById("decks").classList.add("dnone")
         document.getElementById("cards").classList.remove("dnone")
         const currentDeckName = document.getElementById("currentDeckName")
-        const deckname = await fetch("http://localhost:4000/api/getdeckbydeck_id", {
+        
+        //Pakli nevének lekérése
+        const deck_result = await apiFetch("http://localhost:4000/api/getdeckbydeck_id", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -235,13 +213,11 @@ async function deck_open(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         })
-         if (deckname.status == 429) {
-            alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-            return;
-        }
-        const message = await deckname.json()
-        currentDeckName.textContent = message.decks[0].deck_name
-        const response = await fetch("http://localhost:4000/api/getcards", {
+         
+        currentDeckName.textContent = deck_result.decks[0].deck_name
+        
+        //Kártyák lekérése
+        const cards_result = await apiFetch("http://localhost:4000/api/getcards", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -252,46 +228,36 @@ async function deck_open(deck_id) {
        
         let card_list = document.getElementById("cardList");
         card_list.innerHTML = ""
-        const cards = await response.json()
-        for (let i = 0; i < cards.cards.length; i++) {
-            card_list.appendChild(build_card(cards.cards[i].front_text, cards.cards[i].back_text, cards.cards[i].card_id, cards.cards[i].deck_id))
+        for (let i = 0; i < cards_result.cards.length; i++) {
+            card_list.appendChild(build_card(cards_result.cards[i].front_text, cards_result.cards[i].back_text, cards_result.cards[i].card_id, cards_result.cards[i].deck_id))
         }
         document.getElementById("editDeckButton").onclick = () => deck_szerkesztes(deck_id)
     } catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);       
     }
-
-
 }
 
-//BETÖLTÉST MÉG MEGOLDANI
+
 async function add_deck() {
     try {
         const deck_name = document.getElementById("newDeckName").value
-        const token = localStorage.getItem('token');
-        const response = await fetch("http://localhost:4000/api/add_deck", {
+        const token = localStorage.getItem('token');                
+        const result = await apiFetch("http://localhost:4000/api/add_deck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ deck_name: deck_name })
-        })
-        if (response.status == 429) {
-            alertell("Túl sok kérés. Kérem, várjon egy percet.", 5)
-            return
-        }
-        const message = await response.json()
-        alertell(message.message, 2.5)
+        })                
+        alertell(result.message, 2.5)
         load_deck()
     }
     catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);        
     }
 }
-//PIPA
+
 async function load_deck() {
     try {
         const decks = document.getElementById("decks")
@@ -304,32 +270,26 @@ async function load_deck() {
         }
         const deck_list = document.getElementById("deckList")
         const token = localStorage.getItem('token');
-        const response = await fetch("http://localhost:4000/api/deck_load", {
+                
+        const result = await apiFetch("http://localhost:4000/api/deck_load", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
         });
-        if (response.status == 429) {
-            alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-            return
-        }
-        else {
-            const rows = await response.json();
-            deck_list.innerHTML = "";
-            for (let i = 0; i < rows.decks.length; i++) {
-                deck_list.appendChild(build_deck(rows.decks[i].deck_name, rows.decks[i].deck_id, rows.decks[i].cardcount));
-            }
+                
+        deck_list.innerHTML = "";
+        for (let i = 0; i < result.decks.length; i++) {
+            deck_list.appendChild(build_deck(result.decks[i].deck_name, result.decks[i].deck_id, result.decks[i].cardcount));
         }
 
     } catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);        
     }
 }
 
-//PIPA
+
 function add_new_card_modal() {
     const deck_id = document.getElementById("addCardButton").value
     const card_add_modal = document.createElement("div")
@@ -370,7 +330,7 @@ function add_new_card_modal() {
     document.body.appendChild(card_add_modal)
 }
 
-//PIPA
+
 async function save_card(deck_id, card_id) {
     try {
         const token = localStorage.getItem('token');
@@ -379,8 +339,8 @@ async function save_card(deck_id, card_id) {
         if (front_text.length == 0 || back_text.length == 0) {
             alertell("Minimum 1 karakternek kell lennie!", 2.5)
         }
-        else {
-            const response = await fetch("http://localhost:4000/api/updatecard", {
+        else {            
+            const result = await apiFetch("http://localhost:4000/api/updatecard", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -388,40 +348,31 @@ async function save_card(deck_id, card_id) {
                 },
                 body: JSON.stringify({ card_id: card_id, front_text: front_text, back_text: back_text })
             })
-            if (response.status == 429) {
-                alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-                return;
-            }
-            const result = await response.json()
+                        
             cancel_flashcard_modal()
             deck_open(deck_id)
             alertell(result.message, 2.5)
         }
     } catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);        
     }
 
 
 }
 
-//PIPA
+
 async function card_edit(card_id) {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch("http://localhost:4000/api/getcardbyid", {
+                
+        const result = await apiFetch("http://localhost:4000/api/getcardbyid", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ card_id: card_id })
-        })
-        if (response.status == 429) {
-            alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-            return;
-        }
-        const result = await response.json()
+        })                
         const adatok = result.rows
 
         const card_add_modal = document.createElement("div")
@@ -463,18 +414,17 @@ async function card_edit(card_id) {
         card_add_modal.appendChild(modal_content)
         document.body.appendChild(card_add_modal)
     } catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);        
     }
 
 }
 
-//PIPA
+
 function cancel_flashcard_modal() {
     document.getElementById("add_card_modal").remove()
 }
 
-//PIPA
+
 async function save_new_card(deck_id) {
     try {
         const token = localStorage.getItem('token');
@@ -483,8 +433,8 @@ async function save_new_card(deck_id) {
         if (front_text.length == 0 || back_text.length == 0) {
             alertell("Minimum 1 karakternek kell lennie!", 2.5)
         }
-        else {
-            const response = await fetch("http://localhost:4000/api/addnewcard", {
+        else {            
+            const result = await apiFetch("http://localhost:4000/api/addnewcard", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -492,20 +442,13 @@ async function save_new_card(deck_id) {
                 },
                 body: JSON.stringify({ deck_id: deck_id, front_text: front_text, back_text: back_text })
             })
-            if (response.status == 429) {
-                alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
-                return;
-            }
-            const result = await response.json()
+                        
             cancel_flashcard_modal()
             deck_open(deck_id)
             alertell(result.message, 2.5)
         }
     }
     catch (err) {
-        console.error(err);
-        alertell(`Sikertelen csatlakozás a szerverhez!`, 5);
+        console.error(err);        
     }
-
-
 }
