@@ -1,29 +1,29 @@
 
 
 async function felhasznalo_betoltes() {
-    const token = localStorage.getItem('token');
-    const response = await fetch("http://localhost:4000/api/szerkesztes", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`
-        }
-    });
-    if (response.status === 200) {
-        const data = await response.json()
-        document.getElementById("szerkusername").value = data.username
-        document.getElementById("szerkemail").value = data.email
-        document.getElementById("szerkprofilpic").src = data.profil_pic_url
-    } else if (response.status === 401 || response.status === 403) {
-        logout();
-    }
+    try {
+        const token = localStorage.getItem('token');
+        const result = await apiFetch("http://localhost:4000/api/szerkesztes", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            }
+        });
 
+        
+        document.getElementById("szerkusername").value = result.username
+        document.getElementById("szerkemail").value = result.email
+        document.getElementById("szerkprofilpic").src = result.profil_pic_url
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 
 
-document.getElementById("szerkesztes").addEventListener("submit", function(e) {
-    e.preventDefault() 
+document.getElementById("szerkesztes").addEventListener("submit", function (e) {
+    e.preventDefault()
     mentes();
 });
 
@@ -85,16 +85,16 @@ async function mentes() {
             }
             alertell(tartalom, ido);
         }
-        else{ 
+        else {
             if (message.message) {
-            // Ha nincs hibak objektum, de van message, azt jelenítjük meg
-            alertell(message.message, 2.5);
+                // Ha nincs hibak objektum, de van message, azt jelenítjük meg
+                alertell(message.message, 2.5);
             }
             else {
-            // Ha egyik sem áll rendelkezésre, általános hibaüzenet
-            alertell("Ismeretlen hiba történt!", 2.5);
+                // Ha egyik sem áll rendelkezésre, általános hibaüzenet
+                alertell("Ismeretlen hiba történt!", 2.5);
             }
-        } 
+        }
 
     }
 

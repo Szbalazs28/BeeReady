@@ -4,6 +4,7 @@ const signinDiv = document.querySelector('#logdiv');
 const forgetDiv = document.querySelector('#forget_password_div');
 
 
+
 // Ha az „Elfelejtettem a jelszavam”-ra rákattintunk, a másik két div eltűnik, viszont a másik kettő cserélgeti egymást
 function login_register() {
     const isRegnotVisible = regDiv.classList.contains("dnone");
@@ -114,20 +115,7 @@ document.getElementById("loginform").addEventListener("submit", async function (
     }
 });
 
-function alertell(text, time) {
-    if (time < 2.5) {
-        time = 2.5;
-    }
-    const t = document.createElement("div");
-    t.className = "alertell";
-    let p = document.createElement("p");
-    p.innerHTML = text;
-    t.appendChild(p);
-    document.body.appendChild(t);
-    setTimeout(() => {
-        t.remove();
-    }, time * 1000);
-}
+
 
 //profilvalto 
 const profilkep = document.getElementById("prof_img");

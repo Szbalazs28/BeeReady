@@ -54,18 +54,6 @@ router.post("/regisztracio", async (req, res) => {
   }
 })
 
-;router.post("/deletedeck", authenticateToken, async (req, res) =>{
-  const deck_id = req.body.deck_id
-  try {
-    await deletedeck(deck_id)
-    res.status(200).json({ success: true, message: "Sikeres törlés!"})
-  } catch (error) {
-    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli törlésekor: `, error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-})
-
-
 router.post("/bejelentkezes", loginLimiter, async (req, res) => {
   console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /bejelentkezes request - IP: ${req.socket.remoteAddress}`);
   const data = req.body;
@@ -84,9 +72,7 @@ router.post("/bejelentkezes", loginLimiter, async (req, res) => {
         res.status(409).json({ success: false, message: "Hibás jelszó!" });
       }
     } else {
-      res
-        .status(409)
-        .json({ success: false, message: "Nem található emailcím!" });
+      res.status(409).json({ success: false, message: "Nem található emailcím!" });
     }
   } catch (error) {
     console.error("Hiba a bejelentkezés során:", error);

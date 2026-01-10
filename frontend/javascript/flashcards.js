@@ -1,7 +1,16 @@
-
 document.getElementById("flashcard_form").addEventListener("submit", function (e) {
     e.preventDefault()
     add_deck();
+});
+
+document.getElementById("flashcardGameCard").addEventListener("click", function () {
+    if(document.getElementById("flashcard").classList.contains("turn")){
+        document.getElementById("flashcard").classList.remove("turn");
+    }
+    else{
+        document.getElementById("flashcard").classList.add("turn");
+    }
+    
 });
 
 
@@ -55,12 +64,41 @@ function build_card(front_text, back_text, card_id) {
     return card_item
 }
 
+async function flashcard_start(deck_id) {
+    try {
+        document.getElementById("cardList").classList.add("dnone")
+        document.getElementById("editDeckButton").classList.add("dnone")
+        document.getElementById("addCardButton").classList.add("dnone")
+        document.getElementById("startStudyButton").classList.add("dnone")
+        document.getElementById("flashcardGameContainer").style.display = "flex"
+        
+        const token = localStorage.getItem('token');
+        const cards_result = await apiFetch("http://localhost:4000/api/getcards", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({deck_id: deck_id })
+        })
+        let sorrend = [];
+        while (sorrend.length < cards_result.cards.length) {
+            const random = getRandomInt(0, cards_result.cards.length)
+            if(!sorrend.includes(random)){
+                sorrend.push(random);
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 async function card_delete(card_id) {
     try {
         const card = document.getElementById(`card_${card_id}`);
         const token = localStorage.getItem('token');
-                
+
         const result = await apiFetch("http://localhost:4000/api/deletecard", {
             method: "POST",
             headers: {
@@ -68,19 +106,19 @@ async function card_delete(card_id) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ card_id: card_id })
-        })                
+        })
         alertell(result.message, 2.5)
         card.remove();
-        
-    } catch (err) {        
-        console.error(err);        
+
+    } catch (err) {
+        console.error(err);
     }
 }
 
 
 async function deck_szerkesztes(deck_id) {
     try {
-        const token = localStorage.getItem('token');                
+        const token = localStorage.getItem('token');
         const result = await apiFetch("http://localhost:4000/api/getdeckbydeck_id", {
             method: "POST",
             headers: {
@@ -89,7 +127,7 @@ async function deck_szerkesztes(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         });
-        
+
         const adatok = result.decks[0];
         const card_add_modal = document.createElement("div")
         card_add_modal.classList.add('flashcard-modal')
@@ -141,7 +179,7 @@ async function deck_szerkesztes(deck_id) {
         card_add_modal.appendChild(modal_content)
         document.body.appendChild(card_add_modal)
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 }
 
@@ -162,13 +200,13 @@ async function save_deck(deck_id) {
                 },
                 body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
             })
-            
+
             alertell(result.message, 2.5)
             cancel_flashcard_modal()
             deck_open(deck_id)
         }
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 }
 
@@ -183,7 +221,7 @@ async function delete_deck(deck_id) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ deck_id: deck_id })
-        })                
+        })
         alertell(result.message, 2.5)
         cancel_flashcard_modal()
         load_deck()
@@ -198,12 +236,13 @@ async function delete_deck(deck_id) {
 async function deck_open(deck_id) {
     try {
         const add_new_card_button = document.getElementById("addCardButton")
-        add_new_card_button.value = deck_id
+        add_new_card_button.onclick = () => add_new_card_modal(deck_id)
+        document.getElementById("startStudyButton").onclick = () => flashcard_start(deck_id)
         const token = localStorage.getItem('token');
         document.getElementById("decks").classList.add("dnone")
-        document.getElementById("cards").classList.remove("dnone")
+        document.getElementById("cards").classList.remove("dnone")        
         const currentDeckName = document.getElementById("currentDeckName")
-        
+
         //Pakli nevének lekérése
         const deck_result = await apiFetch("http://localhost:4000/api/getdeckbydeck_id", {
             method: "POST",
@@ -213,9 +252,9 @@ async function deck_open(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         })
-         
+
         currentDeckName.textContent = deck_result.decks[0].deck_name
-        
+
         //Kártyák lekérése
         const cards_result = await apiFetch("http://localhost:4000/api/getcards", {
             method: "POST",
@@ -225,7 +264,7 @@ async function deck_open(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         })
-       
+
         let card_list = document.getElementById("cardList");
         card_list.innerHTML = ""
         for (let i = 0; i < cards_result.cards.length; i++) {
@@ -233,7 +272,7 @@ async function deck_open(deck_id) {
         }
         document.getElementById("editDeckButton").onclick = () => deck_szerkesztes(deck_id)
     } catch (err) {
-        console.error(err);       
+        console.error(err);
     }
 }
 
@@ -241,7 +280,7 @@ async function deck_open(deck_id) {
 async function add_deck() {
     try {
         const deck_name = document.getElementById("newDeckName").value
-        const token = localStorage.getItem('token');                
+        const token = localStorage.getItem('token');
         const result = await apiFetch("http://localhost:4000/api/add_deck", {
             method: "POST",
             headers: {
@@ -249,12 +288,12 @@ async function add_deck() {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ deck_name: deck_name })
-        })                
+        })
         alertell(result.message, 2.5)
         load_deck()
     }
     catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 }
 
@@ -270,7 +309,7 @@ async function load_deck() {
         }
         const deck_list = document.getElementById("deckList")
         const token = localStorage.getItem('token');
-                
+
         const result = await apiFetch("http://localhost:4000/api/deck_load", {
             method: "POST",
             headers: {
@@ -278,20 +317,19 @@ async function load_deck() {
                 "authorization": `Bearer ${token}`
             }
         });
-                
+
         deck_list.innerHTML = "";
         for (let i = 0; i < result.decks.length; i++) {
             deck_list.appendChild(build_deck(result.decks[i].deck_name, result.decks[i].deck_id, result.decks[i].cardcount));
         }
 
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 }
 
 
-function add_new_card_modal() {
-    const deck_id = document.getElementById("addCardButton").value
+function add_new_card_modal(deck_id) {
     const card_add_modal = document.createElement("div")
     card_add_modal.classList.add('flashcard-modal')
     card_add_modal.id = "add_card_modal";
@@ -339,7 +377,7 @@ async function save_card(deck_id, card_id) {
         if (front_text.length == 0 || back_text.length == 0) {
             alertell("Minimum 1 karakternek kell lennie!", 2.5)
         }
-        else {            
+        else {
             const result = await apiFetch("http://localhost:4000/api/updatecard", {
                 method: "POST",
                 headers: {
@@ -348,13 +386,13 @@ async function save_card(deck_id, card_id) {
                 },
                 body: JSON.stringify({ card_id: card_id, front_text: front_text, back_text: back_text })
             })
-                        
+
             cancel_flashcard_modal()
             deck_open(deck_id)
             alertell(result.message, 2.5)
         }
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 
 
@@ -364,7 +402,7 @@ async function save_card(deck_id, card_id) {
 async function card_edit(card_id) {
     try {
         const token = localStorage.getItem('token');
-                
+
         const result = await apiFetch("http://localhost:4000/api/getcardbyid", {
             method: "POST",
             headers: {
@@ -372,7 +410,7 @@ async function card_edit(card_id) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ card_id: card_id })
-        })                
+        })
         const adatok = result.rows
 
         const card_add_modal = document.createElement("div")
@@ -414,7 +452,7 @@ async function card_edit(card_id) {
         card_add_modal.appendChild(modal_content)
         document.body.appendChild(card_add_modal)
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 
 }
@@ -433,7 +471,7 @@ async function save_new_card(deck_id) {
         if (front_text.length == 0 || back_text.length == 0) {
             alertell("Minimum 1 karakternek kell lennie!", 2.5)
         }
-        else {            
+        else {
             const result = await apiFetch("http://localhost:4000/api/addnewcard", {
                 method: "POST",
                 headers: {
@@ -442,13 +480,13 @@ async function save_new_card(deck_id) {
                 },
                 body: JSON.stringify({ deck_id: deck_id, front_text: front_text, back_text: back_text })
             })
-                        
+
             cancel_flashcard_modal()
             deck_open(deck_id)
             alertell(result.message, 2.5)
         }
     }
     catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 }
