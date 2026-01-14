@@ -5,11 +5,11 @@ CREATE DATABASE IF NOT EXISTS `BeeReady_db`
 USE `BeeReady_db`;
 
 CREATE TABLE IF NOT EXISTS users (
-  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `profil_pic_url` TEXT DEFAULT NULL
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  profil_pic_url TEXT DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS flashcard_deck(
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS flashcard_card(
 card_id int not null AUTO_INCREMENT PRIMARY KEY,
 deck_id int not null, 
 FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id),
-front_text varchar(200),
+front_text varchar(255),
 back_text TEXT
 );
 

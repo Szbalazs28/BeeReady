@@ -22,6 +22,26 @@ function getRandomInt(min, max) {
 return Math.floor(Math.random() * (max - min)) + min;
 }
 
+
+
+function lengthtest(input, min, max){    
+    let result = true;
+    let errors = "";
+    if (input.length < min){
+        errors+=`Legalább ${min} karakternek kell lennie!\n`
+    }
+    else{
+        if (input.length > max){
+            errors+= `Legfeljebb ${max} karakter lehet!`
+        }
+    }
+    if(errors!=""){
+        alertell(errors,5); 
+        result = true;   
+    }    
+    return result;
+}
+
 async function apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options);

@@ -188,9 +188,8 @@ async function save_deck(deck_id) {
     try {
         const token = localStorage.getItem('token');
         const deck_name = document.getElementById("editDeckName").value
-        if (deck_name.length == 0) {
-            alertell("Minimum 1 karakternek kell lennie!", 2.5)
-        }
+        
+        if (lengthtest(deck_name, 1, 200)) {}
         else {
             const result = await apiFetch("http://localhost:4000/api/updatedeck", {
                 method: "POST",
@@ -198,7 +197,7 @@ async function save_deck(deck_id) {
                     "Content-Type": "application/json",
                     "authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
+                body: JSON.stringify( { deck_id: deck_id, deck_name: deck_name })
             })
 
             alertell(result.message, 2.5)
@@ -374,9 +373,7 @@ async function save_card(deck_id, card_id) {
         const token = localStorage.getItem('token');
         const front_text = document.getElementById("newCardFront").value
         const back_text = document.getElementById("newCardBack").value
-        if (front_text.length == 0 || back_text.length == 0) {
-            alertell("Minimum 1 karakternek kell lennie!", 2.5)
-        }
+        if (lengthtest(front_text, 1, 255) || lengthtest(back_text, 1, 400)) {}
         else {
             const result = await apiFetch("http://localhost:4000/api/updatecard", {
                 method: "POST",
@@ -468,9 +465,7 @@ async function save_new_card(deck_id) {
         const token = localStorage.getItem('token');
         const front_text = document.getElementById("newCardFront").value
         const back_text = document.getElementById("newCardBack").value
-        if (front_text.length == 0 || back_text.length == 0) {
-            alertell("Minimum 1 karakternek kell lennie!", 2.5)
-        }
+        if (lengthtest(front_text, 1, 255) || lengthtest(back_text, 1, 400)) {}
         else {
             const result = await apiFetch("http://localhost:4000/api/addnewcard", {
                 method: "POST",
