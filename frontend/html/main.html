@@ -105,12 +105,12 @@
                 <!--idopzito-->
                 <div class="fooldal_maindiv">
                     <div class="timer_div">
-                        <h3>Időzítő</h3>
-                        <div class="timer_display" id="timerDisplay">00:00:00</div>
+                        <h3>Pomodoro-időzítőt</h3>
+                        <div class="timer_display" id="timer_display"></div>
                         <div class="timer_controls">
-                            <button id="startTimerBtn">Indítás</button>
-                            <button id="stopTimerBtn">Leállítás</button>
-                            <button id="resetTimerBtn">Visszaállítás</button>
+                            <button type="button" id="start_timer" onclick="start()">Indítás</button>
+                            <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
+                            <button type="button" id="reset_timer" onclick="reset()">Visszaállítás</button>
                         </div>
                     </div>
                 </div>
@@ -219,6 +219,8 @@
         <script src="../javascript/calendar.js"></script>
         <script src="../javascript/navbar.js"></script>
         <script src="../javascript/profil_szerk.js"></script>
+        <script src="../javascript/timer.js"></script>
+        
 </body>
 
 </html>
