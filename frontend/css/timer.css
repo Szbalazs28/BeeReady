@@ -78,4 +78,31 @@
     color: #ccc;
 }
 
+@media (max-width: 768px) {
+    .timer_display {
+        font-size: 2.5rem;
+        padding: 1rem 1.5rem;
+    }
 
+    .timer_controls button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .timer_display {
+        font-size: 2rem;
+        letter-spacing: 1px;
+    }
+
+    .timer_controls {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.8rem;
+    }
+
+    .timer_controls button {
+        width: 100%;
+    }
+}
