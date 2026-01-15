@@ -58,7 +58,18 @@
                 <!--feladatok-->
                 <!--a csoportokon belul lehet feladatokat bekuldeni amit mindegyik csoporton beluli tag megkap-->
                 <!--a felhasznalo akar privat feladatokat is beszurhat a to-dobol-->
-                <section id="tasks" class="fooldal_maindiv">Feladatok</section>
+                <section id="tasks" class="fooldal_maindiv">
+                    <div class="todo-grid">
+                        <div class="todo_taskadd">
+                        <h3>Feladatok</h3>
+                        <hr>
+                        <div class="todo_items">
+                            <input type="text" placeholder="Új feladat">
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                    </div>
+                </section>
 
                 <!--naptar-->
                 <div id="calendar" class="fooldal_maindiv calendar_div">
@@ -87,19 +98,7 @@
                 </div>
 
                 <!--to-do-->
-                <!--harom belso div, surgos, masodlagos, raer. felhasznalo tudja megadni a feladatait es besorolni ha ugy van akar a felso feladatok koze is beszurhatja-->
-                <div id="to-do" class="fooldal_maindiv todo">
-                    <div class="todo_main todo_Important_Urgen">
-                        <h3>Sürgős</h3>
-                        <hr>
-                        <div class="todo_items">
-                            <input type="text" placeholder="Új feladat">
-                            <input type="checkbox">
-                        </div>
-                    </div>
-                    <div class="todo_main todo_Important_NotUrgen"></div>
-                    <div class="todo_main todo_NotImportant_Urgen"></div>
-                    <div class="todo_main todo_NotImportant_NotUrgen"></div>
+                <div class="fooldal_maindiv idozito">
                 </div>
             </div>
 

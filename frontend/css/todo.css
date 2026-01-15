@@ -1,10 +1,12 @@
-.todo {
-    display: flex;
-    flex-direction: wrap;
-    justify-content: space-evenly;
+.todo-grid{
+    display: grid;
+    grid-template-columns: 20% 80%;
+    margin: 10px;
+    height: 100%;
 }
 
-.todo .todo_main {
+
+.todo .todo_taskadd {
     display: flex;
     flex-direction: column;
     background-color: #e5e7eb;
@@ -15,21 +17,20 @@
     border-radius: 2rem;
 }
 
-.todo_main h3{
+.todo_taskadd h3 {
     text-align: center;
     font-weight: 600;
     font-size: larger;
 }
 
-.todo_main .todo_items {
+.todo_taskadd .todo_items {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 8px 0;
 }
 
-/* Custom checkbox to match site colors (yellow accent) */
-.todo_main .todo_items input[type="checkbox"]{
+.todo_taskadd .todo_items input[type="checkbox"] {
     appearance: none;
     width: 22px;
     height: 22px;
@@ -45,24 +46,24 @@
     justify-content: center;
 }
 
-.todo_main .todo_items input[type="checkbox"]:focus{
+.todo_taskadd .todo_items input[type="checkbox"]:focus {
     outline: none;
-    box-shadow: 0 0 0 6px rgba(241,180,60,0.12);
+    box-shadow: 0 0 0 6px rgba(241, 180, 60, 0.12);
     border-color: #F1B43C;
 }
 
-.todo_main .todo_items input[type="checkbox"]::after{
+.todo_taskadd .todo_items input[type="checkbox"]::after {
     content: "";
     display: none;
 }
 
-.todo_main .todo_items input[type="checkbox"]:checked{
+.todo_taskadd .todo_items input[type="checkbox"]:checked {
     background: #F1B43C;
     border-color: #F1B43C;
     box-shadow: 0 0 8px #f1b43c55;
 }
 
-.todo_main .todo_items input[type="checkbox"]:checked::after{
+.todo_taskadd .todo_items input[type="checkbox"]:checked::after {
     display: block;
     left: 0;
     top: 0;
@@ -73,7 +74,7 @@
     transform: rotate(45deg);
 }
 
-.todo_main .todo_items input[type="text"]{
+.todo_taskadd .todo_items input[type="text"] {
     appearance: none;
     flex: 1 1 auto;
     padding: 5px;
@@ -84,7 +85,7 @@
     border-bottom: #686868 1px solid;
 }
 
-.todo_main .todo_items input[type="text"]:focus{
+.todo_taskadd .todo_items input[type="text"]:focus {
     outline: none;
     border-color: #F1B43C;
     border: none;
@@ -93,22 +94,23 @@
     box-shadow: 0 5px 50px #f1b43c88;
 }
 
-.todo_main .todo_items input[type="text"]::placeholder{
+.todo_taskadd .todo_items input[type="text"]::placeholder {
     color: #9b9b9b;
 }
 
-@media (max-width: 900px){
-    .todo .todo_main{
+@media (max-width: 900px) {
+    .todo .todo_taskadd {
         width: 45%;
     }
 }
 
-@media (max-width: 580px){
-    .todo { 
-        flex-direction: column; 
-        gap: 12px; }
+@media (max-width: 580px) {
+    .todo {
+        flex-direction: column;
+        gap: 12px;
+    }
 
-    .todo .todo_main{ 
-        width: 100%; 
+    .todo .todo_taskadd {
+        width: 100%;
     }
 }
