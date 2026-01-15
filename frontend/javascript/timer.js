@@ -1,6 +1,6 @@
 let timer;
 let isRunning = false;
-let timeLeft = 25 * 60;
+let timeLeft = 25 * 60; 
 const timerDisplay = document.getElementById('timer_display');
 const startB = document.getElementById('start_timer');
 const pauseB = document.getElementById('stop_timer');
@@ -16,6 +16,8 @@ function updateDisplay() {
 function start() {
     if (!isRunning) {
         isRunning = true;
+        startB.disabled = true;
+        pauseB.disabled = false;
         timer = setInterval(() => {
             if (timeLeft > 0) {
                 timeLeft--;
@@ -24,24 +26,26 @@ function start() {
             else {
                 clearInterval(timer);
                 isRunning = false;
-                timerDisplay.textContent = 'Idő lejárt! Ideje egy kis szünetet tartani.';
+                timerDisplay.innerHTML = '<span class="timer_message">Idő lejárt! Ideje egy kis szünetet tartani.</span>';
+                pauseB.disabled = true;
             }
         }, 1000);
     }
     else { return }
 }
 function pause() {
-    if (!isRunning) {
+    if (isRunning) {
         clearInterval(timer);
         isRunning = false;
+        startB.disabled = false;
     }
     else { return };
-
 }
 function reset() {
     clearInterval(timer);
     isRunning = false;
     timeLeft = 25 * 60;
+    startB.disabled = false;
     updateDisplay();
 }
 

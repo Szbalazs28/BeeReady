@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../css/fooldal.css">
     <link rel="stylesheet" href="../css/calendar.css">
     <link rel="stylesheet" href="../css/todo.css">
+    <link rel="stylesheet" href="../css/timer.css">
     <title>BeeReady</title>
 </head>
 
@@ -71,6 +72,24 @@
                     </div>
                 </section>
 
+                <!--idopzito-->
+                <div class="fooldal_maindiv">
+                    <div class="timer_div">
+                        <h3>Pomodoro</h3>
+                        <div class="timer_display" id="timer_display"></div>
+                        <div class="timer_controls">
+                            <button type="button" id="start_timer" onclick="start()">Indítás</button>
+                            <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
+                            <button type="button" id="reset_timer" onclick="reset()">Visszaállítás</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--statisztika?-->
+                <div class="fooldal_maindiv">
+                    <progress></progress>
+                </div>
+
                 <!--naptar-->
                 <div id="calendar" class="fooldal_maindiv calendar_div">
                     <div class="calendar">
@@ -97,122 +116,103 @@
                     </div>
                 </div>
 
-                <!--statisztika?-->
-                <div class="fooldal_maindiv">
-
-                </div>
-
-                <!--idopzito-->
-                <div class="fooldal_maindiv">
-                    <div class="timer_div">
-                        <h3>Pomodoro-időzítőt</h3>
-                        <div class="timer_display" id="timer_display"></div>
-                        <div class="timer_controls">
-                            <button type="button" id="start_timer" onclick="start()">Indítás</button>
-                            <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
-                            <button type="button" id="reset_timer" onclick="reset()">Visszaállítás</button>
+            </div>
+            <!--Chat-->
+            <div class="chatclass dnone mainelem" id="chat">
+                <div class="chat_div">
+                    <div class="chat_header">
+                        <h1><span>Chatnev</span></h1>
+                    </div>
+                    <div class="chat_messages">
+                        <div class="chat_bubble">
+                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                            <div class="chat_text">
+                                <label>Felhasználó</label>
+                                <p>Chat teszt</p>
+                            </div>
+                        </div>
+                        <div class="chat_bubble mine">
+                            <div class="chat_text">
+                                <p>Chat teszt</p>
+                            </div>
+                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
                         </div>
                     </div>
-                </div>
-
-                <!--Chat-->
-                <div class="chatclass dnone mainelem" id="chat">
-                    <div class="chat_div">
-                        <div class="chat_header">
-                            <h1><span>Chatnev</span></h1>
-                        </div>
-                        <div class="chat_messages">
-                            <div class="chat_bubble">
-                                <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
-                                <div class="chat_text">
-                                    <label>Felhasználó</label>
-                                    <p>Chat teszt</p>
-                                </div>
-                            </div>
-                            <div class="chat_bubble mine">
-                                <div class="chat_text">
-                                    <p>Chat teszt</p>
-                                </div>
-                                <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
-                            </div>
-                        </div>
-                        <div class="chat_input">
-                            <textarea placeholder="Aa"></textarea>
-                            <button><img src="../img/plane.png" alt="Send"></button>
-                        </div>
+                    <div class="chat_input">
+                        <textarea placeholder="Aa"></textarea>
+                        <button><img src="../img/plane.png" alt="Send"></button>
                     </div>
-                </div>
-
-                <!--tanulokartyak-->
-                <div class="cards dnone mainelem" id="tanulokartyak">
-                    <header class="cards_header">
-                        <h2>Flashcardok</h2>
-                    </header>
-                    <div class="deck_creator">
-                        <input type="text" class="newflashcard_input" id="newDeckName"
-                            placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
-                        <button id="createDeckButton">Pakli létrehozása</button>
-                    </div>
-                    <hr>
-                    <div class="deck_list" id="deckList">
-                        <h3>Jelenlegi paklijaid:</h3>
-                    </div>
-                </div>
-                <!--profil kezeles-->
-                <div class="account dnone mainelem" id="felhasznalo">
-                    <form id="szerkesztes">
-                        <div class="account_div">
-                            <div class="profil_img_div">
-                                <div class="profil_img" id="prof_img">
-                                    <img id="szerkprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
-                                </div>
-                                <div class="account_buttons">
-                                    <button type="submit" class="account_button">Mentés</button>
-                                    <a onclick="logout()">Kijelentkezés</a>
-                                </div>
-                            </div>
-                            <div class="modal dnone" id="profil_modal">
-                                <div class="modal_content">
-                                    <div class="avatar_options">
-                                        <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/oroszlan.webp" alt=""
-                                            class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
-                                    </div>
-                                    <button class="account_button" id="close">Bezár</button>
-                                </div>
-                            </div>
-                            <div class="account_inputs input-group">
-                                <div class="account_border_div">
-                                    <label for="felh">Felhasználónév</label>
-                                    <input type="text" id="szerkusername" name="felh" placeholder="Felhasználónév"
-                                        required>
-                                </div>
-                                <div class="account_border_div">
-                                    <label for="email">E-mail</label>
-                                    <input type="email" id="szerkemail" name="email" placeholder="E-mail" required>
-                                </div>
-                                <div class="account_border_div">
-
-                                    <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                                    <input type="password" id="currentpassword" name="jelenlegijelszo"
-                                        placeholder="Jelenlegi jelszó" required>
-                                </div>
-                                <div class="account_border_div">
-                                    <label for="ujjelszo">Új jelszó</label>
-                                    <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
+
+            <!--tanulokartyak-->
+            <div class="cards dnone mainelem" id="tanulokartyak">
+                <header class="cards_header">
+                    <h2>Flashcardok</h2>
+                </header>
+                <div class="deck_creator">
+                    <input type="text" class="newflashcard_input" id="newDeckName"
+                        placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
+                    <button id="createDeckButton">Pakli létrehozása</button>
+                </div>
+                <hr>
+                <div class="deck_list" id="deckList">
+                    <h3>Jelenlegi paklijaid:</h3>
+                </div>
+            </div>
+            <!--profil kezeles-->
+            <div class="account dnone mainelem" id="felhasznalo">
+                <form id="szerkesztes">
+                    <div class="account_div">
+                        <div class="profil_img_div">
+                            <div class="profil_img" id="prof_img">
+                                <img id="szerkprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
+                            </div>
+                            <div class="account_buttons">
+                                <button type="submit" class="account_button">Mentés</button>
+                                <a onclick="logout()">Kijelentkezés</a>
+                            </div>
+                        </div>
+                        <div class="modal dnone" id="profil_modal">
+                            <div class="modal_content">
+                                <div class="avatar_options">
+                                    <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/oroszlan.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
+                                </div>
+                                <button class="account_button" id="close">Bezár</button>
+                            </div>
+                        </div>
+                        <div class="account_inputs input-group">
+                            <div class="account_border_div">
+                                <label for="felh">Felhasználónév</label>
+                                <input type="text" id="szerkusername" name="felh" placeholder="Felhasználónév" required>
+                            </div>
+                            <div class="account_border_div">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="szerkemail" name="email" placeholder="E-mail" required>
+                            </div>
+                            <div class="account_border_div">
+
+                                <label for="jelenlegijelszo">Jelenlegi jelszó</label>
+                                <input type="password" id="currentpassword" name="jelenlegijelszo"
+                                    placeholder="Jelenlegi jelszó" required>
+                            </div>
+                            <div class="account_border_div">
+                                <label for="ujjelszo">Új jelszó</label>
+                                <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
 
 
         </div>
@@ -220,7 +220,7 @@
         <script src="../javascript/navbar.js"></script>
         <script src="../javascript/profil_szerk.js"></script>
         <script src="../javascript/timer.js"></script>
-        
+
 </body>
 
 </html>
