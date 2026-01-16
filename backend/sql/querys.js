@@ -40,11 +40,22 @@ async function  deletedeck(deck_id) {
 }
 
 async function getcards(deck_id) {
-    return await pool.execute("SELECT front_text, back_text, card_id, deck_id FROM flashcard_card WHERE deck_id = ?",[deck_id])
+    return await pool.execute("SELECT front_text, back_text, card_id, deck_id FROM flashcard_card WHERE deck_id = ? ORDER BY position ASC",[deck_id])
 }
 
 async function addnewcard(deck_id, front_text, back_text) {
-    await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`) VALUES(?, ?, ?);", [deck_id, front_text, back_text])
+    const [maxposition] = await maxcardid(deck_id);
+    if(maxposition[0].max_position === null){
+        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, 0);", [deck_id, front_text, back_text])
+    }
+    else{
+        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, ?);", [deck_id, front_text, back_text, maxposition[0].max_position + 1])
+    }
+    
+}
+
+async function maxcardid(deck_id) {
+    return await pool.execute("SELECT MAX(position) AS max_position FROM flashcard_card WHERE deck_id = ?", [deck_id]);
 }
 
 async function deletecard(card_id) {

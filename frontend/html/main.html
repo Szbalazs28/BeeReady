@@ -103,14 +103,15 @@
                     <div class="deck_header">
                         <h2 id="currentDeckName">Pakli Neve Betöltés alatt...</h2>
 
-                        <div class="deck_header_actions">
-                            <button id="startStudyButton" class="action_button start_button">Indítás</button>
-                            <button id="editDeckButton" class="action_button edit_button">Szerkesztés</button>
+                        <div class="deck_header_actions dnone_on_start">
+                            <button id="startStudyButton" class="action_button start_button ">Indítás</button>
+                            <button id="editDeckButton" class="action_button edit_button ">Szerkesztés</button>
                             <button id="addCardButton" onclick="add_new_card_modal()"
-                                class="action_button add_button">Kártya hozzáadása</button>
+                                class="action_button add_button ">Kártya hozzáadása</button>
                             <button id="backToDecksButton" onclick="load_deck()"
                                 class="action_button back_button">Vissza a paklikhoz</button>
                         </div>
+                        <button id="backToCardsButton"  class="dnone action_button back_button">Vissza a kártyákhoz</button>
                     </div>
                     <div class="flashcard_game_container " id="flashcardGameContainer">
                         <div class="flashcard_game_card" id="flashcardGameCard">
@@ -125,7 +126,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flashcard_container" id="cardList">
+                    <div class="flashcard_container dnone_on_start" id="cardList">
 
                         <!--
                         <div class="card_item">
@@ -208,6 +209,7 @@
     <script src="../javascript/profil_szerk.js"></script>
     <script src="../javascript/navbar.js"></script>
     <script src="../javascript/flashcards.js"></script>
+    <script src="../javascript/libs/Sortable.min.js"></script>
 </body>
 
 <!--

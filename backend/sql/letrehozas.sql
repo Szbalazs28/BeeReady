@@ -24,7 +24,8 @@ card_id int not null AUTO_INCREMENT PRIMARY KEY,
 deck_id int not null, 
 FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id),
 front_text varchar(255),
-back_text TEXT
+back_text TEXT,
+position int not null
 );
 
 

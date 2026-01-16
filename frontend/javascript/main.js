@@ -19,26 +19,19 @@ function alertell(text, time) {
 }
 
 function getRandomInt(min, max) {
-return Math.floor(Math.random() * (max - min)) + min;
+    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 
 
-function lengthtest(input, min, max){    
-    let result = true;
-    let errors = "";
-    if (input.length < min){
-        errors+=`Legalább ${min} karakternek kell lennie!\n`
+function lengthtest(input, min, max) {
+    let result = false;
+    let error = "";
+    if (input.length < min || input.length > max) {
+        error += `A hossznak ${min} és ${max} karakter között kell lennie!`
+        result = true
     }
-    else{
-        if (input.length > max){
-            errors+= `Legfeljebb ${max} karakter lehet!`
-        }
-    }
-    if(errors!=""){
-        alertell(errors,5); 
-        result = true;   
-    }    
+    alertell(error, 2.5);
     return result;
 }
 
@@ -54,15 +47,15 @@ async function apiFetch(url, options = {}) {
             } else if (response.status === 403) {
                 alertell("Lejárt munkamenet. Jelentkezz be újra.", 5);
                 logout();
-            }else if (response.status === 401){
+            } else if (response.status === 401) {
                 alertell("Hozzáférés megtagadva. Kérjük, jelentkezzen be!", 5);
                 logout();
             }
-             else {
+            else {
                 alertell(data.message || "Szerverhiba történt.", 5);
             }
 
-            throw new Error(`HTTP ${response.status}`);            
+            throw new Error(`HTTP ${response.status}`);
         }
 
         return await response.json();
