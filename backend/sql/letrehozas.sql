@@ -27,11 +27,11 @@ VALUES
 -- tasks tábla létrehozása
 CREATE TABLE
   IF Not EXISTS tasks (
-    `tak_id` int AUTO_INCREMENT Not null,
+    `task_id` int AUTO_INCREMENT Not null,
     `user_id` int NOT NULL,
     `headline` Varchar(50),
     `description` Varchar(255),
     `deadline` Date,
-    PRIMARY KEY (id),
+    PRIMARY KEY (task_id),
     FOREIGN KEY (`user_id`) REFERENCES users (id)
   );
