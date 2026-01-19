@@ -40,7 +40,7 @@ async function  deletedeck(deck_id) {
 }
 
 async function getcards(deck_id) {
-    return await pool.execute("SELECT front_text, back_text, card_id, deck_id FROM flashcard_card WHERE deck_id = ? ORDER BY position ASC",[deck_id])
+    return await pool.execute("SELECT * FROM flashcard_card WHERE deck_id = ? ORDER BY position ASC",[deck_id])
 }
 
 async function addnewcard(deck_id, front_text, back_text) {
@@ -69,6 +69,10 @@ async function  updatecard(front_text, back_text, card_id) {
 
 async function getcardbyid(card_id) {
     return await pool.execute("SELECT * FROM flashcard_card WHERE card_id=?", [card_id])
+}
+
+async function save_new_order(card_id, new_position) {
+    await pool.execute("UPDATE flashcard_card SET position = ? WHERE card_id = ?", [new_position, card_id])
 }
 
 
@@ -131,5 +135,6 @@ module.exports = {
     updatecard,
     getcardbyid,
     updatedeck,
-    deletedeck
+    deletedeck,
+    save_new_order
 };

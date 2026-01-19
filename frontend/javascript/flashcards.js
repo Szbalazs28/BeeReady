@@ -35,7 +35,8 @@ function build_deck(name, deck_id, cardcount) {
 
 function build_card(front_text, back_text, card_id) {
     const card_item = document.createElement('div');
-    card_item.draggable = true;
+    card_item.draggable = true
+    card_item.setAttribute('data-id', card_id);
     card_item.id = `card_${card_id}`;
     card_item.classList.add("card_item");
     const card_info = document.createElement("div");
@@ -65,15 +66,42 @@ function build_card(front_text, back_text, card_id) {
     return card_item
 }
 
-async function flashcard_start(deck_id) {
-    try {
-        document.getElementById("flashcardGameContainer").classList.remove("dnone");
-        const backToCardsButton = document.getElementById("backToCardsButton");
-        backToCardsButton.onclick = () => deck_open(deck_id);
-        document.querySelectorAll(".dnone_on_start").forEach(elem => elem.classList.add("dnone"));
-        backToCardsButton.classList.remove("dnone");
-        document.getElementById("flashcardGameContainer").style.display = "flex"
+function flashcard_start(deck_id) {
+    document.getElementById("flashcardGameContainer").classList.remove("dnone");
+    const backToCardsButton = document.getElementById("backToCardsButton");
+    backToCardsButton.onclick = () => deck_open(deck_id);
+    document.querySelectorAll(".dnone_on_start").forEach(elem => elem.classList.add("dnone"));
+    backToCardsButton.classList.remove("dnone");
+    document.getElementById("flashcardGameContainer").style.display = "flex"
+    const start_choice = document.createElement("div")
+    start_choice.classList.add('flashcard-modal_c')
+    start_choice.id = "add_card_modal";
+    const buttons = document.createElement("div")
+    buttons.classList.add("modal-actions_c")
+    const modal_content = document.createElement("div")
+    modal_content.classList.add("flashcard-modal-content_c")
+    const title = document.createElement("h3")
+    title.textContent = "Válasszon indítási módot:"
+    const order_button = document.createElement("button")
+    order_button.textContent = "Sorrendben"
+    order_button.classList.add("chioice_button_o");
+    order_button.onclick = () => flashcard_start_ordered(deck_id);
+    const random_button = document.createElement("button")
+    random_button.textContent = "Véletlenszerűen"
+    random_button.classList.add("chioice_button_r");
+    random_button.onclick = () => flashcard_start_random(deck_id);
 
+    modal_content.appendChild(title)
+    buttons.appendChild(order_button)
+    buttons.appendChild(random_button)
+    modal_content.appendChild(buttons)
+    start_choice.appendChild(modal_content)
+    document.body.appendChild(start_choice)
+}
+
+async function flashcard_start_ordered(deck_id) {
+    try {
+        document.getElementById("add_card_modal").remove()
         const token = localStorage.getItem('token');
         const cards_result = await apiFetch("http://localhost:4000/api/getcards", {
             method: "POST",
@@ -83,18 +111,73 @@ async function flashcard_start(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         })
-        let sorrend = [];
-        while (sorrend.length < cards_result.cards.length) {
+        let cards = []
+        for (let i = 0; i < cards_result.cards.length; i++) {
+            cards.push({
+                index: i,
+                front_text: cards_result.cards[i].front_text,
+                back_text: cards_result.cards[i].back_text
+            })
+        }
+        localStorage.setItem('flashcards', JSON.stringify(cards))
+        card_data_load(0);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+function card_data_load(index) {
+    const card_elem = document.getElementById("flashcard")
+    if(card_elem.classList.contains("turn")){
+        card_elem.classList.remove("turn");
+    }
+    const cards = JSON.parse(localStorage.getItem('flashcards'));
+    document.getElementById("flashcard_front").textContent = cards[index].front_text;
+    document.getElementById("flashcard_back").textContent = cards[index].back_text;
+    localStorage.setItem('current_flashcard_index', index);
+}
+
+function changeCard(index_change) {
+    let currentindex = parseInt(localStorage.getItem('current_flashcard_index'));
+    card_data_load(currentindex + index_change);
+}
+
+
+async function flashcard_start_random(deck_id) {
+    try {
+        document.getElementById("add_card_modal").remove()
+        const token = localStorage.getItem('token');
+        const cards_result = await apiFetch("http://localhost:4000/api/getcards", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ deck_id: deck_id })
+        })
+        let order = []
+        let cards = []
+        let i = 0;
+        while (order.length < cards_result.cards.length) {
             const random = getRandomInt(0, cards_result.cards.length)
-            if (!sorrend.includes(random)) {
-                sorrend.push(random);
+            if (!order.includes(random)) {
+                order.push(random);
+                cards.push({
+                    index: i,
+                    front_text: cards_result.cards[random].front_text,
+                    back_text: cards_result.cards[random].back_text
+                })
+                i++
             }
         }
+        localStorage.setItem('flashcards', JSON.stringify(cards))
+        card_data_load(0);
 
     } catch (error) {
         console.error(error);
     }
 }
+
 
 async function card_delete(card_id) {
     try {
@@ -235,6 +318,8 @@ async function delete_deck(deck_id) {
 
 
 async function deck_open(deck_id) {
+    localStorage.removeItem('flashcards');
+    localStorage.removeItem('current_flashcard_index');
     try {
         if (document.getElementById("cardList").classList.contains("dnone")) {
             document.querySelectorAll(".dnone_on_start").forEach(elem => elem.classList.remove("dnone"));
@@ -281,9 +366,27 @@ async function deck_open(deck_id) {
         const el = document.getElementById('cardList');
         Sortable.create(el, {
             animation: 150,
+            dataIdAttr: 'data-id',
             onEnd: function (evt) {
-                saveNewOrder(deck_id); // Mentés, ha elengedte a kártyát
+                const currentorder = Sortable.get(evt.from).toArray();
+                save_new_order(deck_id, currentorder);
             }
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function save_new_order(deck_id, currentorder) {
+    try {
+        const token = localStorage.getItem('token');
+        await apiFetch("http://localhost:4000/api/save_new_order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ deck_id: deck_id, currentorder: currentorder })
         });
     } catch (err) {
         console.error(err);

@@ -453,11 +453,12 @@ test
 
 
 .flashcard_game_container {
-    display: none;
+    display: none; 
     justify-content: center;
     align-items: center;
     height: 100%;
     width: 100%;
+    gap: 30px; 
     
 }
 
@@ -478,7 +479,7 @@ test
     position: absolute;
     transform-style: preserve-3d;
     /* Létrehozza a 3D teret a gyermek elemek számára */
-    transition: transform 0.8s;
+    transition: transform 0.1s;
     /* Animáció ideje és sebessége */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 12px;
@@ -517,4 +518,105 @@ test
 
 .turn {
     transform: rotateY(180deg);
+}
+
+
+.flashcard-modal_c {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 998;
+}
+
+.flashcard-modal-content_c {
+    display: flex;
+    flex-direction: column;
+    background-color: #fefbf5;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+
+}
+
+.modal-actions_c {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+}
+
+.flashcard-modal-content_c h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+
+.chioice_button_r{
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;    
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    background-color: blue;
+}
+
+.chioice_button_o{
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;    
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;    
+    background-color: rgb(115, 115, 218);
+}
+
+.game_nav_button {
+    background-color: rgba(241, 180, 60, 0.2);
+    border: 2px solid #f1b43c;
+    color: #333;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    user-select: none;
+    z-index: 10;
+}
+
+.game_nav_button:hover {
+    background-color: #f1b43c;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+.game_nav_button:active {
+    transform: scale(0.95);
+}
+@media (max-width: 600px) {
+    .flashcard_game_container {
+        gap: 10px;
+    }
+    
+    .game_nav_button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
 }

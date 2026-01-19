@@ -111,20 +111,28 @@
                             <button id="backToDecksButton" onclick="load_deck()"
                                 class="action_button back_button">Vissza a paklikhoz</button>
                         </div>
-                        <button id="backToCardsButton"  class="dnone action_button back_button">Vissza a kártyákhoz</button>
+                        <button id="backToCardsButton" class="dnone action_button back_button">Vissza a
+                            kártyákhoz</button>
                     </div>
                     <div class="flashcard_game_container " id="flashcardGameContainer">
+                        <button class="game_nav_button prev_card" id="prevCardBtn" onclick="changeCard(-1)">
+                            &#10094;
+                        </button>
+
                         <div class="flashcard_game_card" id="flashcardGameCard">
                             <div class="flashcard" id="flashcard">
-                                <div class="flashcard-front">
+                                <div class="flashcard-front" id="flashcard_front">
                                     A kérdés: Mi a fővárosa Japánnak?
                                 </div>
-
-                                <div class="flashcard-back">
+                                <div class="flashcard-back" id="flashcard_back">
                                     Válasz: Tokió (Tokyo)
                                 </div>
                             </div>
                         </div>
+
+                        <button class="game_nav_button next_card" id="nextCardBtn" onclick="changeCard(1)">
+                            &#10095;
+                        </button>
                     </div>
                     <div class="flashcard_container dnone_on_start" id="cardList">
 

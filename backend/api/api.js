@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest } = require("../data_test.js");
-const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck } = require("../sql/querys.js");
+const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_order } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -220,6 +220,7 @@ router.post("/deletecard", authenticateToken, async (req, res) => {
 
 
 router.post("/updatecard", authenticateToken, async (req, res) =>{
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /updatecard request - IP: ${req.socket.remoteAddress}`);
   const adatok = req.body
   try {
     await updatecard(adatok.front_text, adatok.back_text, adatok.card_id)  
@@ -231,6 +232,7 @@ router.post("/updatecard", authenticateToken, async (req, res) =>{
 })
 
 router.post("/getcardbyid", authenticateToken, async (req, res) =>{
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /getcardbyid request - IP: ${req.socket.remoteAddress}`);
   const card_id = req.body.card_id
   try {
     const [rows] = await getcardbyid(card_id)  
@@ -242,6 +244,7 @@ router.post("/getcardbyid", authenticateToken, async (req, res) =>{
 })
 
 router.post("/updatedeck", authenticateToken, async (req, res) =>{
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /updatedeck request - IP: ${req.socket.remoteAddress}`);
   const adatok = req.body
   try {
     await updatedeck(adatok.deck_name, adatok.deck_id)
@@ -253,12 +256,27 @@ router.post("/updatedeck", authenticateToken, async (req, res) =>{
 })
 
 router.post("/deletedeck", authenticateToken, async (req, res) =>{
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /deletedeck request - IP: ${req.socket.remoteAddress}`);
   const deck_id = req.body.deck_id
   try {
     await deletedeck(deck_id)
     res.status(200).json({ success: true, message: "Sikeres törlés!"})
   } catch (error) {
     console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli törlésekor: `, error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+})
+
+router.post("/save_new_order", authenticateToken, async (req, res) =>{
+  console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /save_new_order - IP: ${req.socket.remoteAddress}`);
+  const data = req.body
+  try{
+    for(let i = 0; i < data.currentorder.length; i++){
+      await save_new_order(data.currentorder[i], i)
+    }
+  }
+  catch (error){
+    console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a kártyák sorrendjének mentésekor: `, error);
     res.status(500).json({ success: false, message: error.message });
   }
 })
