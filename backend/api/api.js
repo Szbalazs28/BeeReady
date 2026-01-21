@@ -128,7 +128,7 @@ router.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
             res.status(200).json({ success: true, message: "Sikeres mentés!" });
           }
         } else {
-          console.log("Hibás jelszó!");
+          console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hibás jelszó! - IP: ${req.socket.remoteAddress}`);
           res.status(403).json({ success: false, message: "Hibás jelszó!" });
         }
       } catch (error) {
@@ -144,14 +144,9 @@ router.post("/add_deck", authenticateToken, async (req, res) => {
   const adatok = req.body
   const id = req.user.id
   try {
-    if (adatok.deck_name.length > 200 || adatok.deck_name == "") {
-      res.status(409).json({ success: false, message: "Minimum 1 és maximum 200 karakter lehet !" })
-    }
-    else {
+      lengthtest(adatok.deck_name, 1, 200)
       await add_deck(id, adatok.deck_name)
       res.status(200).json({ success: true, message: "Sikeres hozzáadás!" })
-    }
-
   } catch (error) {
     console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli hozzáadása során: `, error);
     res.status(500).json({ success: false, message: error.message });
@@ -198,6 +193,8 @@ router.post("/addnewcard", authenticateToken, async (req, res) => {
   console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /addnewcard request - IP: ${req.socket.remoteAddress}`);
   const adatok = req.body
   try {
+    lengthtest(adatok.front_text, 1, 255)
+    lengthtest(adatok.back_text,1,1000)
     await addnewcard(adatok.deck_id, adatok.front_text, adatok.back_text)
     res.status(200).json({ success: true, message: "Sikeres hozzáadás!" })
   } catch (error) {
@@ -223,6 +220,8 @@ router.post("/updatecard", authenticateToken, async (req, res) =>{
   console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /updatecard request - IP: ${req.socket.remoteAddress}`);
   const adatok = req.body
   try {
+    lengthtest(adatok.front_text, 1, 255)
+    lengthtest(adatok.back_text,1,1000)
     await updatecard(adatok.front_text, adatok.back_text, adatok.card_id)  
     res.status(200).json({ success: true, message: "Sikeres frissítés!!"})
   } catch (error) {
@@ -245,9 +244,10 @@ router.post("/getcardbyid", authenticateToken, async (req, res) =>{
 
 router.post("/updatedeck", authenticateToken, async (req, res) =>{
   console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /updatedeck request - IP: ${req.socket.remoteAddress}`);
-  const adatok = req.body
+  const data = req.body
   try {
-    await updatedeck(adatok.deck_name, adatok.deck_id)
+    lengthtest(data.deck_name, 1, 200)
+    await updatedeck(data.deck_name, data.deck_id)
     res.status(200).json({ success: true, message: "Sikeres frissítés!"})
   } catch (error) {
     console.error(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hiba a pakli frissítésekor: `, error);

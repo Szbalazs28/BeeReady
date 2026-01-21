@@ -8,8 +8,8 @@
     padding: 12px 14px;
     border: 1px solid rgb(46, 46, 46);
     border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.3);
     -webkit-backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(4px);
     outline: none;
     font-size: 1rem;
@@ -371,6 +371,7 @@ test
     border: none;
     border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     outline: none;
     font-size: 1rem;
@@ -597,6 +598,7 @@ test
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    -webkit-user-select: none;
     user-select: none;
     z-index: 10;
 }

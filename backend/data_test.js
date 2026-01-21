@@ -79,4 +79,11 @@ function emailTest(email) {
     return hibak;
 }
 
-module.exports = { passwordTest, titkositas, compare, usernameTest, emailTest };
+function lengthtest(input, min, max) {    
+    if (input.length < min || input.length > max) {
+        throw new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`)
+    }
+    return true
+}
+
+module.exports = { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest };

@@ -138,8 +138,33 @@ function card_data_load(index) {
 }
 
 function changeCard(index_change) {
+    const card_length = JSON.parse(localStorage.getItem("flashcards")).length
+    const nextcardbutton = document.getElementById("nextCardBtn")
+    const prevcardbutton = document.getElementById("prevCardBtn")
     let currentindex = parseInt(localStorage.getItem('current_flashcard_index'));
+    if(prevcardbutton.disabled){
+        prevcardbutton.disabled = false;
+    }
+    else{
+        if(nextcardbutton.disabled){
+            nextcardbutton.disabled = false;
+        }
+        else{
+            if(currentindex + index_change == 0){
+                prevcardbutton.disabled = true;
+                
+            }
+            else{
+                if(currentindex + index_change == card_length -1){
+                    nextcardbutton.disabled = true;
+                }  
+                  
+            }   
+        }
+    }
     card_data_load(currentindex + index_change);
+     //Nem lett tesztelve
+    
 }
 
 
