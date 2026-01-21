@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS flashcard_deck(
 deck_id int not null AUTO_INCREMENT PRIMARY KEY,
 user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id),
 deck_name varchar(200),
-create_date TIMESTAMP
+create_date TIMESTAMP,
+position int not null
 );
 
 CREATE TABLE IF NOT EXISTS flashcard_card(

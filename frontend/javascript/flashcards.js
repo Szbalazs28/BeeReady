@@ -128,7 +128,7 @@ async function flashcard_start_ordered(deck_id) {
 
 function card_data_load(index) {
     const card_elem = document.getElementById("flashcard")
-    if(card_elem.classList.contains("turn")){
+    if (card_elem.classList.contains("turn")) {
         card_elem.classList.remove("turn");
     }
     const cards = JSON.parse(localStorage.getItem('flashcards'));
@@ -142,29 +142,39 @@ function changeCard(index_change) {
     const nextcardbutton = document.getElementById("nextCardBtn")
     const prevcardbutton = document.getElementById("prevCardBtn")
     let currentindex = parseInt(localStorage.getItem('current_flashcard_index'));
-    if(prevcardbutton.disabled){
-        prevcardbutton.disabled = false;
+    if (currentindex + index_change <= 0) {
+        prevcardbutton.disabled = true;
+        prevcardbutton.classList.add("disabled_game_button");
+        prevcardbutton.classList.remove("activ_game_button");
     }
-    else{
-        if(nextcardbutton.disabled){
-            nextcardbutton.disabled = false;
+    else {
+        if (prevcardbutton.disabled) {
+            prevcardbutton.classList.add("activ_game_button");
+            prevcardbutton.classList.remove("disabled_game_button");
+            prevcardbutton.disabled = false;
         }
-        else{
-            if(currentindex + index_change == 0){
-                prevcardbutton.disabled = true;
-                
+        else {
+            if (currentindex + index_change == card_length - 1) {
+                nextcardbutton.classList.add("disabled_game_button");
+                nextcardbutton.classList.remove("activ_game_button");
+                nextcardbutton.disabled = true;
             }
-            else{
-                if(currentindex + index_change == card_length -1){
-                    nextcardbutton.disabled = true;
-                }  
-                  
-            }   
+            else {
+                if (nextcardbutton.disabled) {
+                    nextcardbutton.classList.add("activ_game_button");
+                    nextcardbutton.classList.remove("disabled_game_button");
+                    nextcardbutton.disabled = false;
+                }                                
+            }
         }
+
+
     }
+
+
     card_data_load(currentindex + index_change);
-     //Nem lett tesztelve
-    
+    //Nem lett tesztelve
+
 }
 
 

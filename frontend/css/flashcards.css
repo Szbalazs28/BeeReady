@@ -603,7 +603,14 @@ test
     z-index: 10;
 }
 
-.game_nav_button:hover {
+.disabled_game_button {
+    background-color: rgba(200, 200, 200, 0.2);
+    border: 2px solid #c0c0c0;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.activ_game_button:hover {
     background-color: #f1b43c;
     transform: scale(1.1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
