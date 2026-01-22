@@ -6,15 +6,15 @@
 }
 
 
-.todo .todo_taskadd {
+.todo_taskadd {
     display: flex;
     flex-direction: column;
     background-color: #e5e7eb;
     margin: 5px;
     padding: 20px;
-    height: 80%;
-    width: 20%;
     border-radius: 2rem;
+    width: 100%;
+    height: 85%;
 }
 
 .todo_taskadd h3 {
@@ -30,50 +30,6 @@
     padding: 8px 0;
 }
 
-.todo_taskadd .todo_items input[type="checkbox"] {
-    appearance: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    border: 2px solid #ddd;
-    background: #fff;
-    cursor: pointer;
-    position: relative;
-    box-sizing: border-box;
-    outline: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.todo_taskadd .todo_items input[type="checkbox"]:focus {
-    outline: none;
-    box-shadow: 0 0 0 6px rgba(241, 180, 60, 0.12);
-    border-color: #F1B43C;
-}
-
-.todo_taskadd .todo_items input[type="checkbox"]::after {
-    content: "";
-    display: none;
-}
-
-.todo_taskadd .todo_items input[type="checkbox"]:checked {
-    background: #F1B43C;
-    border-color: #F1B43C;
-    box-shadow: 0 0 8px #f1b43c55;
-}
-
-.todo_taskadd .todo_items input[type="checkbox"]:checked::after {
-    display: block;
-    left: 0;
-    top: 0;
-    width: 5px;
-    height: 11px;
-    border: solid #000;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
 .todo_taskadd .todo_items input[type="text"] {
     appearance: none;
     flex: 1 1 auto;
@@ -86,17 +42,45 @@
 }
 
 .todo_taskadd .todo_items input[type="text"]:focus {
-    outline: none;
-    border-color: #F1B43C;
-    border: none;
+    appearance: none;
+    flex: 1 1 auto;
+    padding: 5px;
+    border: 1px solid #00000000;
+    background: #00000000;
     border-radius: 10px;
-    border-bottom: 1px solid #F1B43C;
-    box-shadow: 0 5px 50px #f1b43c88;
+    font-size: 1rem;
+    border-bottom: #686868 1px solid;
 }
 
 .todo_taskadd .todo_items input[type="text"]::placeholder {
     color: #9b9b9b;
 }
+
+.todo_taskadd textarea {
+    resize: none;
+    height: 50%;
+    border-radius: 10px;
+    border: 1px solid #686868;
+    background: #ededed;
+    border-bottom: #686868 1px solid;
+    padding: 5px;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.todo_taskadd textarea::placeholder {
+    color: #9b9b9b;
+}
+
+.todo_taskadd select {
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #686868;
+    background: #ededed;
+    font-size: 1rem;
+}
+
 
 @media (max-width: 900px) {
     .todo .todo_taskadd {
