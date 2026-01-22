@@ -81,7 +81,9 @@ function emailTest(email) {
 
 function lengthtest(input, min, max) {    
     if (input.length < min || input.length > max) {
-        throw new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`)
+        const err = new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`);
+        err.status = 400; 
+        throw err;
     }
     return true
 }

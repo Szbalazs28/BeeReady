@@ -6,7 +6,7 @@ function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (token == null) {
-    console.log("Hiányzó token")
+    console.log("Hiányzó token!")
     return res.status(401).json({ message: "Hozzáférés megtagadva. Kérjük, jelentkezzen be!" });
     
   }

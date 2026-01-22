@@ -52,8 +52,6 @@ kepek.forEach(karakter => {
 });
 
 async function mentes() {
-
-
     const email = document.getElementById("szerkemail").value;
     const password = document.getElementById("currentpassword").value;
     const newpassword = document.getElementById("newpassword").value;

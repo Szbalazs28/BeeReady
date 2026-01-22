@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
+const errorHandler = require("./middleware/errorHandler.js");
 const path = require("path")
 
 const app = express();
@@ -26,6 +28,19 @@ const globalLimiter = rateLimit({
     }
 });
 
+morgan.token('hu-date', () => {
+    return new Date().toLocaleDateString();
+});
+morgan.token('hu-time', () => {
+    return new Date().toLocaleTimeString();
+});
+
+const customFormat = '[:hu-date] [:hu-time] :method :url :status :response-time ms - IP: :remote-addr';
+
+
+
+app.use(morgan(customFormat));
+app.use(errorHandler);
 
 
 app.use(cors());

@@ -25,22 +25,20 @@ function getRandomInt(min, max) {
 
 
 function lengthtest(input, min, max) {
-    let result = false;
-    let error = "";
+    let result = false;    
     if (input.length < min || input.length > max) {
-        error += `A hossznak ${min} és ${max} karakter között kell lennie!`
+        alertell(`A hossznak ${min} és ${max} karakter között kell lennie!`, 2.5);
         result = true
-    }
-    alertell(error, 2.5);
+    }    
     return result;
 }
 
 async function apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options);
-
+        const data = await response.json().catch(() => ({}));
         if (!response.ok) {
-            const data = await response.json().catch(() => ({})); // A catch a nem JSON válaszok kezelésére szolgál
+             // A catch a nem JSON válaszok kezelésére szolgál
 
             if (response.status === 429) {
                 alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
@@ -51,18 +49,29 @@ async function apiFetch(url, options = {}) {
                 alertell("Hozzáférés megtagadva. Kérjük, jelentkezzen be!", 5);
                 logout();
             }
+            else if (response.status ===400){
+                alertell(data.message || "Hibás kérés.", 5);
+            }
             else {
-                alertell(data.message || "Szerverhiba történt.", 5);
+                alertell("Szerverhiba történt.", 5);
             }
 
             throw new Error(`HTTP ${response.status}`);
         }
+        else{
+            if(data.write){
+                alertell(data.message || "Sikeres művelet!", 2.5);
+            }
+            
+        }
 
-        return await response.json();
+        return data;
 
     } catch (err) {
-        console.error(err);
-        alertell("Sikertelen csatlakozás a szerverhez!", 5);
+        if (!err.status) {
+            console.error("Hálózati hiba:", err);
+            alertell("Sikertelen csatlakozás a szerverhez!", 5);
+        }
         throw err;
     }
 }
