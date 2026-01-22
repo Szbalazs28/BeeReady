@@ -24,8 +24,9 @@ VALUES
   );
 
 -- teszt1 felhasznalo jelszava = Teszt1$
+
+
 -- tasks tábla létrehozása
-use beeready_db;
 
 CREATE TABLE
   IF Not EXISTS tasks (

@@ -35,7 +35,7 @@ app.post("/regisztracio", async (req, res) => {
               data.profil_pic_url
             );
             const token = await generateToken(user[0].id, "1h");
-            res.status(200).json({ success: true, token, redirect: "./main.html" });
+            res.status(200).json({ success: true, token, redirect: "/html/main.html" });
           } else {
             res.status(409).json({ success: false, hibak }); // Visszaküldi a hibákat
           }
@@ -65,7 +65,7 @@ app.post("/bejelentkezes", async (req, res) => {
           expiresInTime = "7d";
         }
         const token = await generateToken(rows[0].id, expiresInTime);
-        res.status(200).json({ success: true, token, redirect: "./main.html" });
+        res.status(200).json({ success: true, token, redirect: "/html/main.html" });
       } else {
         res.status(409).json({ success: false, message: "Hibás jelszó!" });
       }
@@ -165,12 +165,13 @@ app.post("/taskadd", authenticateToken, async (req, res) => {
   }
 });
 
-// Root route - frontend fájlok servírozása
+app.use(express.static(path.join(__dirname, "..", "frontend")));
+
+// Root route - bejelentkezési felületre dobás
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend", "html", "index.html"));
 });
 
-app.use(express.static(path.join(__dirname, "..", "frontend")));
 app.listen(port, () => {
   console.log(`Szerver fut: http://localhost:${port}`);
 });
