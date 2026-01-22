@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { passwordTest, titkositas, compare, usernameTest, emailTest } = require("../data_test.js");
+const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
 const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_order } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
@@ -267,12 +267,12 @@ router.post("/deletedeck", authenticateToken, async (req, res) =>{
   }
 })
 
-router.post("/save_new_order", authenticateToken, async (req, res) =>{
+router.post("/save_new_card_order", authenticateToken, async (req, res) =>{
   console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] /save_new_order - IP: ${req.socket.remoteAddress}`);
   const data = req.body
   try{
     for(let i = 0; i < data.currentorder.length; i++){
-      await save_new_order(data.currentorder[i], i)
+      await save_new_card_order(data.currentorder[i], i)
     }
   }
   catch (error){

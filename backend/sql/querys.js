@@ -22,7 +22,7 @@ async function add_deck(id, name) {
 }
 
 async function  getdeck(id) {
-    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id",[id])
+    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id ORDER BY flashcard_deck.position ASC",[id])
 }
 
 async function  getdeckbydeck_id(deck_id) {
@@ -44,7 +44,7 @@ async function getcards(deck_id) {
 }
 
 async function addnewcard(deck_id, front_text, back_text) {
-    const [maxposition] = await maxcardid(deck_id);
+    const [maxposition] = await maxcardposition(deck_id);
     if(maxposition[0].max_position === null){
         await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, 0);", [deck_id, front_text, back_text])
     }
@@ -54,7 +54,7 @@ async function addnewcard(deck_id, front_text, back_text) {
     
 }
 
-async function maxcardid(deck_id) {
+async function maxcardposition(deck_id) {
     return await pool.execute("SELECT MAX(position) AS max_position FROM flashcard_card WHERE deck_id = ?", [deck_id]);
 }
 
@@ -71,7 +71,7 @@ async function getcardbyid(card_id) {
     return await pool.execute("SELECT * FROM flashcard_card WHERE card_id=?", [card_id])
 }
 
-async function save_new_order(card_id, new_position) {
+async function save_new_card_order(card_id, new_position) {
     await pool.execute("UPDATE flashcard_card SET position = ? WHERE card_id = ?", [new_position, card_id])
 }
 
@@ -136,5 +136,5 @@ module.exports = {
     getcardbyid,
     updatedeck,
     deletedeck,
-    save_new_order
+    save_new_card_order
 };

@@ -16,6 +16,8 @@ document.getElementById("flashcardGameCard").addEventListener("click", function 
 
 function build_deck(name, deck_id, cardcount) {
     const deck_item = document.createElement('div')
+    deck_item.draggable = true
+    deck_item.setAttribute('data-id', deck_id)
     deck_item.classList.add("deck_item")
     const deck_info = document.createElement("div")
     deck_info.classList.add("deck_info")
@@ -404,7 +406,7 @@ async function deck_open(deck_id) {
             dataIdAttr: 'data-id',
             onEnd: function (evt) {
                 const currentorder = Sortable.get(evt.from).toArray();
-                save_new_order(deck_id, currentorder);
+                save_new_card_order(deck_id, currentorder);
             }
         });
     } catch (err) {
@@ -412,10 +414,10 @@ async function deck_open(deck_id) {
     }
 }
 
-async function save_new_order(deck_id, currentorder) {
+async function save_new_card_order(deck_id, currentorder) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch("http://localhost:4000/api/save_new_order", {
+        await apiFetch("http://localhost:4000/api/save_new_card_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
