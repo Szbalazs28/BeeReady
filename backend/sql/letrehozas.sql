@@ -25,17 +25,17 @@ VALUES
 
 -- teszt1 felhasznalo jelszava = Teszt1$
 
-
 -- tasks tábla létrehozása
+USE `BeeReady_db`;
 
 CREATE TABLE
-  IF Not EXISTS tasks (
-    `task_id` int AUTO_INCREMENT Not null,
-    `user_id` int NOT NULL,
-    `headline` Varchar(50),
-    `description` Varchar(255),
-    `deadline` Date,
-    `priority` Varchar(20), 
+  IF NOT EXISTS `tasks` (
+    `task_id` INT AUTO_INCREMENT NOT NULL,
+    `user_id` INT NOT NULL,
+    `task_name` VARCHAR(100),
+    `task_description` VARCHAR(255),
+    `deadline` DATE,
+    `importance` VARCHAR(20), 
     PRIMARY KEY (`task_id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (id)
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
   );

@@ -65,16 +65,19 @@
                             <h3>Feladatok</h3>
                             <hr>
                             <div class="todo_items">
-                                <input type="text" placeholder="Új feladat">
+                                <input type="text" id="task_name" placeholder="Új feladat">
                             </div>
-                            <textarea name="description" id="task_description" placeholder="A feladat leírása..."></textarea>
+                            <textarea name="description" id="task_description"
+                                placeholder="A feladat leírása..."></textarea>
                             <select name="importance" id="importance">
                                 <option value="importance" disabled selected> fontosság</option>
                                 <option value="high">magas</option>
                                 <option value="medium">közepes</option>
                                 <option value="low">alacsony</option>
                             </select>
-                            <button type="button" id="add_task" onclick="TaskAdd()"><p>Feladat hozzáadása</p></button>
+                            <button type="button" id="add_task" onclick="submitTask()">
+                                <p>Feladat hozzáadása</p>
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -227,6 +230,7 @@
         <script src="../javascript/navbar.js"></script>
         <script src="../javascript/profil_szerk.js"></script>
         <script src="../javascript/timer.js"></script>
+        <script src="../javascript/todo.js"></script>
 
 </body>
 

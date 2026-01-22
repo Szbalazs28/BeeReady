@@ -1,13 +1,26 @@
-async function addTask(task_name, task_description, importance) {
-    const token = localStorage.getItem('token');
-    const response =  await fetch('/taskadd', {
+async function submitTask() {
+    const task_name = document.getElementById('task_name').value;
+    const task_description = document.getElementById('task_description').value;
+    const importance = document.getElementById('importance').value;
+
+    const response = await fetch('/taskadd', {
         method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}` 
         },
-        body: JSON.stringify({ task_name, task_description, importance })
+        body: JSON.stringify({
+            task_name,
+            task_description,
+            importance
+        })
     });
-    const data = await response.json();
-    return data;
+
+    const result = await response.json();
+    if (result.success) {
+        alert("Siker: " + result.message);
+        location.reload(); 
+    } else {
+        alert("Hiba: " + result.message);
+    }
 }

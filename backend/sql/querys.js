@@ -59,8 +59,9 @@ async function isexist(data){
 }
 
 //innentől kezdődnek a todo queryk
-async function TaskAdd(user_id, headline, description, priority){
-    return await pool.query("INSERT INTO tasks (user_id, headline, description, priority) VALUES (?,?,?,?)", [user_id, headline, description, priority])
+
+async function TaskAdd(user_id, task_name, task_description, importance){
+    return await pool.query("INSERT INTO tasks (user_id, task_name, task_description, importance) VALUES (?,?,?,?)", [user_id, task_name, task_description, importance])
 }
 
 
