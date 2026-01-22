@@ -58,6 +58,10 @@ async function isexist(data){
     return await pool.query(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
+//innentől kezdődnek a todo queryk
+async function TaskAdd(user_id, headline, description, priority){
+    return await pool.query("INSERT INTO tasks (user_id, headline, description, priority) VALUES (?,?,?,?)", [user_id, headline, description, priority])
+}
 
 
 module.exports = {
@@ -65,5 +69,6 @@ module.exports = {
     newuser,
     userbyemail,
     userbyid,
-    updateuser
+    updateuser,
+    TaskAdd
 };

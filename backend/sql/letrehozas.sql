@@ -23,8 +23,10 @@ VALUES
     '../img/allatos_profilkepek/oroszlan.webp'
   );
 
---teszt1 felhasznalo jelszava = Teszt1$
+-- teszt1 felhasznalo jelszava = Teszt1$
 -- tasks tábla létrehozása
+use beeready_db;
+
 CREATE TABLE
   IF Not EXISTS tasks (
     `task_id` int AUTO_INCREMENT Not null,
@@ -32,6 +34,6 @@ CREATE TABLE
     `headline` Varchar(50),
     `description` Varchar(255),
     `deadline` Date,
-    PRIMARY KEY (task_id),
+    PRIMARY KEY (id),
     FOREIGN KEY (`user_id`) REFERENCES users (id)
   );

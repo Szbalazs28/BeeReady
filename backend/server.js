@@ -5,7 +5,7 @@ const app = express();
 
 const {authenticateToken,generateToken} = require("./middleware/jsonwebtoken.js");
 const {passwordTest,titkositas,compare,usernameTest,emailTest} = require("./data_test.js");
-const {userexists,newuser,userbyemail,userbyid,updateuser} = require("./sql/querys.js");
+const {userexists,newuser,userbyemail,userbyid,updateuser,TaskAdd} = require("./sql/querys.js");
 
 app.use(cors());
 app.use(express.json());
@@ -136,6 +136,31 @@ app.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
       }
     }
+  }
+});
+
+app.post("/taskadd", authenticateToken, async (req, res) => {
+  const user_id = req.user.id;
+  const { task_name, task_description, importance } = req.body;
+  
+  console.log(`[${new Date().toLocaleTimeString()}] /taskadd request - User ID: ${user_id}`);
+  
+  try {
+    // ha nincs megadva a task_name vagy üres
+    if (!task_name || task_name.trim() === "") {
+      return res.status(400).json({ success: false, message: "A feladat neve kötelező!" });
+    }
+    
+    if (!importance || importance === "importance") {
+      return res.status(400).json({ success: false, message: "A fontosság kiválasztása kötelező!" });
+    }
+    
+    await TaskAdd(user_id, task_name, task_description || "", importance);
+    
+    res.status(200).json({ success: true, message: "Feladat sikeresen hozzáadva!" });
+  } catch (error) {
+    console.error(`[${new Date().toLocaleTimeString()}] Hiba a feladat hozzáadása során:`, error);
+    res.status(500).json({ success: false, message: "Adatbázis hiba a feladat hozzáadása során." });
   }
 });
 

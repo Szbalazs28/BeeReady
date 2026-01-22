@@ -65,16 +65,17 @@
                             <h3>Feladatok</h3>
                             <hr>
                             <div class="todo_items">
-                                <input type="text" placeholder="Új feladat" class="task_title">
-                                <textarea placeholder="Rövid leírás a feladathoz..." class="task_description"></textarea>
-                                <select class="task_priority">
-                                    <option value="" disabled selected>Prioritás szint</option>
-                                    <option value="low">Alacsony</option>
-                                    <option value="medium">Közepes</option>
-                                    <option value="high">Magas</option>
-                                    <option value="urgent">Sürgős</option>
-                                </select>
+                                <input type="text" placeholder="Új feladat">
+                                <input type="checkbox">
                             </div>
+                            <textarea name="description" id="task_description" placeholder="A feladat leírása..."></textarea>
+                            <select name="importance" id="importance">
+                                <option value="importance" disabled selected> fontosság</option>
+                                <option value="high">magas</option>
+                                <option value="medium">közepes</option>
+                                <option value="low">alacsony</option>
+                            </select>
+                            <button type="button" id="add_task" onclick="add_task()">Feladat hozzáadása</button>
                         </div>
                     </div>
                 </section>

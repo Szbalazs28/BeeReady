@@ -6,16 +6,13 @@
 }
 
 
-.todo .todo_taskadd {
+.todo_taskadd {
     display: flex;
     flex-direction: column;
     background-color: #ffffff;
     margin: 5px;
     padding: 20px;
-    height: 80%;
-    width: 20%;
     border-radius: 2rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .todo_taskadd h3 {
@@ -44,9 +41,11 @@
 
 .todo_taskadd .todo_items input[type="text"]:focus {
     outline: none;
-    border-color: #ffffff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    background: #ffffff;
+    border-color: #F1B43C;
+    border: none;
+    border-radius: 10px;
+    border-bottom: 1px solid #F1B43C;
+    box-shadow: 0 5px 50px #f1b43c88;
 }
 
 .todo_taskadd .todo_items input[type="text"]::placeholder {
@@ -102,6 +101,32 @@
     color: black;
     padding: 10px;
 }
+
+.todo_taskadd textarea {
+    resize: none;
+    height: 50%;
+    border-radius: 10px;
+    border: 1px solid #686868;
+    background: #ededed;
+    border-bottom: #686868 1px solid;
+    padding: 5px;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.todo_taskadd textarea::placeholder {
+    color: #9b9b9b;
+}
+
+.todo_taskadd select {
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #686868;
+    background: #ededed;
+    font-size: 1rem;
+}
+
 
 @media (max-width: 900px) {
     .todo .todo_taskadd {
