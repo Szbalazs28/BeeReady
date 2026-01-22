@@ -18,7 +18,15 @@ async function userbyid(id) {
 }
 
 async function add_deck(id, name) {
-    await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name) VALUES(?, ?)", [id, name])
+    
+    const [maxposition] = await maxdeckposition(id);
+    if(maxposition[0].max_position === null){
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position) VALUES(?, ?, 0)", [id, name])    
+    }
+    else{
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position) VALUES(?, ?, ?)", [id, name, maxposition[0].max_position + 1])
+    }
+
 }
 
 async function  getdeck(id) {
@@ -54,6 +62,10 @@ async function addnewcard(deck_id, front_text, back_text) {
     
 }
 
+async function maxdeckposition(user_id) {
+    return await pool.execute("SELECT MAX(position) AS max_position FROM flashcard_deck WHERE user_id = ?", [user_id]);
+}
+
 async function maxcardposition(deck_id) {
     return await pool.execute("SELECT MAX(position) AS max_position FROM flashcard_card WHERE deck_id = ?", [deck_id]);
 }
@@ -73,6 +85,10 @@ async function getcardbyid(card_id) {
 
 async function save_new_card_order(card_id, new_position) {
     await pool.execute("UPDATE flashcard_card SET position = ? WHERE card_id = ?", [new_position, card_id])
+}
+
+async function save_new_deck_order(deck_id, new_position) {
+    await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ?", [new_position, deck_id])
 }
 
 
@@ -136,5 +152,6 @@ module.exports = {
     getcardbyid,
     updatedeck,
     deletedeck,
-    save_new_card_order
+    save_new_card_order,
+    save_new_deck_order
 };

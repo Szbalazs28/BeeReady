@@ -75,8 +75,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 12px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    gap: 12px;    
     cursor: pointer;
 
 }
@@ -88,8 +87,7 @@
     max-width: 80%;
 }
 
-.deck_item:hover {
-    transform: translateY(-4px);
+.deck_item:hover {    
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
@@ -135,9 +133,6 @@
 
 
 
-/*
-test
-*/
 
 .deck_header {
     display: flex;
@@ -480,7 +475,7 @@ test
     position: absolute;
     transform-style: preserve-3d;
     /* Létrehozza a 3D teret a gyermek elemek számára */
-    transition: transform 0.1s;
+    transition: transform 0.25s;
     /* Animáció ideje és sebessége */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 12px;
@@ -488,20 +483,32 @@ test
 }
 
 .flashcard-front,
-.flashcard-back {
+.flashcard-back {    
     position: absolute;
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    /* Elrejti az elem hátulját, amikor forog */
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5em;
     text-align: center;
     padding: 20px;
     box-sizing: border-box;
-    border-radius: 12px;
+    border-radius: 12px;    
+    overflow-y: auto;          
+    overflow-x: hidden;        
+    word-wrap: break-word;     
+    display: block;            
+}
+
+
+#flashcard_front, #flashcard_back {
+    margin-top: auto;
+    margin-bottom: auto;
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .flashcard-front {

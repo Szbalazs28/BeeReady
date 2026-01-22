@@ -134,8 +134,11 @@ function card_data_load(index) {
         card_elem.classList.remove("turn");
     }
     const cards = JSON.parse(localStorage.getItem('flashcards'));
-    document.getElementById("flashcard_front").textContent = cards[index].front_text;
-    document.getElementById("flashcard_back").textContent = cards[index].back_text;
+    setTimeout(() => {
+        document.getElementById("flashcard_front").textContent = cards[index].front_text;
+        document.getElementById("flashcard_back").textContent = cards[index].back_text;
+    }, 100);
+
     localStorage.setItem('current_flashcard_index', index);
 }
 
@@ -166,7 +169,7 @@ function changeCard(index_change) {
                     nextcardbutton.classList.add("activ_game_button");
                     nextcardbutton.classList.remove("disabled_game_button");
                     nextcardbutton.disabled = false;
-                }                                
+                }
             }
         }
 
@@ -444,7 +447,7 @@ async function add_deck() {
             body: JSON.stringify({ deck_name: deck_name })
         })
         alertell(result.message, 2.5)
-        load_deck()
+        await load_deck()
     }
     catch (err) {
         console.error(err);
@@ -477,6 +480,32 @@ async function load_deck() {
             deck_list.appendChild(build_deck(result.decks[i].deck_name, result.decks[i].deck_id, result.decks[i].cardcount));
         }
 
+        const el = document.getElementById('deckList');
+        Sortable.create(el, {
+            animation: 150,
+            dataIdAttr: 'data-id',
+            onEnd: function (evt) {
+                const currentorder = Sortable.get(evt.from).toArray();
+                save_new_deck_order(currentorder);
+            }
+        });
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function save_new_deck_order(currentorder) {
+    try {
+        const token = localStorage.getItem('token');
+        await apiFetch("http://localhost:4000/api/save_new_deck_order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ currentorder: currentorder })
+        });
     } catch (err) {
         console.error(err);
     }
