@@ -34,6 +34,7 @@ CREATE TABLE
     `headline` Varchar(50),
     `description` Varchar(255),
     `deadline` Date,
-    PRIMARY KEY (id),
+    `priority` Varchar(20), 
+    PRIMARY KEY (`task_id`),
     FOREIGN KEY (`user_id`) REFERENCES users (id)
   );

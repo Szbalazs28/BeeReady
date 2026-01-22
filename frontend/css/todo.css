@@ -9,10 +9,12 @@
 .todo_taskadd {
     display: flex;
     flex-direction: column;
-    background-color: #ffffff;
+    background-color: #e5e7eb;
     margin: 5px;
     padding: 20px;
     border-radius: 2rem;
+    width: 100%;
+    height: 85%;
 }
 
 .todo_taskadd h3 {
@@ -23,7 +25,7 @@
 
 .todo_taskadd .todo_items {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 12px;
     padding: 8px 0;
 }
@@ -31,75 +33,27 @@
 .todo_taskadd .todo_items input[type="text"] {
     appearance: none;
     flex: 1 1 auto;
-    padding: 10px;
-    border: 1px solid #ffffff99;
-    background: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    border: 1px solid #00000000;
+    background: #00000000;
     border-radius: 10px;
     font-size: 1rem;
-    font-weight: 500;
+    border-bottom: #686868 1px solid;
 }
 
 .todo_taskadd .todo_items input[type="text"]:focus {
-    outline: none;
-    border-color: #F1B43C;
-    border: none;
+    appearance: none;
+    flex: 1 1 auto;
+    padding: 5px;
+    border: 1px solid #00000000;
+    background: #00000000;
     border-radius: 10px;
-    border-bottom: 1px solid #F1B43C;
-    box-shadow: 0 5px 50px #f1b43c88;
+    font-size: 1rem;
+    border-bottom: #686868 1px solid;
 }
 
 .todo_taskadd .todo_items input[type="text"]::placeholder {
-    color: #6b7280;
-}
-
-.todo_taskadd .todo_items textarea {
-    appearance: none;
-    padding: 10px;
-    border: 1px solid #ffffff99;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-family: inherit;
-    resize: none;
-    min-height: 100px;
-}
-
-.todo_taskadd .todo_items textarea:focus {
-    outline: none;
-    border-color: #ffffff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    background: #ffffff;
-}
-
-.todo_taskadd .todo_items textarea::placeholder {
-    color: #6b7280;
-}
-
-.todo_taskadd .todo_items select {
-    appearance: none;
-    padding: 10px;
-    border: 1px solid #ffffff99;
-    background: rgba(255, 255, 255, 0.9) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
-    background-size: 12px;
-    padding-right: 35px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    color: black;
-    font-weight: bold;
-}
-
-.todo_taskadd .todo_items select:focus {
-    outline: none;
-    border-color: #ffffff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    background-color: #ffffff;
-}
-
-.todo_taskadd .todo_items select option {
-    background-color: #ffffff;
-    color: black;
-    padding: 10px;
+    color: #9b9b9b;
 }
 
 .todo_taskadd textarea {

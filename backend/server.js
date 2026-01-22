@@ -1,6 +1,7 @@
 const port = 4000;
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const app = express();
 
 const {authenticateToken,generateToken} = require("./middleware/jsonwebtoken.js");
@@ -164,7 +165,12 @@ app.post("/taskadd", authenticateToken, async (req, res) => {
   }
 });
 
-app.use(express.static("public"));
+// Root route - frontend fájlok servírozása
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "html", "index.html"));
+});
+
+app.use(express.static(path.join(__dirname, "..", "frontend")));
 app.listen(port, () => {
   console.log(`Szerver fut: http://localhost:${port}`);
 });
