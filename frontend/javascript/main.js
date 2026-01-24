@@ -43,7 +43,7 @@ async function apiFetch(url, options = {}) {
             if (response.status === 429) {
                 alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
             } else if (response.status === 403) {
-                alertell("Lejárt munkamenet. Jelentkezz be újra.", 5);
+                alertell("Lejárt a munkamenet. Jelentkezz be újra.", 5);
                 logout();
             } else if (response.status === 401) {
                 alertell("Hozzáférés megtagadva. Kérjük, jelentkezzen be!", 5);

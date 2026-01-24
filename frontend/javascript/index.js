@@ -54,7 +54,7 @@ function forget_Password() {
     }, 200);
 }
 
-let uzenet = document.getElementById("uzenet")
+
 document.getElementById("regform").addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -63,10 +63,10 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     const username = document.getElementById("regusername").value;
     const profil_pic_url = document.getElementById("profil_pic_url").src.split("/");
 
-    const response = await fetch("http://localhost:4000/api/regisztracio", {
+    const response = await fetch("http://localhost:4000/api/registration", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length - 1]}` })
+        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilpicek/${profil_pic_url[profil_pic_url.length - 1]}` })
     });
     message = await response.json()
     if (message.success) {
@@ -79,13 +79,13 @@ document.getElementById("regform").addEventListener("submit", async function (e)
             alertell(message.message, 2.5);
         }
         else {
-            let ido = 0.5;
-            let tartalom = ""
-            for (let hibaUzenet of Object.values(message.hibak)) {
-                tartalom += `${hibaUzenet}<br>`
-                ido++
+            let time = 0.5;
+            let content = ""
+            for (let errormessage of Object.values(message.issues)) {
+                content += `${errormessage}<br>`
+                time++
             }
-            alertell(tartalom, ido);
+            alertell(content, time);
         }
 
     }
@@ -97,7 +97,7 @@ document.getElementById("loginform").addEventListener("submit", async function (
     const email = document.getElementById("logemail").value;
     const password = document.getElementById("logpassword").value;
 
-    const response = await fetch("http://localhost:4000/api/bejelentkezes", {
+    const response = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, stay })
@@ -118,13 +118,13 @@ document.getElementById("loginform").addEventListener("submit", async function (
 
 
 //profilvalto 
-const profilkep = document.getElementById("prof_img");
+const profilpic = document.getElementById("prof_img");
 const modal = document.getElementById("profil_modal");
 const close = document.getElementById("close");
-const kepek = document.querySelectorAll(".avatar_option");
-const src = profilkep.querySelector("img");
+const images = document.querySelectorAll(".avatar_option");
+const src = profilpic.querySelector("img");
 
-profilkep.addEventListener("click", () => {
+profilpic.addEventListener("click", () => {
     modal.style.display = "flex";
 });
 
@@ -132,10 +132,10 @@ close.addEventListener("click", () => {
     modal.style.display = "none";
 });
 
-kepek.forEach(karakter => {
-    karakter.addEventListener("click", () => {
-        const uj = karakter.src;
-        src.src = uj;
+images.forEach(character => {
+    character.addEventListener("click", () => {
+        const newcharacter = character.src;
+        src.src = newcharacter;
         modal.style.display = "none";
     });
 });

@@ -1,4 +1,4 @@
-function navbar_click(id, sorszam) {
+function navbar_click(id, index) {
     document.querySelectorAll(".mainelem").forEach(element => {
         if (!element.classList.contains("dnone")) {
             element.classList.add("dnone")
@@ -9,7 +9,7 @@ function navbar_click(id, sorszam) {
             element.classList.remove("active")
         }
     })
-    document.querySelector(`.nav_items_div > div:nth-child(${sorszam})`).classList.add("active")
+    document.querySelector(`.nav_items_div > div:nth-child(${index})`).classList.add("active")
     document.getElementById(id).classList.remove("dnone")
     document.getElementById("navbar").classList.remove("nav_open");
     if (document.querySelector(".hamburger").classList.contains("dnone")) {
@@ -18,10 +18,10 @@ function navbar_click(id, sorszam) {
 
 }
 
-async function kepbetoltes() {
+async function load_image() {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://localhost:4000/api/szerkesztes", {
+        const result = await apiFetch("http://localhost:4000/api/edit_user", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -46,4 +46,4 @@ function toggleMenu() {
     }
 }
 
-window.onload = kepbetoltes
+window.onload = load_image

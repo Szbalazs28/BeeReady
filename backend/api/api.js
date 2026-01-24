@@ -20,27 +20,27 @@ const loginLimiter = rateLimit({
 
 
 
-router.post("/regisztracio", async (req, res) => {
+router.post("/registration", async (req, res) => {
   let data = req.body;
-  const usernamehibak = usernameTest(data.username);
-  const emailhibak = emailTest(data.email);
-  if (Object.keys(usernamehibak).length != 0) {
-    res.status(403).json({ success: false, hibak: usernamehibak });
+  const usernameissues = usernameTest(data.username);
+  const emailissues = emailTest(data.email);
+  if (Object.keys(usernameissues).length != 0) {
+    res.status(403).json({ success: false, issues: usernameissues });
   } else {
-    if (Object.keys(emailhibak).length != 0) {
-      res.status(403).json({ success: false, hibak: emailhibak });
+    if (Object.keys(emailissues).length != 0) {
+      res.status(403).json({ success: false, issues: emailissues });
     } else {
       try {
         const [rows] = await userexists(data.email, data.username);
         if (rows.length == 0) {
-          let hibak = passwordTest(data.password);
-          if (Object.keys(hibak).length == 1) {
+          let issues = passwordTest(data.password);
+          if (Object.keys(issues).length == 1) {
             const password = await titkositas(data.password);
             const [user] = await newuser(data.username, data.email, password, data.profil_pic_url);
             const token = await generateToken(user[0].id, "1h");
             res.status(200).json({ success: true, token, redirect: "./main.html" });
           } else {
-            res.status(409).json({ success: false, hibak }); // Visszaküldi a hibákat
+            res.status(409).json({ success: false, issues }); // Visszaküldi a hibákat
           }
         } else {
           res.status(409).json({ success: false, message: "Ilyen E-mail cím vagy Felhasználónév már létezik!" });
@@ -52,13 +52,13 @@ router.post("/regisztracio", async (req, res) => {
   }
 })
 
-router.post("/bejelentkezes", loginLimiter, async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const data = req.body;
   try {
     const [rows] = await userbyemail(data.email);
     if (rows.length > 0) {
-      const egyezike = await compare(data.password, rows[0].password);
-      if (egyezike) {
+      const compare_result = await compare(data.password, rows[0].password);
+      if (compare_result) {
         let expiresInTime = "1h";
         if (data.stay) {
           expiresInTime = "7d";
@@ -76,7 +76,7 @@ router.post("/bejelentkezes", loginLimiter, async (req, res) => {
   }
 });
 
-router.get("/szerkesztes", authenticateToken, async (req, res) => {
+router.get("/edit_user", authenticateToken, async (req, res) => {
   try {
     const id = req.user.id;
     const [rows] = await userbyid(id);
@@ -90,29 +90,29 @@ router.get("/szerkesztes", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/szerkesztes_mentes", authenticateToken, async (req, res) => {
+router.post("/edit_user_mentes", authenticateToken, async (req, res) => {
   const id = req.user.id;
   const adatok = req.body;
-  const usernamehibak = usernameTest(adatok.username);
-  const emailhibak = emailTest(adatok.email);
-  if (Object.keys(usernamehibak).length != 0) {
-    res.status(403).json({ success: false, hibak: usernamehibak });
+  const usernameissues = usernameTest(adatok.username);
+  const emailissues = emailTest(adatok.email);
+  if (Object.keys(usernameissues).length != 0) {
+    res.status(403).json({ success: false, issues: usernameissues });
   } else {
-    if (Object.keys(emailhibak).length != 0) {
-      res.status(403).json({ success: false, hibak: emailhibak });
+    if (Object.keys(emailissues).length != 0) {
+      res.status(403).json({ success: false, issues: emailissues });
     } else {
       try {
         const [rows] = await userbyid(id);
         if (await compare(adatok.password, rows[0].password)) {
           if (adatok.newpassword != "") {
-            let hibak = passwordTest(adatok.newpassword);
-            if (Object.keys(hibak).length == 1) {
+            let issues = passwordTest(adatok.newpassword);
+            if (Object.keys(issues).length == 1) {
               const newpassword = await titkositas(adatok.newpassword);
               adatok.newpassword = newpassword;
               await updateuser(rows, adatok, id);
               res.status(200).json({ success: true, message: "Sikeres mentés!" });
             } else {
-              res.status(403).json({ success: false, hibak });
+              res.status(403).json({ success: false, issues });
             }
           } else {
             await updateuser(rows, adatok, id);

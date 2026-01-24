@@ -69,6 +69,16 @@ function build_card(front_text, back_text, card_id) {
 }
 
 function flashcard_start(deck_id) {
+    if(document.getElementById("prevCardBtn").disabled == false){
+        document.getElementById("prevCardBtn").classList.add("disabled_game_button");
+        document.getElementById("prevCardBtn").classList.remove("activ_game_button");
+        document.getElementById("prevCardBtn").disabled = true;
+    }
+    if(document.getElementById("nextCardBtn").disabled == true){
+        document.getElementById("nextCardBtn").classList.remove("disabled_game_button");
+        document.getElementById("nextCardBtn").classList.add("activ_game_button");
+        document.getElementById("nextCardBtn").disabled = false;
+    }
     document.getElementById("flashcardGameContainer").classList.remove("dnone");
     const backToCardsButton = document.getElementById("backToCardsButton");
     backToCardsButton.onclick = () => deck_open(deck_id);
@@ -240,7 +250,7 @@ async function card_delete(card_id) {
 }
 
 
-async function deck_szerkesztes(deck_id) {
+async function deck_edit_user(deck_id) {
     try {
         const token = localStorage.getItem('token');
         const result = await apiFetch("http://localhost:4000/api/getdeckbydeck_id", {
@@ -397,7 +407,7 @@ async function deck_open(deck_id) {
         for (let i = 0; i < cards_result.cards.length; i++) {
             card_list.appendChild(build_card(cards_result.cards[i].front_text, cards_result.cards[i].back_text, cards_result.cards[i].card_id, cards_result.cards[i].deck_id))
         }
-        document.getElementById("editDeckButton").onclick = () => deck_szerkesztes(deck_id)
+        document.getElementById("editDeckButton").onclick = () => deck_edit_user(deck_id)
         const el = document.getElementById('cardList');
         Sortable.create(el, {
             animation: 150,

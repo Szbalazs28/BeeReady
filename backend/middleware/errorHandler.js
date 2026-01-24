@@ -7,10 +7,7 @@ function errorHandler(err, req, res, next) {
     console.error(`---`)
 
     
-    res.status(statusCode).json({ 
-        success: false, 
-        message: err.message || "Szerverhiba történt." 
-    })
+    res.status(statusCode).json({success: false, message: err.message || "Szerverhiba történt." })
 }
 
 module.exports = errorHandler
