@@ -69,12 +69,12 @@ function build_card(front_text, back_text, card_id) {
 }
 
 function flashcard_start(deck_id) {
-    if(document.getElementById("prevCardBtn").disabled == false){
+    if (document.getElementById("prevCardBtn").disabled == false) {
         document.getElementById("prevCardBtn").classList.add("disabled_game_button");
         document.getElementById("prevCardBtn").classList.remove("activ_game_button");
         document.getElementById("prevCardBtn").disabled = true;
     }
-    if(document.getElementById("nextCardBtn").disabled == true){
+    if (document.getElementById("nextCardBtn").disabled == true) {
         document.getElementById("nextCardBtn").classList.remove("disabled_game_button");
         document.getElementById("nextCardBtn").classList.add("activ_game_button");
         document.getElementById("nextCardBtn").disabled = false;
@@ -241,7 +241,7 @@ async function card_delete(card_id) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ card_id: card_id })
-        })        
+        })
         card.remove();
 
     } catch (err) {
@@ -323,8 +323,8 @@ async function save_deck(deck_id) {
         const token = localStorage.getItem('token');
         const deck_name = document.getElementById("editDeckName").value
 
-        if (!lengthtest(deck_name, 1, 200)) { 
-        
+        if (!lengthtest(deck_name, 1, 200)) {
+
             const result = await apiFetch("http://localhost:4000/api/updatedeck", {
                 method: "POST",
                 headers: {
@@ -332,7 +332,7 @@ async function save_deck(deck_id) {
                     "authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
-            })            
+            })
             cancel_flashcard_modal()
             deck_open(deck_id)
         }
@@ -352,20 +352,20 @@ async function delete_deck(deck_id) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ deck_id: deck_id })
-        })        
+        })
         cancel_flashcard_modal()
         load_deck()
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 
 }
 
 
 async function deck_open(deck_id) {
-    localStorage.removeItem('flashcards');
-    localStorage.removeItem('current_flashcard_index');
     try {
+        localStorage.removeItem('flashcards');
+        localStorage.removeItem('current_flashcard_index');
         if (document.getElementById("cardList").classList.contains("dnone")) {
             document.querySelectorAll(".dnone_on_start").forEach(elem => elem.classList.remove("dnone"));
             document.getElementById("backToCardsButton").classList.add("dnone");
@@ -572,7 +572,7 @@ async function save_card(deck_id, card_id) {
             })
 
             cancel_flashcard_modal()
-            deck_open(deck_id)            
+            deck_open(deck_id)
         }
     } catch (err) {
         console.error(err);
@@ -662,7 +662,7 @@ async function save_new_card(deck_id) {
             })
 
             cancel_flashcard_modal()
-            deck_open(deck_id)            
+            deck_open(deck_id)
         }
 
 

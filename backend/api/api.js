@@ -20,7 +20,7 @@ const loginLimiter = rateLimit({
 
 
 
-router.post("/registration", async (req, res) => {
+router.post("/registration", async (req, res, next) => {
   let data = req.body;
   const usernameissues = usernameTest(data.username);
   const emailissues = emailTest(data.email);
@@ -52,7 +52,7 @@ router.post("/registration", async (req, res) => {
   }
 })
 
-router.post("/login", loginLimiter, async (req, res) => {
+router.post("/login", loginLimiter, async (req, res, next) => {
   const data = req.body;
   try {
     const [rows] = await userbyemail(data.email);
@@ -76,7 +76,7 @@ router.post("/login", loginLimiter, async (req, res) => {
   }
 });
 
-router.get("/edit_user", authenticateToken, async (req, res) => {
+router.get("/edit_user", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
     const [rows] = await userbyid(id);
@@ -90,7 +90,7 @@ router.get("/edit_user", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/edit_user_mentes", authenticateToken, async (req, res) => {
+router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
   const id = req.user.id;
   const adatok = req.body;
   const usernameissues = usernameTest(adatok.username);
@@ -129,7 +129,7 @@ router.post("/edit_user_mentes", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/add_deck", authenticateToken, async (req, res) => {
+router.post("/add_deck", authenticateToken, async (req, res, next) => {
   try {
     const adatok = req.body
     const id = req.user.id
@@ -141,7 +141,7 @@ router.post("/add_deck", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/deck_load", authenticateToken, async (req, res) => {
+router.post("/deck_load", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
     const [rows] = await getdeck(id)
@@ -151,7 +151,7 @@ router.post("/deck_load", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/getdeckbydeck_id", authenticateToken, async (req, res) => {
+router.post("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
   try {
     const deck_id = req.body.deck_id
     const [rows] = await getdeckbydeck_id(deck_id)
@@ -161,7 +161,7 @@ router.post("/getdeckbydeck_id", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/getcards", authenticateToken, async (req, res) => {
+router.post("/getcards", authenticateToken, async (req, res, next) => {
   try {
     const deck_id = req.body.deck_id
     const [rows] = await getcards(deck_id)
@@ -171,7 +171,7 @@ router.post("/getcards", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/addnewcard", authenticateToken, async (req, res) => {
+router.post("/addnewcard", authenticateToken, async (req, res, next) => {
   try {
     const adatok = req.body
     lengthtest(adatok.front_text, 1, 255)
@@ -183,7 +183,7 @@ router.post("/addnewcard", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/deletecard", authenticateToken, async (req, res) => {
+router.post("/deletecard", authenticateToken, async (req, res, next) => {
   try {
     const card_id = req.body.card_id
     await deletecard(card_id)
@@ -206,7 +206,7 @@ router.post("/updatecard", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/getcardbyid", authenticateToken, async (req, res) => {
+router.post("/getcardbyid", authenticateToken, async (req, res, next) => {
   try {
     const card_id = req.body.card_id
     const [rows] = await getcardbyid(card_id)
@@ -216,7 +216,7 @@ router.post("/getcardbyid", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/updatedeck", authenticateToken, async (req, res) => {
+router.post("/updatedeck", authenticateToken, async (req, res, next) => {
   try {
     const data = req.body
     lengthtest(data.deck_name, 1, 200)
@@ -227,7 +227,7 @@ router.post("/updatedeck", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/deletedeck", authenticateToken, async (req, res) => {
+router.post("/deletedeck", authenticateToken, async (req, res, next) => {
   try {
     const deck_id = req.body.deck_id
     await deletedeck(deck_id)
@@ -237,7 +237,7 @@ router.post("/deletedeck", authenticateToken, async (req, res) => {
   }
 })
 
-router.post("/save_new_card_order", authenticateToken, async (req, res) => {
+router.post("/save_new_card_order", authenticateToken, async (req, res, next) => {
   try {
     const data = req.body
     for (let i = 0; i < data.currentorder.length; i++) {
