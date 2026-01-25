@@ -323,19 +323,19 @@ async function save_deck(deck_id) {
         const token = localStorage.getItem('token');
         const deck_name = document.getElementById("editDeckName").value
 
-        if (!lengthtest(deck_name, 1, 200)) {
+        lengthtest(deck_name, 1, 200)
 
-            const result = await apiFetch("http://localhost:4000/api/updatedeck", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
-            })
-            cancel_flashcard_modal()
-            deck_open(deck_id)
-        }
+        const result = await apiFetch("http://localhost:4000/api/updatedeck", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
+        })
+        cancel_flashcard_modal()
+        deck_open(deck_id)
+
     } catch (err) {
         console.error(err);
     }
@@ -561,22 +561,23 @@ async function save_card(deck_id, card_id) {
         const token = localStorage.getItem('token');
         const front_text = document.getElementById("newCardFront").value
         const back_text = document.getElementById("newCardBack").value
-        if (!lengthtest(front_text, 1, 255) && !lengthtest(back_text, 1, 400)) {
-            const result = await apiFetch("http://localhost:4000/api/updatecard", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ card_id: card_id, front_text: front_text, back_text: back_text })
-            })
+        lengthtest(front_text, 1, 255)
+        lengthtest(back_text, 1, 400)
+        const result = await apiFetch("http://localhost:4000/api/updatecard", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ card_id: card_id, front_text: front_text, back_text: back_text })
+        })
 
-            cancel_flashcard_modal()
-            deck_open(deck_id)
-        }
+        cancel_flashcard_modal()
+        deck_open(deck_id)
+    
     } catch (err) {
-        console.error(err);
-    }
+    console.error(err);
+}
 
 
 }
@@ -651,19 +652,20 @@ async function save_new_card(deck_id) {
         const token = localStorage.getItem('token');
         const front_text = document.getElementById("newCardFront").value
         const back_text = document.getElementById("newCardBack").value
-        if (!lengthtest(front_text, 1, 255) && !lengthtest(back_text, 1, 400)) {
-            const result = await apiFetch("http://localhost:4000/api/addnewcard", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ deck_id: deck_id, front_text: front_text, back_text: back_text })
-            })
+        lengthtest(front_text, 1, 255)
+        lengthtest(back_text, 1, 400)
+        const result = await apiFetch("http://localhost:4000/api/addnewcard", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ deck_id: deck_id, front_text: front_text, back_text: back_text })
+        })
 
-            cancel_flashcard_modal()
-            deck_open(deck_id)
-        }
+        cancel_flashcard_modal()
+        deck_open(deck_id)
+
 
 
 

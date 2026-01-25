@@ -24,13 +24,11 @@ function getRandomInt(min, max) {
 
 
 
-function lengthtest(input, min, max) {
-    let result = false;    
+function lengthtest(input, min, max) {        
     if (input.length < min || input.length > max) {
         alertell(`A hossznak ${min} és ${max} karakter között kell lennie!`, 2.5);
-        result = true
-    }    
-    return result;
+        throw new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`);
+    }        
 }
 
 async function apiFetch(url, options = {}) {
