@@ -33,7 +33,7 @@
 .todo_taskadd .todo_items input[type="text"] {
     appearance: none;
     flex: 1 1 auto;
-    padding: 5px;
+    padding: 10px;
     border: 1px solid #00000000;
     background: #00000000;
     border-radius: 10px;
@@ -42,14 +42,16 @@
 }
 
 .todo_taskadd .todo_items input[type="text"]:focus {
-    appearance: none;
-    flex: 1 1 auto;
-    padding: 5px;
-    border: 1px solid #00000000;
+    outline: none;
+    padding: 10px;
     background: #00000000;
     border-radius: 10px;
     font-size: 1rem;
     border-bottom: #686868 1px solid;
+}
+
+.todo_taskadd .todo_items input[type="text"] {
+    outline: none;
 }
 
 .todo_taskadd .todo_items input[type="text"]::placeholder {
@@ -67,6 +69,13 @@
     padding: 5px;
     font-size: 1rem;
     margin-top: 10px;
+}
+
+.todo_taskadd textarea:focus {
+    outline: none;
+    border: 1px solid #686868;
+    background: #ededed;
+    border-bottom: #686868 1px solid;
 }
 
 .todo_taskadd textarea::placeholder {
