@@ -57,6 +57,7 @@
 }
 
 .todo_taskadd textarea {
+    font-family: 'Courier New', Courier, monospace;
     resize: none;
     height: 50%;
     border-radius: 10px;
@@ -79,8 +80,38 @@
     border: 1px solid #686868;
     background: #ededed;
     font-size: 1rem;
+    width: 100%;
 }
 
+.todo_taskadd .section_button {
+    font-family: 'Courier New', Courier, monospace;
+    align-items: center;
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.todo_taskadd button {
+    width: 80%;
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 15px;
+    padding: 5px;
+    border-radius: 10px;
+    border: none;
+    background-color: #F1B43C;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: .2s;
+    font-weight: 600;
+    margin: auto;
+}
+
+.todo_taskadd button:hover {
+    background-color: #e0a92f;
+    box-shadow: 0 0 8px #e0a92f77;
+}
 
 @media (max-width: 900px) {
     .todo .todo_taskadd {

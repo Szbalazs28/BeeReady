@@ -67,17 +67,18 @@
                             <div class="todo_items">
                                 <input type="text" id="task_name" placeholder="Új feladat">
                             </div>
-                            <textarea name="description" id="task_description"
-                                placeholder="A feladat leírása..."></textarea>
-                            <select name="importance" id="importance">
-                                <option value="importance" disabled selected> fontosság</option>
-                                <option value="high">magas</option>
-                                <option value="medium">közepes</option>
-                                <option value="low">alacsony</option>
-                            </select>
-                            <button type="button" id="add_task" onclick="submitTask()">
-                                <p>Feladat hozzáadása</p>
-                            </button>
+                            <textarea name="description" id="task_description" placeholder="A feladat leírása..."></textarea>
+                            <div class="section_button">
+                                <select name="importance" id="importance">
+                                    <option value="importance" disabled selected> fontosság</option>
+                                    <option value="high">magas</option>
+                                    <option value="medium">közepes</option>
+                                    <option value="low">alacsony</option>
+                                </select>
+                                <button type="button" id="add_task" onclick="submitTask()">
+                                    <p>Feladat hozzáadása</p>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
