@@ -20,22 +20,24 @@
         <!--navbar-->
         <nav class="navbar" id="navbar">
             <div class="logo">
-                <img src="../img/BeeReady_Logo_negyzet_atlatszo.PNG" alt="">
+                <img src="../img/BeeReady_Logo_negyzet_atlatszo.PNG" alt="img">
                 <h1>BeeReady</h1>
             </div>
             <hr>
 
             <div class="hamburger" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <div class="hamburder_padding">
+                    <div class="hamburger_border">
+                        <img src="../img/hamburger.png" alt="img">
+                    </div>
+                </div>
             </div>
             <div class="nav_items_div">
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
-                <div onclick="navbar_click('tanulokartyak',2)" class="nav_items">Tanulókártyák</div>
+                <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('chat',3)" class="nav_items">Chat</div>
 
-                <div onclick="navbar_click('felhasznalo',4), felhasznalo_betoltes()" class="nav_items nav_profil">
+                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
@@ -59,7 +61,8 @@
                     </div>
                     <div class="chat_messages">
                         <div class="chat_bubble">
-                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                            <img alt="prfil_kep_hely" src="../img/allatos_profilkepek/farkas.webp"
+                                class="chat_profile_pic">
                             <div class="chat_text">
                                 <label>Felhasználó</label>
                                 <p>Chat teszt</p>
@@ -69,7 +72,8 @@
                             <div class="chat_text">
                                 <p>Chat teszt</p>
                             </div>
-                            <img src="../img/allatos_profilkepek/farkas.webp" class="chat_profile_pic">
+                            <img alt="prfil_kep_hely" src="../img/allatos_profilkepek/farkas.webp"
+                                class="chat_profile_pic">
                         </div>
                     </div>
                     <div class="chat_input">
@@ -80,31 +84,90 @@
             </div>
 
             <!--tanulokartyak-->
-            <div class="cards dnone mainelem" id="tanulokartyak">                
-                <div class="deck_creator">
-                    <input type="text" class="newflashcard_input" id="newDeckName" placeholder="Új pakli neve (pl.: Történelem - 10. osztály)"
-                        required>
-                    <button id="createDeckButton">Pakli létrehozása</button>
-                </div>
-                <hr>
-                <div class="deck_list" id="deckList">
+            <div class="cards dnone mainelem" id="tanulokartyak">
+                <div id="decks">
+                    <div class="deck_creator">
+                        <form id="flashcard_form">
+                            <input type="text" class="newflashcard_input" id="newDeckName"
+                                placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
+                            <button type="submit" id="createDeckButton">Pakli létrehozása</button>
+                        </form>
+                    </div>
+
                     <h3>Jelenlegi paklijaid:</h3>
+                    <div class="flashcard_container" id="deckList">
+
+                    </div>
                 </div>
+                <div id="cards" class="dnone">
+                    <div class="deck_header">
+                        <h2 id="currentDeckName">Pakli Neve Betöltés alatt...</h2>
+
+                        <div class="deck_header_actions dnone_on_start">
+                            <button id="startStudyButton" class="action_button start_button ">Indítás</button>
+                            <button id="editDeckButton" class="action_button edit_button ">Szerkesztés</button>
+                            <button id="addCardButton" onclick="add_new_card_modal()"
+                                class="action_button add_button ">Kártya hozzáadása</button>
+                            <button id="backToDecksButton" onclick="load_deck()"
+                                class="action_button back_button">Vissza a paklikhoz</button>
+                        </div>
+                        <button id="backToCardsButton" class="dnone action_button back_button">Vissza a
+                            kártyákhoz</button>
+                    </div>
+                    <div class="flashcard_game_container " id="flashcardGameContainer">
+                        <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn" onclick="changeCard(-1)" disabled>
+                            &#10094;
+                        </button>
+
+                        <div class="flashcard_game_card" id="flashcardGameCard">
+                            <div class="flashcard" id="flashcard">
+                                <div class="flashcard-front" id="flashcard_front">
+                                    A kérdés helye:
+                                </div>
+                                <div class="flashcard-back" id="flashcard_back">
+                                    A válasz helye:
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="game_nav_button activ_game_button next_card" id="nextCardBtn" onclick="changeCard(1)">
+                            &#10095;
+                        </button>
+                    </div>
+                    <div class="flashcard_container dnone_on_start" id="cardList">
+
+                        <!--
+                        <div class="card_item">
+                            <div class="card_info">
+                                <p class="card_front">Példa kártya</p>
+                                <p class="card_back">Példa definíció</p>
+                            </div>
+                            <div class="card_actions">
+                                <button class="edit_card_button">Szerkesztés</button>
+                                <button class="del_card_button">Törlés</button>
+                            </div>
+                        </div>
+                    
+                    -->
+                    </div>
+
+                </div>
+
             </div>
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
-                <form id="szerkesztes">
+                <form id="edit_user">
                     <div class="account_div">
                         <div class="profil_img_div">
                             <div class="profil_img" id="prof_img">
-                                <img id="szerkprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
+                                <img id="editprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
                             </div>
                             <div class="account_buttons">
                                 <button type="submit" class="account_button">Mentés</button>
                                 <a onclick="logout()">Kijelentkezés</a>
                             </div>
                         </div>
-                        <div class="modal dnone" id="profil_modal">
+                        <div class="modal" id="profil_modal">
                             <div class="modal_content">
                                 <div class="avatar_options">
                                     <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
@@ -117,27 +180,30 @@
                                     <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
                                     <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
                                 </div>
-                                <button class="account_button" id="close">Bezár</button>
+                                <button type="button" class="account_button" id="close">Bezár</button>
                             </div>
                         </div>
-                        <div class="account_inputs input-group">
-                            <div class="account_border_div">
-                                <label for="felh">Felhasználónév</label>
-                                <input type="text" id="szerkusername" name="felh" placeholder="Felhasználónév" required>
-                            </div>
-                            <div class="account_border_div">
-                                <label for="email">E-mail</label>
-                                <input type="email" id="szerkemail" name="email" placeholder="E-mail" required>
-                            </div>
-                            <div class="account_border_div">
+                        <div class="account_kenyszerdiv">
+                            <div class="account_inputs input-group">
+                                <div class="account_border_div">
+                                    <label for="felh">Felhasználónév</label>
+                                    <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
+                                        required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="email">E-mail</label>
+                                    <input type="email" id="editemail" name="email" placeholder="E-mail" required>
+                                </div>
+                                <div class="account_border_div">
 
-                                <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                                <input type="password" id="currentpassword" name="jelenlegijelszo"
-                                    placeholder="Jelenlegi jelszó" required>
-                            </div>
-                            <div class="account_border_div">
-                                <label for="ujjelszo">Új jelszó</label>
-                                <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                                    <label for="jelenlegijelszo">Jelenlegi jelszó</label>
+                                    <input type="password" id="currentpassword" name="jelenlegijelszo"
+                                        placeholder="Jelenlegi jelszó" required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="ujjelszo">Új jelszó</label>
+                                    <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -147,8 +213,48 @@
 
 
     </div>
-    <script src="../javascript/navbar.js"></script>
+    <script src="../javascript/main.js"></script>
     <script src="../javascript/profil_szerk.js"></script>
+    <script src="../javascript/navbar.js"></script>
+    <script src="../javascript/flashcards.js"></script>
+    <script src="../javascript/libs/Sortable.min.js"></script>
 </body>
 
+<!--
+<div class="deck-edit-modal" id="deck_edit_modal">
+    <div class="deck-modal-content">
+        <input type="text" class="deck_edit_input" placeholder="Kárya első oldala (pl.: Alma)" requiredvalue="">
+        <input type="textarea" class="deck_edit_input" placeholder="Kártya hátsó oldala (pl.: Édes-savanyú, ehető gyümölcs, almafán terem.)" requiredvalue="">
+        <button class="save_deck">Mentés</button>
+        <button class="cancel_save_deck">Mégse</button>
+    </div>
+</div>
+<div class="flashcard-modal" id="add_card_modal">
+    <div class="flashcard-modal-content">
+        <h3>Kártya adatai:</h3>
+        <input type="text" id="newCardFront" class="flashcard_input" placeholder="Kártya elülső oldala (pl.: Alma)" required>
+        <textarea id="newCardBack" class="flashcard_textarea" placeholder="Kártya hátsó oldala (pl.: Édes-savanyú, ehető gyümölcs, almafán terem.)" required></textarea>        
+        <div class="modal-actions">
+            <button class="save_card_button" id="saveNewCard">Mentés</button>
+            <button class="cancel_card_button" id="cancelNewCard">Mégse</button>
+        </div>
+    </div>
+</div>
+-->
+
+
 </html>
+
+<!--
+- Példa a DOM deck-re:
+<div class="deck_item">
+    <div class="deck_info">
+        <p class="deck_name">Példa pakli 1 </p>
+        <p class="deck_count">32 kártya</p>
+    </div>
+    <div class="deck_actions">
+        <button class="edit_deck_button">Szerkesztés</button>
+    </div>
+</div>
+
+-->

@@ -239,5 +239,5 @@ a:hover {
 }
 
 .dnone{
-  display: none;
+  display: none !important;
 }

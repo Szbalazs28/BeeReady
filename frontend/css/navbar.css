@@ -63,3 +63,9 @@ hr{
     border: 1px solid #ddd;
     object-fit: cover;
 }
+
+@media (min-width: 769px) {
+    .hamburger{
+        display: none;
+    }
+}

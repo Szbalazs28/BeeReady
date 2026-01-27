@@ -1,12 +1,15 @@
+.dnone{
+    display: none !important;
+}
+
 .newflashcard_input {
     margin: auto;
-    width: 90%;
+    width: 50vw;
     padding: 12px 14px;
-    border: none;
-
+    border: 1px solid rgb(46, 46, 46);
     border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.3);
     -webkit-backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(4px);
     outline: none;
     font-size: 1rem;
@@ -36,4 +39,600 @@
 
 #createDeckButton:hover {
     background-color: #d99c2c;
+}
+
+
+.cards {
+    height: 100%;
+}
+
+.flashcard_container {
+    flex: 1;
+    height: 65vh;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3%;
+    row-gap: 10px;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+}
+
+
+
+
+.deck_item {
+    min-width: 200px;
+    width: 25%;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(241, 180, 60, 0.35);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;    
+    cursor: pointer;
+
+}
+
+.deck_info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.deck_item:hover {    
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+
+.deck_name {
+
+    width: 90%;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #000;
+
+}
+
+
+.deck_count {
+    font-size: 0.9rem;
+    color: #333;
+    opacity: 0.75;
+}
+
+.deck_actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.edit_deck_button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f1b43c;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit_deck_button:hover {
+    background: #d99c2c;
+}
+
+#flashcard_form {
+    display: flex;
+    gap: 10%;
+}
+
+
+
+
+.deck_header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+    padding: 10px;
+    border-bottom: 2px solid #f1b43c;
+}
+
+#currentDeckName {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.8rem;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.deck_header_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+.action_button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    flex-grow: 1;
+    max-width: 180px;
+}
+
+.action_button:hover {
+    transform: translateY(-1px);
+}
+
+.start_button {
+    color: #000;
+    background-color: rgba(241, 180, 60, 0.35);
+    ;
+}
+
+.start_button:hover {
+    background-color: #f1b43c;
+
+}
+
+.edit_button {
+    background-color: #f1b43c;
+    color: black;
+}
+
+.edit_button:hover {
+    background-color: #d99c2c;
+}
+
+.add_button {
+    color: #000;
+    background-color: #f1b43c;
+
+}
+
+.add_button:hover {
+    background-color: #d99c2c;
+}
+
+.back_button {
+    background-color: #9e9e9e;
+
+}
+
+.back_button:hover {
+    background-color: #797979;
+
+}
+
+
+@media (min-width: 600px) {
+    .deck_header {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .deck_header_actions {
+        flex-wrap: nowrap;
+        gap: 10px;
+        width: auto;
+    }
+
+    #currentDeckName {
+        margin: 0;
+    }
+
+    .action_button {
+        flex-grow: 0;
+    }
+}
+
+
+
+.card_item {
+    min-width: 200px;
+    width: 25%;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(241, 180, 60, 0.35);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+
+
+}
+
+.card_info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.card_front {
+
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #000;
+    max-width: 200px;
+    overflow-x: auto;
+}
+
+
+.card_back {
+
+    font-size: 0.9rem;
+    color: #333;
+    opacity: 0.75;
+    width: 100%;
+    max-width: 200px;
+    overflow-x: auto;
+    /*Itt javítás*/
+}
+
+
+.card_actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.edit_card_button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f1b43c;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit_card_button:hover {
+    background: #d99c2c;
+}
+
+.del_card_button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    background-color: rgb(0, 0, 0);
+}
+
+.del_card_button:hover {
+    background-color: white;
+    color: rgb(0, 0, 0);
+}
+
+
+/*FELUGRÓ ABLAK*/
+.flashcard-modal {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 998;
+}
+
+.flashcard-modal-content {
+
+    background-color: #fefbf5;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+
+}
+
+.flashcard-modal-content h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+
+
+.flashcard_input,
+.flashcard_textarea {
+    margin-bottom: 15px;
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    outline: none;
+    font-size: 1rem;
+    color: #000;
+    transition: 0.3s;
+    box-sizing: border-box;
+}
+
+.flashcard_textarea {
+    resize: vertical;
+    min-height: 120px;
+    max-height: 30vh;
+}
+
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+
+    justify-content: space-between;
+    gap: 10px;
+}
+
+
+.right-actions {
+    display: flex;
+    gap: 10px;
+}
+
+
+.delete_card_button {
+
+    padding: 8px 14px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #000000;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+
+
+.save_card_button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.save_card_button:hover {
+    background: #45a049;
+}
+
+
+.cancel_card_button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f44336;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cancel_card_button:hover {
+    background: #da190b;
+}
+
+
+
+
+
+
+.flashcard_game_container {
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    gap: 30px; 
+    
+}
+
+.flashcard_game_card {
+    width: 100%;
+    height: 100%;
+    max-height: 400px;
+    max-width: 300px;
+    min-width: 100px;
+    min-height: 200px;
+    position: relative;
+}
+
+
+#flashcard {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    /* Létrehozza a 3D teret a gyermek elemek számára */
+    transition: transform 0.25s;
+    /* Animáció ideje és sebessége */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.flashcard-front,
+.flashcard-back {    
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 12px;    
+    overflow-y: auto;          
+    overflow-x: hidden;        
+    word-wrap: break-word;     
+    display: block;            
+}
+
+
+#flashcard_front, #flashcard_back {
+    margin-top: auto;
+    margin-bottom: auto;
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flashcard-front {
+    background-color: #fff;
+    color: #333;
+    border: 4px solid #d99c2c;
+}
+
+.flashcard-back {
+    background-color: #d99c2c;
+    color: #fff;
+    /* A hátlapot alapból elforgatjuk, hogy ne látszódjon */
+    transform: rotateY(180deg);
+}
+
+.turn {
+    transform: rotateY(180deg);
+}
+
+
+.flashcard-modal_c {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 998;
+}
+
+.flashcard-modal-content_c {
+    display: flex;
+    flex-direction: column;
+    background-color: #fefbf5;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+
+}
+
+.modal-actions_c {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+}
+
+.flashcard-modal-content_c h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+
+.chioice_button_r{
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;    
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    background-color: blue;
+}
+
+.chioice_button_o{
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;    
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;    
+    background-color: rgb(115, 115, 218);
+}
+
+.game_nav_button {
+    background-color: rgba(241, 180, 60, 0.2);
+    border: 2px solid #f1b43c;
+    color: #333;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    -webkit-user-select: none;
+    user-select: none;
+    z-index: 10;
+}
+
+.disabled_game_button {
+    background-color: rgba(200, 200, 200, 0.2);
+    border: 2px solid #c0c0c0;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.activ_game_button:hover {
+    background-color: #f1b43c;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+.game_nav_button:active {
+    transform: scale(0.95);
+}
+@media (max-width: 600px) {
+    .flashcard_game_container {
+        gap: 10px;
+    }
+    
+    .game_nav_button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
 }

@@ -1,21 +1,97 @@
 const pool = require('../sql/database');
 
 async function userexists(email, username) {
-    return await pool.query("SELECT email, username FROM users WHERE email= ? or username=?", [email, username]);
+    return await pool.execute("SELECT email, username FROM users WHERE email= ? or username=?", [email, username]);
 }
 
 async function newuser(username, email, password, profil_pic_url) {
-    await pool.query("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
-    return await pool.query("SELECT id FROM users WHERE email= ?", [email]);
+    await pool.execute("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
+    return await pool.execute("SELECT id FROM users WHERE email= ?", [email]);
 }
 
 async function userbyemail(email) {
-    return await pool.query("SELECT * FROM users WHERE email = ?", [email]);
+    return await pool.execute("SELECT * FROM users WHERE email = ?", [email]);
 }
 
 async function userbyid(id) {
-    return await pool.query("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
+    return await pool.execute("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
 }
+
+async function add_deck(id, name) {
+    
+    const [maxposition] = await maxdeckposition(id);
+    if(maxposition[0].max_position === null){
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position) VALUES(?, ?, 0)", [id, name])    
+    }
+    else{
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position) VALUES(?, ?, ?)", [id, name, maxposition[0].max_position + 1])
+    }
+
+}
+
+async function  getdeck(id) {
+    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id ORDER BY flashcard_deck.position ASC",[id])
+}
+
+async function  getdeckbydeck_id(deck_id) {
+    return await pool.execute("SELECT deck_name, deck_id FROM flashcard_deck WHERE deck_id = ?",[deck_id])
+}
+
+async function updatedeck(deck_name, deck_id) {
+    await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
+}
+
+async function  deletedeck(deck_id) {
+    await pool.execute("DELETE FROM flashcard_card WHERE deck_id = ?", [deck_id])
+    await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ?", [deck_id])
+    
+}
+
+async function getcards(deck_id) {
+    return await pool.execute("SELECT * FROM flashcard_card WHERE deck_id = ? ORDER BY position ASC",[deck_id])
+}
+
+async function addnewcard(deck_id, front_text, back_text) {
+    const [maxposition] = await maxcardposition(deck_id);
+    if(maxposition[0].max_position === null){
+        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, 0);", [deck_id, front_text, back_text])
+    }
+    else{
+        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, ?);", [deck_id, front_text, back_text, maxposition[0].max_position + 1])
+    }
+    
+}
+
+async function maxdeckposition(user_id) {
+    return await pool.execute("SELECT MAX(position) AS max_position FROM flashcard_deck WHERE user_id = ?", [user_id]);
+}
+
+async function maxcardposition(deck_id) {
+    return await pool.execute("SELECT MAX(position) AS max_position FROM flashcard_card WHERE deck_id = ?", [deck_id]);
+}
+
+async function deletecard(card_id) {
+    await pool.execute("DELETE FROM flashcard_card WHERE flashcard_card.card_id = ?", [card_id])
+}
+
+async function  updatecard(front_text, back_text, card_id) {
+    await pool.execute("UPDATE flashcard_card SET front_text=?, back_text=? WHERE card_id=?", [front_text, back_text, card_id])
+    
+}
+
+async function getcardbyid(card_id) {
+    return await pool.execute("SELECT * FROM flashcard_card WHERE card_id=?", [card_id])
+}
+
+async function save_new_card_order(card_id, new_position) {
+    await pool.execute("UPDATE flashcard_card SET position = ? WHERE card_id = ?", [new_position, card_id])
+}
+
+async function save_new_deck_order(deck_id, new_position) {
+    await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ?", [new_position, deck_id])
+}
+
+
 
 async function updateuser(rows, ujadatok, kit) {
     let valtoztatas = updatebuild(rows, ujadatok);
@@ -55,7 +131,7 @@ function updatebuild(rows, ujadatok) {
 }
 
 async function isexist(data){
-    return await pool.query(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
+    return await pool.execute(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
 
@@ -65,5 +141,17 @@ module.exports = {
     newuser,
     userbyemail,
     userbyid,
-    updateuser
+    updateuser,
+    add_deck,
+    getdeck,
+    getdeckbydeck_id,
+    getcards,
+    addnewcard, 
+    deletecard,
+    updatecard,
+    getcardbyid,
+    updatedeck,
+    deletedeck,
+    save_new_card_order,
+    save_new_deck_order
 };

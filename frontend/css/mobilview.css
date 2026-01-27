@@ -1,30 +1,43 @@
-/* --- MOBIL NÉZET --- */
 @media (max-width: 768px) {
     .hamburger {
         position: fixed;
-        top: 15px;
-        left: 15px;
-        width: 32px;
-        height: 28px;
-        z-index: 1000;
+        top: 6px;
+        left: 6px;
+        width: 50px;
+        height: 50px;
+        z-index: 10;
+        cursor: pointer;
+        background-color: #fefbf5;
+        border-top-left-radius: 1.9rem;
+        border-bottom-right-radius: 17px;
+    }
+
+    .hamburger_border {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        cursor: pointer;
+        position: relative;
     }
 
-    .hamburger span {
-        display: block;
-        height: 4px;
-        width: 100%;
-        background: #333;
-        border-radius: 3px;
+    .hamburger_border img {
+        top: 5px;
+        right: 5px;
+        height: 0%;
     }
+
+    .hamburder_padding {
+        border-top-left-radius: 1.9rem;
+        border-bottom-right-radius: 15px;
+        margin-right: 4px;
+        margin-bottom: 4px;
+        background-color: #F1B43C;
+    }
+
     .navbar {
         position: fixed;
         top: 0;
         left: -290px;
-        height: 100vh;
+        height: 95vh;
         width: 260px;
         background: #F8F8F8;
         transition: 0.3s;
@@ -34,6 +47,7 @@
     .navbar.nav_open {
         left: 0;
     }
+
     .main_grid {
         grid-template-columns: 1fr;
     }
@@ -44,16 +58,43 @@
         gap: 1rem;
     }
 
+    .account {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .account form {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .account .account_kenyszerdiv {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
+
     .account_div {
         grid-template-columns: 1fr;
+        position: relative;
+        align-items: center;
+        justify-content: center;
         width: 100%;
+        height: 100%;
     }
 
     .profil_img_div {
+        position: absolute;
         margin: auto;
+        min-width: 100%;
+        top: 10%;
     }
 
-    .dnone{
+    .dnone {
         display: none;
     }
 }
