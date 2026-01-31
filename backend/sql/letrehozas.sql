@@ -5,14 +5,46 @@ SET
 USE `BeeReady_db`;
 
 CREATE TABLE
-  IF NOT EXISTS `users` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `username` VARCHAR(100) NOT NULL,
-    `email` VARCHAR(255) NOT NULL,
-    `password` VARCHAR(255) NOT NULL,
-    `profil_pic_url` TEXT DEFAULT NULL
+  IF NOT EXISTS users (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    profil_pic_url TEXT DEFAULT NULL
   );
 
+CREATE TABLE
+  IF NOT EXISTS flashcard_deck (
+    deck_id int not null AUTO_INCREMENT PRIMARY KEY,
+    user_id int not null,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    deck_name varchar(200),
+    create_date TIMESTAMP,
+    position int not null
+  );
+
+CREATE TABLE
+  IF NOT EXISTS flashcard_card (
+    card_id int not null AUTO_INCREMENT PRIMARY KEY,
+    deck_id int not null,
+    FOREIGN KEY (deck_id) REFERENCES flashcard_deck (deck_id),
+    front_text varchar(255),
+    back_text TEXT,
+    position int not null
+  );
+
+CREATE TABLE
+  todo_tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    task_name VARCHAR(255) NOT NULL,
+    task_description TEXT,
+    importance ENUM ('high', 'medium', 'low') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
+
+-- teszt1 felhasznalo jelszava = Teszt1$
 INSERT INTO
   `users` (username, email, password, profil_pic_url)
 VALUES
@@ -23,19 +55,5 @@ VALUES
     '../img/allatos_profilkepek/oroszlan.webp'
   );
 
--- teszt1 felhasznalo jelszava = Teszt1$
-
 -- tasks tábla létrehozása
 USE `BeeReady_db`;
-
-CREATE TABLE
-  IF NOT EXISTS `tasks` (
-    `task_id` INT AUTO_INCREMENT NOT NULL,
-    `user_id` INT NOT NULL,
-    `task_name` VARCHAR(100),
-    `task_description` VARCHAR(255),
-    `deadline` DATE,
-    `importance` VARCHAR(20), 
-    PRIMARY KEY (`task_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-  );

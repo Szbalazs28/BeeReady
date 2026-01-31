@@ -2,24 +2,24 @@ const bcrypt = require('bcrypt')
 
 
 function passwordTest(password) {
-    let hibak = {}    
-    hibak["alap"] = "A jelszónak meg kell felelnie a következő követelményeknek:"
+    let issues = {}
+    issues["alap"] = "A jelszónak meg kell felelnie a következő követelményeknek:"
     if (password.length < 6) {
-        hibak["hossz"] = "Legalább 6 karakternek kell lennie!"
+        issues["hossz"] = "Legalább 6 karakternek kell lennie!"
 
     }
     if (!nagybetuellenorzes(password)) {
-        hibak["nagybetu"] = "Kell tartalmaznia nagybetűt!"
+        issues["nagybetu"] = "Kell tartalmaznia nagybetűt!"
 
     }
     if (!specialiskarakterellenorzes(password)) {
-        hibak["specialis"] = "Kell tartalmaznia legalább egy speciális karaktert!"
+        issues["specialis"] = "Kell tartalmaznia legalább egy speciális karaktert!"
 
     }
     if (!szamjegyellenorzes(password)) {
-        hibak["szam"] = "Kell tartalmaznia legalább egy számot!"
+        issues["szam"] = "Kell tartalmaznia legalább egy számot!"
     }
-    return hibak;
+    return issues;
 }
 
 function nagybetuellenorzes(password) {
@@ -42,9 +42,15 @@ function szamjegyellenorzes(password) {
 }
 
 async function titkositas(password) {
-  const saltRounds = 12
-  const hash = await bcrypt.hash(password, saltRounds)
-  return hash
+    try {
+        const saltRounds = 12
+        const hash = await bcrypt.hash(password, saltRounds)
+        return hash
+    }
+    catch (err) {
+        console.error("Hiba a jelszó titkosításakor: ", err);
+    }
+
 }
 
 async function compare(password, hash) {
@@ -53,24 +59,33 @@ async function compare(password, hash) {
 
 
 function usernameTest(username) {
-    let hibak = {}
+    let issues = {}
     if (username.length < 3) {
-        hibak["rovid"] = "Legalább 3 karakternek kell lennie!"
+        issues["rovid"] = "Legalább 3 karakternek kell lennie!"
     }
     if (username.length > 20) {
-        hibak["hosszu"] = "Legfeljebb 20 karakter lehet!"
+        issues["hosszu"] = "Legfeljebb 20 karakter lehet!"
     }
-    return hibak;
+    return issues;
 
 }
 
 function emailTest(email) {
-    let hibak = {}    
+    let issues = {}
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if(!emailRegex.test(email)){
-        hibak["formatum"] = "Érvénytelen e-mail formátum!"
+    if (!emailRegex.test(email)) {
+        issues["formatum"] = "Érvénytelen e-mail formátum!"
     }
-    return hibak;
+    return issues;
 }
 
-module.exports = {passwordTest, titkositas, compare, usernameTest, emailTest};
+function lengthtest(input, min, max) {    
+    if (input.length < min || input.length > max) {
+        const err = new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`);
+        err.status = 400; 
+        throw err;
+    }
+    return true
+}
+
+module.exports = { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest };

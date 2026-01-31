@@ -31,7 +31,6 @@ body {
 
 .workspace section {
     grid-column: 1/4;
-    height: fit-content;
 }
 
 #fooldal header{

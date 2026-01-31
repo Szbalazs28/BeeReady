@@ -184,6 +184,20 @@
 .task-card.low::before { background-color: #10b981; }
 
 
+/* Szerkeszthető területek stílusa */
+[contenteditable="true"]:focus {
+    outline: 2px dashed #F1B43C;
+    background-color: #fffdf0;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+.task-content h4, .task-content p {
+    min-height: 1.2em; /* Akkor is kattintható marad, ha üres */
+    margin-bottom: 8px;
+}
+
+
 @media (max-width: 900px) {
     .todo-grid {
         grid-template-columns: 1fr; 
