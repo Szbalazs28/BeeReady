@@ -9,24 +9,37 @@ CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(100) NOT NULL UNIQUE,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  profil_pic_url TEXT DEFAULT NULL
+  profil_pic_url TEXT DEFAULT NULL,
+  selected_week_type VARCHAR(2) DEFAULT 'A'  
 );
 
 CREATE TABLE IF NOT EXISTS flashcard_deck(
 deck_id int not null AUTO_INCREMENT PRIMARY KEY,
-user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id),
 deck_name varchar(200),
 create_date TIMESTAMP,
-position int not null
+position int not null,
+user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS flashcard_card(
 card_id int not null AUTO_INCREMENT PRIMARY KEY,
 deck_id int not null, 
-FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id),
 front_text varchar(255),
 back_text TEXT,
-position int not null
+position int not null,
+FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS timetable (
+    event_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    day INT NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    subject VARCHAR(100),
+    location VARCHAR(50),    
+    week_type VARCHAR(2), 
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 

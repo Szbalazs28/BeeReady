@@ -1,0 +1,232 @@
+#timetable{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.create_event_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+/* Legördülő menü csoportosítása */
+.controls_group {
+    display: flex;
+    align-items: center;
+}
+
+.select_wrapper {
+    position: relative;
+    min-width: 120px;
+}
+
+.custom_select {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    background-color: #f0f2f5;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    appearance: none; /* Alapértelmezett böngésző nyíl eltávolítása */
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Kijelölési állapot */
+.custom_select:focus {
+    outline: none;
+    border-color: #4a90e2;
+    background-color: #fff;
+}
+
+/* Egyedi nyíl a legördülőhöz */
+.select_wrapper::after {
+    content: '▼';
+    font-size: 12px;
+    color: #666;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Plusz jeles gomb */
+.add_btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add_btn:hover {
+    background-color: #218838;
+    transform: rotate(90deg) scale(1.1); /* Egy kis extra: elforog hoverre */
+}
+
+
+
+
+.timetable-flex-container {
+    display: flex;
+    flex-direction: row; 
+    gap: 12px;
+    padding: 20px;
+    align-items: flex-start; 
+    overflow-x: auto;
+}
+
+.day-column {
+    min-height: 100px;
+    height: 66vh;
+    flex: 1;
+    min-width: 150px;
+    background-color: #f4f4f4;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column; 
+    overflow-y: auto;
+}
+
+.day-header {
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #FFCC00; 
+    margin-bottom: 15px;
+}
+
+.event-card {
+    background: white;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    border-left: 5px solid #FFCC00;
+}
+
+.event-card:hover {
+    transform: translateY(-3px);
+}
+
+.event-title, .event-location {
+    margin: 0; /* Eltávolítja az összes alapértelmezett margint */
+    padding: 0; /* Opcionális: adj hozzá egy kis helyet, ha szükséges */
+    font-size: 1rem; /* Beállíthatod a pontos méretet is */
+}
+
+.event-time {
+   
+    font-size: 0.75rem;
+    color: #666;
+    
+}
+
+/* Modal háttér */
+.timetable-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal doboz */
+.timetable-modal-content {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+/* Egységes input stílus */
+.timetable-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box; /* Fontos a padding miatt! */
+    transition: border-color 0.3s;
+}
+
+.timetable-input:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+/* Gombok elrendezése */
+.modal-button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-save, .btn-cancel {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+.btn-save {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-save:hover, .btn-cancel:hover {
+    opacity: 0.9;
+}
+
+.timetable-time-row{
+    display: flex;
+    gap: 10px;
+}
+
+.modal-field-wrapper{
+    flex: 1;
+}

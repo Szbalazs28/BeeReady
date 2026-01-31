@@ -40,7 +40,7 @@ const customFormat = '[:hu-date] [:hu-time] :method :url :status :response-time 
 
 
 app.use(morgan(customFormat));
-app.use(errorHandler);
+
 
 
 app.use(cors());
@@ -60,6 +60,9 @@ app.use('/api', endpoints);
 
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.use(errorHandler);
+
 app.listen(port, () => {
   console.log(`Szerver fut: http://${ip}:${port}/`);
 });

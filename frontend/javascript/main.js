@@ -54,7 +54,9 @@ async function apiFetch(url, options = {}) {
                 alertell("Szerverhiba történt.", 5);
             }
 
-            throw new Error(`HTTP ${response.status}`);
+            let err = new Error(`HTTP ${response.status}`);
+            err.status = response.status;
+            throw err;
         }
         else{
             if(data.write){
