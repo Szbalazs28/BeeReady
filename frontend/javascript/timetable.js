@@ -193,7 +193,7 @@ function build_event(event) {
     eventCard.classList.add("event-card");
     const eventTime = document.createElement("span");
     eventTime.classList.add("event-time");
-    eventTime.textContent = `${event.start_time} - ${event.end_time}`;
+    eventTime.textContent = `${event.start_time.slice(0,5)} - ${event.end_time.slice(0,5)}`;
     const eventTitle = document.createElement("h4");
     eventTitle.classList.add("event-title");
     eventTitle.textContent = event.subject;

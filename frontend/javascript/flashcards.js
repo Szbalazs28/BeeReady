@@ -123,6 +123,7 @@ async function flashcard_start_ordered(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         })
+        card_length_test(cards_result.cards, deck_id)
         let cards = []
         for (let i = 0; i < cards_result.cards.length; i++) {
             cards.push({
@@ -135,6 +136,22 @@ async function flashcard_start_ordered(deck_id) {
         card_data_load(0);
     } catch (error) {
         console.error(error);
+    }
+}
+
+function card_length_test(cards, deck_id) {
+    if (cards.length == 0) {
+        deck_open(deck_id)
+        alertell("Nincsenek kártyák a pakliban!", 2.5)
+        throw new Error("Nincsenek kártyák a pakliban!")
+    }
+    else{
+        if(cards.length == 1){
+            const nextBtn = document.getElementById("nextCardBtn");
+            nextBtn.disabled = true;
+            nextBtn.classList.add("disabled_game_button");
+            nextBtn.classList.remove("activ_game_button");
+        }
     }
 }
 
@@ -157,39 +174,26 @@ function changeCard(index_change) {
     const nextcardbutton = document.getElementById("nextCardBtn")
     const prevcardbutton = document.getElementById("prevCardBtn")
     let currentindex = parseInt(localStorage.getItem('current_flashcard_index'));
-    if (currentindex + index_change <= 0) {
+    let newIndex = currentindex + index_change;
+    if (newIndex <= 0) {
         prevcardbutton.disabled = true;
         prevcardbutton.classList.add("disabled_game_button");
         prevcardbutton.classList.remove("activ_game_button");
+    } else {
+        prevcardbutton.disabled = false;
+        prevcardbutton.classList.add("activ_game_button");
+        prevcardbutton.classList.remove("disabled_game_button");
     }
-    else {
-        if (prevcardbutton.disabled) {
-            prevcardbutton.classList.add("activ_game_button");
-            prevcardbutton.classList.remove("disabled_game_button");
-            prevcardbutton.disabled = false;
-        }
-        else {
-            if (currentindex + index_change == card_length - 1) {
-                nextcardbutton.classList.add("disabled_game_button");
-                nextcardbutton.classList.remove("activ_game_button");
-                nextcardbutton.disabled = true;
-            }
-            else {
-                if (nextcardbutton.disabled) {
-                    nextcardbutton.classList.add("activ_game_button");
-                    nextcardbutton.classList.remove("disabled_game_button");
-                    nextcardbutton.disabled = false;
-                }
-            }
-        }
-
-
+    if (newIndex >= card_length - 1) {
+        nextcardbutton.disabled = true;
+        nextcardbutton.classList.add("disabled_game_button");
+        nextcardbutton.classList.remove("activ_game_button");
+    } else {
+        nextcardbutton.disabled = false;
+        nextcardbutton.classList.add("activ_game_button");
+        nextcardbutton.classList.remove("disabled_game_button");
     }
-
-
     card_data_load(currentindex + index_change);
-    //Nem lett tesztelve
-
 }
 
 
@@ -205,6 +209,7 @@ async function flashcard_start_random(deck_id) {
             },
             body: JSON.stringify({ deck_id: deck_id })
         })
+        card_length_test(cards_result.cards, deck_id)
         let order = []
         let cards = []
         let i = 0;
@@ -574,10 +579,10 @@ async function save_card(deck_id, card_id) {
 
         cancel_flashcard_modal()
         deck_open(deck_id)
-    
+
     } catch (err) {
-    console.error(err);
-}
+        console.error(err);
+    }
 
 
 }
