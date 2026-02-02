@@ -94,6 +94,10 @@ async function get_events(user_id) {
     return await pool.execute("SELECT event_id, day, start_time, end_time, subject, location, week_type FROM timetable WHERE user_id = ? AND week_type = (SELECT selected_week_type FROM users WHERE id = ?) ORDER BY day ASC, start_time ASC, end_time ASC", [user_id, user_id]);
 }
 
+async function get_saved_weektype(user_id) {
+    return await pool.execute("SELECT selected_week_type FROM users WHERE id = ?", [user_id]);
+}
+
 async function save_new_event(id, day, startTime, endTime, subject, location, weekType) {
     await pool.execute("INSERT INTO timetable (user_id, day, start_time, end_time, subject, location, week_type) VALUES (?,?,?,?,?,?,?)", [id, day, startTime, endTime, subject, location, weekType]);
     
@@ -101,6 +105,14 @@ async function save_new_event(id, day, startTime, endTime, subject, location, we
 
 async function changeselectedweek(id, week_type) {
     await pool.execute("UPDATE users SET selected_week_type = ? WHERE id = ?", [week_type, id]);
+}
+
+async function updateevent(event_id, day, startTime, endTime, subject, location, weekType) {
+    await pool.execute("UPDATE timetable SET day = ?, start_time = ?, end_time = ?, subject = ?, location = ?, week_type = ? WHERE event_id = ?", [day, startTime, endTime, subject, location, weekType, event_id]);
+}
+
+async function delete_event(event_id) {
+    await pool.execute("DELETE FROM timetable WHERE event_id = ?", [event_id]);
 }
 
 
@@ -169,5 +181,8 @@ module.exports = {
     save_new_deck_order,
     save_new_event,
     get_events,
-    changeselectedweek    
+    changeselectedweek,
+    get_saved_weektype,
+    updateevent,
+    delete_event  
 };

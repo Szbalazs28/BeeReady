@@ -7,7 +7,7 @@ function authenticateToken(req, res, next) {
 
   if (token == null) {
     console.log("Hiányzó token!")
-    return res.status(401).json({ message: "Hozzáférés megtagadva. Kérjük, jelentkezzen be!" });
+    return res.status(401).json({ message: "Hozzáférés megtagadva." });
     
   }
 

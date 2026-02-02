@@ -97,7 +97,7 @@
 
 .day-column {
     min-height: 100px;
-    height: 66vh;
+    height: 64vh;
     flex: 1;
     min-width: 150px;
     background-color: #f4f4f4;
@@ -106,6 +106,10 @@
     display: flex;
     flex-direction: column; 
     overflow-y: auto;
+}
+
+.today_highlight {
+    border: 3px solid #FFCC00; 
 }
 
 .day-header {
@@ -133,7 +137,7 @@
 .event-title, .event-location {
     margin: 0; /* Eltávolítja az összes alapértelmezett margint */
     padding: 0; /* Opcionális: adj hozzá egy kis helyet, ha szükséges */
-    font-size: 1rem; /* Beállíthatod a pontos méretet is */
+    font-size: 1rem; 
 }
 
 .event-time {
@@ -157,7 +161,7 @@
     z-index: 1000;
 }
 
-/* Modal doboz */
+
 .timetable-modal-content {
     background-color: #ffffff;
     padding: 25px;
@@ -174,7 +178,7 @@
     text-align: center;
 }
 
-/* Egységes input stílus */
+
 .timetable-input {
     width: 100%;
     padding: 12px;
@@ -182,7 +186,7 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 14px;
-    box-sizing: border-box; /* Fontos a padding miatt! */
+    box-sizing: border-box;
     transition: border-color 0.3s;
 }
 
@@ -191,14 +195,14 @@
     border-color: #4a90e2;
 }
 
-/* Gombok elrendezése */
+
 .modal-button-group {
     display: flex;
     gap: 10px;
     margin-top: 10px;
 }
 
-.btn-save, .btn-cancel {
+.btn-save, .btn-cancel, .btn-delete {
     flex: 1;
     padding: 12px;
     border: none;
@@ -206,6 +210,11 @@
     cursor: pointer;
     font-weight: bold;
     transition: opacity 0.2s;
+}
+
+.btn-delete {
+    background-color: red;
+    color: white;
 }
 
 .btn-save {
@@ -218,7 +227,7 @@
     color: white;
 }
 
-.btn-save:hover, .btn-cancel:hover {
+.btn-save:hover, .btn-cancel:hover, .btn-delete:hover {
     opacity: 0.9;
 }
 
