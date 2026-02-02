@@ -65,21 +65,15 @@
 }
 
 .todo_tasks {
-    display: flex;            
-    flex-direction: row;      
+    display: flex;
+    flex-direction: row;
     gap: 20px;
-    padding: 10px 5px 15px 5px; 
-    overflow-x: scroll;        
-    overflow-y: hidden;       
-    width: 100%;
-    flex-grow: 1;     
-    flex-wrap: nowrap;        
+    padding: 15px 10px;
+    overflow-x: auto; 
+    overflow-y: hidden;
     width: 100%;
     box-sizing: border-box;
-    scrollbar-width: thin;
-    scrollbar-color: #F1B43C #d1d5db;
-    max-width: 100%; 
-   
+    align-items: flex-start; 
 }
 
 .task-card {
@@ -91,8 +85,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-width: 200px;                   
-    white-space: normal;     
+    min-width: 200px; 
+    max-width: 200px;
+    height: 250px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .todo_tasks::-webkit-scrollbar {
@@ -114,6 +112,9 @@
     font-size: 1.15rem;
     color: #1f2937;
     font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    word-break: break-word; 
 }
 
 .task-card p {
@@ -126,8 +127,9 @@
 
 .task-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 12px;
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid #f3f4f6;
@@ -184,7 +186,6 @@
 .task-card.low::before { background-color: #10b981; }
 
 
-/* Szerkeszthető területek stílusa */
 [contenteditable="true"]:focus {
     outline: 2px dashed #F1B43C;
     background-color: #fffdf0;
@@ -193,7 +194,7 @@
 }
 
 .task-content h4, .task-content p {
-    min-height: 1.2em; /* Akkor is kattintható marad, ha üres */
+    min-height: 1.2em; 
     margin-bottom: 8px;
 }
 
@@ -202,4 +203,91 @@
     .todo-grid {
         grid-template-columns: 1fr; 
     }
+}
+
+.task-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%; 
+}
+
+.task-actions .edit_btn, 
+.task-actions .delete_btn {
+    flex: 1; /* Egyforma szélesek lesznek a gombok */
+    text-align: center;
+    padding: 8px 4px;
+}
+
+.task-card .edit_btn {
+    background-color: #e5e7eb;
+    color: #374151;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.task-card .edit_btn:hover {
+    background-color: #d1d5db; 
+    color: #111827;
+}
+
+.task-card .edit_btn.btn-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+.task-card .edit_btn.btn-success:hover {
+    background-color: #a7f3d0;
+}
+
+.editing .task-title, 
+.editing .task-desc {
+    border: 1px dashed #F1B43C;
+    background-color: #fffdf5;
+    padding: 2px 5px;
+    border-radius: 4px;
+    outline: none;
+}
+
+.task-desc {
+    width: 100%;
+    flex-grow: 1; 
+    margin: 10px 0;
+    
+    background-color: transparent;
+    border: 1px solid transparent;
+    resize: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #4b5563;
+    line-height: 1.4;
+    padding: 5px;
+    box-sizing: border-box;
+    outline: none;
+    overflow-y: auto; 
+    overflow-x: hidden;
+}
+
+.task-desc::-webkit-scrollbar {
+    width: 6px;
+}
+.task-desc::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 4px;
+}
+
+.task-desc:not([readonly]) {
+    background-color: #fff;
+    border: 1px dashed #F1B43C;
+    border-radius: 4px;
+    color: #000;
+}
+
+.task-title[contenteditable="true"] {
+    border: 1px dashed #F1B43C;
+    background-color: #fffdf5;
+    padding: 2px;
 }

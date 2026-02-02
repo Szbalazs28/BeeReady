@@ -134,7 +134,6 @@ async function isexist(data){
     return await pool.execute(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
-// Új feladat hozzáadása
 async function add_task(user_id, task_name, task_description, importance) {
     await pool.execute(
         "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)", 
@@ -144,15 +143,17 @@ async function add_task(user_id, task_name, task_description, importance) {
 
 // Feladatok lekérése felhasználó szerint (időrendben visszafelé)
 async function get_tasks(user_id) {
-    return await pool.execute("SELECT * FROM todo_tasks WHERE user_id = ? ORDER BY id DESC", [user_id]);
+    return await pool.execute(`SELECT * FROM todo_tasks 
+WHERE user_id = ? 
+ORDER BY 
+    importance ASC, 
+    created_at ASC;`, [user_id]);
 }
 
-// Feladat törlése
 async function delete_task(task_id) {
     await pool.execute("DELETE FROM todo_tasks WHERE id = ?", [task_id]);
 }
 
-// Feladat frissítése
 async function update_task(task_id, task_name, task_description, importance) {
     await pool.execute(
         "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?", 

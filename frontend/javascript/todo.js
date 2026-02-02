@@ -25,7 +25,7 @@ async function submitTask() {
     }
 }
 
-// Oldal betöltésekor lekérjük a feladatokat
+
 document.addEventListener('DOMContentLoaded', loadTasks);
 
 async function loadTasks() {
@@ -40,7 +40,7 @@ async function loadTasks() {
         
         if (result.success) {
             const container = document.getElementById('todo_tasks');
-            container.innerHTML = ''; // Töröljük a jelenlegi tartalmat (pl. a demo kártyát)
+            container.innerHTML = ''; 
             
             result.tasks.forEach(task => {
                 const taskCard = createTaskElement(task);
@@ -52,28 +52,24 @@ async function loadTasks() {
     }
 }
 
-// DOM elem generáló függvény
 function createTaskElement(task) {
     const div = document.createElement('div');
-    // Importance osztály hozzáadása (high, medium, low)
     div.className = `task-card ${task.importance}`;
     div.id = `task-${task.id}`;
 
-    // Cím
     const h4 = document.createElement('h4');
     h4.innerText = task.task_name;
-    h4.classList.add('task-title'); // CSS miatt hasznos lehet
+    h4.classList.add('task-title'); 
 
-    // Leírás
-    const p = document.createElement('p');
-    p.innerText = task.task_description;
-    p.classList.add('task-desc');
+    const desc = document.createElement('textarea');
+    desc.value = task.task_description; 
+    desc.classList.add('task-desc');
+    desc.readOnly = true; 
+    desc.setAttribute('spellcheck', 'false'); 
 
-    // Lábléc (Footer)
     const footer = document.createElement('div');
     footer.className = 'task-footer';
 
-    // Fontosság szöveg
     const spanImportance = document.createElement('span');
     const importanceHu = {
         'high': 'Magas',
@@ -81,40 +77,34 @@ function createTaskElement(task) {
         'low': 'Alacsony'
     };
     spanImportance.innerText = importanceHu[task.importance] || task.importance;
-    spanImportance.dataset.value = task.importance; // Eredeti értéket tároljuk az update-hez
+    spanImportance.dataset.value = task.importance; 
 
-    // Gombok tárolója
-    const btnGroup = document.createElement('div');
-    btnGroup.style.display = 'flex';
-    btnGroup.style.gap = '10px';
+    const btn_group = document.createElement('div');
+    btn_group.className = 'task-actions'; 
 
-    // Szerkesztés gomb
     const editBtn = document.createElement('button');
     editBtn.innerText = 'Szerkesztés';
-    editBtn.className = 'edit_btn btn btn-sm btn-outline-secondary'; // Bootstrap stílus vagy saját
+    editBtn.className = 'edit_btn'; 
     editBtn.onclick = () => enableEditMode(task.id, div, editBtn);
 
-    // Törlés gomb
-    const deleteBtn = document.createElement('button');
-    deleteBtn.innerText = 'Törlés';
-    deleteBtn.className = 'delete_btn';
-    deleteBtn.onclick = () => deleteTask(task.id);
+    const del_btn = document.createElement('button');
+    del_btn.innerText = 'Törlés';
+    del_btn.className = 'delete_btn';
+    del_btn.onclick = () => deleteTask(task.id);
 
-    // Összeállítás
-    btnGroup.appendChild(editBtn);
-    btnGroup.appendChild(deleteBtn);
+    btn_group.appendChild(editBtn);
+    btn_group.appendChild(del_btn);
 
     footer.appendChild(spanImportance);
-    footer.appendChild(btnGroup);
+    footer.appendChild(btn_group);
 
     div.appendChild(h4);
-    div.appendChild(p);
+    div.appendChild(desc); 
     div.appendChild(footer);
 
     return div;
 }
 
-// Új feladat beküldése
 async function submitTask() {
     const task_name = document.getElementById('task_name').value;
     const task_description = document.getElementById('task_description').value;
@@ -140,19 +130,16 @@ async function submitTask() {
 
     const result = await response.json();
     if (result.success) {
-        // Mezők ürítése
         document.getElementById('task_name').value = '';
         document.getElementById('task_description').value = '';
         document.getElementById('importance').value = '';
         
-        // Lista újratöltése reload nélkül
         loadTasks();
     } else {
         alert("Hiba: " + result.message);
     }
 }
 
-// Feladat törlése
 async function deleteTask(id) {
     if(!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return;
 
@@ -167,45 +154,34 @@ async function deleteTask(id) {
 
     const result = await response.json();
     if (result.success) {
-        // Elem eltávolítása a DOM-ból
         document.getElementById(`task-${id}`).remove();
     } else {
         alert("Hiba történt a törléskor.");
     }
 }
 
-// Szerkesztés mód bekapcsolása
-function enableEditMode(id, cardDiv, editBtn) {
-    const titleElement = cardDiv.querySelector('h4');
-    const descElement = cardDiv.querySelector('p');
+function enableEditMode(id, card_div, editBtn) {
+    const titleElement = card_div.querySelector('.task-title');
+    const descElement = card_div.querySelector('.task-desc'); 
 
-    // Tartalom szerkeszthetővé tétele
     titleElement.contentEditable = "true";
-    descElement.contentEditable = "true";
-    
-    // Vizuális jelzés (pl. fókusz)
-    titleElement.focus();
-    cardDiv.classList.add('editing'); // CSS-ben formázhatod ha akarod
-
-    // Gomb átváltása "Mentés"-re
+    descElement.readOnly = false;
+    descElement.focus();
+    card_div.classList.add('editing');
     editBtn.innerText = "Mentés";
-    editBtn.classList.remove('btn-outline-secondary');
-    editBtn.classList.add('btn-success'); // Zöld gomb
-    
-    // Funkció cseréje a gombon
-    editBtn.onclick = () => saveTask(id, cardDiv, editBtn);
+    editBtn.classList.add('btn-success');
+    editBtn.onclick = () => saveTask(id, card_div, editBtn);
 }
 
-// Módosítások mentése
-async function saveTask(id, cardDiv, saveBtn) {
-    const titleElement = cardDiv.querySelector('h4');
-    const descElement = cardDiv.querySelector('p');
-    const importanceSpan = cardDiv.querySelector('.task-footer span');
+async function saveTask(id, card_div, saveBtn) {
+    const titleElement = card_div.querySelector('.task-title');
+    const descElement = card_div.querySelector('.task-desc');
+    const importanceSpan = card_div.querySelector('.task-footer span');
 
     const newTitle = titleElement.innerText;
-    const newDesc = descElement.innerText;
-    // Az importance-t most nem tettem szerkeszthetővé a kártyán belül egyszerűség kedvéért,
-    // de az eredeti értéket visszaküldjük.
+    
+    const newDesc = descElement.value; 
+    
     const importanceValue = importanceSpan.dataset.value; 
 
     const response = await fetch('/api/updatetask', {
@@ -225,17 +201,16 @@ async function saveTask(id, cardDiv, saveBtn) {
     const result = await response.json();
 
     if (result.success) {
-        // Szerkesztés lezárása
         titleElement.contentEditable = "false";
-        descElement.contentEditable = "false";
-        cardDiv.classList.remove('editing');
+        
+        descElement.readOnly = true;
+        
+        card_div.classList.remove('editing');
 
-        // Gomb visszaállítása
         saveBtn.innerText = "Szerkesztés";
         saveBtn.classList.remove('btn-success');
-        saveBtn.classList.add('btn-outline-secondary');
-        saveBtn.onclick = () => enableEditMode(id, cardDiv, saveBtn);
+        saveBtn.onclick = () => enableEditMode(id, card_div, saveBtn);
     } else {
-        alert("Hiba a mentés során: " + result.message);
+        alert("Hiba: " + result.message);
     }
 }
