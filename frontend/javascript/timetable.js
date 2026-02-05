@@ -1,18 +1,20 @@
 document.getElementById("weekSelector").onchange = async () => {
-    const weekType = document.getElementById("weekSelector").value;
-    const token = localStorage.getItem("token");
-    const result = await apiFetch("http://127.0.0.1:4000/api/change_selected_week", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ week_type: weekType })
-    })
+    try {
+        const weekType = document.getElementById("weekSelector").value;
+        const token = localStorage.getItem("token");
+        const result = await apiFetch("http://127.0.0.1:4000/api/change_selected_week", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ week_type: weekType })
+        })
 
-    await load_events();
-
-
+        await load_events();
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 async function createEventModal() {
@@ -136,22 +138,31 @@ async function createEventModal() {
 }
 
 async function saveNewEvent() {
-    const day = document.getElementById("modal_day_select").value;
-    const startTime = document.getElementById("modal_start_time").value;
-    const endTime = document.getElementById("modal_end_time").value;
-    const subject = document.getElementById("modal_subject_input").value;
-    const location = document.getElementById("modal_location_input").value;
-    const weekType = document.getElementById("weekSelector").value;
-    const token = localStorage.getItem("token");
-    const result = await apiFetch("http://127.0.0.1:4000/api/save_new_event", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ day: day, start_time: startTime, end_time: endTime, subject: subject, location: location, week_type: weekType })
-    })
-    load_events();
+    try {
+        const day = document.getElementById("modal_day_select").value;
+        const startTime = document.getElementById("modal_start_time").value;
+        const endTime = document.getElementById("modal_end_time").value;
+        const subject = document.getElementById("modal_subject_input").value;
+        const location = document.getElementById("modal_location_input").value;
+        const weekType = document.getElementById("weekSelector").value;
+        lengthtest(startTime, 5, 5)
+        lengthtest(endTime, 5, 5)
+        lengthtest(subject, 1, 100)
+        lengthtest(location, 1, 50)
+        const token = localStorage.getItem("token");
+        const result = await apiFetch("http://127.0.0.1:4000/api/save_new_event", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ day: day, start_time: startTime, end_time: endTime, subject: subject, location: location, week_type: weekType })
+        })
+        load_events();
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
 async function load_events() {
@@ -350,33 +361,47 @@ async function change_event(event) {
 }
 
 async function updateevent(event_id) {
-    const day = document.getElementById("modal_day_select").value;
-    const startTime = document.getElementById("modal_start_time").value;
-    const endTime = document.getElementById("modal_end_time").value;
-    const subject = document.getElementById("modal_subject_input").value;
-    const location = document.getElementById("modal_location_input").value;
-    const weekType = document.getElementById("weekSelector").value;
-    const token = localStorage.getItem("token");
-    const result = await apiFetch("http://127.0.0.1:4000/api/updateevent", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ event_id: event_id, day: day, start_time: startTime, end_time: endTime, subject: subject, location: location, week_type: weekType })
-    })
-    load_events();
+    try {
+        const day = document.getElementById("modal_day_select").value;
+        const startTime = document.getElementById("modal_start_time").value;
+        const endTime = document.getElementById("modal_end_time").value;
+        const subject = document.getElementById("modal_subject_input").value;
+        const location = document.getElementById("modal_location_input").value;
+        const weekType = document.getElementById("weekSelector").value;
+        lengthtest(startTime, 5, 5)
+        lengthtest(endTime, 5, 5)
+        lengthtest(subject, 1, 100)
+        lengthtest(location, 1, 50)
+        const token = localStorage.getItem("token");
+        const result = await apiFetch("http://127.0.0.1:4000/api/updateevent", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ event_id: event_id, day: day, start_time: startTime, end_time: endTime, subject: subject, location: location, week_type: weekType })
+        })
+        load_events();
+    } catch (error) {
+        console.error(error)
+    }
+
 }
 
 async function delete_event(event_id) {
-    const token = localStorage.getItem("token");
-    const result = await apiFetch("http://127.0.0.1:4000/api/delete_event", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ event_id: event_id })
-    })
-    load_events();
+    try {
+        const token = localStorage.getItem("token");
+        const result = await apiFetch("http://127.0.0.1:4000/api/delete_event", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ event_id: event_id })
+        })
+        load_events();
+    } catch (error) {
+        console.error(error)
+    }
+
 }
