@@ -239,3 +239,58 @@
 .modal-field-wrapper{
     flex: 1;
 }
+
+.mobile-day-selector{
+    justify-self: center;
+    align-self: center;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+    padding: 5px;
+    border-radius: 12px;
+    margin: 10px 15px;
+    gap: 5px;
+}
+
+.day-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent; 
+}
+
+
+.day-btn.active-day-btn {
+    background-color: #ffffff;
+    color: #ffc107; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+}
+
+
+@media (max-width: 768px) {
+    .mobile-day-selector {
+        display: flex;
+    }
+    
+    .day-column {
+        display: none; 
+    }
+
+    .day-column.active-day {
+        display: block; 
+        animation: fadeIn 0.3s ease-in-out;
+    }
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

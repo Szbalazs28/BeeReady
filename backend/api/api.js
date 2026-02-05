@@ -267,6 +267,10 @@ router.post("/save_new_event", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
     const data = req.body
+    lengthtest(data.start_time, 5, 5)
+    lengthtest(data.end_time, 5, 5)
+    lengthtest(data.subject, 1, 100)
+    lengthtest(data.location, 1, 50)
     await save_new_event(id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
     res.status(200).json({ write: true, message: "Sikeres hozzáadás!" })
   }
@@ -302,6 +306,10 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
 router.post("/updateevent", authenticateToken, async (req, res, next) => {
   try {    
     const data = req.body
+    lengthtest(data.start_time, 5, 5)
+    lengthtest(data.end_time, 5, 5)
+    lengthtest(data.subject, 1, 100)
+    lengthtest(data.location, 1, 50)
     await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   }
