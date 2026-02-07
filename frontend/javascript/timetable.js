@@ -167,12 +167,21 @@ async function saveNewEvent() {
 
 async function load_events() {
     try {
-        const today = new Date().getDay() - 1
-        if (today > 0 || today < 4) {
+        const today = new Date().getDay() -1
+        
+        if (today >= 0 && today <= 4) {
             let todaydiv = document.querySelector(`.day${today}`)
+            let selectedbtn = document.querySelectorAll('.day-btn')[today];
             if (!todaydiv.classList.contains("today_highlight")) {
                 todaydiv.classList.add("today_highlight")
+            }            
+            if(!selectedbtn.classList.contains("active-day-btn")){
+                selectedbtn.classList.add("active-day-btn");
             }
+            if(!todaydiv.classList.contains("active-day")){
+                todaydiv.classList.add("active-day");
+            }
+
         }
 
         document.querySelectorAll(".event-card").forEach(e => e.remove());
@@ -404,4 +413,24 @@ async function delete_event(event_id) {
         console.error(error)
     }
 
+}
+
+function showDay(daynumber){
+    for(let i = 0; i< 5; i++){
+        let daydiv = document.querySelector(`.day${i}`);
+        const selectedbtn = document.querySelectorAll('.day-btn')[i];
+        if(i == daynumber){
+            daydiv.classList.add("active-day");
+            selectedbtn.classList.add("active-day-btn");
+        }
+        else{
+            if(selectedbtn.classList.contains("active-day-btn")){
+                selectedbtn.classList.remove("active-day-btn");
+            }
+            if(daydiv.classList.contains("active-day")){
+                daydiv.classList.remove("active-day");
+            }
+            daydiv.classList.remove("active-day");
+        }
+    }
 }

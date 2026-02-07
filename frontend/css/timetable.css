@@ -1,4 +1,4 @@
-#timetable{
+#timetable {
     display: flex;
     flex-direction: column;
 }
@@ -16,7 +16,7 @@
     border: 1px solid #e0e0e0;
 }
 
-/* Legördülő menü csoportosítása */
+
 .controls_group {
     display: flex;
     align-items: center;
@@ -36,32 +36,16 @@
     background-color: #f0f2f5;
     border: 2px solid transparent;
     border-radius: 8px;
-    appearance: none; /* Alapértelmezett böngésző nyíl eltávolítása */
-    -webkit-appearance: none;
+
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-/* Kijelölési állapot */
-.custom_select:focus {
-    outline: none;
-    border-color: #4a90e2;
-    background-color: #fff;
-}
 
-/* Egyedi nyíl a legördülőhöz */
-.select_wrapper::after {
-    content: '▼';
-    font-size: 12px;
-    color: #666;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-}
 
-/* Plusz jeles gomb */
+
+
+
 .add_btn {
     width: 45px;
     height: 45px;
@@ -80,7 +64,7 @@
 
 .add_btn:hover {
     background-color: #218838;
-    transform: rotate(90deg) scale(1.1); /* Egy kis extra: elforog hoverre */
+    transform: rotate(90deg) scale(1.1);
 }
 
 
@@ -88,15 +72,15 @@
 
 .timetable-flex-container {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
     gap: 12px;
     padding: 20px;
-    align-items: flex-start; 
+    align-items: flex-start;
     overflow-x: auto;
 }
 
 .day-column {
-    min-height: 100px;
+
     height: 64vh;
     flex: 1;
     min-width: 150px;
@@ -104,19 +88,26 @@
     border-radius: 12px;
     padding: 10px;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
+
+}
+
+.events-container {
+    min-height: 100px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #FFCC00 #f4f4f4;
 }
 
 .today_highlight {
-    border: 3px solid #FFCC00; 
+    border: 3px solid #FFCC00;
 }
 
 .day-header {
     text-align: center;
     font-weight: bold;
     padding-bottom: 10px;
-    border-bottom: 2px solid #FFCC00; 
+    border-bottom: 2px solid #FFCC00;
     margin-bottom: 15px;
 }
 
@@ -125,7 +116,7 @@
     margin-bottom: 10px;
     padding: 12px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
     border-left: 5px solid #FFCC00;
 }
@@ -134,20 +125,21 @@
     transform: translateY(-3px);
 }
 
-.event-title, .event-location {
-    margin: 0; /* Eltávolítja az összes alapértelmezett margint */
-    padding: 0; /* Opcionális: adj hozzá egy kis helyet, ha szükséges */
-    font-size: 1rem; 
+.event-title,
+.event-location {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
 }
 
 .event-time {
-   
+
     font-size: 0.75rem;
     color: #666;
-    
+
 }
 
-/* Modal háttér */
+
 .timetable-modal-overlay {
     position: fixed;
     top: 0;
@@ -168,7 +160,7 @@
     border-radius: 15px;
     width: 90%;
     max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .modal-title {
@@ -202,7 +194,9 @@
     margin-top: 10px;
 }
 
-.btn-save, .btn-cancel, .btn-delete {
+.btn-save,
+.btn-cancel,
+.btn-delete {
     flex: 1;
     padding: 12px;
     border: none;
@@ -227,34 +221,35 @@
     color: white;
 }
 
-.btn-save:hover, .btn-cancel:hover, .btn-delete:hover {
+.btn-save:hover,
+.btn-cancel:hover,
+.btn-delete:hover {
     opacity: 0.9;
 }
 
-.timetable-time-row{
+.timetable-time-row {
     display: flex;
     gap: 10px;
 }
 
-.modal-field-wrapper{
+.modal-field-wrapper {
     flex: 1;
 }
 
-.mobile-day-selector{
+.mobile-day-selector {
+    display: none;
     justify-self: center;
     align-self: center;
     justify-content: space-between;
     background-color: #f0f0f0;
     padding: 5px;
     border-radius: 12px;
-    margin: 10px 15px;
     gap: 5px;
 }
 
 .day-btn {
     flex: 1;
     border: none;
-    background: transparent;
     padding: 10px 0;
     font-weight: 600;
     font-size: 14px;
@@ -262,35 +257,48 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    -webkit-tap-highlight-color: transparent; 
 }
 
 
 .day-btn.active-day-btn {
     background-color: #ffffff;
-    color: #ffc107; 
+    color: #ffc107;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transform: scale(1.05);
 }
+
 
 
 @media (max-width: 768px) {
     .mobile-day-selector {
         display: flex;
     }
-    
+
     .day-column {
-        display: none; 
+        display: none;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #FFCC00 #f4f4f4;
     }
 
-    .day-column.active-day {
-        display: block; 
+
+
+    .active-day {
+        display: block;
         animation: fadeIn 0.3s ease-in-out;
     }
+
 }
 
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
