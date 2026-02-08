@@ -1,3 +1,4 @@
+const { share_code_generator } = require("../data_test.js");
 const pool = require('../sql/database');
 
 async function userexists(email, username) {
@@ -17,16 +18,57 @@ async function userbyid(id) {
     return await pool.execute("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
 }
 
-async function add_deck(id, name) {
-    
-    const [maxposition] = await maxdeckposition(id);
-    if(maxposition[0].max_position === null){
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position) VALUES(?, ?, 0)", [id, name])    
+async function exists_share_code(share_code) {
+    const [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
+    return exists.length > 0;
+}
+
+async function  copy_deck(share_code, user_id) {
+    if(await exists_share_code(share_code)){
+        const [deck] = await pool.execute("SELECT deck_name FROM flashcard_deck WHERE share_code = ?", [share_code]);
+        let new_share_code = await uniquesharecode()
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [user_id, deck[0].deck_name, 0, new_share_code])
+        const [cards] = await pool.execute("SELECT front_text, back_text FROM flashcard_card WHERE deck_id = (SELECT deck_id FROM flashcard_deck WHERE share_code = ?)", [share_code]);
+        for(let i = 0; i<cards.length; i++){
+            await pool.execute("INSERT INTO flashcard_card (deck_id, front_text, back_text, position) VALUES ((SELECT deck_id FROM flashcard_deck WHERE share_code = ?), ?, ?, ?)", [new_share_code, cards[i].front_text, cards[i].back_text, i])
+        }
     }
     else{
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position) VALUES(?, ?, ?)", [id, name, maxposition[0].max_position + 1])
+        let error = new Error("Nincs ilyen megosztási kód!")
+        error.status = 400;
+        throw error
+    }
+}
+
+async function uniquesharecode(){
+    let share_code = share_code_generator()
+    while(await exists_share_code(share_code)){
+        share_code = share_code_generator()        
+    }
+    return share_code
+}
+
+async function add_deck(id, name) {
+    let share_code = await uniquesharecode()
+    const [maxposition] = await maxdeckposition(id);
+    if(maxposition[0].max_position === null){
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, 0, ?)", [id, name, share_code])    
+    }
+    else{
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [id, name, maxposition[0].max_position + 1, share_code])
     }
 
+}
+
+async function change_share_code(id) {
+    let share_code = share_code_generator()
+    let [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
+    while(exists.length > 0){
+        share_code = share_code_generator()
+        [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
+    }
+    await pool.execute("UPDATE flashcard_deck SET share_code = ? WHERE deck_id = ?", [share_code, id])
+    return share_code;
 }
 
 async function  getdeck(id) {
@@ -34,7 +76,7 @@ async function  getdeck(id) {
 }
 
 async function  getdeckbydeck_id(deck_id) {
-    return await pool.execute("SELECT deck_name, deck_id FROM flashcard_deck WHERE deck_id = ?",[deck_id])
+    return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ?",[deck_id])
 }
 
 async function updatedeck(deck_name, deck_id) {
@@ -184,5 +226,7 @@ module.exports = {
     changeselectedweek,
     get_saved_weektype,
     updateevent,
-    delete_event  
+    delete_event,
+    change_share_code,
+    copy_deck
 };

@@ -62,7 +62,14 @@ async function apiFetch(url, options = {}) {
                 logout();
             }
             else if (response.status === 400) {
-                alertell(data.message || "Hibás kérés.", 5);
+                if (data.message == "Nincs ilyen megosztási kód!") {
+                    alertell(data.message, 5)
+                }
+                else {
+                    alertell(data.message || "Hibás kérés.", 5);
+                }
+
+
             }
             else {
                 alertell("Szerverhiba történt.", 5);

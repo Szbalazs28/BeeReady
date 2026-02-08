@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-
+const crypto = require('crypto');
 
 function passwordTest(password) {
     let issues = {}
@@ -92,4 +92,4 @@ function lengthtest(input, min, max) {
     return true
 }
 
-module.exports = { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest };
+module.exports = { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest, share_code_generator };
