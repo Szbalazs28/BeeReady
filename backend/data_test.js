@@ -53,6 +53,10 @@ async function titkositas(password) {
 
 }
 
+function share_code_generator(){
+      return crypto.randomBytes(6).toString("base64url"); 
+}
+
 async function compare(password, hash) {
     return await bcrypt.compare(password, hash)
 }

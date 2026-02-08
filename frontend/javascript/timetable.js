@@ -145,8 +145,7 @@ async function saveNewEvent() {
         const subject = document.getElementById("modal_subject_input").value;
         const location = document.getElementById("modal_location_input").value;
         const weekType = document.getElementById("weekSelector").value;
-        lengthtest(startTime, 5, 5)
-        lengthtest(endTime, 5, 5)
+        timetest(startTime, endTime);
         lengthtest(subject, 1, 100)
         lengthtest(location, 1, 50)
         const token = localStorage.getItem("token");
@@ -377,8 +376,7 @@ async function updateevent(event_id) {
         const subject = document.getElementById("modal_subject_input").value;
         const location = document.getElementById("modal_location_input").value;
         const weekType = document.getElementById("weekSelector").value;
-        lengthtest(startTime, 5, 5)
-        lengthtest(endTime, 5, 5)
+        timetest(startTime, endTime);
         lengthtest(subject, 1, 100)
         lengthtest(location, 1, 50)
         const token = localStorage.getItem("token");

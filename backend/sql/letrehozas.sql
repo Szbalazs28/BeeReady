@@ -18,6 +18,7 @@ deck_id int not null AUTO_INCREMENT PRIMARY KEY,
 deck_name varchar(200),
 create_date TIMESTAMP,
 position int not null,
+share_code varchar(8) UNIQUE DEFAULT NULL,
 user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
