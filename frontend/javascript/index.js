@@ -66,7 +66,7 @@ document.getElementById("regform").addEventListener("submit", async function (e)
     const response = await fetch("http://localhost:4000/api/registration", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilpicek/${profil_pic_url[profil_pic_url.length - 1]}` })
+        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length - 1]}` })
     });
     message = await response.json()
     if (message.success) {

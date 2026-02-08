@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order } = require("../sql/querys.js");
+const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -123,7 +123,7 @@ router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
           res.status(403).json({ success: false, message: "Hibás jelszó!" });
         }
       } catch (error) {
-       next(error);
+        next(error);
       }
     }
   }
@@ -263,6 +263,71 @@ router.post("/save_new_deck_order", authenticateToken, async (req, res, next) =>
   }
 })
 
+router.post("/save_new_event", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id
+    const data = req.body
+    lengthtest(data.start_time, 5, 5)
+    lengthtest(data.end_time, 5, 5)
+    lengthtest(data.subject, 1, 100)
+    lengthtest(data.location, 1, 50)
+    await save_new_event(id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
+    res.status(200).json({ write: true, message: "Sikeres hozzáadás!" })
+  }
+  catch (error) {
+    next(error)
+  }
+})
+
+router.post("/get_events", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id   
+    const [rows] = await get_events(id)
+    const [weektype_rows] = await get_saved_weektype(id)
+    res.status(200).json({ write: false, events: rows, selected_week_type: weektype_rows[0].selected_week_type })
+  }
+  catch (error) {
+    next(error)
+  }
+})
+
+router.post("/change_selected_week", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id
+    const week_type = req.body.week_type
+    await changeselectedweek(id, week_type)
+    res.status(200).json({ write: false})
+  }
+  catch (error) {
+    next(error)
+  }
+})
+
+router.post("/updateevent", authenticateToken, async (req, res, next) => {
+  try {    
+    const data = req.body
+    lengthtest(data.start_time, 5, 5)
+    lengthtest(data.end_time, 5, 5)
+    lengthtest(data.subject, 1, 100)
+    lengthtest(data.location, 1, 50)
+    await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
+    res.status(200).json({ write: true, message: "Sikeres frissítés!" })
+  }
+  catch (error) {
+    next(error)
+  }
+})
+
+router.post("/delete_event", authenticateToken, async (req, res, next) => {
+  try {    
+    const data = req.body
+    await delete_event(data.event_id)
+    res.status(200).json({ write: true, message: "Sikeres törlés!" })
+  }
+  catch (error) {
+    next(error)
+  }
+})
 
 
 

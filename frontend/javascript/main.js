@@ -24,11 +24,25 @@ function getRandomInt(min, max) {
 
 
 
-function lengthtest(input, min, max) {        
+function lengthtest(input, min, max) {
     if (input.length < min || input.length > max) {
         alertell(`A hossznak ${min} és ${max} karakter között kell lennie!`, 2.5);
         throw new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`);
-    }        
+    }
+}
+
+function timetest(start, end) {
+    if (start.length !== 5 || end.length !== 5 || start[2] !== ':' || end[2] !== ':') {
+        alertell("Az időpontnak HH:MM formátumúnak kell lennie!", 2.5);
+        throw new Error("Az időpontnak HH:MM formátumúnak kell lennie!");
+    }
+    else {
+        if (start >= end) {
+            alertell("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!", 2.5);
+            throw new Error("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!");
+        }
+    }
+
 }
 
 async function apiFetch(url, options = {}) {
@@ -36,7 +50,7 @@ async function apiFetch(url, options = {}) {
         const response = await fetch(url, options);
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {
-             // A catch a nem JSON válaszok kezelésére szolgál
+            // A catch a nem JSON válaszok kezelésére szolgál
 
             if (response.status === 429) {
                 alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
@@ -47,20 +61,22 @@ async function apiFetch(url, options = {}) {
                 alertell("Hozzáférés megtagadva. Kérjük, jelentkezzen be!", 5);
                 logout();
             }
-            else if (response.status ===400){
+            else if (response.status === 400) {
                 alertell(data.message || "Hibás kérés.", 5);
             }
             else {
                 alertell("Szerverhiba történt.", 5);
             }
 
-            throw new Error(`HTTP ${response.status}`);
+            let err = new Error(`HTTP ${response.status}`);
+            err.status = response.status;
+            throw err;
         }
-        else{
-            if(data.write){
+        else {
+            if (data.write) {
                 alertell(data.message || "Sikeres művelet!", 2.5);
             }
-            
+
         }
 
         return data;
