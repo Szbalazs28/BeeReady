@@ -87,13 +87,14 @@ function createTaskElement(task) {
     editBtn.className = 'edit_btn'; 
     editBtn.onclick = () => enableEditMode(task.id, div, editBtn);
 
-    const del_btn = document.createElement('button');
-    del_btn.innerText = 'Törlés';
-    del_btn.className = 'delete_btn';
-    del_btn.onclick = () => deleteTask(task.id);
+    const doneBtn = document.createElement('button');
+    doneBtn.innerText = '✓';
+    doneBtn.className = 'done_btn';
+    doneBtn.title = 'Feladat kész';
+    doneBtn.onclick = () => markTaskDone(task.id);
 
     btn_group.appendChild(editBtn);
-    btn_group.appendChild(del_btn);
+    btn_group.appendChild(doneBtn);
 
     footer.appendChild(spanImportance);
     footer.appendChild(btn_group);
@@ -140,10 +141,8 @@ async function submitTask() {
     }
 }
 
-async function deleteTask(id) {
-    if(!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return;
-
-    const response = await fetch('/api/deletetask', {
+async function markTaskDone(id) {
+    const response = await fetch('/api/marktaskdone', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -154,9 +153,9 @@ async function deleteTask(id) {
 
     const result = await response.json();
     if (result.success) {
-        document.getElementById(`task-${id}`).remove();
+        loadTasks();
     } else {
-        alert("Hiba történt a törléskor.");
+        alert("Hiba történt a feladat megjelölésekor.");
     }
 }
 

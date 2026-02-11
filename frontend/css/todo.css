@@ -181,9 +181,31 @@
     color: #dc2626;
 }
 
+.task-card .done_btn {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.task-card .done_btn:hover {
+    background-color: #a7f3d0;
+    color: #047857;
+}
+
 .task-card.high::before { background-color: #ef4444; }
 .task-card.medium::before { background-color: #F1B43C; }
 .task-card.low::before { background-color: #10b981; }
+.task-card.done::before { background-color: #6b7280; }
+.task-card.done {
+    opacity: 0.7;
+    background-color: #f3f4f6;
+}
 
 
 [contenteditable="true"]:focus {

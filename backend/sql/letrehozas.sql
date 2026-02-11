@@ -39,7 +39,7 @@ CREATE TABLE
     user_id INT NOT NULL,
     task_name VARCHAR(255) NOT NULL,
     task_description TEXT,
-    importance ENUM ('high', 'medium', 'low') NOT NULL,
+    importance ENUM ('high', 'medium', 'low', 'done') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );

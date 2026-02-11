@@ -6,7 +6,7 @@ const router = express.Router();
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
 const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order } = require("../sql/querys.js");
-const { add_task, get_tasks, delete_task, update_task } = require("../sql/querys.js");
+const { add_task, get_tasks, delete_task, update_task, mark_task_done } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -304,6 +304,16 @@ router.post("/updatetask", authenticateToken, async (req, res, next) => {
         const { task_id, task_name, task_description, importance } = req.body;
         await update_task(task_id, task_name, task_description, importance);
         res.status(200).json({ success: true, message: "Feladat frissítve!" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
+    try {
+        const { task_id } = req.body;
+        await mark_task_done(task_id);
+        res.status(200).json({ success: true, message: "Feladat megjelölve!" });
     } catch (error) {
         next(error);
     }

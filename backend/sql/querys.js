@@ -161,6 +161,13 @@ async function update_task(task_id, task_name, task_description, importance) {
     );
 }
 
+async function mark_task_done(task_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET importance = 'done' WHERE id = ?",
+        [task_id]
+    );
+}
+
 
 module.exports = {
     userexists,
@@ -183,5 +190,6 @@ module.exports = {
     add_task,
     get_tasks,
     delete_task,
-    update_task
+    update_task,
+    mark_task_done
 };
