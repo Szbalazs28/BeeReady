@@ -11,16 +11,15 @@
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="../css/mobilview.css">
     <link rel="stylesheet" href="../css/flashcards.css">
-<<<<<<< HEAD
-    <link rel="stylesheet" href="../css/timetable.css">
-=======
-    <link rel="stylesheet" href="../css/fooldal.css">
-    <link rel="stylesheet" href="../css/todo.css">
-    <link rel="stylesheet" href="../css/timer.css">
-    <link rel="stylesheet" href="../css/calendar.css">
+    <<<<<<< HEAD <link rel="stylesheet" href="../css/timetable.css">
+        =======
+        <link rel="stylesheet" href="../css/fooldal.css">
+        <link rel="stylesheet" href="../css/todo.css">
+        <link rel="stylesheet" href="../css/timer.css">
+        <link rel="stylesheet" href="../css/calendar.css">
 
->>>>>>> fooldal
-    <title>BeeReady</title>
+        >>>>>>> fooldal
+        <title>BeeReady</title>
 </head>
 
 <body>
@@ -44,22 +43,21 @@
             <div class="nav_items_div">
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
-<<<<<<< HEAD
+
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div>
 
                 <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
-=======
-                <div onclick="navbar_click('chat',3)" class="nav_items">Chat</div>
 
-                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
->>>>>>> fooldal
-                    <div class="profil_img">
-                        <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
+                    <div onclick="navbar_click('chat',3)" class="nav_items">Chat</div>
+
+                    <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
+                        <div class="profil_img">
+                            <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
+                        </div>
+                        <span id="felhasznalonev" class="profil_nev">Felhasználó</span>
                     </div>
-                    <span id="felhasznalonev" class="profil_nev">Felhasználó</span>
                 </div>
-            </div>
         </nav>
         <div class="fodiv">
             <!--foooldal-->
@@ -127,7 +125,7 @@
                 <div class="fooldal_maindiv">
                     <!--kordiagramm, az egyes fontossagi dolgok reszletezeserol-->
                     <!--valami xp szint?-->
-                    
+
                 </div>
 
                 <!--naptar-->
@@ -192,14 +190,8 @@
                 <div id="decks">
                     <div class="deck_creator">
                         <form id="flashcard_form">
-                            <input type="text" class="newflashcard_input" id="newDeckName"
-<<<<<<< HEAD
-                                placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
-                            <button type="submit" id="createDeckButton">Pakli hozzáadása</button>
-=======
-                                placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
-                            <button type="submit" id="createDeckButton">Pakli létrehozása</button>
->>>>>>> fooldal
+                            <input type="text" class="newflashcard_input" id="newDeckName" placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
+                            <button type="submit" id="createDeckButton" placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>Pakli hozzáadása</button>
                         </form>
                     </div>
 
@@ -224,34 +216,28 @@
                             kártyákhoz</button>
                     </div>
                     <div class="flashcard_game_container " id="flashcardGameContainer">
-<<<<<<< HEAD
                         <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn"
-                            onclick="changeCard(-1)" disabled>
-=======
-                        <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn" onclick="changeCard(-1)" disabled>
->>>>>>> fooldal
-                            &#10094;
-                        </button>
+                            onclick="changeCard(-1)" disabled></button>
 
-                        <div class="flashcard_game_card" id="flashcardGameCard">
-                            <div class="flashcard" id="flashcard">
-                                <div class="flashcard-front" id="flashcard_front">
-                                    A kérdés helye:
-                                </div>
-                                <div class="flashcard-back" id="flashcard_back">
-                                    A válasz helye:
+                            <div class="flashcard_game_card" id="flashcardGameCard">
+                                <div class="flashcard" id="flashcard">
+                                    <div class="flashcard-front" id="flashcard_front">
+                                        A kérdés helye:
+                                    </div>
+                                    <div class="flashcard-back" id="flashcard_back">
+                                        A válasz helye:
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-<<<<<<< HEAD
-                        <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
-                            onclick="changeCard(1)">
-=======
-                        <button class="game_nav_button activ_game_button next_card" id="nextCardBtn" onclick="changeCard(1)">
->>>>>>> fooldal
-                            &#10095;
-                        </button>
+                            <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
+                                onclick="changeCard(1)">
+
+                                <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
+                                    onclick="changeCard(1)">
+
+                                    &#10095;
+                                </button>
                     </div>
                     <div class="flashcard_container dnone_on_start" id="cardList">
 
@@ -272,7 +258,6 @@
 
                 </div>
 
-<<<<<<< HEAD
             </div>
             <!--Órarend-->
             <div class=" dnone mainelem" id="timetable">
@@ -332,9 +317,6 @@
                         </div>
                     </div>
                 </div>
-
-=======
->>>>>>> fooldal
             </div>
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
@@ -365,34 +347,31 @@
                                 <button type="button" class="account_button" id="close">Bezár</button>
                             </div>
                         </div>
-<<<<<<< HEAD
                         <div class="account_edit_div">
-=======
-                        <div class="account_kenyszerdiv">
->>>>>>> fooldal
-                            <div class="account_inputs input-group">
-                                <div class="account_border_div">
-                                    <label for="felh">Felhasználónév</label>
-                                    <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
-                                        required>
-                                </div>
-                                <div class="account_border_div">
-                                    <label for="email">E-mail</label>
-                                    <input type="email" id="editemail" name="email" placeholder="E-mail" required>
-                                </div>
-                                <div class="account_border_div">
+                            <div class="account_kenyszerdiv">
+                                <div class="account_inputs input-group">
+                                    <div class="account_border_div">
+                                        <label for="felh">Felhasználónév</label>
+                                        <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
+                                            required>
+                                    </div>
+                                    <div class="account_border_div">
+                                        <label for="email">E-mail</label>
+                                        <input type="email" id="editemail" name="email" placeholder="E-mail" required>
+                                    </div>
+                                    <div class="account_border_div">
 
-                                    <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                                    <input type="password" id="currentpassword" name="jelenlegijelszo"
-                                        placeholder="Jelenlegi jelszó" required>
-                                </div>
-                                <div class="account_border_div">
-                                    <label for="ujjelszo">Új jelszó</label>
-                                    <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                                        <label for="jelenlegijelszo">Jelenlegi jelszó</label>
+                                        <input type="password" id="currentpassword" name="jelenlegijelszo"
+                                            placeholder="Jelenlegi jelszó" required>
+                                    </div>
+                                    <div class="account_border_div">
+                                        <label for="ujjelszo">Új jelszó</label>
+                                        <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </form>
             </div>
         </div>
@@ -403,16 +382,12 @@
     <script src="../javascript/profil_szerk.js"></script>
     <script src="../javascript/navbar.js"></script>
     <script src="../javascript/flashcards.js"></script>
-<<<<<<< HEAD
     <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/timetable.js"></script>
-=======
     <script src="../javascript/timer.js"></script>
     <script src="../javascript/calendar.js"></script>
     <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/todo.js"></script>
-
->>>>>>> fooldal
 </body>
 
 <!--

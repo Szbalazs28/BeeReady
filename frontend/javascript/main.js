@@ -22,9 +22,6 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
-
-<<<<<<< HEAD
 function lengthtest(input, min, max) {
     if (input.length < min || input.length > max) {
         alertell(`A hossznak ${min} és ${max} karakter között kell lennie!`, 2.5);
@@ -43,27 +40,13 @@ function timetest(start, end) {
             throw new Error("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!");
         }
     }
-
-=======
-function lengthtest(input, min, max) {        
-    if (input.length < min || input.length > max) {
-        alertell(`A hossznak ${min} és ${max} karakter között kell lennie!`, 2.5);
-        throw new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`);
-    }        
->>>>>>> fooldal
 }
-
 async function apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options);
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) {
-<<<<<<< HEAD
+        if (!response.ok) {            // A catch a nem JSON válaszok kezelésére szolgál
             // A catch a nem JSON válaszok kezelésére szolgál
-=======
-             // A catch a nem JSON válaszok kezelésére szolgál
->>>>>>> fooldal
-
             if (response.status === 429) {
                 alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
             } else if (response.status === 403) {
@@ -73,18 +56,13 @@ async function apiFetch(url, options = {}) {
                 alertell("Hozzáférés megtagadva. Kérjük, jelentkezzen be!", 5);
                 logout();
             }
-<<<<<<< HEAD
             else if (response.status === 400) {
-=======
-            else if (response.status ===400){
->>>>>>> fooldal
                 alertell(data.message || "Hibás kérés.", 5);
             }
             else {
                 alertell("Szerverhiba történt.", 5);
             }
 
-<<<<<<< HEAD
             let err = new Error(`HTTP ${response.status}`);
             err.status = response.status;
             throw err;
@@ -94,15 +72,7 @@ async function apiFetch(url, options = {}) {
                 alertell(data.message || "Sikeres művelet!", 2.5);
             }
 
-=======
             throw new Error(`HTTP ${response.status}`);
-        }
-        else{
-            if(data.write){
-                alertell(data.message || "Sikeres művelet!", 2.5);
-            }
-            
->>>>>>> fooldal
         }
 
         return data;
@@ -115,5 +85,3 @@ async function apiFetch(url, options = {}) {
         throw err;
     }
 }
-
-
