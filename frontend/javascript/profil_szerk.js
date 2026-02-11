@@ -95,8 +95,4 @@ async function mentes() {
         }
 
     }
-
-
-
 }
-
