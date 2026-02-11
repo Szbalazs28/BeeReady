@@ -45,6 +45,39 @@ function timetest(start, end) {
 
 }
 
+async function index_apiFetch(url, options = {}) {
+    try {
+        const response = await fetch(url, options)
+        const data = await response.json().catch(() => ({}))
+        if(!response.ok){
+            if (response.status === 429) {
+                alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
+            }
+
+            else if(response.status===400){
+                alertell(data.message || "Hibás kérés.", 5);
+            }
+            else if(response.status===409){
+                alertell(data.message || "Hibás adat!", 5);
+
+            }
+            else if(response.status===403){
+                alertell(data.message || "Hibás jelszó!", 5);
+            }
+            else{
+                alertell("Szerverhiba történt.", 5)
+            }
+
+        }
+    } catch (error) {
+        if (!err.status) {
+            console.error("Hálózati hiba:", err);
+            alertell("Sikertelen csatlakozás a szerverhez!", 5);
+        }
+        throw err;
+    }
+}
+
 async function apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options);

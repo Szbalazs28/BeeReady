@@ -4,8 +4,8 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
+const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid } = require("../data_test.js");
+const { newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -19,58 +19,34 @@ const loginLimiter = rateLimit({
 });
 
 
-
 router.post("/registration", async (req, res, next) => {
-  let data = req.body;
-  const usernameissues = usernameTest(data.username);
-  const emailissues = emailTest(data.email);
-  if (Object.keys(usernameissues).length != 0) {
-    res.status(403).json({ success: false, issues: usernameissues });
-  } else {
-    if (Object.keys(emailissues).length != 0) {
-      res.status(403).json({ success: false, issues: emailissues });
-    } else {
-      try {
-        const [rows] = await userexists(data.email, data.username);
-        if (rows.length == 0) {
-          let issues = passwordTest(data.password);
-          if (Object.keys(issues).length == 1) {
-            const password = await titkositas(data.password);
-            const [user] = await newuser(data.username, data.email, password, data.profil_pic_url);
-            const token = await generateToken(user[0].id, "1h");
-            res.status(200).json({ success: true, token, redirect: "./main.html" });
-          } else {
-            res.status(409).json({ success: false, issues }); // Visszaküldi a hibákat
-          }
-        } else {
-          res.status(409).json({ success: false, message: "Ilyen E-mail cím vagy Felhasználónév már létezik!" });
-        }
-      } catch (error) {
-        next(error);
-      }
-    }
+  try {
+    const data = req.body
+    lengthtest(data.username, 3, 20)
+    emailTest(data.email)
+    passwordTest(data.password)
+    checkuserexists(data.email, data.username)
+    const password = await encrypt(data.password)
+    const [user] = await newuser(data.username, data.email, password, data.profil_pic_url)
+    const token = await generateToken(user[0].id, "1h")
+    res.status(200).json({ token, redirect: "./main.html" })
+  } catch (error) {
+    next(error)
   }
+
 })
 
 router.post("/login", loginLimiter, async (req, res, next) => {
-  const data = req.body;
   try {
-    const [rows] = await userbyemail(data.email);
-    if (rows.length > 0) {
-      const compare_result = await compare(data.password, rows[0].password);
-      if (compare_result) {
-        let expiresInTime = "1h";
-        if (data.stay) {
-          expiresInTime = "7d";
-        }
-        const token = await generateToken(rows[0].id, expiresInTime);
-        res.status(200).json({ success: true, token, redirect: "./main.html" });
-      } else {
-        res.status(409).json({ success: false, message: "Hibás jelszó!" });
-      }
-    } else {
-      res.status(409).json({ success: false, message: "Nem található emailcím!" });
+    const data = req.body;
+    const rows = await getuserbyemail(data.email);
+    compare(data.password, rows.password)
+    let expiresInTime = "1h";
+    if (data.stay) {
+      expiresInTime = "7d";
     }
+    const token = await generateToken(rows[0].id, expiresInTime);
+    res.status(200).json({ token, redirect: "./main.html" })
   } catch (error) {
     next(error)
   }
@@ -79,12 +55,21 @@ router.post("/login", loginLimiter, async (req, res, next) => {
 router.get("/edit_user", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
-    const [rows] = await userbyid(id);
-    if (rows.length == 0) {
-      res.status(404).json({ message: "Felhasználó nem található." });
-    } else {
-      res.status(200).json({ username: rows[0].username, email: rows[0].email, profil_pic_url: rows[0].profil_pic_url, });
-    }
+    const rows = await getuserbyid(id)
+    res.status(200).json({ username: rows[0].username, email: rows[0].email, profil_pic_url: rows[0].profil_pic_url, });
+  } catch (error) {
+    next(error)
+  }
+});
+
+router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const data = req.body;
+    lengthtest(data.username, 3, 20)
+    emailTest(data.email);
+    const currentdata = await getuserbyid(id);
+    compare(data.password, currentdata[0].password)
   } catch (error) {
     next(error)
   }
@@ -107,7 +92,7 @@ router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
           if (adatok.newpassword != "") {
             let issues = passwordTest(adatok.newpassword);
             if (Object.keys(issues).length == 1) {
-              const newpassword = await titkositas(adatok.newpassword);
+              const newpassword = await encrypt(adatok.newpassword);
               adatok.newpassword = newpassword;
               await updateuser(rows, adatok, id);
               res.status(200).json({ success: true, message: "Sikeres mentés!" });
