@@ -1,5 +1,3 @@
-
-
 async function load_user() {
     try {
         const token = localStorage.getItem('token');
@@ -20,13 +18,10 @@ async function load_user() {
     }
 }
 
-
-
 document.getElementById("edit_user").addEventListener("submit", function (e) {
     e.preventDefault()
     mentes();
 });
-
 
 //kep valtoztatasa (a modal/overlay fullosan mukodik)
 const profilpic = document.getElementById("prof_img");

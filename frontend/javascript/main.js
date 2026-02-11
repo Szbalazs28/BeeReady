@@ -46,7 +46,6 @@ async function apiFetch(url, options = {}) {
         const response = await fetch(url, options);
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {            // A catch a nem JSON válaszok kezelésére szolgál
-            // A catch a nem JSON válaszok kezelésére szolgál
             if (response.status === 429) {
                 alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
             } else if (response.status === 403) {

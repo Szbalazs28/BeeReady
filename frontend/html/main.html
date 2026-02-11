@@ -11,14 +11,11 @@
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="../css/mobilview.css">
     <link rel="stylesheet" href="../css/flashcards.css">
-    <<<<<<< HEAD <link rel="stylesheet" href="../css/timetable.css">
-        =======
+    <link rel="stylesheet" href="../css/timetable.css">
         <link rel="stylesheet" href="../css/fooldal.css">
         <link rel="stylesheet" href="../css/todo.css">
         <link rel="stylesheet" href="../css/timer.css">
         <link rel="stylesheet" href="../css/calendar.css">
-
-        >>>>>>> fooldal
         <title>BeeReady</title>
 </head>
 
@@ -46,17 +43,11 @@
 
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div>
-
-                <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
-
-                    <div onclick="navbar_click('chat',3)" class="nav_items">Chat</div>
-
-                    <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
-                        <div class="profil_img">
-                            <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
-                        </div>
-                        <span id="felhasznalonev" class="profil_nev">Felhasználó</span>
+                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
+                    <div class="profil_img">
+                        <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
+                    <span id="felhasznalonev" class="profil_nev">Felhasználó</span>
                 </div>
         </nav>
         <div class="fodiv">
@@ -190,8 +181,11 @@
                 <div id="decks">
                     <div class="deck_creator">
                         <form id="flashcard_form">
-                            <input type="text" class="newflashcard_input" id="newDeckName" placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
-                            <button type="submit" id="createDeckButton" placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>Pakli hozzáadása</button>
+                            <input type="text" class="newflashcard_input" id="newDeckName"
+                                placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
+                            <button type="submit" id="createDeckButton"
+                                placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>Pakli
+                                hozzáadása</button>
                         </form>
                     </div>
 
@@ -219,25 +213,25 @@
                         <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn"
                             onclick="changeCard(-1)" disabled></button>
 
-                            <div class="flashcard_game_card" id="flashcardGameCard">
-                                <div class="flashcard" id="flashcard">
-                                    <div class="flashcard-front" id="flashcard_front">
-                                        A kérdés helye:
-                                    </div>
-                                    <div class="flashcard-back" id="flashcard_back">
-                                        A válasz helye:
-                                    </div>
+                        <div class="flashcard_game_card" id="flashcardGameCard">
+                            <div class="flashcard" id="flashcard">
+                                <div class="flashcard-front" id="flashcard_front">
+                                    A kérdés helye:
+                                </div>
+                                <div class="flashcard-back" id="flashcard_back">
+                                    A válasz helye:
                                 </div>
                             </div>
+                        </div>
+
+                        <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
+                            onclick="changeCard(1)">
 
                             <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
                                 onclick="changeCard(1)">
 
-                                <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
-                                    onclick="changeCard(1)">
-
-                                    &#10095;
-                                </button>
+                                &#10095;
+                            </button>
                     </div>
                     <div class="flashcard_container dnone_on_start" id="cardList">
 
