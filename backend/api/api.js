@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> fooldal
 const express = require("express");
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
@@ -334,8 +330,6 @@ router.post("/delete_event", authenticateToken, async (req, res, next) => {
 })
 
 
-<<<<<<< HEAD
-=======
 //innentol todo
 router.post("/taskadd", authenticateToken, async (req, res, next) => {
     try {
@@ -389,6 +383,5 @@ router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
     }
 });
 
->>>>>>> fooldal
 
 module.exports = router;

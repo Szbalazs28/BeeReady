@@ -41,14 +41,9 @@ async function updatedeck(deck_name, deck_id) {
     await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
 }
 
-<<<<<<< HEAD
-async function  deletedeck(deck_id) {    
-=======
-async function  deletedeck(deck_id) {
-    await pool.execute("DELETE FROM flashcard_card WHERE deck_id = ?", [deck_id])
->>>>>>> fooldal
+
+async function  deletedeck(deck_id) { 
     await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ?", [deck_id])
-    
 }
 
 async function getcards(deck_id) {
@@ -95,7 +90,6 @@ async function save_new_deck_order(deck_id, new_position) {
     await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ?", [new_position, deck_id])
 }
 
-<<<<<<< HEAD
 async function get_events(user_id) {
     return await pool.execute("SELECT event_id, day, start_time, end_time, subject, location, week_type FROM timetable WHERE user_id = ? AND week_type = (SELECT selected_week_type FROM users WHERE id = ?) ORDER BY day ASC, start_time ASC, end_time ASC", [user_id, user_id]);
 }
@@ -121,9 +115,6 @@ async function delete_event(event_id) {
     await pool.execute("DELETE FROM timetable WHERE event_id = ?", [event_id]);
 }
 
-
-=======
->>>>>>> fooldal
 
 
 async function updateuser(rows, ujadatok, kit) {
@@ -220,18 +211,15 @@ module.exports = {
     deletedeck,
     save_new_card_order,
     save_new_deck_order,
-<<<<<<< HEAD
     save_new_event,
     get_events,
     changeselectedweek,
     get_saved_weektype,
     updateevent,
-    delete_event  
-=======
+    delete_event,
     add_task,
     get_tasks,
     delete_task,
     update_task,
     mark_task_done
->>>>>>> fooldal
 };

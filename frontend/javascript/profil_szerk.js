@@ -95,12 +95,4 @@ async function mentes() {
         }
 
     }
-<<<<<<< HEAD
-
-
-
 }
-
-=======
-}
->>>>>>> fooldal
