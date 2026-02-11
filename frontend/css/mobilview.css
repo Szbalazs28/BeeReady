@@ -72,7 +72,11 @@
         height: 100%;
     }
 
+<<<<<<< HEAD
     .account .account_edit_div {
+=======
+    .account .account_kenyszerdiv {
+>>>>>>> fooldal
         position: absolute;
         width: 100%;
         bottom: 0;

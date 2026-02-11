@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> fooldal
 const express = require("express");
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
@@ -330,5 +334,61 @@ router.post("/delete_event", authenticateToken, async (req, res, next) => {
 })
 
 
+<<<<<<< HEAD
+=======
+//innentol todo
+router.post("/taskadd", authenticateToken, async (req, res, next) => {
+    try {
+        const { task_name, task_description, importance } = req.body;
+        if(lengthtest(task_name, 1, 100) && lengthtest(task_description, 0, 100)) {
+            throw new Error("Érvénytelen bemenet!");
+        }
+        await add_task(req.user.id, task_name, task_description, importance);
+        res.status(200).json({ success: true, message: "Feladat sikeresen hozzáadva!" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/gettasks", authenticateToken, async (req, res, next) => {
+    try {
+        const [rows] = await get_tasks(req.user.id);
+        res.status(200).json({ success: true, tasks: rows });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.post("/deletetask", authenticateToken, async (req, res, next) => {
+    try {
+        const { task_id } = req.body;
+        await delete_task(task_id);
+        res.status(200).json({ success: true, message: "Feladat törölve!" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.post("/updatetask", authenticateToken, async (req, res, next) => {
+    try {
+        const { task_id, task_name, task_description, importance } = req.body;
+        await update_task(task_id, task_name, task_description, importance);
+        res.status(200).json({ success: true, message: "Feladat frissítve!" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
+    try {
+        const { task_id } = req.body;
+        await mark_task_done(task_id);
+        res.status(200).json({ success: true, message: "Feladat megjelölve!" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+>>>>>>> fooldal
 
 module.exports = router;

@@ -11,7 +11,15 @@
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="../css/mobilview.css">
     <link rel="stylesheet" href="../css/flashcards.css">
+<<<<<<< HEAD
     <link rel="stylesheet" href="../css/timetable.css">
+=======
+    <link rel="stylesheet" href="../css/fooldal.css">
+    <link rel="stylesheet" href="../css/todo.css">
+    <link rel="stylesheet" href="../css/timer.css">
+    <link rel="stylesheet" href="../css/calendar.css">
+
+>>>>>>> fooldal
     <title>BeeReady</title>
 </head>
 
@@ -36,10 +44,16 @@
             <div class="nav_items_div">
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
+<<<<<<< HEAD
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div>
 
                 <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
+=======
+                <div onclick="navbar_click('chat',3)" class="nav_items">Chat</div>
+
+                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
+>>>>>>> fooldal
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
@@ -50,9 +64,97 @@
         <div class="fodiv">
             <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
-                <section id="tasks">Feladatok</section>
-                <div id="calendar">naptar</div>
-                <div id="to-do">to-do </div>
+                <header class="fooldal_maindiv">
+                    <h2>Főoldal</h2>
+                </header>
+
+                <!--feladatok-->
+                <section id="tasks" class="fooldal_maindiv">
+                    <div class="todo-grid">
+                        <div class="todo_taskadd">
+                            <h3>Feladatok hozzáadása</h3>
+                            <hr>
+                            <div class="todo_items">
+                                <input type="text" id="task_name" placeholder="Új feladat">
+                            </div>
+                            <textarea name="description" id="task_description"
+                                placeholder="A feladat leírása..."></textarea>
+                            <div class="section_button">
+                                <select name="importance" id="importance">
+                                    <option value="" disabled selected>Fontosság</option>
+                                    <option value="high">Magas</option>
+                                    <option value="medium">Közepes</option>
+                                    <option value="low">Alacsony</option>
+                                </select>
+                                <button type="button" id="add_task" onclick="submitTask()">
+                                    Feladat hozzáadása
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="todo_tasklist">
+                            <h3>Aktuális Feladatok</h3>
+                            <hr>
+                            <div class="todo_tasks" id="todo_tasks">
+                                <div class="task-card high">
+                                    <h4>Vásárlás</h4>
+                                    <p>Tej, kenyér, tojás a holnapi reggelihez.</p>
+                                    <div class="task-footer">
+                                        <span>Magas</span>
+                                        <button type="button" class="delete_btn">Törlés</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!--idopzito-->
+                <div class="fooldal_maindiv">
+                    <div class="timer_div">
+                        <h3>Pomodoro</h3>
+                        <div class="timer_display" id="timer_display"></div>
+                        <div class="timer_controls">
+                            <button type="button" id="start_timer" onclick="start()">Indítás</button>
+                            <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
+                            <button type="button" id="reset_timer" onclick="reset()">Visszaállítás</button>
+                        </div>
+                    </div>
+                    <!--egy felhasznalo altal beirt idozito-->
+                </div>
+
+                <!--statisztika?-->
+                <div class="fooldal_maindiv">
+                    <!--kordiagramm, az egyes fontossagi dolgok reszletezeserol-->
+                    <!--valami xp szint?-->
+                    
+                </div>
+
+                <!--naptar-->
+                <div id="calendar" class="fooldal_maindiv calendar_div">
+                    <div class="calendar">
+                        <div class="calendar_header">
+                            <button type="button" id="calendar_backBTN">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <div class="monthYear" id="monthYear">
+                            </div>
+                            <button type="button" id="calendar_nextBTN">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="days">
+                            <div class="day">H</div>
+                            <div class="day">K</div>
+                            <div class="day">Sz</div>
+                            <div class="day">Cs</div>
+                            <div class="day">P</div>
+                            <div class="day">Sz</div>
+                            <div class="day">V</div>
+                        </div>
+                        <div class="dates" id="dates"></div>
+                    </div>
+                </div>
             </div>
 
             <!--Chat-->
@@ -91,8 +193,13 @@
                     <div class="deck_creator">
                         <form id="flashcard_form">
                             <input type="text" class="newflashcard_input" id="newDeckName"
+<<<<<<< HEAD
                                 placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
                             <button type="submit" id="createDeckButton">Pakli hozzáadása</button>
+=======
+                                placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>
+                            <button type="submit" id="createDeckButton">Pakli létrehozása</button>
+>>>>>>> fooldal
                         </form>
                     </div>
 
@@ -117,8 +224,12 @@
                             kártyákhoz</button>
                     </div>
                     <div class="flashcard_game_container " id="flashcardGameContainer">
+<<<<<<< HEAD
                         <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn"
                             onclick="changeCard(-1)" disabled>
+=======
+                        <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn" onclick="changeCard(-1)" disabled>
+>>>>>>> fooldal
                             &#10094;
                         </button>
 
@@ -133,8 +244,12 @@
                             </div>
                         </div>
 
+<<<<<<< HEAD
                         <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
                             onclick="changeCard(1)">
+=======
+                        <button class="game_nav_button activ_game_button next_card" id="nextCardBtn" onclick="changeCard(1)">
+>>>>>>> fooldal
                             &#10095;
                         </button>
                     </div>
@@ -157,6 +272,7 @@
 
                 </div>
 
+<<<<<<< HEAD
             </div>
             <!--Órarend-->
             <div class=" dnone mainelem" id="timetable">
@@ -217,6 +333,8 @@
                     </div>
                 </div>
 
+=======
+>>>>>>> fooldal
             </div>
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
@@ -247,7 +365,11 @@
                                 <button type="button" class="account_button" id="close">Bezár</button>
                             </div>
                         </div>
+<<<<<<< HEAD
                         <div class="account_edit_div">
+=======
+                        <div class="account_kenyszerdiv">
+>>>>>>> fooldal
                             <div class="account_inputs input-group">
                                 <div class="account_border_div">
                                     <label for="felh">Felhasználónév</label>
@@ -281,8 +403,16 @@
     <script src="../javascript/profil_szerk.js"></script>
     <script src="../javascript/navbar.js"></script>
     <script src="../javascript/flashcards.js"></script>
+<<<<<<< HEAD
     <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/timetable.js"></script>
+=======
+    <script src="../javascript/timer.js"></script>
+    <script src="../javascript/calendar.js"></script>
+    <script src="../javascript/libs/Sortable.min.js"></script>
+    <script src="../javascript/todo.js"></script>
+
+>>>>>>> fooldal
 </body>
 
 <!--

@@ -41,7 +41,12 @@ async function updatedeck(deck_name, deck_id) {
     await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
 }
 
+<<<<<<< HEAD
 async function  deletedeck(deck_id) {    
+=======
+async function  deletedeck(deck_id) {
+    await pool.execute("DELETE FROM flashcard_card WHERE deck_id = ?", [deck_id])
+>>>>>>> fooldal
     await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ?", [deck_id])
     
 }
@@ -90,6 +95,7 @@ async function save_new_deck_order(deck_id, new_position) {
     await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ?", [new_position, deck_id])
 }
 
+<<<<<<< HEAD
 async function get_events(user_id) {
     return await pool.execute("SELECT event_id, day, start_time, end_time, subject, location, week_type FROM timetable WHERE user_id = ? AND week_type = (SELECT selected_week_type FROM users WHERE id = ?) ORDER BY day ASC, start_time ASC, end_time ASC", [user_id, user_id]);
 }
@@ -116,6 +122,8 @@ async function delete_event(event_id) {
 }
 
 
+=======
+>>>>>>> fooldal
 
 
 async function updateuser(rows, ujadatok, kit) {
@@ -159,6 +167,39 @@ async function isexist(data){
     return await pool.execute(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
+async function add_task(user_id, task_name, task_description, importance) {
+    await pool.execute(
+        "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)", 
+        [user_id, task_name, task_description, importance]
+    );
+}
+
+// Feladatok lekérése felhasználó szerint (időrendben visszafelé)
+async function get_tasks(user_id) {
+    return await pool.execute(`SELECT * FROM todo_tasks 
+WHERE user_id = ? 
+ORDER BY 
+    importance ASC, 
+    created_at ASC;`, [user_id]);
+}
+
+async function delete_task(task_id) {
+    await pool.execute("DELETE FROM todo_tasks WHERE id = ?", [task_id]);
+}
+
+async function update_task(task_id, task_name, task_description, importance) {
+    await pool.execute(
+        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?", 
+        [task_name, task_description, importance, task_id]
+    );
+}
+
+async function mark_task_done(task_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET importance = 'done' WHERE id = ?",
+        [task_id]
+    );
+}
 
 
 module.exports = {
@@ -179,10 +220,18 @@ module.exports = {
     deletedeck,
     save_new_card_order,
     save_new_deck_order,
+<<<<<<< HEAD
     save_new_event,
     get_events,
     changeselectedweek,
     get_saved_weektype,
     updateevent,
     delete_event  
+=======
+    add_task,
+    get_tasks,
+    delete_task,
+    update_task,
+    mark_task_done
+>>>>>>> fooldal
 };

@@ -1,0 +1,77 @@
+.calendar_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    text-align: center;
+}
+
+.monthYear {
+    background-color: #f1b43c;
+    padding: 10px;
+    border-radius: 2rem;
+    text-align: center;
+    font-weight: 600;
+    width: 150px;
+    box-shadow: 0 0 10px #f1b43c88;
+
+}
+
+.calendar_header button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background-color: #fff;
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.day {
+    text-align: center;
+    padding: 5px;
+    color: #949494;
+    font-weight: 500;
+}
+
+.dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: auto;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.date:hover,
+.date.active {
+    background-color: #d99c2c;
+    color: white;
+    box-shadow: 0 0 10px #f1b43c88;
+}
+
+.date.inactive {
+    color: #d3d3d3;
+}
+
+.date.inactive:hover {
+    color: black;
+}

@@ -51,10 +51,13 @@ async function titkositas(password) {
         console.error("Hiba a jelszó titkosításakor: ", err);
     }
 
+<<<<<<< HEAD
 }
 
 function share_code_generator(){
       return crypto.randomBytes(6).toString("base64url"); 
+=======
+>>>>>>> fooldal
 }
 
 async function compare(password, hash) {
