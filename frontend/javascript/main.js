@@ -23,7 +23,6 @@ function getRandomInt(min, max) {
 }
 
 
-
 function lengthtest(input, min, max) {
     if (input.length < min || input.length > max) {
         alertell(`A hossznak ${min} és ${max} karakter között kell lennie!`, 2.5);
