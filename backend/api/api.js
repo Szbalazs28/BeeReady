@@ -65,52 +65,18 @@ router.get("/edit_user", authenticateToken, async (req, res, next) => {
 router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
-    const data = req.body;
+    let data = req.body;
     lengthtest(data.username, 3, 20)
     emailTest(data.email);
     const currentdata = await getuserbyid(id);
     compare(data.password, currentdata[0].password)
+    if (data.newpassword != "") {
+      passwordTest(data.newpassword)
+      data.newpassword = await encrypt(data.newpassword)
+    }
+    await updateuser(currentdata, data, id);
   } catch (error) {
     next(error)
-  }
-});
-
-router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
-  const id = req.user.id;
-  const adatok = req.body;
-  const usernameissues = usernameTest(adatok.username);
-  const emailissues = emailTest(adatok.email);
-  if (Object.keys(usernameissues).length != 0) {
-    res.status(403).json({ success: false, issues: usernameissues });
-  } else {
-    if (Object.keys(emailissues).length != 0) {
-      res.status(403).json({ success: false, issues: emailissues });
-    } else {
-      try {
-        const [rows] = await userbyid(id);
-        if (await compare(adatok.password, rows[0].password)) {
-          if (adatok.newpassword != "") {
-            let issues = passwordTest(adatok.newpassword);
-            if (Object.keys(issues).length == 1) {
-              const newpassword = await encrypt(adatok.newpassword);
-              adatok.newpassword = newpassword;
-              await updateuser(rows, adatok, id);
-              res.status(200).json({ success: true, message: "Sikeres mentés!" });
-            } else {
-              res.status(403).json({ success: false, issues });
-            }
-          } else {
-            await updateuser(rows, adatok, id);
-            res.status(200).json({ success: true, message: "Sikeres mentés!" });
-          }
-        } else {
-          console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hibás jelszó! - IP: ${req.socket.remoteAddress}`);
-          res.status(403).json({ success: false, message: "Hibás jelszó!" });
-        }
-      } catch (error) {
-        next(error);
-      }
-    }
   }
 });
 
