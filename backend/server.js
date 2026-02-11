@@ -55,14 +55,8 @@ app.use('/', router);
 const endpoints = require('./api/api.js');
 app.use('/api', endpoints);
 
-app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
-app.use(express.static(path.join(__dirname, '../frontend')));
 
-app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Szerver fut: http://${ip}:${port}/`);
-});
 
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(express.static(path.join(__dirname, '../frontend')));
@@ -72,4 +66,3 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`Szerver fut: http://${ip}:${port}/`);
 });
-
