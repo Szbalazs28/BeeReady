@@ -44,7 +44,18 @@ CREATE TABLE IF NOT EXISTS timetable (
 );
 
 
+  CREATE TABLE
+  todo_tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    task_name VARCHAR(255) NOT NULL,
+    task_description TEXT,
+    importance ENUM ('high', 'medium', 'low', 'done') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
+
 
 INSERT INTO `users` (username, email, password, profil_pic_url) VALUES
   ('teszt1', 'teszt1@gmail.com', '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC', '../img/allatos_profilkepek/oroszlan.webp');
---Teszt1$
+-- Teszt1$
