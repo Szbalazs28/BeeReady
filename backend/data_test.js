@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt')
-const crypto = require('crypto');
-const {userexists, userbyemail, userbyid} = require("../sql/querys.js");
+const {userexists, userbyemail, userbyid} = require("./sql/querys.js");
 
 function passwordTest(password) {
     let issue = false
@@ -60,11 +59,6 @@ async function encrypt(password) {
 
 }
 
-function share_code_generator() {
-    return crypto.randomBytes(6).toString("base64url");
-}
-
-
 
 function emailTest(email) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -77,7 +71,7 @@ function emailTest(email) {
 
 async function checkuserexists(email, username) {
     const [rows] = await userexists(email, username);
-    if (rows.length == 0) {
+    if (rows.length != 0) {
         const err = new Error("Ilyen E-mail cím vagy Felhasználónév már létezik!")
         err.status = 409;
         throw err;
@@ -108,7 +102,7 @@ async function getuserbyid(id){
 
 async function compare(password, hash) {
     if (!await bcrypt.compare(password, hash)) {
-        const err = new Error("Hibás jelszó!")
+        let err = new Error("Hibás jelszó!")
         err.status = 403;
         throw err;
     }
@@ -123,4 +117,4 @@ function lengthtest(input, min, max) {
     }
 }
 
-module.exports = {getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, share_code_generator, checkuserexists };
+module.exports = {getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists };

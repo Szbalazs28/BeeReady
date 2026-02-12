@@ -25,7 +25,7 @@ router.post("/registration", async (req, res, next) => {
     lengthtest(data.username, 3, 20)
     emailTest(data.email)
     passwordTest(data.password)
-    checkuserexists(data.email, data.username)
+    await checkuserexists(data.email, data.username)
     const password = await encrypt(data.password)
     const [user] = await newuser(data.username, data.email, password, data.profil_pic_url)
     const token = await generateToken(user[0].id, "1h")
@@ -40,7 +40,7 @@ router.post("/login", loginLimiter, async (req, res, next) => {
   try {
     const data = req.body;
     const rows = await getuserbyemail(data.email);
-    compare(data.password, rows.password)
+    await compare(data.password, rows[0].password)
     let expiresInTime = "1h";
     if (data.stay) {
       expiresInTime = "7d";
@@ -69,7 +69,7 @@ router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
     lengthtest(data.username, 3, 20)
     emailTest(data.email);
     const currentdata = await getuserbyid(id);
-    compare(data.password, currentdata[0].password)
+    await compare(data.password, currentdata[0].password)
     if (data.newpassword != "") {
       passwordTest(data.newpassword)
       data.newpassword = await encrypt(data.newpassword)

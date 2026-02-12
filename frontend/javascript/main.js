@@ -68,13 +68,18 @@ async function index_apiFetch(url, options = {}) {
                 alertell("Szerverhiba történt.", 5)
             }
 
+            let err = new Error(`HTTP ${response.status}`);
+            err.status = response.status;
+            throw err;
+
         }
+        return data;
     } catch (error) {
-        if (!err.status) {
-            console.error("Hálózati hiba:", err);
+        if (!error.status) {
+            console.error("Hálózati hiba:", error);
             alertell("Sikertelen csatlakozás a szerverhez!", 5);
         }
-        throw err;
+        throw error;
     }
 }
 

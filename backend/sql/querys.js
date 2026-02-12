@@ -1,4 +1,4 @@
-const { share_code_generator } = require("../data_test.js");
+const { share_code_generator } = require("../utils.js");
 const pool = require('../sql/database');
 
 async function userexists(email, username) {
