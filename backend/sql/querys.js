@@ -157,6 +157,40 @@ async function delete_event(event_id) {
     await pool.execute("DELETE FROM timetable WHERE event_id = ?", [event_id]);
 }
 
+async function add_task(user_id, task_name, task_description, importance) {
+    await pool.execute(
+        "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)", 
+        [user_id, task_name, task_description, importance]
+    );
+}
+
+// Feladatok lekérése felhasználó szerint (időrendben visszafelé)
+async function get_tasks(user_id) {
+    return await pool.execute(`SELECT * FROM todo_tasks 
+    WHERE user_id = ? 
+    ORDER BY 
+    importance ASC, 
+    created_at ASC;`, [user_id]);
+}
+
+async function delete_task(task_id) {
+    await pool.execute("DELETE FROM todo_tasks WHERE id = ?", [task_id]);
+}
+
+async function update_task(task_id, task_name, task_description, importance) {
+    await pool.execute(
+        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?", 
+        [task_name, task_description, importance, task_id]
+    );
+}
+
+async function mark_task_done(task_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET importance = 'done' WHERE id = ?",
+        [task_id]
+    );
+}
+
 
 
 
@@ -204,6 +238,11 @@ async function isexist(data){
 
 
 module.exports = {
+    delete_task,
+    add_task,
+    get_tasks,
+    update_task,
+    mark_task_done,
     userexists,
     newuser,
     userbyemail,

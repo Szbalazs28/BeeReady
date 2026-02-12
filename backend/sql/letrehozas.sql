@@ -32,17 +32,26 @@ FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS timetable (
-    event_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    day INT NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    subject VARCHAR(100),
-    location VARCHAR(50),    
-    week_type VARCHAR(2), 
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  event_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  day INT NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  subject VARCHAR(100),
+  location VARCHAR(50),    
+  week_type VARCHAR(2), 
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE todo_tasks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  task_name VARCHAR(100) NOT NULL,
+  task_description TEXT,
+  importance ENUM ('high', 'medium', 'low', 'done') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
 
 
 INSERT INTO `users` (username, email, password, profil_pic_url) VALUES

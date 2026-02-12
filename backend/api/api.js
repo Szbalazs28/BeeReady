@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid } = require("../data_test.js");
-const { newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
+const { add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -302,6 +302,57 @@ router.post("/delete_event", authenticateToken, async (req, res, next) => {
   }
 })
 
+router.post("/taskadd", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id
+    const data = req.body;
+    lengthtest(data.task_name, 1, 100)
+    await add_task(id, data.task_name, data.task_description, data.importance);
+    res.status(200).json({ write: true, message: "Feladat sikeresen hozzáadva!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/gettasks", authenticateToken, async (req, res, next) => {
+  try {
+    const [rows] = await get_tasks(req.user.id);
+    res.status(200).json({ write: false, tasks: rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/deletetask", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    await delete_task(data.task_id);
+    res.status(200).json({ write: true, message: "Feladat törölve!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/updatetask", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    lengthtest(data.task_name, 1, 100)
+    await update_task(data.task_id, data.task_name, data.task_description, data.importance);
+    res.status(200).json({ write: true, message: "Feladat frissítve!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    await mark_task_done(data.task_id);
+    res.status(200).json({ write: true, message: "Feladat megjelölve!" });
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 module.exports = router;
