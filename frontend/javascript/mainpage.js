@@ -110,6 +110,7 @@ function reset() {
 updateDisplay();
 
 // ToDo
+
 async function submitTask() {
     try {
         const task_name = document.getElementById('task_name').value;
@@ -224,7 +225,8 @@ function createTaskElement(task) {
 document.addEventListener('DOMContentLoaded', loadTasks);
 
 async function markTaskDone(id) {
-    const response = await fetch('/api/marktaskdone', {
+    try {
+        const response = await apiFetch('http://localhost:4000/api/marktaskdone', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -232,19 +234,19 @@ async function markTaskDone(id) {
         },
         body: JSON.stringify({ task_id: id })
     });
-
-    const result = await response.json();
-    if (result.success) {
-        loadTasks();
-    } else {
-        alert("Hiba történt a feladat megjelölésekor.");
+    loadTasks();
     }
+    catch (error) {
+        console.error(error);
+    }
+   
 }
 
 async function deleteTask(id) {
     if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return;
 
-    const response = await fetch('/api/deletetask', {
+    try{
+         const response = await apiFetch('http://localhost:4000/api/deletetask', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -252,13 +254,13 @@ async function deleteTask(id) {
         },
         body: JSON.stringify({ task_id: id })
     });
+}
+catch(error){
+    console.error(error);
+}
 
-    const result = await response.json();
-    if (result.success) {
-        loadTasks();
-    } else {
-        alert("Hiba történt a törléskor.");
-    }
+loadTasks();
+   
 }
 
 function enableEditMode(id, card_div, editBtn) {
@@ -275,43 +277,31 @@ function enableEditMode(id, card_div, editBtn) {
 }
 
 async function saveTask(id, card_div, saveBtn) {
-    const titleElement = card_div.querySelector('.task-title');
-    const descElement = card_div.querySelector('.task-desc');
-    const importanceSpan = card_div.querySelector('.task-footer span');
-
-    const newTitle = titleElement.innerText;
-
-    const newDesc = descElement.value;
-
-    const importanceValue = importanceSpan.dataset.value;
-
-    const response = await fetch('/api/updatetask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-            task_id: id,
-            task_name: newTitle,
-            task_description: newDesc,
-            importance: importanceValue
-        })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-        titleElement.contentEditable = "false";
-
-        descElement.readOnly = true;
-
-        card_div.classList.remove('editing');
-
-        saveBtn.innerText = "Szerkesztés";
-        saveBtn.classList.remove('btn-success');
-        saveBtn.onclick = () => enableEditMode(id, card_div, saveBtn);
-    } else {
-        alert("Hiba: " + result.message);
+    try {
+        const titleElement = card_div.querySelector('.task-title');
+        const descElement = card_div.querySelector('.task-desc');
+        const importanceSpan = card_div.querySelector('.task-footer span');
+        const newTitle = titleElement.innerText;
+        const newDesc = descElement.value;
+        const importanceValue = importanceSpan.dataset.value;
+    
+        const response = await apiFetch('http://localhost:4000/api/updatetask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                task_id: id,
+                task_name: newTitle,
+                task_description: newDesc,
+                importance: importanceValue
+            })
+        });
+        
     }
+    catch (error) {
+        console.error(error);
+    }
+    loadTasks();
 }

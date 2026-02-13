@@ -51,9 +51,6 @@
         <div class="fodiv">
             <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
-                <header class="fooldal_maindiv">
-                    <h2>Főoldal</h2>
-                </header>
                 <!--feladatok-->
                 <section id="tasks" class="fooldal_maindiv">
                     <div class="todo-grid">
@@ -67,9 +64,8 @@
                                 placeholder="A feladat leírása..."></textarea>
                             <div class="section_button">
                                 <select name="importance" id="importance">
-                                    <option value="" disabled selected>Fontosság</option>
                                     <option value="high">Magas</option>
-                                    <option value="medium">Közepes</option>
+                                    <option value="medium" selected>Közepes</option>
                                     <option value="low">Alacsony</option>
                                 </select>
                                 <button type="button" id="add_task" onclick="submitTask()">
