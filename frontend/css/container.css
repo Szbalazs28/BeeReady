@@ -17,7 +17,7 @@ body {
 
 .workspace {    
     display: grid;
-     grid-template-columns: 1fr 3fr 1fr;
+    grid-template-columns: 1fr 3fr 1fr;
     grid-template-rows: 1fr 7fr 6fr;
     gap: 1rem;
 }
