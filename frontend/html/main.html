@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../css/mobilview.css">
     <link rel="stylesheet" href="../css/flashcards.css">
     <link rel="stylesheet" href="../css/timetable.css">
+    <link rel="stylesheet" href="../css/mainpage.css">
     <title>BeeReady</title>
 </head>
 
@@ -38,7 +39,6 @@
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div>
-
                 <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
@@ -49,10 +49,102 @@
         </nav>
         <div class="fodiv">
             <!--foooldal-->
+            <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
-                <section id="tasks">Feladatok</section>
-                <div id="calendar">naptar</div>
-                <div id="to-do">to-do </div>
+                <!--feladatok-->
+                <section id="tasks" class="fooldal_maindiv">
+                    <div class="todo-grid">
+                        <div class="todo_taskadd">
+                            <h3>Feladatok hozzáadása</h3>
+                            <hr>
+                            <div class="todo_items">
+                                <input type="text" id="task_name" placeholder="Új feladat">
+                            </div>
+                            <textarea name="description" id="task_description"
+                                placeholder="A feladat leírása..."></textarea>
+                            <div class="section_button">
+                                <select name="importance" id="importance">
+                                    <option value="high">Magas</option>
+                                    <option value="medium" selected>Közepes</option>
+                                    <option value="low">Alacsony</option>
+                                </select>
+                                <button type="button" id="add_task" onclick="submitTask()">
+                                    Feladat hozzáadása
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="todo_tasklist">
+                            <h3>Aktuális Feladatok</h3>
+                            <hr>
+                            <div class="todo_tasks" id="todo_tasks">
+                                <div class="task-card high">
+                                    <h4>Vásárlás</h4>
+                                    <p>Tej, kenyér, tojás a holnapi reggelihez.</p>
+                                    <div class="task-footer">
+                                        <span>Magas</span>
+                                        <button type="button" class="delete_btn">Törlés</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!--idozito-->
+                <div class="fooldal_maindiv">
+                    <div class="timer_div">
+                        <h3>Pomodoro</h3>
+                        <div class="timer_display" id="timer_display">25:00</div>
+                        <div class="timer_controls">
+                            <button type="button" id="start_timer" onclick="start()">Indítás</button>
+                            <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
+                            <button type="button" id="reset_timer" onclick="reset()">Visszaállítás</button>
+                        </div>
+                    </div>
+                    <!--egy felhasznalo altal beirt idozito-->
+                </div>
+
+                <!--statisztika?-->
+                <div class="fooldal_maindiv">
+                   <div id="statistics" class="statistics">
+                        <h3 id="stat_h3">Statisztika</h3>
+                        <div class="circle_stats">
+                            <div class="circle"></div>
+                            <p id="caption"></p>
+                        </div>
+                        <div class="study_time">
+
+                        </div>
+                        
+                   </div>
+                </div>
+
+                <!--naptar-->
+                <div id="calendar" class="fooldal_maindiv calendar_div">
+                    <div class="calendar">
+                        <div class="calendar_header">
+                            <button type="button" id="calendar_backBTN">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <div class="monthYear" id="monthYear">
+                            </div>
+                            <button type="button" id="calendar_nextBTN">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="days">
+                            <div class="day">H</div>
+                            <div class="day">K</div>
+                            <div class="day">Sz</div>
+                            <div class="day">Cs</div>
+                            <div class="day">P</div>
+                            <div class="day">Sz</div>
+                            <div class="day">V</div>
+                        </div>
+                        <div class="dates" id="dates"></div>
+                    </div>
+                </div>
             </div>
 
             <!--Chat-->
@@ -283,6 +375,7 @@
     <script src="../javascript/flashcards.js"></script>
     <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/timetable.js"></script>
+    <script src="../javascript/mainpage.js"></script>
 </body>
 
 <!--

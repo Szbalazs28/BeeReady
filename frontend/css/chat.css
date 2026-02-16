@@ -144,8 +144,9 @@ ezért kellett ide bemásolni
 
 .alertell p {
   color: #fff;
-  
+  white-space: pre-line;
 }
+
 
 @keyframes fadeIn {
   from {
