@@ -7,8 +7,8 @@
         {
             "type": "msedge",
             "request": "launch",
-            "name": "Open main.html",
-            "file": "c:\\Users\\2021c_szekely_b\\Downloads\\BeeReady\\frontend\\html\\main.html"
+            "name": "Open index.html",
+            "file": "c:\\Users\\piszk\\Downloads\\BeeReady\\frontend\\html\\index.html"
         }
     ]
 }

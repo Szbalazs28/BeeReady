@@ -3,7 +3,7 @@ const {userexists, userbyemail, userbyid} = require("./sql/querys.js");
 
 function passwordTest(password) {
     let issue = false
-    let err = new Error("A jelszónak meg kell felelnie a követleményeknek: ")
+    let err = new Error("A jelszónak meg kell felelnie a követleményeknek: \n")
     if (password.length < 6) {
         err.message += "\n Legalább 6 karakternek kell lennie!"
         issue = true
@@ -109,6 +109,20 @@ async function compare(password, hash) {
 
 }
 
+function timetest(start, end) {
+    if (start.length < 5 || end.length < 5 || start[2] !== ':' || end[2] !== ':') {
+        alertell("Az időpontnak HH:MM formátumúnak kell lennie!", 2.5);
+        throw new Error("Az időpontnak HH:MM formátumúnak kell lennie!");
+    }
+    else {
+        if (start >= end) {
+            alertell("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!", 2.5);
+            throw new Error("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!");
+        }
+    }
+
+}
+
 function lengthtest(input, min, max) {
     if (input.length < min || input.length > max) {
         const err = new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`);
@@ -117,4 +131,4 @@ function lengthtest(input, min, max) {
     }
 }
 
-module.exports = {getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists };
+module.exports = {getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest};

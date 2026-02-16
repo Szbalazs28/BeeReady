@@ -49,10 +49,8 @@
         </nav>
         <div class="fodiv">
             <!--foooldal-->
+            <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
-                <header class="fooldal_maindiv">
-                    <h2>Főoldal</h2>
-                </header>
                 <!--feladatok-->
                 <section id="tasks" class="fooldal_maindiv">
                     <div class="todo-grid">
@@ -65,10 +63,10 @@
                             <textarea name="description" id="task_description"
                                 placeholder="A feladat leírása..."></textarea>
                             <div class="section_button">
-                                <select title="Válasszon prioritást:" name="importance" id="importance">
-                                    <option value="low">Alacsony</option>
-                                    <option value="medium">Közepes</option>
+                                <select name="importance" id="importance">
                                     <option value="high">Magas</option>
+                                    <option value="medium" selected>Közepes</option>
+                                    <option value="low">Alacsony</option>
                                 </select>
                                 <button type="button" id="add_task" onclick="submitTask()">
                                     Feladat hozzáadása
@@ -93,11 +91,11 @@
                     </div>
                 </section>
 
-                <!--idopzito-->
+                <!--idozito-->
                 <div class="fooldal_maindiv">
                     <div class="timer_div">
                         <h3>Pomodoro</h3>
-                        <div class="timer_display" id="timer_display"></div>
+                        <div class="timer_display" id="timer_display">25:00</div>
                         <div class="timer_controls">
                             <button type="button" id="start_timer" onclick="start()">Indítás</button>
                             <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
@@ -109,9 +107,17 @@
 
                 <!--statisztika?-->
                 <div class="fooldal_maindiv">
-                    <!--kordiagramm, az egyes fontossagi dolgok reszletezeserol-->
-                    <!--valami xp szint?-->
+                   <div id="statistics" class="statistics">
+                        <h3 id="stat_h3">Statisztika</h3>
+                        <div class="circle_stats">
+                            <div class="circle"></div>
+                            <p id="caption"></p>
+                        </div>
+                        <div class="study_time">
 
+                        </div>
+                        
+                   </div>
                 </div>
 
                 <!--naptar-->

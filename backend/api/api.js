@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid } = require("../data_test.js");
+const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
 const { add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
@@ -56,13 +56,13 @@ router.get("/edit_user", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
     const rows = await getuserbyid(id)
-    res.status(200).json({ username: rows[0].username, email: rows[0].email, profil_pic_url: rows[0].profil_pic_url, });
+    res.status(200).json({ username: rows[0].username, email: rows[0].email, profil_pic_url: rows[0].profil_pic_url });
   } catch (error) {
     next(error)
   }
 });
 
-router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
+router.post("/edit_user_save", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
     let data = req.body;
@@ -75,6 +75,7 @@ router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
       data.newpassword = await encrypt(data.newpassword)
     }
     await updateuser(currentdata, data, id);
+    res.status(200).json({ write: true, message: "Sikeres módosítás!" })
   } catch (error) {
     next(error)
   }
@@ -279,8 +280,8 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
 router.post("/updateevent", authenticateToken, async (req, res, next) => {
   try {
     const data = req.body
-    lengthtest(data.start_time, 5, 5)
-    lengthtest(data.end_time, 5, 5)
+    timetest(data.start_time),
+    timetest(data.end_time),
     lengthtest(data.subject, 1, 100)
     lengthtest(data.location, 1, 50)
     await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)

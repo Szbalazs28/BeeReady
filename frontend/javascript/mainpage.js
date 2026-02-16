@@ -1,13 +1,14 @@
 // Naptár 
-
 const monthYear = document.getElementById(`monthYear`)
 const dates = document.getElementById(`dates`)
 const backBtn = document.getElementById(`calendar_backBTN`)
 const nextBtn = document.getElementById(`calendar_nextBTN`)
-
 let current_date = new Date()
-
-let update_Cal = () => {
+window.addEventListener('load', () => {
+    update_cal();
+    loadTasks();
+});
+function update_cal() {
     const currentY = current_date.getFullYear()
     const currentM = current_date.getMonth()
 
@@ -19,40 +20,51 @@ let update_Cal = () => {
 
     const monthY_ToString = current_date.toLocaleString(`default`, { month: `long`, year: `numeric` })
     monthYear.textContent = monthY_ToString
+    dates.innerHTML = ""
 
-    let res = ``
 
     for (let i = firstD_index; i > 0; i--) {
         const prevD = new Date(currentY, currentM, 0 - i + 1)
-        res += `<div class="date inactive">${prevD.getDate()}</div>`
+        let div = document.createElement(`div`)
+        div.className = `date inactive`
+        div.textContent = prevD.getDate()
+        dates.appendChild(div)
+
     }
 
     for (let i = 1; i <= totalD; i++) {
         const date = new Date(currentY, currentM, i)
-        const active = date.toDateString() === new Date().toDateString() ? 'active' : ''
-        res += `<div class="date ${active}">${i}</div>`
+        let div = document.createElement(`div`)
+        div.classList.add(`date`)
+        if (date.toDateString() === new Date().toDateString()) {
+            div.classList.add("active")
+        }
+        div.classList.add
+        div.textContent = i
+        dates.appendChild(div)
     }
 
     for (let i = 1; i <= 7 - lastD_index; i++) {
-        const nextD = new Date(currentY, currentM + 1, i)
-        res += `<div class="date inactive">${nextD.getDate()}</div>`
+        const prevD = new Date(currentY, currentM, 0 - i + 1)
+        let div = document.createElement(`div`)
+        div.className = `date inactive`
+        div.textContent = prevD.getDate()
+        dates.appendChild(div)
     }
 
-    dates.innerHTML = res;
+
 }
 backBtn.addEventListener('click', () => {
     current_date.setMonth(current_date.getMonth() - 1)
-    update_Cal()
+    update_cal()
 
 })
 
 nextBtn.addEventListener('click', () => {
     current_date.setMonth(current_date.getMonth() + 1)
-    update_Cal()
+    update_cal()
 
 })
-
-update_Cal()
 
 //Időzítő
 
@@ -84,12 +96,15 @@ function start() {
             else {
                 clearInterval(timer);
                 isRunning = false;
-                timerDisplay.innerHTML = '<span class="timer_message">Idő lejárt! Ideje egy kis szünetet tartani.</span>';
+                const span = document.createElement('span');
+                span.className = 'timer_message';
+                span.textContent = 'Idő lejárt! Ideje egy kis szünetet tartani.';
+                timerDisplay.innerHTML = '25:00';
+                timerDisplay.appendChild(span);
                 pauseB.disabled = true;
             }
         }, 1000);
     }
-    else { return }
 }
 function pause() {
     if (isRunning) {
@@ -97,7 +112,6 @@ function pause() {
         isRunning = false;
         startB.disabled = false;
     }
-    else { return };
 }
 function reset() {
     clearInterval(timer);
@@ -107,7 +121,7 @@ function reset() {
     updateDisplay();
 }
 
-updateDisplay();
+//updateDisplay();
 
 // ToDo
 
@@ -124,13 +138,20 @@ async function submitTask() {
             },
             body: JSON.stringify({ task_name: task_name, task_description: task_description, importance: importance })
         });
+
+        // ez ide kell hogy folyamatosan frissitse es ne kelljen rafrissiteni az oldalra hogy megjelenjenek a feladatok
+        if (result && result.write) {
+            loadTasks();
+            document.getElementById('task_name').value = '';
+            document.getElementById('task_description').value = '';
+            document.getElementById('importance').value = 'low';
+        }
     } catch (error) {
         console.error(error);
     }
 }
 
 
-document.addEventListener('DOMContentLoaded', loadTasks);
 
 async function loadTasks() {
     try {
@@ -151,6 +172,7 @@ async function loadTasks() {
         console.error(error);
     }
 }
+
 
 function createTaskElement(task) {
     const div = document.createElement('div');
@@ -216,40 +238,38 @@ function createTaskElement(task) {
 
 
 async function markTaskDone(id) {
-    const response = await fetch('/api/marktaskdone', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ task_id: id })
-    });
-
-    const result = await response.json();
-    if (result.success) {
+    try {
+        const result = await apiFetch('http://localhost:4000/api/marktaskdone', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ task_id: id })
+        });
         loadTasks();
-    } else {
-        alert("Hiba történt a feladat megjelölésekor.");
     }
+    catch (error) {
+        console.error(error);
+    }
+
 }
 
 async function deleteTask(id) {
-    if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return;
-
-    const response = await fetch('/api/deletetask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ task_id: id })
-    });
-
-    const result = await response.json();
-    if (result.success) {
+    try {
+        if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return;
+        const result = await apiFetch('http://localhost:4000/api/deletetask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ task_id: id })
+        });
         loadTasks();
-    } else {
-        alert("Hiba történt a törléskor.");
+    }
+    catch (error) {
+        console.error(error);
     }
 }
 
@@ -263,47 +283,34 @@ function enableEditMode(id, card_div, editBtn) {
     card_div.classList.add('editing');
     editBtn.innerText = "Mentés";
     editBtn.classList.add('btn-success');
-    editBtn.onclick = () => saveTask(id, card_div, editBtn);
+    editBtn.onclick = () => saveTask(id, card_div);
 }
 
-async function saveTask(id, card_div, saveBtn) {
-    const titleElement = card_div.querySelector('.task-title');
-    const descElement = card_div.querySelector('.task-desc');
-    const importanceSpan = card_div.querySelector('.task-footer span');
-
-    const newTitle = titleElement.innerText;
-
-    const newDesc = descElement.value;
-
-    const importanceValue = importanceSpan.dataset.value;
-
-    const response = await fetch('/api/updatetask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-            task_id: id,
-            task_name: newTitle,
-            task_description: newDesc,
-            importance: importanceValue
-        })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-        titleElement.contentEditable = "false";
-
-        descElement.readOnly = true;
-
-        card_div.classList.remove('editing');
-
-        saveBtn.innerText = "Szerkesztés";
-        saveBtn.classList.remove('btn-success');
-        saveBtn.onclick = () => enableEditMode(id, card_div, saveBtn);
-    } else {
-        alert("Hiba: " + result.message);
+async function saveTask(id, card_div) {
+    try {
+        const titleElement = card_div.querySelector('.task-title');
+        const descElement = card_div.querySelector('.task-desc');
+        const importanceSpan = card_div.querySelector('.task-footer span');
+        const newTitle = titleElement.innerText;
+        const newDesc = descElement.value;
+        const importanceValue = importanceSpan.dataset.value;
+        const result = await apiFetch('http://localhost:4000/api/updatetask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                task_id: id,
+                task_name: newTitle,
+                task_description: newDesc,
+                importance: importanceValue
+            })
+        });
+        loadTasks();
     }
+    catch (error) {
+        console.error(error);
+    }
+
 }

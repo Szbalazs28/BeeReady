@@ -194,41 +194,41 @@ async function mark_task_done(task_id) {
 
 
 
-async function updateuser(rows, ujadatok, kit) {
-    let valtoztatas = updatebuild(rows, ujadatok);
-    for (let i = 0; i < valtoztatas.length; i++) {
-        if(valtoztatas[i][0] === "username" || valtoztatas[i][0] === "email"){
-            const [exists] = await isexist(valtoztatas[i]);
+async function updateuser(rows, newdata, id) {
+    let changes = updatebuild(rows, newdata);
+    for (let i = 0; i < changes.length; i++) {
+        if(changes[i][0] === "username" || changes[i][0] === "email"){
+            const [exists] = await isexist(changes[i]);
             if(exists.length > 0){
-                throw new Error(`A ${valtoztatas[i][1]} már foglalt!`);
+                throw new Error(`A ${changes[i][1]} már foglalt!`);
             }
             else{
-                await pool.query(`UPDATE users SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
+                await pool.query(`UPDATE users SET ${changes[i][0]} = ?  WHERE id=?`, [changes[i][1], id]);
             }
         }
         else{
-            await pool.query(`UPDATE users SET ${valtoztatas[i][0]} = ?  WHERE id=?`, [valtoztatas[i][1], kit]);
+            await pool.query(`UPDATE users SET ${changes[i][0]} = ?  WHERE id=?`, [changes[i][1], id]);
         }
         
     }
     
 }
 
-function updatebuild(rows, ujadatok) {
-    let valtoztatas = []
-    if (rows[0].username != ujadatok.username) {
-        valtoztatas.push(["username", ujadatok.username])
+function updatebuild(rows, newdata) {
+    let changes = []
+    if (rows[0].username != newdata.username) {
+        changes.push(["username", newdata.username])
     }
-    if (rows[0].email != ujadatok.email) {
-        valtoztatas.push(["email", ujadatok.email])
+    if (rows[0].email != newdata.email) {
+        changes.push(["email", newdata.email])
     }
-    if (rows[0].profil_pic_url != `../img/allatos_profilkepek/${ujadatok.newprofil_pic_url}`) {
-        valtoztatas.push(["profil_pic_url", `../img/allatos_profilkepek/${ujadatok.newprofil_pic_url}`])
+    if (rows[0].profil_pic_url != `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`) {
+        changes.push(["profil_pic_url", `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`])
     }
-    if(ujadatok.newpassword.length > 0){
-        valtoztatas.push(["password", ujadatok.newpassword])
+    if(newdata.newpassword.length > 0){
+        changes.push(["password", newdata.newpassword])
     }
-    return valtoztatas;
+    return changes;
 }
 
 async function isexist(data){

@@ -32,7 +32,7 @@ function lengthtest(input, min, max) {
 }
 
 function timetest(start, end) {
-    if (start.length !== 5 || end.length !== 5 || start[2] !== ':' || end[2] !== ':') {
+    if (start.length < 5 || end.length < 5 || start[2] !== ':' || end[2] !== ':') {
         alertell("Az időpontnak HH:MM formátumúnak kell lennie!", 2.5);
         throw new Error("Az időpontnak HH:MM formátumúnak kell lennie!");
     }
@@ -71,6 +71,12 @@ async function index_apiFetch(url, options = {}) {
             let err = new Error(`HTTP ${response.status}`);
             err.status = response.status;
             throw err;
+
+        }
+        else {
+            if (data.write) {
+                alertell(data.message || "Sikeres művelet!", 2.5);
+            }
 
         }
         return data;

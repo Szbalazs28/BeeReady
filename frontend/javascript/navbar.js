@@ -1,3 +1,5 @@
+window.addEventListener('load', load_image);
+
 function navbar_click(id, index) {
     document.querySelectorAll(".mainelem").forEach(element => {
         if (!element.classList.contains("dnone")) {
@@ -46,4 +48,3 @@ function toggleMenu() {
     }
 }
 
-window.onload = load_image
