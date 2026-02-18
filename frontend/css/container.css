@@ -29,7 +29,10 @@ body {
     background: #fefbf5;
     border-radius: 2rem;
     border: 1px solid #ddd;    
+    overflow-y: auto;
+    overflow-x: hidden;
 }
+
 
 
 .workspace section {
