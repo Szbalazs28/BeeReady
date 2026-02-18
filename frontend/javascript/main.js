@@ -88,7 +88,6 @@ async function index_apiFetch(url, options = {}) {
         throw error;
     }
 }
-
 async function apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options);
@@ -140,5 +139,3 @@ async function apiFetch(url, options = {}) {
         throw err;
     }
 }
-
-

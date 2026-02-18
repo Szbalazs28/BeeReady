@@ -23,7 +23,6 @@ document.getElementById("edit_user").addEventListener("submit", async function (
     await mentes();
 });
 
-
 //kep valtoztatasa (a modal/overlay fullosan mukodik)
 const profilpic = document.getElementById("prof_img");
 const modal = document.getElementById("profil_modal");
