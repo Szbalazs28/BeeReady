@@ -4,8 +4,8 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event } = require("../sql/querys.js");
+const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
+const { add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -19,58 +19,34 @@ const loginLimiter = rateLimit({
 });
 
 
-
 router.post("/registration", async (req, res, next) => {
-  let data = req.body;
-  const usernameissues = usernameTest(data.username);
-  const emailissues = emailTest(data.email);
-  if (Object.keys(usernameissues).length != 0) {
-    res.status(403).json({ success: false, issues: usernameissues });
-  } else {
-    if (Object.keys(emailissues).length != 0) {
-      res.status(403).json({ success: false, issues: emailissues });
-    } else {
-      try {
-        const [rows] = await userexists(data.email, data.username);
-        if (rows.length == 0) {
-          let issues = passwordTest(data.password);
-          if (Object.keys(issues).length == 1) {
-            const password = await titkositas(data.password);
-            const [user] = await newuser(data.username, data.email, password, data.profil_pic_url);
-            const token = await generateToken(user[0].id, "1h");
-            res.status(200).json({ success: true, token, redirect: "./main.html" });
-          } else {
-            res.status(409).json({ success: false, issues }); // Visszaküldi a hibákat
-          }
-        } else {
-          res.status(409).json({ success: false, message: "Ilyen E-mail cím vagy Felhasználónév már létezik!" });
-        }
-      } catch (error) {
-        next(error);
-      }
-    }
+  try {
+    const data = req.body
+    lengthtest(data.username, 3, 20)
+    emailTest(data.email)
+    passwordTest(data.password)
+    await checkuserexists(data.email, data.username)
+    const password = await encrypt(data.password)
+    const [user] = await newuser(data.username, data.email, password, data.profil_pic_url)
+    const token = await generateToken(user[0].id, "1h")
+    res.status(200).json({ token, redirect: "./main.html" })
+  } catch (error) {
+    next(error)
   }
+
 })
 
 router.post("/login", loginLimiter, async (req, res, next) => {
-  const data = req.body;
   try {
-    const [rows] = await userbyemail(data.email);
-    if (rows.length > 0) {
-      const compare_result = await compare(data.password, rows[0].password);
-      if (compare_result) {
-        let expiresInTime = "1h";
-        if (data.stay) {
-          expiresInTime = "7d";
-        }
-        const token = await generateToken(rows[0].id, expiresInTime);
-        res.status(200).json({ success: true, token, redirect: "./main.html" });
-      } else {
-        res.status(409).json({ success: false, message: "Hibás jelszó!" });
-      }
-    } else {
-      res.status(409).json({ success: false, message: "Nem található emailcím!" });
+    const data = req.body;
+    const rows = await getuserbyemail(data.email);
+    await compare(data.password, rows[0].password)
+    let expiresInTime = "1h";
+    if (data.stay) {
+      expiresInTime = "7d";
     }
+    const token = await generateToken(rows[0].id, expiresInTime);
+    res.status(200).json({ token, redirect: "./main.html" })
   } catch (error) {
     next(error)
   }
@@ -79,53 +55,29 @@ router.post("/login", loginLimiter, async (req, res, next) => {
 router.get("/edit_user", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
-    const [rows] = await userbyid(id);
-    if (rows.length == 0) {
-      res.status(404).json({ message: "Felhasználó nem található." });
-    } else {
-      res.status(200).json({ username: rows[0].username, email: rows[0].email, profil_pic_url: rows[0].profil_pic_url, });
-    }
+    const rows = await getuserbyid(id)
+    res.status(200).json({ username: rows[0].username, email: rows[0].email, profil_pic_url: rows[0].profil_pic_url });
   } catch (error) {
     next(error)
   }
 });
 
-router.post("/edit_user_mentes", authenticateToken, async (req, res, next) => {
-  const id = req.user.id;
-  const adatok = req.body;
-  const usernameissues = usernameTest(adatok.username);
-  const emailissues = emailTest(adatok.email);
-  if (Object.keys(usernameissues).length != 0) {
-    res.status(403).json({ success: false, issues: usernameissues });
-  } else {
-    if (Object.keys(emailissues).length != 0) {
-      res.status(403).json({ success: false, issues: emailissues });
-    } else {
-      try {
-        const [rows] = await userbyid(id);
-        if (await compare(adatok.password, rows[0].password)) {
-          if (adatok.newpassword != "") {
-            let issues = passwordTest(adatok.newpassword);
-            if (Object.keys(issues).length == 1) {
-              const newpassword = await titkositas(adatok.newpassword);
-              adatok.newpassword = newpassword;
-              await updateuser(rows, adatok, id);
-              res.status(200).json({ success: true, message: "Sikeres mentés!" });
-            } else {
-              res.status(403).json({ success: false, issues });
-            }
-          } else {
-            await updateuser(rows, adatok, id);
-            res.status(200).json({ success: true, message: "Sikeres mentés!" });
-          }
-        } else {
-          console.log(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] Hibás jelszó! - IP: ${req.socket.remoteAddress}`);
-          res.status(403).json({ success: false, message: "Hibás jelszó!" });
-        }
-      } catch (error) {
-        next(error);
-      }
+router.post("/edit_user_save", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    let data = req.body;
+    lengthtest(data.username, 3, 20)
+    emailTest(data.email);
+    const currentdata = await getuserbyid(id);
+    await compare(data.password, currentdata[0].password)
+    if (data.newpassword != "") {
+      passwordTest(data.newpassword)
+      data.newpassword = await encrypt(data.newpassword)
     }
+    await updateuser(currentdata, data, id);
+    res.status(200).json({ write: true, message: "Sikeres módosítás!" })
+  } catch (error) {
+    next(error)
   }
 });
 
@@ -140,6 +92,28 @@ router.post("/add_deck", authenticateToken, async (req, res, next) => {
     next(error)
   }
 })
+
+router.post("/change_share_code", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.body.deck_id
+    const new_share_code = await change_share_code(id)
+    res.status(200).json({ write: false, share_code: new_share_code })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post("/copy_deck", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id
+    const share_code = req.body.share_code
+    await copy_deck(share_code, id)
+    res.status(200).json({ write: true, message: "Sikeres lekérés!" })
+  } catch (error) {
+    next(error)
+  }
+})
+
 
 router.post("/deck_load", authenticateToken, async (req, res, next) => {
   try {
@@ -281,7 +255,7 @@ router.post("/save_new_event", authenticateToken, async (req, res, next) => {
 
 router.post("/get_events", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id   
+    const id = req.user.id
     const [rows] = await get_events(id)
     const [weektype_rows] = await get_saved_weektype(id)
     res.status(200).json({ write: false, events: rows, selected_week_type: weektype_rows[0].selected_week_type })
@@ -296,7 +270,7 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
     const id = req.user.id
     const week_type = req.body.week_type
     await changeselectedweek(id, week_type)
-    res.status(200).json({ write: false})
+    res.status(200).json({ write: false })
   }
   catch (error) {
     next(error)
@@ -304,10 +278,10 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
 })
 
 router.post("/updateevent", authenticateToken, async (req, res, next) => {
-  try {    
+  try {
     const data = req.body
-    lengthtest(data.start_time, 5, 5)
-    lengthtest(data.end_time, 5, 5)
+    timetest(data.start_time),
+    timetest(data.end_time),
     lengthtest(data.subject, 1, 100)
     lengthtest(data.location, 1, 50)
     await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
@@ -319,7 +293,7 @@ router.post("/updateevent", authenticateToken, async (req, res, next) => {
 })
 
 router.post("/delete_event", authenticateToken, async (req, res, next) => {
-  try {    
+  try {
     const data = req.body
     await delete_event(data.event_id)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
@@ -329,58 +303,56 @@ router.post("/delete_event", authenticateToken, async (req, res, next) => {
   }
 })
 
-
-//innentol todo
 router.post("/taskadd", authenticateToken, async (req, res, next) => {
-    try {
-        const { task_name, task_description, importance } = req.body;
-        if(lengthtest(task_name, 1, 100) && lengthtest(task_description, 0, 100)) {
-            throw new Error("Érvénytelen bemenet!");
-        }
-        await add_task(req.user.id, task_name, task_description, importance);
-        res.status(200).json({ success: true, message: "Feladat sikeresen hozzáadva!" });
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const id = req.user.id
+    const data = req.body;
+    lengthtest(data.task_name, 1, 100)
+    await add_task(id, data.task_name, data.task_description, data.importance);
+    res.status(200).json({ write: true, message: "Feladat sikeresen hozzáadva!" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/gettasks", authenticateToken, async (req, res, next) => {
-    try {
-        const [rows] = await get_tasks(req.user.id);
-        res.status(200).json({ success: true, tasks: rows });
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const [rows] = await get_tasks(req.user.id);
+    res.status(200).json({ write: false, tasks: rows });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/deletetask", authenticateToken, async (req, res, next) => {
-    try {
-        const { task_id } = req.body;
-        await delete_task(task_id);
-        res.status(200).json({ success: true, message: "Feladat törölve!" });
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const data = req.body;
+    await delete_task(data.task_id);
+    res.status(200).json({ write: true, message: "Feladat törölve!" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/updatetask", authenticateToken, async (req, res, next) => {
-    try {
-        const { task_id, task_name, task_description, importance } = req.body;
-        await update_task(task_id, task_name, task_description, importance);
-        res.status(200).json({ success: true, message: "Feladat frissítve!" });
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const data = req.body;
+    lengthtest(data.task_name, 1, 100)
+    await update_task(data.task_id, data.task_name, data.task_description, data.importance);
+    res.status(200).json({ write: true, message: "Feladat frissítve!" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
-    try {
-        const { task_id } = req.body;
-        await mark_task_done(task_id);
-        res.status(200).json({ success: true, message: "Feladat megjelölve!" });
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const data = req.body;
+    await mark_task_done(data.task_id);
+    res.status(200).json({ write: true, message: "Feladat megjelölve!" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 

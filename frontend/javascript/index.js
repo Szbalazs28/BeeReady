@@ -57,61 +57,43 @@ function forget_Password() {
 
 document.getElementById("regform").addEventListener("submit", async function (e) {
     e.preventDefault();
+    try {
+        const email = document.getElementById("regemail").value;
+        const password = document.getElementById("regpassword").value;
+        const username = document.getElementById("regusername").value;
+        const profil_pic_url = document.getElementById("profil_pic_url").src.split("/");
 
-    const email = document.getElementById("regemail").value;
-    const password = document.getElementById("regpassword").value;
-    const username = document.getElementById("regusername").value;
-    const profil_pic_url = document.getElementById("profil_pic_url").src.split("/");
+        const result = await index_apiFetch("http://localhost:4000/api/registration", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length - 1]}` })
+        });
 
-    const response = await fetch("http://localhost:4000/api/registration", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilpicek/${profil_pic_url[profil_pic_url.length - 1]}` })
-    });
-    message = await response.json()
-    if (message.success) {
-        localStorage.setItem("token", message.token);
-        window.location.href = message.redirect;
-        alertell("Sikeres regisztráció!", 2.5);
+        localStorage.setItem("token", result.token);
+        window.location.href =  result.redirect;
+    } catch (error) {
+        console.error(error)
     }
-    else {
-        if (Object.keys(message).includes("message")) {
-            alertell(message.message, 2.5);
-        }
-        else {
-            let time = 0.5;
-            let content = ""
-            for (let errormessage of Object.values(message.issues)) {
-                content += `${errormessage}<br>`
-                time++
-            }
-            alertell(content, time);
-        }
 
-    }
+
 
 });
 document.getElementById("loginform").addEventListener("submit", async function (e) {
     e.preventDefault();
-    const stay = document.getElementById("stay").checked;
-    const email = document.getElementById("logemail").value;
-    const password = document.getElementById("logpassword").value;
+    try {
+        const stay = document.getElementById("stay").checked;
+        const email = document.getElementById("logemail").value;
+        const password = document.getElementById("logpassword").value;
 
-    const response = await fetch("http://localhost:4000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, stay })
-    });
-    message = await response.json()
-    if (response.status === 200) {        
-        localStorage.setItem("token", message.token);
-        window.location.href = message.redirect;
-    } else if (response.status === 429) {
-        // RATE LIMIT VÁLASZ
-        alertell(message.message, 5); 
-    } else {
-        //Egyéb hibák (409, 500)
-        alertell(message.message, 2.5);
+        const result = await index_apiFetch("http://localhost:4000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, stay })
+        });
+        localStorage.setItem("token", result.token);
+        window.location.href = result.redirect;
+    } catch (error) {
+        console.error(error)
     }
 });
 

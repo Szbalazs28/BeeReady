@@ -1,6 +1,25 @@
-document.getElementById("flashcard_form").addEventListener("submit", function (e) {
-    e.preventDefault()
-    add_deck();
+document.getElementById("flashcard_form").addEventListener("submit", async function (e) {
+    try {
+        e.preventDefault()
+        const inputvalue = document.getElementById("newDeckName").value
+        if (inputvalue[0] == "#" && inputvalue.length == 9) {
+            const token = localStorage.getItem('token');
+            const result = await apiFetch("http://localhost:4000/api/copy_deck", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ share_code: inputvalue.substring(1, 9) })
+            })
+            await load_deck()
+        } else {
+            await add_deck(inputvalue);
+        }
+    } catch (error) {
+        console.error(error)
+    }
+
 });
 
 document.getElementById("flashcardGameCard").addEventListener("click", function () {
@@ -145,8 +164,8 @@ function card_length_test(cards, deck_id) {
         alertell("Nincsenek kártyák a pakliban!", 2.5)
         throw new Error("Nincsenek kártyák a pakliban!")
     }
-    else{
-        if(cards.length == 1){
+    else {
+        if (cards.length == 1) {
             const nextBtn = document.getElementById("nextCardBtn");
             nextBtn.disabled = true;
             nextBtn.classList.add("disabled_game_button");
@@ -283,6 +302,11 @@ async function deck_edit_user(deck_id) {
         deck_name.placeholder = "Pakli neve (pl.: Történelem - 10. osztály)"
         deck_name.required = true
 
+        const share_code_p = document.createElement("p")
+        share_code_p.textContent = `Megosztási kód: #${adatok.share_code}`
+        share_code_p.classList.add("share_code_p")
+        share_code_p.id = "share_code"
+
         const actions_div = document.createElement("div")
         actions_div.classList.add("modal-actions")
 
@@ -304,21 +328,45 @@ async function deck_edit_user(deck_id) {
         delete_button.classList.add("delete_card_button")
         delete_button.onclick = () => delete_deck(deck_id);
 
+        const share_button = document.createElement("button")
+        share_button.textContent = "Megosztási kód váltás"
+        share_button.classList.add("share_deck_button")
+        share_button.onclick = () => share_code_change(deck_id);
+
 
         right_actions_div.appendChild(save_button)
         right_actions_div.appendChild(cancel_button)
 
 
         actions_div.appendChild(delete_button)
+        actions_div.appendChild(share_button)
         actions_div.appendChild(right_actions_div)
 
         modal_content.appendChild(title)
         modal_content.appendChild(deck_name)
+        modal_content.appendChild(share_code_p)
         modal_content.appendChild(actions_div)
         card_add_modal.appendChild(modal_content)
         document.body.appendChild(card_add_modal)
     } catch (err) {
         console.error(err);
+    }
+}
+
+async function share_code_change(deck_id) {
+    try {
+        const token = localStorage.getItem('token');
+        const result = await apiFetch("http://localhost:4000/api/change_share_code", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ deck_id: deck_id })
+        })
+        document.getElementById("share_code").textContent = `Megosztási kód: #${result.share_code}`;
+    } catch (error) {
+        console.error(error);
     }
 }
 
@@ -444,9 +492,9 @@ async function save_new_card_order(deck_id, currentorder) {
 }
 
 
-async function add_deck() {
+async function add_deck(deck_name) {
     try {
-        const deck_name = document.getElementById("newDeckName").value
+
         const token = localStorage.getItem('token');
         const result = await apiFetch("http://localhost:4000/api/add_deck", {
             method: "POST",

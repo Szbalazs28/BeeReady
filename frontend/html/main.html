@@ -12,11 +12,8 @@
     <link rel="stylesheet" href="../css/mobilview.css">
     <link rel="stylesheet" href="../css/flashcards.css">
     <link rel="stylesheet" href="../css/timetable.css">
-        <link rel="stylesheet" href="../css/fooldal.css">
-        <link rel="stylesheet" href="../css/todo.css">
-        <link rel="stylesheet" href="../css/timer.css">
-        <link rel="stylesheet" href="../css/calendar.css">
-        <title>BeeReady</title>
+    <link rel="stylesheet" href="../css/mainpage.css">
+    <title>BeeReady</title>
 </head>
 
 <body>
@@ -40,10 +37,9 @@
             <div class="nav_items_div">
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
-
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div>
-                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
+                <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
@@ -52,11 +48,8 @@
         </nav>
         <div class="fodiv">
             <!--foooldal-->
+            <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
-                <header class="fooldal_maindiv">
-                    <h2>Főoldal</h2>
-                </header>
-
                 <!--feladatok-->
                 <section id="tasks" class="fooldal_maindiv">
                     <div class="todo-grid">
@@ -70,9 +63,8 @@
                                 placeholder="A feladat leírása..."></textarea>
                             <div class="section_button">
                                 <select name="importance" id="importance">
-                                    <option value="" disabled selected>Fontosság</option>
                                     <option value="high">Magas</option>
-                                    <option value="medium">Közepes</option>
+                                    <option value="medium" selected>Közepes</option>
                                     <option value="low">Alacsony</option>
                                 </select>
                                 <button type="button" id="add_task" onclick="submitTask()">
@@ -98,11 +90,11 @@
                     </div>
                 </section>
 
-                <!--idopzito-->
+                <!--idozito-->
                 <div class="fooldal_maindiv">
                     <div class="timer_div">
                         <h3>Pomodoro</h3>
-                        <div class="timer_display" id="timer_display"></div>
+                        <div class="timer_display" id="timer_display">25:00</div>
                         <div class="timer_controls">
                             <button type="button" id="start_timer" onclick="start()">Indítás</button>
                             <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
@@ -114,9 +106,17 @@
 
                 <!--statisztika?-->
                 <div class="fooldal_maindiv">
-                    <!--kordiagramm, az egyes fontossagi dolgok reszletezeserol-->
-                    <!--valami xp szint?-->
+                   <div id="statistics" class="statistics">
+                        <h3 id="stat_h3">Statisztika</h3>
+                        <div class="circle_stats">
+                            <div class="circle"></div>
+                            <p id="caption"></p>
+                        </div>
+                        <div class="study_time">
 
+                        </div>
+                        
+                   </div>
                 </div>
 
                 <!--naptar-->
@@ -183,9 +183,7 @@
                         <form id="flashcard_form">
                             <input type="text" class="newflashcard_input" id="newDeckName"
                                 placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
-                            <button type="submit" id="createDeckButton"
-                                placeholder="Új pakli neve (pl.: Történelem - 10. osztály)" required>Pakli
-                                hozzáadása</button>
+                            <button type="submit" id="createDeckButton">Pakli hozzáadása</button>
                         </form>
                     </div>
 
@@ -211,7 +209,9 @@
                     </div>
                     <div class="flashcard_game_container " id="flashcardGameContainer">
                         <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn"
-                            onclick="changeCard(-1)" disabled></button>
+                            onclick="changeCard(-1)" disabled>
+                            &#10094;
+                        </button>
 
                         <div class="flashcard_game_card" id="flashcardGameCard">
                             <div class="flashcard" id="flashcard">
@@ -226,12 +226,8 @@
 
                         <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
                             onclick="changeCard(1)">
-
-                            <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
-                                onclick="changeCard(1)">
-
-                                &#10095;
-                            </button>
+                            &#10095;
+                        </button>
                     </div>
                     <div class="flashcard_container dnone_on_start" id="cardList">
 
@@ -311,6 +307,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
@@ -342,18 +339,17 @@
                             </div>
                         </div>
                         <div class="account_edit_div">
-                            <div class="account_kenyszerdiv">
-                                <div class="account_inputs input-group">
-                                    <div class="account_border_div">
-                                        <label for="felh">Felhasználónév</label>
-                                        <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
-                                            required>
-                                    </div>
-                                    <div class="account_border_div">
-                                        <label for="email">E-mail</label>
-                                        <input type="email" id="editemail" name="email" placeholder="E-mail" required>
-                                    </div>
-                                    <div class="account_border_div">
+                            <div class="account_inputs input-group">
+                                <div class="account_border_div">
+                                    <label for="felh">Felhasználónév</label>
+                                    <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
+                                        required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="email">E-mail</label>
+                                    <input type="email" id="editemail" name="email" placeholder="E-mail" required>
+                                </div>
+                                <div class="account_border_div">
 
                                         <label for="jelenlegijelszo">Jelenlegi jelszó</label>
                                         <input type="password" id="currentpassword" name="jelenlegijelszo"
@@ -378,10 +374,7 @@
     <script src="../javascript/flashcards.js"></script>
     <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/timetable.js"></script>
-    <script src="../javascript/timer.js"></script>
-    <script src="../javascript/calendar.js"></script>
-    <script src="../javascript/libs/Sortable.min.js"></script>
-    <script src="../javascript/todo.js"></script>
+    <script src="../javascript/mainpage.js"></script>
 </body>
 
 <!--

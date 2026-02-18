@@ -11,7 +11,7 @@ const port = 4000;
 const rateLimit = require('express-rate-limit');
 const globalLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 perces időablak
-    max: 100, // Maximum 100 kérés 1 percen belül IP címenként
+    max: 300, // Maximum 100 kérés 1 percen belül IP címenként
     message: {
         success: false,
         message: "Túl sok kérés. Kérem, várjon egy percet."
@@ -48,21 +48,15 @@ app.use(express.json());
 app.use(globalLimiter);
 
 router.get('/', (request, response) => {
-  response.sendFile(path.join(__dirname, '../frontend/html/main.html'));
+  response.sendFile(path.join(__dirname, '../frontend/html/index.html'));
 });
 
 app.use('/', router);
 const endpoints = require('./api/api.js');
 app.use('/api', endpoints);
 
-app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
-app.use(express.static(path.join(__dirname, '../frontend')));
 
-app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Szerver fut: http://${ip}:${port}/`);
-});
 
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
 app.use(express.static(path.join(__dirname, '../frontend')));
@@ -72,4 +66,3 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`Szerver fut: http://${ip}:${port}/`);
 });
-

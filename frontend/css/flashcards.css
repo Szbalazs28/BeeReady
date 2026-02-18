@@ -385,7 +385,6 @@
 .modal-actions {
     margin-top: 20px;
     display: flex;
-
     justify-content: space-between;
     gap: 10px;
 }
@@ -399,8 +398,7 @@
 
 .delete_card_button {
 
-    padding: 8px 14px;
-    padding: 8px 14px;
+    padding: 8px 14px;    
     border: none;
     border-radius: 8px;
     background: #000000;
@@ -410,7 +408,20 @@
     transition: background 0.2s;
 }
 
+.share_deck_button {    
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #2196F3;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
 
+.share_deck_button:hover {
+    background: #1976D2;
+}
 
 .save_card_button {
     padding: 8px 14px;
@@ -622,6 +633,7 @@
     transform: scale(1.1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
 .game_nav_button:active {
     transform: scale(0.95);
 }
