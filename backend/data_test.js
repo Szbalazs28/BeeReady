@@ -123,6 +123,12 @@ function timetest(start, end) {
 
 }
 
+function affectedRowscheck(rows){
+    if(rows.affectedRows === 0){
+        throw new Error("Nincs hozzáférése az adatok módosításához!") 
+    }
+}
+
 function lengthtest(input, min, max) {
     if (input.length < min || input.length > max) {
         const err = new Error(`A hossznak ${min} és ${max} karakter között kell lennie!`);
@@ -131,4 +137,4 @@ function lengthtest(input, min, max) {
     }
 }
 
-module.exports = {getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest};
+module.exports = {affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest};

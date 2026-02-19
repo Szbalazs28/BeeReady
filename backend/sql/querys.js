@@ -60,39 +60,44 @@ async function add_deck(id, name) {
 
 }
 
-async function change_share_code(id) {
+async function change_share_code(id, user_id) {
     let share_code = share_code_generator()
     let [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
     while(exists.length > 0){
         share_code = share_code_generator()
         [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
     }
-    await pool.execute("UPDATE flashcard_deck SET share_code = ? WHERE deck_id = ?", [share_code, id])
-    return share_code;
+    const rows = await pool.execute("UPDATE flashcard_deck SET share_code = ? WHERE deck_id = ? AND user_id = ?", [share_code, id, user_id])
+    return {rows: rows, share_code: share_code};
 }
 
 async function  getdeck(id) {
     return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id ORDER BY flashcard_deck.position ASC",[id])
 }
 
-async function  getdeckbydeck_id(deck_id) {
-    return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ?",[deck_id])
+async function  getdeckbydeck_id(deck_id, user_id) {
+    return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ? AND user_id = ?",[deck_id, user_id])
 }
 
-async function updatedeck(deck_name, deck_id) {
-    await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
+async function updatedeck(deck_name, deck_id, user_id) {
+    return await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=? AND user_id = ?", [deck_name, deck_id, user_id]) 
 }
 
-async function  deletedeck(deck_id) {    
-    await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ?", [deck_id])
-    
+async function  deletedeck(deck_id, user_id) {    
+    return await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
 }
 
-async function getcards(deck_id) {
-    return await pool.execute("SELECT * FROM flashcard_card WHERE deck_id = ? ORDER BY position ASC",[deck_id])
+async function getcards(deck_id, user_id) {
+    return await pool.execute("SELECT flashcard_card.front_text, flashcard_card.back_text, flashcard_card.card_id, flashcard_card.position, flashcard_deck.deck_id FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.deck_id = ? AND flashcard_deck.user_id = ? ORDER BY position ASC",[deck_id, user_id])
 }
 
-async function addnewcard(deck_id, front_text, back_text) {
+async function addnewcard(deck_id, front_text, back_text, user_id) {
+    const [rows] = await pool.execute("SELECT deck_name FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
+    if (rows.length === 0) {
+        const error = new Error("Nincs jogosultságod ehhez a paklihoz!");
+        error.status = 403;
+        throw error;
+    }
     const [maxposition] = await maxcardposition(deck_id);
     if(maxposition[0].max_position === null){
         await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, 0);", [deck_id, front_text, back_text])
@@ -111,25 +116,25 @@ async function maxcardposition(deck_id) {
     return await pool.execute("SELECT MAX(position) AS max_position FROM flashcard_card WHERE deck_id = ?", [deck_id]);
 }
 
-async function deletecard(card_id) {
-    await pool.execute("DELETE FROM flashcard_card WHERE flashcard_card.card_id = ?", [card_id])
+async function deletecard(card_id, user_id) {
+   return await pool.execute("DELETE flashcard_card FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.card_id = ? AND flashcard_deck.user_id = ?;", [card_id, user_id])
 }
 
-async function  updatecard(front_text, back_text, card_id) {
-    await pool.execute("UPDATE flashcard_card SET front_text=?, back_text=? WHERE card_id=?", [front_text, back_text, card_id])
+async function  updatecard(front_text, back_text, card_id, user_id) {
+    return await pool.execute("UPDATE flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id SET flashcard_card.front_text=?, flashcard_card.back_text=? WHERE flashcard_card.card_id=? AND flashcard_deck.user_id = ?;", [front_text, back_text, card_id, user_id])
     
 }
 
-async function getcardbyid(card_id) {
-    return await pool.execute("SELECT * FROM flashcard_card WHERE card_id=?", [card_id])
+async function getcardbyid(card_id, user_id) {
+    return await pool.execute("SELECT flashcard_card.card_id, flashcard_card.front_text, flashcard_card.back_text,flashcard_card.deck_id, flashcard_card.position FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.card_id=? AND flashcard_deck.user_id = ?", [card_id, user_id])
 }
 
-async function save_new_card_order(card_id, new_position) {
-    await pool.execute("UPDATE flashcard_card SET position = ? WHERE card_id = ?", [new_position, card_id])
+async function save_new_card_order(card_id, new_position, user_id) {
+  return  await pool.execute("UPDATE flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id SET flashcard_card.position = ? WHERE flashcard_card.card_id = ? AND flashcard_deck.user_id = ?", [new_position, card_id, user_id])
 }
 
-async function save_new_deck_order(deck_id, new_position) {
-    await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ?", [new_position, deck_id])
+async function save_new_deck_order(deck_id, new_position, user_id) {
+   return await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ? AND user_id = ?", [new_position, deck_id, user_id])
 }
 
 async function get_events(user_id) {
@@ -149,12 +154,12 @@ async function changeselectedweek(id, week_type) {
     await pool.execute("UPDATE users SET selected_week_type = ? WHERE id = ?", [week_type, id]);
 }
 
-async function updateevent(event_id, day, startTime, endTime, subject, location, weekType) {
-    await pool.execute("UPDATE timetable SET day = ?, start_time = ?, end_time = ?, subject = ?, location = ?, week_type = ? WHERE event_id = ?", [day, startTime, endTime, subject, location, weekType, event_id]);
+async function updateevent(event_id, day, startTime, endTime, subject, location, weekType, user_id) {
+    await pool.execute("UPDATE timetable SET day = ?, start_time = ?, end_time = ?, subject = ?, location = ?, week_type = ? WHERE event_id = ? AND user_id = ?", [day, startTime, endTime, subject, location, weekType, event_id, user_id]);
 }
 
-async function delete_event(event_id) {
-    await pool.execute("DELETE FROM timetable WHERE event_id = ?", [event_id]);
+async function delete_event(event_id, user_id) {
+    await pool.execute("DELETE FROM timetable WHERE event_id = ? AND user_id = ?", [event_id, user_id]);
 }
 
 async function add_task(user_id, task_name, task_description, importance) {
@@ -173,21 +178,21 @@ async function get_tasks(user_id) {
     created_at ASC;`, [user_id]);
 }
 
-async function delete_task(task_id) {
-    await pool.execute("DELETE FROM todo_tasks WHERE id = ?", [task_id]);
+async function delete_task(task_id, user_id) {
+    await pool.execute("DELETE FROM todo_tasks WHERE id = ? AND user_id = ?", [task_id, user_id]);
 }
 
-async function update_task(task_id, task_name, task_description, importance) {
+async function update_task(task_id, task_name, task_description, importance, user_id) {
     await pool.execute(
-        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?", 
-        [task_name, task_description, importance, task_id]
+        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ? AND user_id = ?", 
+        [task_name, task_description, importance, task_id, user_id]
     );
 }
 
-async function mark_task_done(task_id) {
+async function mark_task_done(task_id, user_id) {
     await pool.execute(
-        "UPDATE todo_tasks SET importance = 'done' WHERE id = ?",
-        [task_id]
+        "UPDATE todo_tasks SET importance = 'done' WHERE id = ? AND user_id = ?",
+        [task_id, user_id]
     );
 }
 

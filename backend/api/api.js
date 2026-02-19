@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
+const {affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
 const { add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
@@ -83,10 +83,10 @@ router.post("/edit_user_save", authenticateToken, async (req, res, next) => {
 
 router.post("/add_deck", authenticateToken, async (req, res, next) => {
   try {
-    const adatok = req.body
+    const data = req.body
     const id = req.user.id
-    lengthtest(adatok.deck_name, 1, 200)
-    await add_deck(id, adatok.deck_name)
+    lengthtest(data.deck_name, 1, 200)
+    await add_deck(id, data.deck_name)
     res.status(200).json({ write: true, message: "Sikeres hozzáadás!" })
   } catch (error) {
     next(error)
@@ -95,9 +95,11 @@ router.post("/add_deck", authenticateToken, async (req, res, next) => {
 
 router.post("/change_share_code", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.body.deck_id
-    const new_share_code = await change_share_code(id)
-    res.status(200).json({ write: false, share_code: new_share_code })
+    const id = req.user.id
+    const deck_id = req.body.deck_id
+    const result = await change_share_code(deck_id, id)
+    affectedRowscheck(result.rows)
+    res.status(200).json({ write: false, share_code: result.share_code })
   } catch (error) {
     next(error)
   }
@@ -127,8 +129,10 @@ router.post("/deck_load", authenticateToken, async (req, res, next) => {
 
 router.post("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const deck_id = req.body.deck_id
-    const [rows] = await getdeckbydeck_id(deck_id)
+    const [rows] = await getdeckbydeck_id(deck_id, id)
+    affectedRowscheck(rows)
     res.status(200).json({ write: false, decks: rows })
   } catch (error) {
     next(error)
@@ -137,8 +141,9 @@ router.post("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
 
 router.post("/getcards", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const deck_id = req.body.deck_id
-    const [rows] = await getcards(deck_id)
+    const [rows] = await getcards(deck_id, id)
     res.status(200).json({ write: false, cards: rows })
   } catch (error) {
     next(error)
@@ -147,10 +152,11 @@ router.post("/getcards", authenticateToken, async (req, res, next) => {
 
 router.post("/addnewcard", authenticateToken, async (req, res, next) => {
   try {
-    const adatok = req.body
-    lengthtest(adatok.front_text, 1, 255)
-    lengthtest(adatok.back_text, 1, 1000)
-    await addnewcard(adatok.deck_id, adatok.front_text, adatok.back_text)
+    const id = req.user.id
+    const data = req.body
+    lengthtest(data.front_text, 1, 255)
+    lengthtest(data.back_text, 1, 1000)
+    await addnewcard(data.deck_id, data.front_text, data.back_text, id)
     res.status(200).json({ write: true, message: "Sikeres hozzáadás!" })
   } catch (error) {
     next(error)
@@ -159,8 +165,10 @@ router.post("/addnewcard", authenticateToken, async (req, res, next) => {
 
 router.post("/deletecard", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const card_id = req.body.card_id
-    await deletecard(card_id)
+    const [rows] = await deletecard(card_id, id)
+    affectedRowscheck(rows)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
   } catch (error) {
     next(error)
@@ -170,10 +178,12 @@ router.post("/deletecard", authenticateToken, async (req, res, next) => {
 
 router.post("/updatecard", authenticateToken, async (req, res, next) => {
   try {
-    const adatok = req.body
-    lengthtest(adatok.front_text, 1, 255)
-    lengthtest(adatok.back_text, 1, 1000)
-    await updatecard(adatok.front_text, adatok.back_text, adatok.card_id)
+    const data = req.body
+    const id = req.user.id
+    lengthtest(data.front_text, 1, 255)
+    lengthtest(data.back_text, 1, 1000)
+    const [rows] = await updatecard(data.front_text, data.back_text, data.card_id, id)
+    affectedRowscheck(rows)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   } catch (error) {
     next(error)
@@ -182,8 +192,9 @@ router.post("/updatecard", authenticateToken, async (req, res, next) => {
 
 router.post("/getcardbyid", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const card_id = req.body.card_id
-    const [rows] = await getcardbyid(card_id)
+    const [rows] = await getcardbyid(card_id, id)
     res.status(200).json({ write: false, rows: rows[0] })
   } catch (error) {
     next(error)
@@ -193,8 +204,10 @@ router.post("/getcardbyid", authenticateToken, async (req, res, next) => {
 router.post("/updatedeck", authenticateToken, async (req, res, next) => {
   try {
     const data = req.body
+    const id = req.user.id
     lengthtest(data.deck_name, 1, 200)
-    await updatedeck(data.deck_name, data.deck_id)
+    const rows = await updatedeck(data.deck_name, data.deck_id, id)
+    affectedRowscheck(rows)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   } catch (error) {
     next(error)
@@ -203,8 +216,10 @@ router.post("/updatedeck", authenticateToken, async (req, res, next) => {
 
 router.post("/deletedeck", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const deck_id = req.body.deck_id
-    await deletedeck(deck_id)
+    const rows =  await deletedeck(deck_id, id)
+    affectedRowscheck(rows)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
   } catch (error) {
     next(error)
@@ -213,9 +228,11 @@ router.post("/deletedeck", authenticateToken, async (req, res, next) => {
 
 router.post("/save_new_card_order", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const data = req.body
     for (let i = 0; i < data.currentorder.length; i++) {
-      await save_new_card_order(data.currentorder[i], i)
+      const [rows] = await save_new_card_order(data.currentorder[i], i, id)
+      affectedRowscheck(rows)
     }
     res.status(200).json({ write: false })
   }
@@ -226,9 +243,11 @@ router.post("/save_new_card_order", authenticateToken, async (req, res, next) =>
 
 router.post("/save_new_deck_order", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const data = req.body
     for (let i = 0; i < data.currentorder.length; i++) {
-      await save_new_deck_order(data.currentorder[i], i)
+      const [rows] = await save_new_deck_order(data.currentorder[i], i, id)
+      affectedRowscheck(rows)
     }
     res.status(200).json({ write: false })
   }
@@ -279,12 +298,13 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
 
 router.post("/updateevent", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const data = req.body
     timetest(data.start_time),
     timetest(data.end_time),
     lengthtest(data.subject, 1, 100)
     lengthtest(data.location, 1, 50)
-    await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
+    await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type, id)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   }
   catch (error) {
@@ -294,8 +314,9 @@ router.post("/updateevent", authenticateToken, async (req, res, next) => {
 
 router.post("/delete_event", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id
     const data = req.body
-    await delete_event(data.event_id)
+    await delete_event(data.event_id, id)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
   }
   catch (error) {
@@ -317,7 +338,8 @@ router.post("/taskadd", authenticateToken, async (req, res, next) => {
 
 router.get("/gettasks", authenticateToken, async (req, res, next) => {
   try {
-    const [rows] = await get_tasks(req.user.id);
+    const id = req.user.id;
+    const [rows] = await get_tasks(id);
     res.status(200).json({ write: false, tasks: rows });
   } catch (error) {
     next(error);
@@ -326,8 +348,9 @@ router.get("/gettasks", authenticateToken, async (req, res, next) => {
 
 router.post("/deletetask", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id;
     const data = req.body;
-    await delete_task(data.task_id);
+    await delete_task(data.task_id, id);
     res.status(200).json({ write: true, message: "Feladat törölve!" });
   } catch (error) {
     next(error);
@@ -336,9 +359,10 @@ router.post("/deletetask", authenticateToken, async (req, res, next) => {
 
 router.post("/updatetask", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id;
     const data = req.body;
     lengthtest(data.task_name, 1, 100)
-    await update_task(data.task_id, data.task_name, data.task_description, data.importance);
+    await update_task(data.task_id, data.task_name, data.task_description, data.importance, id);
     res.status(200).json({ write: true, message: "Feladat frissítve!" });
   } catch (error) {
     next(error);
@@ -347,8 +371,9 @@ router.post("/updatetask", authenticateToken, async (req, res, next) => {
 
 router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
   try {
+    const id = req.user.id;
     const data = req.body;
-    await mark_task_done(data.task_id);
+    await mark_task_done(data.task_id, id);
     res.status(200).json({ write: true, message: "Feladat megjelölve!" });
   } catch (error) {
     next(error);
