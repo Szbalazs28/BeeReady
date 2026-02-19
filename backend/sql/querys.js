@@ -196,6 +196,9 @@ async function mark_task_done(task_id, user_id) {
     );
 }
 
+async function getquizzes(user_id) {
+    return await pool.execute("SELECT * FROM quizzes WHERE user_id = ?", [user_id]);
+}
 
 
 
@@ -243,6 +246,7 @@ async function isexist(data){
 
 
 module.exports = {
+    getquizzes,
     delete_task,
     add_task,
     get_tasks,
