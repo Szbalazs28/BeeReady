@@ -154,6 +154,8 @@ async function loadTasks() {
             const taskCard = createTaskElement(task);
             container.appendChild(taskCard);
         });
+
+        updateStatisticsChart();
     } catch (error) {
         console.error(error);
     }
@@ -209,6 +211,7 @@ function createTaskElement(task) {
         delBtn.innerText = 'Törlés';
         delBtn.className = 'delete_btn';
         delBtn.onclick = () => deleteTask(task.id);
+        editBtn.disabled = true;
         btn_group.appendChild(delBtn);
     }
 
@@ -227,40 +230,40 @@ document.addEventListener('DOMContentLoaded', loadTasks);
 async function markTaskDone(id) {
     try {
         const response = await apiFetch('http://localhost:4000/api/marktaskdone', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ task_id: id })
-    });
-    loadTasks();
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ task_id: id })
+        });
+        loadTasks();
     }
     catch (error) {
         console.error(error);
     }
-   
+
 }
 
 async function deleteTask(id) {
     if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return;
 
-    try{
-         const response = await apiFetch('http://localhost:4000/api/deletetask', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ task_id: id })
-    });
-}
-catch(error){
-    console.error(error);
-}
+    try {
+        const response = await apiFetch('http://localhost:4000/api/deletetask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ task_id: id })
+        });
+        loadTasks();
+    }
+    catch (error) {
+        console.error(error);
+    }
 
-loadTasks();
-   
+
 }
 
 function enableEditMode(id, card_div, editBtn) {
@@ -284,7 +287,7 @@ async function saveTask(id, card_div, saveBtn) {
         const newTitle = titleElement.innerText;
         const newDesc = descElement.value;
         const importanceValue = importanceSpan.dataset.value;
-    
+
         const response = await apiFetch('http://localhost:4000/api/updatetask', {
             method: 'POST',
             headers: {
@@ -298,10 +301,74 @@ async function saveTask(id, card_div, saveBtn) {
                 importance: importanceValue
             })
         });
-        
+
+        loadTasks();
     }
     catch (error) {
         console.error(error);
     }
-    loadTasks();
 }
+
+//statisztika 
+function updateStatisticsChart() {
+    const tasks = document.querySelectorAll('.task-card');
+
+    let counts = {
+        high: 0,
+        medium: 0,
+        low: 0,
+        done: 0
+    };
+
+    // Számold meg a feladatokat
+    tasks.forEach(task => {
+        const importance = task.classList[1];
+        if (counts.hasOwnProperty(importance)) {
+            counts[importance]++;
+        }
+    });
+
+    const total = counts.high + counts.medium + counts.low + counts.done;
+    const caption = document.getElementById('caption');
+
+    if (total == 0) {
+        // alapertelmezetten a szurke legyen 100%
+        const circleElement = document.querySelector('.circle');
+        circleElement.style.setProperty('--high-p', '0%');
+        circleElement.style.setProperty('--medium-p', '0%');
+        circleElement.style.setProperty('--low-p', '0%');
+        circleElement.style.setProperty('--done-p', '100%');
+
+        caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`;
+
+       return; 
+
+        /*
+            circleElement.style.backgroundImage = `
+            radial-gradient(#F8F8F8 40%, transparent 0 70%, #F8F8F8 0),
+            conic-gradient(from 20deg,
+                #ef4444 0 25%, 
+                #F1B43C 25% 50%, 
+                #10b981 50% 75%, 
+                #6b7280 75% 100%
+            )`; 
+        */
+    }
+
+    // ertekek szamolasa es cssbe helyezes
+    const highP = (counts.high / total * 100).toFixed(1);
+    const mediumP = (counts.medium / total * 100).toFixed(1);
+    const lowP = (counts.low / total * 100).toFixed(1);
+    const doneP = (counts.done / total * 100).toFixed(1);
+
+    const circleElement = document.querySelector('.circle');
+    circleElement.style.setProperty('--high-p', highP + '%');
+    circleElement.style.setProperty('--medium-p', mediumP+ '%');
+    circleElement.style.setProperty('--low-p', lowP + '%');
+    circleElement.style.setProperty('--done-p', doneP + '%');
+
+    caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`;
+
+}
+
+updateStatisticsChart();

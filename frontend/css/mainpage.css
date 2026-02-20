@@ -568,23 +568,29 @@
     --medium: #F1B43C;
     --low: #10b981;
     --done: #6b7280;
-    /*ezeket coustum proppertyklenyegeben cssben megoldas a redundancia ellen*/
+    --high-p: 25%;
+    --medium-p: 25%;
+    --low-p: 25%;
+    --done-p: 25%;
 
     flex: 1 0 200px;
     max-width: 200px;
     aspect-ratio: 1;
-     background-image: 
-        radial-gradient(
-            #F8F8F8 40%,
-            transparent 0 70%,
-            #F8F8F8 0
+    background-image: 
+    radial-gradient(  /*az egesz egy negyzeten helyezkedik el es ez a resz egy kozeprol kifele meno szinvaltozas, ami beleolvad a hatterbe es a kozepe atlatszo*/
+        #F8F8F8 40%,
+        transparent 0 70%,
+        #F8F8F8 0
         ),
-        conic-gradient( from 20deg,
-            var(--high) 0% 20%, 
-            var(--medium) 20% 50%, 
-            var(--low) 50% 80%, 
-            var(--done) 80% 100%
+
+
+        conic-gradient( from 20deg, /*ez a negyzeten belulul kozeppontosan indit oramutato jarasnalk megfelolen egy atmenetet, aminek a szelei nem folynak egymasba*/
+            var(--high) 0 var(--high-p), 
+            var(--medium) var(--high-p) calc(var(--high-p) + var(--medium-p)), 
+            var(--low) calc(var(--high-p) + var(--medium-p)) calc(var(--high-p) + var(--medium-p) + var(--low-p)), 
+            var(--done) calc(var(--high-p) + var(--medium-p) + var(--low-p)) 100%
         );
+        /*ezeknel pedig kliszamoljuk mennyi az egymas kozti ertek */
 }
 
 
