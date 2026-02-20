@@ -184,7 +184,8 @@ function createTaskElement(task) {
     const importanceHu = {
         'high': 'Magas',
         'medium': 'Közepes',
-        'low': 'Alacsony'
+        'low': 'Alacsony',
+        'done': 'Kész'
     };
     spanImportance.innerText = importanceHu[task.importance] || task.importance;
     spanImportance.dataset.value = task.importance;
