@@ -73,10 +73,14 @@ function CustomInput() {
         input.type = 'text'
         input.id = 'timer_custom_minutes'
         input.placeholder = 'Perc (pl. 10)'
-        input.style.width = '90px'
-        input.style.marginRight = '8px'
+        input.style.width = 'auto'
+        input.style.marginRight = '0'
         input.style.display = 'none'
-        timerSelect && timerSelect.after(input)
+        if (timerDisplay && timerDisplay.parentNode) {
+            timerDisplay.parentNode.insertBefore(input, timerDisplay)
+        } else {
+            timerSelect && timerSelect.after(input)
+        }
         input.addEventListener('change', () => {
             if (mode === 'custom' && !isRunning) {
                 const mins = parseInt(input.value, 10)
@@ -86,6 +90,9 @@ function CustomInput() {
                 }
             }
         })
+    }
+    else{
+        input.remove()
     }
 }
 
@@ -116,7 +123,11 @@ function applyMode(newMode) {
         }
         if (timerDisplay) timerDisplay.style.display = ''
     }
-    if (timer) { clearInterval(timer); timer = null }
+    if (timer) { 
+        clearInterval(timer) 
+        timer = null 
+    }
+    
     isRunning = false
     startB.disabled = false
     pauseB.disabled = true
@@ -243,7 +254,6 @@ function reset() {
 updateDisplay()
 
 // ToDo
-
 async function submitTask() {
     try {
         const task_name = document.getElementById('task_name').value
@@ -269,8 +279,6 @@ async function submitTask() {
         console.error(error)
     }
 }
-
-
 
 async function loadTasks() {
     try {
