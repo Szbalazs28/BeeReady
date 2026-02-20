@@ -98,6 +98,25 @@
     transform: scale(0.98);
 }
 
+.timer_div input#timer_custom_minutes {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
+    background-color: #f0f2f5;
+    border: 2px solid transparent;
+    border-radius: 0.6rem;
+    width: 90px;
+    box-sizing: border-box;
+    text-align: center;
+    transition: all 0.15s ease;
+}
+.timer_div input#timer_custom_minutes:focus {
+    outline: none;
+    border-color: #f1b43c;
+    background-color: #fff;
+}
+
 .timer_controls button:disabled {
     opacity: 0.5;
     cursor: not-allowed;

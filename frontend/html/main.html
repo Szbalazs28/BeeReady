@@ -94,7 +94,11 @@
                 <!--idopzito-->
                 <div class="fooldal_maindiv">
                     <div class="timer_div">
-                        <h3>Pomodoro</h3>
+                        <select id="timer_select" class="custom_select">
+                    <option value="stopwatch">időzitő</option>
+                        <option value="pomodoro">Pomodoro</option>
+                        <option value="custom">Egyéni időzítő</option>
+                        </select>
                         <div class="timer_display" id="timer_display"></div>
                         <div class="timer_controls">
                             <button type="button" id="start_timer" onclick="start()">Indítás</button>
@@ -102,7 +106,6 @@
                             <button type="button" id="reset_timer" onclick="reset()">Visszaállítás</button>
                         </div>
                     </div>
-                    <!--egy felhasznalo altal beirt idozito-->
                 </div>
 
                 <!--statisztika?-->
