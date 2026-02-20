@@ -106,10 +106,11 @@ function applyMode(newMode) {
     } else if (mode === 'custom') {
         CustomInput()
         const input = document.getElementById('timer_custom_minutes')
-        const mins = parseInt(input && input.value, 10) || 5
+        const mins = parseInt((input && input.value) || '5', 10) || 5
         timeLeft = Math.max(1, mins) * 60
         elapsed = 0
         if (input) {
+            input.value = String(mins)
             input.style.display = 'inline-block'
             input.readOnly = false
         }
@@ -170,13 +171,14 @@ function start() {
         if (mode === 'custom') {
             const input = document.getElementById('timer_custom_minutes')
             if (input) {
-                const raw = input.value.trim()
+                const raw = (input.value || '5').trim()
                 let mins = parseInt(raw, 10)
                 if (isNaN(mins) && raw.includes(':')) {
                     const parts = raw.split(':')
                     mins = parseInt(parts[0], 10) || 0
                 }
-                if (!isNaN(mins) && mins > 0) timeLeft = Math.max(1, mins) * 60
+                mins = (!isNaN(mins) && mins > 0) ? mins : 5
+                timeLeft = Math.max(1, mins) * 60
             }
             const inputElem = document.getElementById('timer_custom_minutes')
             if (inputElem) inputElem.readOnly = true
