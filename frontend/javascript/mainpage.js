@@ -91,12 +91,11 @@ function CustomInput() {
             }
         })
     }
-    else{
-        input.remove()
-    }
 }
 
 function applyMode(newMode) {
+    const existingInput = document.getElementById('timer_custom_minutes')
+    if (existingInput) existingInput.remove()
     mode = newMode
     if (mode === 'pomodoro') {
         timeLeft = DEFAULT_POMODORO
@@ -118,8 +117,7 @@ function applyMode(newMode) {
     } else {
         const input = document.getElementById('timer_custom_minutes')
         if (input) {
-            input.style.display = 'none'
-            input.readOnly = false
+            input.remove()
         }
         if (timerDisplay) timerDisplay.style.display = ''
     }
