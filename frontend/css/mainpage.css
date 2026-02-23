@@ -98,23 +98,49 @@
     transform: scale(0.98);
 }
 
+/* Az input stílusa, hogy pont olyan legyen mint a sima kijelző */
 .timer_div input#timer_custom_minutes {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: #f1b43c;
+    letter-spacing: 2px;
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    /* Fix szélesség, hogy ne ugráljon a kijelző */
+    width: 120px; 
+    padding: 0;
+    margin: 0;
+    /* Eltüntetjük a böngésző alapértelmezett kereteit */
+    outline: none;
+    font-family: inherit;
+}
+
+/* Chrome, Safari, Edge léptető nyilak eltüntetése */
+.timer_div input#timer_custom_minutes::-webkit-outer-spin-button,
+.timer_div input#timer_custom_minutes::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox léptető nyilak eltüntetése */
+.timer_div input#timer_custom_minutes[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* A display konténert is fixáljuk kicsit, hogy ne mozogjon el az inputtól */
+.timer_display {
+    min-height: 5rem; /* Biztosítja, hogy az input és a szöveg magassága azonos legyen */
     font-size: 3.5rem;
     font-weight: 300;
     color: #f1b43c;
     letter-spacing: 2px;
     text-align: center;
     padding: 1.5rem 2rem;
-    border-radius: 2rem;
-    background-color: transparent;
-    border: none;
-    max-width: 100px;
-}
-.timer_div input#timer_custom_minutes:focus {
-    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .timer_controls button:disabled {

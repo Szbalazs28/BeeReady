@@ -57,8 +57,8 @@ update_Cal()
 //Időzítő
 let timer;
 let isRunning = false;
-let currentMode = 'pomodoro'; 
-let seconds = 25 * 60; 
+let currentMode = 'stopwatch'; 
+let seconds = 0; 
 
 const display = document.getElementById('timer_display');
 const select = document.getElementById('timer_select');
@@ -91,10 +91,16 @@ function updateDisplay() {
         let input = document.createElement('input');
         input.type = 'number';
         input.id = 'timer_custom_minutes';
-        input.placeholder = '00';
-        input.min = '1';
-        input.max = '999';
+        input.placeholder = '000';
+
+        input.addEventListener('input', function() {
+            if (this.value.length > 3) {
+                this.value = this.value.slice(0, 3);
+            }
+        });
+
         display.appendChild(input);
+        input.focus();
     } else {
         const mins = Math.floor(Math.abs(seconds) / 60);
         const secs = Math.abs(seconds) % 60;
@@ -103,43 +109,49 @@ function updateDisplay() {
 }
 
 function start() {
-    if (isRunning) return;
+    if (!isRunning) {
+        if (currentMode === 'custom') {
+            const input = document.getElementById('timer_custom_minutes');
+            if (input) {
+                try {
+                    lengthtest(input.value, 1, 3);
+                } catch (e) {
+                    return;
+                }
 
-    if (currentMode === 'custom') {
-        const input = document.getElementById('timer_custom_minutes');
-        if (input) {
-            const val = parseInt(input.value);
-            if (isNaN(val) || val <= 0) {
-                alertell("Adj meg egy érvényes percet!", 2.5);
-                return;
+                const val = parseInt(input.value);
+                if (isNaN(val) || val <= 0) {
+                    alertell("Adj meg egy érvényes percet!", 2.5);
+                    return;
+                }
+                seconds = val * 60;
             }
-            seconds = val * 60;
+        } else if (currentMode === 'pomodoro' && seconds === 0) {
+            seconds = 25 * 60;
         }
-    } else if (currentMode === 'pomodoro' && seconds === 0) {
-        seconds = 25 * 60;
-    }
 
-    isRunning = true;
-    toggleButtons(); 
-    updateDisplay();
-
-    timer = setInterval(() => {
-        if (currentMode === 'stopwatch') {
-            seconds++;
-        } else {
-            seconds--;
-            if (seconds <= 0) {
-                clearInterval(timer);
-                isRunning = false;
-                seconds = 0;
-                alertell("Idő lejárt!", 2.5);
-                toggleButtons(); 
-                updateDisplay();
-                return;
-            }
-        }
+        isRunning = true;
+        toggleButtons(); 
         updateDisplay();
-    }, 1000);
+
+        timer = setInterval(() => {
+            if (currentMode === 'stopwatch') {
+                seconds++;
+            } else {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    isRunning = false;
+                    seconds = 0;
+                    alertell("Idő lejárt!", 2.5);
+                    toggleButtons(); 
+                    updateDisplay();
+                    return;
+                }
+            }
+            updateDisplay();
+        }, 1000);
+    }
 }
 
 function pause() {
@@ -158,7 +170,6 @@ function reset() {
     updateDisplay();
     toggleButtons(); 
 }
-
 
 // ToDo
 async function submitTask() {
