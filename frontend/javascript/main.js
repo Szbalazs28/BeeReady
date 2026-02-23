@@ -22,7 +22,12 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
+function speclengthtest(input, min, max, text) {
+    if (input.length < min || input.length > max) {
+        alertell(`${text}  ${min} és ${max} karakter között kell lennie!`, 2.5);
+        throw new Error(`${text} ${min} és ${max} karakter között kell lennie!`);
+    }
+}
 
 function lengthtest(input, min, max) {
     if (input.length < min || input.length > max) {
@@ -112,6 +117,10 @@ async function apiFetch(url, options = {}) {
                     alertell(data.message || "Hibás kérés.", 5);
                 }
 
+
+            }
+            else if(response.status===409){
+                alertell(data.message || "Hibás adat!", 5);
 
             }
             else {

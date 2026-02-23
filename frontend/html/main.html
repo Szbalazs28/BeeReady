@@ -39,7 +39,7 @@
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
-                <div onclick="navbar_click('quiz',4), load_quizzes()" class="nav_items">Kvíz</div>
+                <div onclick="navbar_click('quiz',4), backToQuizzes(), load_quizzes()" class="nav_items">Kvíz</div>
                 <div onclick="navbar_click('chat',5)" class="nav_items">Chat</div>
                 <div onclick="navbar_click('felhasznalo',6), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
@@ -313,13 +313,12 @@
             </div>
             <!--quiz-->
             <div class="dnone mainelem" id="quiz">
-                <div class="quiz-action-div">
-                    <input type="text" class="quiz-input" id="newDeckName"
-                        placeholder="Keressen kvízt..." required>
-                        <button class="quiz-plus-button">+</button>
+                <div class="quiz-action-div ">
+                    <input type="text" class="quiz-input" id="newDeckName" placeholder="Keressen kvízt..." required>
+                    <button onclick="showcreatequiz()" class="quiz-plus-button">+</button>
                 </div>
 
-                <div class="quiz-container">
+                <div class="quiz-container " id="quizContainer">
                     <div class="quiz-element">
                         <div class="quiz-info">
                             <h2 class="quiz-title">IT kvíz</h2>
@@ -375,6 +374,62 @@
                         </div>
                     </div>
                 </div>
+
+
+                <form class="quiz-create-container dnone" id="quizCreateForm" onsubmit="saveQuiz(event)">
+                    <div class="quiz-create-header">
+                        <div class="quiz-title-row">
+                            <input type="text" id="quizTitle" placeholder="Kvíz címe (pl. Történelem 9. osztály)"
+                                class="quiz-title-input" required>
+                            <button type="button" class="quiz-back-button" onclick="backToQuizzes()">Vissza</button>
+                        </div>
+                        <div class="quiz-meta-controls">
+                            <input type="text" id="quizDescription" placeholder="Kvíz leírása"
+                                class="quiz-description-input">
+                            <div>
+                                <label for="isPublicQuiz" class="public-quiz-label">Nyilvánosan elérhető:</label>
+                                <input type="checkbox" id="isPublicQuiz" class="public-quiz-checkbox">
+                            </div>
+
+                        </div>
+
+                        <p class="quiz-help-text">Tipp: Jelöld be a pipa ikonnal a helyes választ/válaszokat!</p>
+                    </div>
+
+                    <div id="questionsContainer">
+                        <!-- <div class="question-card" id="q_block_1">
+                            <div class="question-header">
+                                <input type="text" placeholder="1. Kérdés szövege" class="q-input">
+                                <div class="q-settings">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" class="is-multiple-choice">
+                                        <span class="checkmark-label">Több helyes válasz</span>
+                                    </label>
+                                    <button class="delete-q-btn" onclick="deletequestion()">
+                                        <img src="../img/icons/trash.png" alt="Törlés" style="width: 26px;">
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="answers-container">
+                                <div class="answer-row">
+                                    <input type="checkbox" name="correct_1" class="correct-check">
+                                    <input type="text" placeholder="Válaszlehetőség" class="ans-input">
+                                    <button class="delete-ans-btn" onclick="this.parentElement.remove()">×</button>
+                                </div>
+                            </div>
+
+                            <div class="question-actions">
+                                <button class="add-ans-btn" onclick="addAnswerToBlock()">+ Válasz hozzáadása</button>
+                            </div>
+                        </div> -->
+                    </div>
+
+                    <div class="quiz-creator-footer">
+                        <button type="button" class="btn-add-q" onclick="addNewQuestionBlock()">+ Új kérdés hozzáadása</button>
+                        <button type="submit" class="btn-save-quiz">Kvíz mentése</button>
+                    </div>
+                </form>
             </div>
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">

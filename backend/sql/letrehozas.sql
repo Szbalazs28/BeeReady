@@ -57,10 +57,11 @@ CREATE TABLE IF NOT EXISTS quizzes (
   quiz_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   title VARCHAR(200) NOT NULL,
-  description TEXT,
+  description TEXT default NULL,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   public BOOLEAN DEFAULT FALSE,
   last_result INT DEFAULT NULL,
+  position INT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -68,11 +69,15 @@ CREATE TABLE IF NOT EXISTS quiz_questions (
   question_id INT AUTO_INCREMENT PRIMARY KEY,
   quiz_id INT NOT NULL,
   question_text TEXT NOT NULL,
-  correct_answer TEXT NOT NULL,
-  wrong_1 TEXT NOT NULL,
-  wrong_2 TEXT NOT NULL,
-  wrong_3 TEXT NOT NULL,
   FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS quiz_answers (
+  answer_id INT AUTO_INCREMENT PRIMARY KEY,
+  question_id INT NOT NULL,
+  answer_text TEXT NOT NULL,
+  right_answer BOOLEAN NOT NULL,
+  FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
 );
 
 INSERT INTO `users` (username, email, password, profil_pic_url) VALUES
