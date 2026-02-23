@@ -57,8 +57,8 @@ update_Cal()
 //Időzítő
 let timer
 let isRunning = false
-let currentMode = 'stopwatch' 
-let seconds = 0 
+let currentMode = 'stopwatch'
+let seconds = 0
 
 const display = document.getElementById('timer_display')
 const select = document.getElementById('timer_select')
@@ -70,17 +70,17 @@ updateDisplay()
 toggleButtons()
 
 select.addEventListener('change', (e) => {
-    pause() 
+    pause()
     currentMode = e.target.value
     seconds = (currentMode === 'pomodoro') ? 25 * 60 : 0
     updateDisplay()
-    toggleButtons() 
+    toggleButtons()
 })
 
 function toggleButtons() {
     stopBtn.disabled = !isRunning
-    const isInitialValue = (currentMode === 'pomodoro' && seconds === 25 * 60) || 
-                           (currentMode !== 'pomodoro' && seconds === 0)
+    const isInitialValue = (currentMode === 'pomodoro' && seconds === 25 * 60) ||
+        (currentMode !== 'pomodoro' && seconds === 0)
     resetBtn.disabled = !isRunning && isInitialValue
     startBtn.disabled = isRunning
 }
@@ -93,7 +93,7 @@ function updateDisplay() {
         input.id = 'timer_custom_minutes'
         input.placeholder = '00:00'
 
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function () {
             if (this.value.length > 3) {
                 this.value = this.value.slice(0, 3)
             }
@@ -109,17 +109,19 @@ function updateDisplay() {
     }
 }
 
+let totalSecondsSpent = 0
+
 function start() {
     if (!isRunning) {
 
-        let canStart = true 
+        let canStart = true
         if (currentMode === 'custom') {
             const input = document.getElementById('timer_custom_minutes')
             if (input) {
                 try {
                     lengthtest(input.value, 1, 3)
                     const val = parseInt(input.value)
-                    
+
                     if (!isNaN(val) && val > 0) {
                         seconds = val * 60
                     } else {
@@ -127,19 +129,21 @@ function start() {
                         canStart = false
                     }
                 } catch (e) {
-                    canStart = false 
+                    canStart = false
                 }
             }
         } else if (currentMode === 'pomodoro' && seconds === 0) {
             seconds = 25 * 60
         }
-    
+
         if (canStart) {
             isRunning = true
             toggleButtons()
             updateDisplay()
-    
+
             timer = setInterval(() => {
+                totalSecondsSpent++;
+                updateStudyTime();
                 if (currentMode === 'stopwatch') {
                     seconds++
                 } else {
@@ -162,7 +166,7 @@ function start() {
 function pause() {
     clearInterval(timer)
     isRunning = false
-    toggleButtons() 
+    toggleButtons()
 }
 
 function reset() {
@@ -173,7 +177,21 @@ function reset() {
         seconds = 0
     }
     updateDisplay()
-    toggleButtons() 
+    toggleButtons()
+}
+
+/*tanualassal tolott ido*/
+function updateStudyTime() {
+    const studyTimeDisplay = document.querySelector('#total_time_display');
+    
+    const h = Math.floor(totalSecondsSpent / 3600);
+    const m = Math.floor((totalSecondsSpent % 3600) / 60);
+    const s = totalSecondsSpent % 60;
+
+    const timeString = `${h > 0 ? h + 'ó ' : ''}${m > 0 ? m + 'p ' : ''}${s}mp`;
+
+    studyTimeDisplay.textContent = timeString;
+
 }
 
 // ToDo

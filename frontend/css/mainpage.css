@@ -98,40 +98,30 @@
     transform: scale(0.98);
 }
 
-/* Az input stílusa, hogy pont olyan legyen mint a sima kijelző */
 .timer_div input#timer_custom_minutes {
     display: inline-block;
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     font-weight: 300;
     color: #f1b43c;
     letter-spacing: 2px;
     text-align: center;
     background-color: transparent;
     border: none;
-    /* Fix szélesség, hogy ne ugráljon a kijelző */
-    width: 120px; 
+    width: 120px;
     padding: 0;
     margin: 0;
-    /* Eltüntetjük a böngésző alapértelmezett kereteit */
     outline: none;
-    font-family: inherit;
 }
 
-/* Chrome, Safari, Edge léptető nyilak eltüntetése */
+/*leptetonyilak eltuntetese*/
 .timer_div input#timer_custom_minutes::-webkit-outer-spin-button,
 .timer_div input#timer_custom_minutes::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-/* Firefox léptető nyilak eltüntetése */
-.timer_div input#timer_custom_minutes[type=number] {
-    -moz-appearance: textfield;
-}
-
-/* A display konténert is fixáljuk kicsit, hogy ne mozogjon el az inputtól */
 .timer_display {
-    min-height: 5rem; /* Biztosítja, hogy az input és a szöveg magassága azonos legyen */
+    min-height: 5rem;
     font-size: 3.5rem;
     font-weight: 300;
     color: #f1b43c;
@@ -185,7 +175,7 @@
 }
 
 /*to-do*/
-.todo{
+.todo {
     display: grid;
 }
 
@@ -194,10 +184,11 @@
     grid-template-columns: 2fr 8fr;
     gap: 20px;
     margin: 20px;
-    align-items: stretch; 
+    align-items: stretch;
 }
 
-.todo_taskadd, .todo_tasklist {
+.todo_taskadd,
+.todo_tasklist {
     display: flex;
     flex-direction: column;
     background-color: #e5e7eb;
@@ -205,11 +196,12 @@
     border-radius: 2rem;
     box-sizing: border-box;
     height: 100%;
-    min-width: 0;  
-    overflow: hidden; 
+    min-width: 0;
+    overflow: hidden;
 }
 
-.todo_taskadd h3, .todo_tasklist h3 {
+.todo_taskadd h3,
+.todo_tasklist h3 {
     text-align: center;
     font-weight: 600;
     font-size: larger;
@@ -260,11 +252,11 @@
     flex-direction: row;
     gap: 20px;
     padding: 15px 10px;
-    overflow-x: auto; 
+    overflow-x: auto;
     overflow-y: hidden;
     width: 100%;
     box-sizing: border-box;
-    align-items: flex-start; 
+    align-items: flex-start;
 }
 
 .task-card {
@@ -276,7 +268,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-width: 200px; 
+    min-width: 200px;
     max-width: 200px;
     height: 250px;
     white-space: normal;
@@ -311,7 +303,7 @@
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 10px;
-    word-break: break-word; 
+    word-break: break-word;
 }
 
 .task-card p {
@@ -319,13 +311,13 @@
     font-size: 0.95rem;
     color: #4b5563;
     line-height: 1.4;
-    flex-grow: 1; 
+    flex-grow: 1;
 }
 
 .task-footer {
     display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
+    flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
     margin-top: 10px;
     padding-top: 10px;
@@ -395,10 +387,22 @@
     color: #047857;
 }
 
-.task-card.high::before { background-color: #ef4444; }
-.task-card.medium::before { background-color: #F1B43C; }
-.task-card.low::before { background-color: #10b981; }
-.task-card.done::before { background-color: #6b7280; }
+.task-card.high::before {
+    background-color: #ef4444;
+}
+
+.task-card.medium::before {
+    background-color: #F1B43C;
+}
+
+.task-card.low::before {
+    background-color: #10b981;
+}
+
+.task-card.done::before {
+    background-color: #6b7280;
+}
+
 .task-card.done {
     opacity: 0.7;
     background-color: #f3f4f6;
@@ -412,27 +416,29 @@
     border-radius: 4px;
 }
 
-.task-content h4, .task-content p {
-    min-height: 1.2em; 
+.task-content h4,
+.task-content p {
+    min-height: 1.2em;
     margin-bottom: 8px;
 }
 
 
 @media (max-width: 900px) {
     .todo-grid {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
 }
 
 .task-actions {
     display: flex;
     gap: 8px;
-    width: 100%; 
+    width: 100%;
 }
 
-.task-actions .edit_btn, 
+.task-actions .edit_btn,
 .task-actions .delete_btn {
-    flex: 1; /* Egyforma szélesek lesznek a gombok */
+    flex: 1;
+    /* Egyforma szélesek lesznek a gombok */
     text-align: center;
     padding: 8px 4px;
 }
@@ -450,7 +456,7 @@
 }
 
 .task-card .edit_btn:hover {
-    background-color: #d1d5db; 
+    background-color: #d1d5db;
     color: #111827;
 }
 
@@ -458,11 +464,12 @@
     background-color: #d1fae5;
     color: #065f46;
 }
+
 .task-card .edit_btn.btn-success:hover {
     background-color: #a7f3d0;
 }
 
-.editing .task-title, 
+.editing .task-title,
 .editing .task-desc {
     border: 1px dashed #F1B43C;
     background-color: #fffdf5;
@@ -473,9 +480,9 @@
 
 .task-desc {
     width: 100%;
-    flex-grow: 1; 
+    flex-grow: 1;
     margin: 10px 0;
-    
+
     background-color: transparent;
     border: 1px solid transparent;
     resize: none;
@@ -486,13 +493,14 @@
     padding: 5px;
     box-sizing: border-box;
     outline: none;
-    overflow-y: auto; 
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
 .task-desc::-webkit-scrollbar {
     width: 6px;
 }
+
 .task-desc::-webkit-scrollbar-thumb {
     background-color: #d1d5db;
     border-radius: 4px;
@@ -615,7 +623,7 @@
     color: #333;
 }
 
-.circle_stats{
+.circle_stats {
     display: flex;
     place-content: center;
     flex-flow: wrap;
@@ -637,24 +645,40 @@
     flex: 1 0 200px;
     max-width: 200px;
     aspect-ratio: 1;
-    background-image: 
-    radial-gradient(  /*az egesz egy negyzeten helyezkedik el es ez a resz egy kozeprol kifele meno szinvaltozas, ami beleolvad a hatterbe es a kozepe atlatszo*/
-        #F8F8F8 40%,
-        transparent 0 70%,
-        #F8F8F8 0
-        ),
+    background-image:
+        radial-gradient(
+            /*az egesz egy negyzeten helyezkedik el es ez a resz egy kozeprol kifele meno szinvaltozas, ami beleolvad a hatterbe es a kozepe atlatszo*/
+            #F8F8F8 40%,
+            transparent 0 70%,
+            #F8F8F8 0),
 
 
-        conic-gradient( from 20deg, /*ez a negyzeten belulul kozeppontosan indit oramutato jarasnalk megfelolen egy atmenetet, aminek a szelei nem folynak egymasba*/
-            var(--high) 0 var(--high-p), 
-            var(--medium) var(--high-p) calc(var(--high-p) + var(--medium-p)), 
-            var(--low) calc(var(--high-p) + var(--medium-p)) calc(var(--high-p) + var(--medium-p) + var(--low-p)), 
-            var(--done) calc(var(--high-p) + var(--medium-p) + var(--low-p)) 100%
-        );
-        /*ezeknel pedig kliszamoljuk mennyi az egymas kozti ertek */
+        conic-gradient(from 20deg,
+            /*ez a negyzeten belulul kozeppontosan indit oramutato jarasnalk megfelolen egy atmenetet, aminek a szelei nem folynak egymasba*/
+            var(--high) 0 var(--high-p),
+            var(--medium) var(--high-p) calc(var(--high-p) + var(--medium-p)),
+            var(--low) calc(var(--high-p) + var(--medium-p)) calc(var(--high-p) + var(--medium-p) + var(--low-p)),
+            var(--done) calc(var(--high-p) + var(--medium-p) + var(--low-p)) 100%);
 }
 
+/*Tanulassal toltott ido*/
 
+.study_time {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-top: 1px solid #eee;
+    width: 100%;
+    text-align: center;
+}
 
+.stat_item {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 0.5rem 0;
+}
 
-
+.stat_item span {
+    font-weight: bold;
+    color: #f1b43c;
+    font-size: 1.3rem;
+}
