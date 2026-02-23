@@ -662,13 +662,69 @@
 }
 
 /*Tanulassal toltott ido*/
-
 .study_time {
-    margin-top: 1rem;
-    padding: 1rem;
-    border-top: 1px solid #eee;
-    width: 100%;
+    margin-top: 1.5rem;
     text-align: center;
+    border-radius: 12px;
+    /* border: 1px solid black; */
+    background-image: url(../img/hourglass.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.study_time_header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.study_time_header i {
+    font-size: 1.5rem;
+    color: #f1b43c;
+}
+
+.study_time_header h4 {
+    margin: 0;
+    font-size: 2rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.study_time_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.time_display_box {
+    background-color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 2px solid #f1b43c;
+}
+
+.time_value {
+    font-weight: bold;
+    color: #f1b43c;
+    font-size: 1.8rem;
+    display: block;
+    letter-spacing: 1px;
+}
+
+.time_label {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    font-weight: 500;
 }
 
 .stat_item {

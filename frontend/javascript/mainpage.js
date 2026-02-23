@@ -188,7 +188,7 @@ function updateStudyTime() {
     const m = Math.floor((totalSecondsSpent % 3600) / 60);
     const s = totalSecondsSpent % 60;
 
-    const timeString = `${h > 0 ? h + 'ó ' : ''}${m > 0 ? m + 'p ' : ''}${s}mp`;
+    const timeString = `${h > 0 ? h + 'h ' : ''}${m > 0 ? m + 'm ' : ''}${s}s`;
 
     studyTimeDisplay.textContent = timeString;
 
