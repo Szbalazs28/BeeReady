@@ -97,4 +97,49 @@
     .dnone {
         display: none;
     }
+
+  /* 1. A fő konténer kényszerítése egy oszlopra */
+    #statistics.statistics {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 1rem !important;
+        gap: 20px !important;
+    }
+
+    /* 2. Az alcímek divjét mobilon teljesen el kell tüntetni, 
+       mert a fix szélessége miatt ez tolja el az egészet */
+    .h3_statistics_headlines {
+        display: none !important;
+    }
+
+    /* 3. A kártyák (kör és idő) alaphelyzetbe állítása */
+    .circle_stats, 
+    .study_time {
+        padding-top: 40px !important; 
+        margin-top: 10px !important;
+
+        position: static !important; /* Megszüntet minden eltolást */
+        width: 100% !important;
+        max-width: 100% !important;
+        
+        margin: 0 0 20px 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transform: none !important; /* Ha lenne rajta eltolás */
+        border: 1px solid black;
+    }
+
+    /* 4. A kördiagram ne lógjon ki */
+    .circle {
+        max-height: 100px !important;
+        max-width: 100px !important;
+    }
+
+    /* 5. A tanulási idő doboza */
+    .study_time {
+        padding: 40px 20px !important;
+        background-size: 70% !important; /* Kisebb homokóra háttér */
+    }
 }

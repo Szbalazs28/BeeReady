@@ -447,7 +447,6 @@
 .task-actions .edit_btn,
 .task-actions .delete_btn {
     flex: 1;
-    /* Egyforma szélesek lesznek a gombok */
     text-align: center;
     padding: 8px 4px;
 }
@@ -642,6 +641,8 @@
     padding: 2rem;
     align-items: stretch;
 }
+
+
 
 #stat_h3 {
     grid-column: 1/3;
