@@ -186,9 +186,23 @@ async function update_task(task_id, task_name, task_description, importance) {
     );
 }
 
+async function toggle_task_completion(task_id, is_completed) {
+    await pool.execute(
+        "UPDATE todo_tasks SET is_completed = ? WHERE id = ?",
+        [is_completed, task_id]
+    );
+}
+
 async function mark_task_done(task_id) {
     await pool.execute(
-        "UPDATE todo_tasks SET importance = 'done' WHERE id = ?",
+        "UPDATE todo_tasks SET is_completed = TRUE WHERE id = ?",
+        [task_id]
+    );
+}
+
+async function restore_task(task_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET is_completed = FALSE WHERE id = ?",
         [task_id]
     );
 }
@@ -222,5 +236,7 @@ module.exports = {
     get_tasks,
     delete_task,
     update_task,
-    mark_task_done
+    mark_task_done,
+    toggle_task_completion,
+    restore_task
 };

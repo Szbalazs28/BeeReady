@@ -183,7 +183,7 @@ function reset() {
 /*tanualassal tolott ido*/
 function updateStudyTime() {
     const studyTimeDisplay = document.querySelector('#total_time_display');
-    
+
     const h = Math.floor(totalSecondsSpent / 3600);
     const m = Math.floor((totalSecondsSpent % 3600) / 60);
     const s = totalSecondsSpent % 60;
@@ -246,7 +246,7 @@ async function loadTasks() {
 
 function createTaskElement(task) {
     const div = document.createElement('div')
-    div.className = `task-card ${task.importance}`
+    div.className = `task-card ${task.importance}${task.is_completed ? ' completed' : ''}`
     div.id = `task-${task.id}`
 
     const h4 = document.createElement('h4')
@@ -266,8 +266,7 @@ function createTaskElement(task) {
     const importanceHu = {
         'high': 'Magas',
         'medium': 'Közepes',
-        'low': 'Alacsony',
-        'done': 'Kész'
+        'low': 'Alacsony'
     }
     spanImportance.innerText = importanceHu[task.importance] || task.importance
     spanImportance.dataset.value = task.importance
@@ -276,25 +275,29 @@ function createTaskElement(task) {
     btn_group.className = 'task-actions'
 
     const editBtn = document.createElement('button')
-    editBtn.innerText = 'Szerkesztés'
     editBtn.className = 'edit_btn'
     editBtn.onclick = () => enableEditMode(task.id, div, editBtn)
-
     btn_group.appendChild(editBtn)
 
-    if (task.importance !== 'done') {
+    if (!task.is_completed) {
+        editBtn.innerText = 'Szerkesztés'
+
         const doneBtn = document.createElement('button')
         doneBtn.innerText = 'Kész'
         doneBtn.className = 'done_btn'
         doneBtn.title = 'Feladat kész'
         doneBtn.onclick = () => markTaskDone(task.id)
         btn_group.appendChild(doneBtn)
+
     } else {
+        editBtn.innerText = 'Vissza'
+        editBtn.className = 'takeBack_btn'
+        editBtn.onclick = () => restoreTask(task.id)
+
         const delBtn = document.createElement('button')
         delBtn.innerText = 'Törlés'
         delBtn.className = 'delete_btn'
         delBtn.onclick = () => deleteTask(task.id)
-        editBtn.disabled = true
         btn_group.appendChild(delBtn)
     }
 
@@ -325,7 +328,23 @@ async function markTaskDone(id) {
     catch (error) {
         console.error(error)
     }
+}
 
+async function restoreTask(id) {
+    try {
+        const response = await apiFetch('http://localhost:4000/api/restoretask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ task_id: id })
+        })
+        loadTasks()
+    }
+    catch (error) {
+        console.error(error)
+    }
 }
 
 async function deleteTask(id) {

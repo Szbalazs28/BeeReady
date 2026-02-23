@@ -408,6 +408,15 @@
     background-color: #f3f4f6;
 }
 
+.task-card.completed::before {
+    background-color: #6b7280;
+}
+
+.task-card.completed {
+    opacity: 0.7;
+    background-color: #f3f4f6;
+}
+
 
 [contenteditable="true"]:focus {
     outline: 2px dashed #F1B43C;
@@ -611,25 +620,42 @@
 .statistics {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 5fr;
-    gap: 1rem;
+    grid-template-rows: auto 1fr;
+    gap: 1.5rem;
     padding: 2rem;
+    align-items: stretch;
 }
 
 #stat_h3 {
     grid-column: 1/3;
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
     color: #333;
+    font-size: 1.6rem;
+    margin: 0;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #f1b43c;
+    letter-spacing: 0.5px;
+}
+
+.h3_statistics_headlines {
+    display: flex;
+    grid-column: 1/3;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 1rem;
 }
 
 .circle_stats {
     display: flex;
-    place-content: center;
-    flex-flow: wrap;
+    /* border: 1px solid black; */
+    border-radius: 12px; 
+    flex-direction: column; 
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: #fcfcfc; 
 }
 
 .circle {
@@ -661,41 +687,26 @@
             var(--done) calc(var(--high-p) + var(--medium-p) + var(--low-p)) 100%);
 }
 
+.circle_stats, .study_time {
+    box-sizing: border-box;
+    height: 220px;
+}
+
 /*Tanulassal toltott ido*/
 .study_time {
-    margin-top: 1.5rem;
+    margin-top: 0; 
     text-align: center;
     border-radius: 12px;
-    /* border: 1px solid black; */
+    /* border: 1px solid black;  */
     background-image: url(../img/hourglass.png);
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain;
+    background-size: 60%; 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 2rem;
-}
-
-.study_time_header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    margin-bottom: 1.5rem;
-}
-
-.study_time_header i {
-    font-size: 1.5rem;
-    color: #f1b43c;
-}
-
-.study_time_header h4 {
-    margin: 0;
-    font-size: 2rem;
-    color: #333;
-    font-weight: 600;
 }
 
 .study_time_content {
@@ -706,15 +717,14 @@
 }
 
 .time_display_box {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.616);
     padding: 1rem 1.5rem;
     border-radius: 8px;
-    border: 2px solid #f1b43c;
+    border: 2px solid #f1b53c;
 }
 
 .time_value {
     font-weight: bold;
-    color: #f1b43c;
     font-size: 1.8rem;
     display: block;
     letter-spacing: 1px;

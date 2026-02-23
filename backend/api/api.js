@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { add_task, get_tasks, delete_task, update_task, mark_task_done, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event } = require("../sql/querys.js");
+const { add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -376,6 +376,26 @@ router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
     const data = req.body;
     await mark_task_done(data.task_id);
     res.status(200).json({ write: true, message: "Feladat megjelölve!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/restoretask", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    await restore_task(data.task_id);
+    res.status(200).json({ write: true, message: "Feladat visszahozva!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/toggletaskcompletion", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    await toggle_task_completion(data.task_id, data.is_completed);
+    res.status(200).json({ write: true, message: "Feladat állapota frissítve!" });
   } catch (error) {
     next(error);
   }
