@@ -55,120 +55,125 @@ nextBtn.addEventListener('click', () => {
 update_Cal()
 
 //Időzítő
-let timer;
-let isRunning = false;
-let currentMode = 'stopwatch'; 
-let seconds = 0; 
+let timer
+let isRunning = false
+let currentMode = 'stopwatch' 
+let seconds = 0 
 
-const display = document.getElementById('timer_display');
-const select = document.getElementById('timer_select');
-const startBtn = document.getElementById('start_timer');
-const stopBtn = document.getElementById('stop_timer');
-const resetBtn = document.getElementById('reset_timer');
+const display = document.getElementById('timer_display')
+const select = document.getElementById('timer_select')
+const startBtn = document.getElementById('start_timer')
+const stopBtn = document.getElementById('stop_timer')
+const resetBtn = document.getElementById('reset_timer')
 
-updateDisplay();
-toggleButtons();
+updateDisplay()
+toggleButtons()
 
 select.addEventListener('change', (e) => {
-    pause(); 
-    currentMode = e.target.value;
-    seconds = (currentMode === 'pomodoro') ? 25 * 60 : 0;
-    updateDisplay();
-    toggleButtons(); 
-});
+    pause() 
+    currentMode = e.target.value
+    seconds = (currentMode === 'pomodoro') ? 25 * 60 : 0
+    updateDisplay()
+    toggleButtons() 
+})
 
 function toggleButtons() {
-    stopBtn.disabled = !isRunning;
+    stopBtn.disabled = !isRunning
     const isInitialValue = (currentMode === 'pomodoro' && seconds === 25 * 60) || 
-                           (currentMode !== 'pomodoro' && seconds === 0);
-    resetBtn.disabled = !isRunning && isInitialValue;
-    startBtn.disabled = isRunning;
+                           (currentMode !== 'pomodoro' && seconds === 0)
+    resetBtn.disabled = !isRunning && isInitialValue
+    startBtn.disabled = isRunning
 }
 
 function updateDisplay() {
     if (currentMode === 'custom' && !isRunning) {
-        display.innerHTML = '';
-        let input = document.createElement('input');
-        input.type = 'number';
-        input.id = 'timer_custom_minutes';
-        input.placeholder = '000';
+        display.innerHTML = ''
+        let input = document.createElement('input')
+        input.type = 'number'
+        input.id = 'timer_custom_minutes'
+        input.placeholder = '00:00'
 
         input.addEventListener('input', function() {
             if (this.value.length > 3) {
-                this.value = this.value.slice(0, 3);
+                this.value = this.value.slice(0, 3)
             }
-        });
+        })
 
-        display.appendChild(input);
-        input.focus();
+        display.appendChild(input)
+        input.focus()
     } else {
-        const mins = Math.floor(Math.abs(seconds) / 60);
-        const secs = Math.abs(seconds) % 60;
-        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        const mins = Math.floor(Math.abs(seconds) / 60)
+        const secs = Math.abs(seconds) % 60
+        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+        //padstart azért kell hogy mindig 2 számjegy legyen, ha kevesebb akkor 0-val tölti ki a helyet
     }
 }
 
 function start() {
     if (!isRunning) {
+
+        let canStart = true 
         if (currentMode === 'custom') {
-            const input = document.getElementById('timer_custom_minutes');
+            const input = document.getElementById('timer_custom_minutes')
             if (input) {
                 try {
-                    lengthtest(input.value, 1, 3);
+                    lengthtest(input.value, 1, 3)
+                    const val = parseInt(input.value)
+                    
+                    if (!isNaN(val) && val > 0) {
+                        seconds = val * 60
+                    } else {
+                        alertell("Adj meg egy érvényes percet!", 2.5)
+                        canStart = false
+                    }
                 } catch (e) {
-                    return;
+                    canStart = false 
                 }
-
-                const val = parseInt(input.value);
-                if (isNaN(val) || val <= 0) {
-                    alertell("Adj meg egy érvényes percet!", 2.5);
-                    return;
-                }
-                seconds = val * 60;
             }
         } else if (currentMode === 'pomodoro' && seconds === 0) {
-            seconds = 25 * 60;
+            seconds = 25 * 60
         }
-
-        isRunning = true;
-        toggleButtons(); 
-        updateDisplay();
-
-        timer = setInterval(() => {
-            if (currentMode === 'stopwatch') {
-                seconds++;
-            } else {
-                seconds--;
-                if (seconds <= 0) {
-                    clearInterval(timer);
-                    isRunning = false;
-                    seconds = 0;
-                    alertell("Idő lejárt!", 2.5);
-                    toggleButtons(); 
-                    updateDisplay();
-                    return;
+    
+        if (canStart) {
+            isRunning = true
+            toggleButtons()
+            updateDisplay()
+    
+            timer = setInterval(() => {
+                if (currentMode === 'stopwatch') {
+                    seconds++
+                } else {
+                    seconds--
+                    if (seconds <= 0) {
+                        clearInterval(timer)
+                        isRunning = false
+                        seconds = 0
+                        alertell("Idő lejárt!", 2.5)
+                        toggleButtons()
+                    }
                 }
-            }
-            updateDisplay();
-        }, 1000);
+                updateDisplay()
+            }, 1000)
+        }
     }
 }
 
+
 function pause() {
-    clearInterval(timer);
-    isRunning = false;
-    toggleButtons(); 
+    clearInterval(timer)
+    isRunning = false
+    toggleButtons() 
 }
 
 function reset() {
-    pause();
+    pause()
     if (currentMode === 'pomodoro') {
-        seconds = 25 * 60;
+        seconds = 25 * 60
     } else {
-        seconds = 0;
+        seconds = 0
     }
-    updateDisplay();
-    toggleButtons(); 
+    updateDisplay()
+    toggleButtons() 
 }
 
 // ToDo
