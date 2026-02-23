@@ -100,10 +100,11 @@
                             <option value="custom">Egyéni időzítő</option>
                         </select>
                         <div class="timer_display" id="timer_display"></div>
+                        <div class="timer_custom_input" id="timer_custom_input"></div>
                         <div class="timer_controls">
                             <button type="button" id="start_timer" onclick="start()">Indítás</button>
-                            <button type="button" id="stop_timer" onclick="pause()">Leállítás</button>
-                            <button type="button" id="reset_timer" onclick="reset()">Visszaállítás</button>
+                            <button type="button" id="stop_timer" onclick="pause()" disabled>Leállítás</button>
+                            <button type="button" id="reset_timer" onclick="reset()" disabled>Visszaállítás</button>
                         </div>
                     </div>
                 </div>

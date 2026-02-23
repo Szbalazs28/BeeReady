@@ -55,34 +55,45 @@ nextBtn.addEventListener('click', () => {
 update_Cal()
 
 //Időzítő
-
 let timer;
-let seconds = 0;
 let isRunning = false;
-let currentMode = 'pomodoro';
+let currentMode = 'pomodoro'; 
+let seconds = 25 * 60; 
 
 const display = document.getElementById('timer_display');
 const select = document.getElementById('timer_select');
+const startBtn = document.getElementById('start_timer');
+const stopBtn = document.getElementById('stop_timer');
+const resetBtn = document.getElementById('reset_timer');
 
 updateDisplay();
-
+toggleButtons();
 
 select.addEventListener('change', (e) => {
-    reset();
+    pause(); 
     currentMode = e.target.value;
+    seconds = (currentMode === 'pomodoro') ? 25 * 60 : 0;
     updateDisplay();
+    toggleButtons(); 
 });
+
+function toggleButtons() {
+    stopBtn.disabled = !isRunning;
+    const isInitialValue = (currentMode === 'pomodoro' && seconds === 25 * 60) || 
+                           (currentMode !== 'pomodoro' && seconds === 0);
+    resetBtn.disabled = !isRunning && isInitialValue;
+    startBtn.disabled = isRunning;
+}
 
 function updateDisplay() {
     if (currentMode === 'custom' && !isRunning) {
+        display.innerHTML = '';
         let input = document.createElement('input');
         input.type = 'number';
         input.id = 'timer_custom_minutes';
         input.placeholder = '00';
         input.min = '1';
         input.max = '999';
-
-        display.innerHTML = '';
         display.appendChild(input);
     } else {
         const mins = Math.floor(Math.abs(seconds) / 60);
@@ -92,49 +103,62 @@ function updateDisplay() {
 }
 
 function start() {
-    if (!isRunning) {
-        if (currentMode == 'custom') {
-            const input = document.getElementById('timer_custom_minutes');
-            if (input) {
-                seconds = parseInt(input.value) * 60 || 0;
-                if (seconds <= 0)
-                    alertell("Adj meg egy érvényes percet!", 2.5);
-            }
-        } if (currentMode == 'pomodoro' && seconds == 0) {
-            seconds = 25 * 60;
-            updateDisplay();
+    if (isRunning) return;
 
-        }
-        isRunning = true;
-        timer = setInterval(() => {
-            if (currentMode === 'stopwatch') {
-                seconds++;
-            } else {
-                seconds--;
-                if (seconds <= 0) {
-                    clearInterval(timer);
-                    isRunning = false;
-                    seconds = 0;
-                    alertell("Idő lejárt!", 2.5);
-                }
+    if (currentMode === 'custom') {
+        const input = document.getElementById('timer_custom_minutes');
+        if (input) {
+            const val = parseInt(input.value);
+            if (isNaN(val) || val <= 0) {
+                alertell("Adj meg egy érvényes percet!", 2.5);
+                return;
             }
-            updateDisplay();
-        }, 1000);
+            seconds = val * 60;
+        }
+    } else if (currentMode === 'pomodoro' && seconds === 0) {
+        seconds = 25 * 60;
     }
+
+    isRunning = true;
+    toggleButtons(); 
+    updateDisplay();
+
+    timer = setInterval(() => {
+        if (currentMode === 'stopwatch') {
+            seconds++;
+        } else {
+            seconds--;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                isRunning = false;
+                seconds = 0;
+                alertell("Idő lejárt!", 2.5);
+                toggleButtons(); 
+                updateDisplay();
+                return;
+            }
+        }
+        updateDisplay();
+    }, 1000);
 }
 
 function pause() {
     clearInterval(timer);
     isRunning = false;
+    toggleButtons(); 
 }
 
 function reset() {
     pause();
-    seconds = 0;
-    if (currentMode === 'pomodoro')
+    if (currentMode === 'pomodoro') {
         seconds = 25 * 60;
+    } else {
+        seconds = 0;
+    }
     updateDisplay();
+    toggleButtons(); 
 }
+
 
 // ToDo
 async function submitTask() {
