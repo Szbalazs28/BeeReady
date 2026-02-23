@@ -56,6 +56,7 @@ CREATE TABLE
     task_description TEXT,
     importance ENUM ('high', 'medium', 'low') NOT NULL,
     is_completed BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 

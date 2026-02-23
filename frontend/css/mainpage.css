@@ -478,6 +478,23 @@
     background-color: #a7f3d0;
 }
 
+.task-card .takeBack_btn {
+    background-color: #bfdbfe;
+    color: #0c4a6e;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.task-card .takeBack_btn:hover {
+    background-color: #93c5fd;
+    color: #082f49;
+}
+
 .editing .task-title,
 .editing .task-desc {
     border: 1px dashed #F1B43C;

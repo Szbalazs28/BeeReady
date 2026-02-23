@@ -168,9 +168,18 @@ async function add_task(user_id, task_name, task_description, importance) {
 
 // Feladatok lekérése felhasználó szerint (időrendben visszafelé)
 async function get_tasks(user_id) {
-    return await pool.execute(`SELECT * FROM todo_tasks 
+    return await pool.execute(`SELECT 
+        id,
+        user_id,
+        task_name,
+        task_description,
+        importance,
+        is_completed,
+        created_at
+    FROM todo_tasks 
     WHERE user_id = ? 
     ORDER BY 
+    is_completed ASC,
     importance ASC, 
     created_at ASC;`, [user_id]);
 }

@@ -245,8 +245,11 @@ async function loadTasks() {
 
 
 function createTaskElement(task) {
+    // Fallback: ha nincs is_completed, akkor a régi logika alapján (importance === 'done')
+    const isCompleted = task.is_completed !== undefined ? task.is_completed : (task.importance === 'done');
+    
     const div = document.createElement('div')
-    div.className = `task-card ${task.importance}${task.is_completed ? ' completed' : ''}`
+    div.className = `task-card ${task.importance}${isCompleted ? ' completed' : ''}`
     div.id = `task-${task.id}`
 
     const h4 = document.createElement('h4')
@@ -274,12 +277,11 @@ function createTaskElement(task) {
     const btn_group = document.createElement('div')
     btn_group.className = 'task-actions'
 
-    const editBtn = document.createElement('button')
-    editBtn.className = 'edit_btn'
-    editBtn.onclick = () => enableEditMode(task.id, div, editBtn)
-    btn_group.appendChild(editBtn)
-
-    if (!task.is_completed) {
+    if (!isCompleted) {
+        const editBtn = document.createElement('button')
+        editBtn.className = 'edit_btn'
+        editBtn.onclick = () => enableEditMode(task.id, div, editBtn)
+        btn_group.appendChild(editBtn)
         editBtn.innerText = 'Szerkesztés'
 
         const doneBtn = document.createElement('button')
@@ -290,7 +292,11 @@ function createTaskElement(task) {
         btn_group.appendChild(doneBtn)
 
     } else {
+        const editBtn = document.createElement('button')
         editBtn.innerText = 'Vissza'
+        editBtn.className = 'takeBack_btn'
+        editBtn.onclick = () => restoreTask(task.id)
+        btn_group.appendChild(editBtn)
         editBtn.className = 'takeBack_btn'
         editBtn.onclick = () => restoreTask(task.id)
 
