@@ -59,7 +59,7 @@ update_Cal()
 let timer;
 let seconds = 0;
 let isRunning = false;
-let currentMode = 'stopwatch';
+let currentMode = 'pomodoro';
 
 const display = document.getElementById('timer_display');
 const select = document.getElementById('timer_select');
@@ -75,10 +75,15 @@ select.addEventListener('change', (e) => {
 
 function updateDisplay() {
     if (currentMode === 'custom' && !isRunning) {
-        document.createElement('input');
+        let input = document.createElement('input');
+        input.type = 'number';
+        input.id = 'timer_custom_minutes';
+        input.placeholder = '00';
+        input.min = '1';
+        input.max = '999';
 
-
-        display.innerHTML = `<input type="number" id="timer_custom_minutes" placeholder="00" min="1" max="999">`;
+        display.innerHTML = '';
+        display.appendChild(input);
     } else {
         const mins = Math.floor(Math.abs(seconds) / 60);
         const secs = Math.abs(seconds) % 60;
@@ -87,34 +92,35 @@ function updateDisplay() {
 }
 
 function start() {
-    if (isRunning) return;
-    else{
-        if (currentMode === 'custom') {
+    if (!isRunning) {
+        if (currentMode == 'custom') {
             const input = document.getElementById('timer_custom_minutes');
             if (input) {
                 seconds = parseInt(input.value) * 60 || 0;
-                if (seconds <= 0) return alert("Adj meg egy érvényes percet!");
+                if (seconds <= 0)
+                    alertell("Adj meg egy érvényes percet!", 2.5);
             }
-        } else if (currentMode === 'pomodoro' && seconds === 0) {
+        } if (currentMode == 'pomodoro' && seconds == 0) {
             seconds = 25 * 60;
-        }
-    }
+            updateDisplay();
 
-    isRunning = true;
-    timer = setInterval(() => {
-        if (currentMode === 'stopwatch') {
-            seconds++;
-        } else {
-            seconds--;
-            if (seconds <= 0) {
-                clearInterval(timer);
-                isRunning = false;
-                seconds = 0;
-                alert("Idő lejárt!");
-            }
         }
-        updateDisplay();
-    }, 1000);
+        isRunning = true;
+        timer = setInterval(() => {
+            if (currentMode === 'stopwatch') {
+                seconds++;
+            } else {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    isRunning = false;
+                    seconds = 0;
+                    alertell("Idő lejárt!", 2.5);
+                }
+            }
+            updateDisplay();
+        }, 1000);
+    }
 }
 
 function pause() {
@@ -125,7 +131,8 @@ function pause() {
 function reset() {
     pause();
     seconds = 0;
-    if (currentMode === 'pomodoro') seconds = 25 * 60;
+    if (currentMode === 'pomodoro')
+        seconds = 25 * 60;
     updateDisplay();
 }
 
@@ -359,7 +366,7 @@ function updateStatisticsChart() {
 
         caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
 
-       return 
+        return
 
         /*
             circleElement.style.backgroundImage = `
@@ -381,7 +388,7 @@ function updateStatisticsChart() {
 
     const circleElement = document.querySelector('.circle')
     circleElement.style.setProperty('--high-p', highP + '%')
-    circleElement.style.setProperty('--medium-p', mediumP+ '%')
+    circleElement.style.setProperty('--medium-p', mediumP + '%')
     circleElement.style.setProperty('--low-p', lowP + '%')
     circleElement.style.setProperty('--done-p', doneP + '%')
 
