@@ -428,11 +428,17 @@ function updateStatisticsChart() {
         done: 0
     }
 
-    // Számold meg a feladatokat
     tasks.forEach(task => {
-        const importance = task.classList[1]
-        if (counts.hasOwnProperty(importance)) {
-            counts[importance]++
+        const isCompleted = task.classList.contains('completed')
+        
+        if (isCompleted) {
+            counts.done++
+        } else {
+           
+            const importance = task.classList[1] 
+            if (counts.hasOwnProperty(importance)) {
+                counts[importance]++
+            }
         }
     })
 
@@ -448,9 +454,6 @@ function updateStatisticsChart() {
         circleElement.style.setProperty('--done-p', '100%')
 
         caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
-
-        return
-
         /*
             circleElement.style.backgroundImage = `
             radial-gradient(#F8F8F8 40%, transparent 0 70%, #F8F8F8 0),
