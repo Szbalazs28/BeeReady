@@ -56,202 +56,78 @@ update_Cal()
 
 //Időzítő
 
-let timer = null
-let isRunning = false
-let timeLeft = 5 * 60
-const timerDisplay = document.getElementById('timer_display')
-const startB = document.getElementById('start_timer')
-const pauseB = document.getElementById('stop_timer')
-const resetB = document.getElementById('reset_timer')
-const timerSelect = document.getElementById('timer_select')
+let timer;
+let seconds = 0;
+let isRunning = false;
+let currentMode = 'stopwatch';
 
-const DEFAULT_POMODORO = 25 * 60
+const display = document.getElementById('timer_display');
+const select = document.getElementById('timer_select');
 
-function CustomInput() {
-    if (!document.getElementById('timer_custom_minutes')) {
-        const input = document.createElement('input')
-        input.type = 'text'
-        input.id = 'timer_custom_minutes'
-        input.placeholder = 'Perc (pl. 10)'
-        input.style.width = 'auto'
-        input.style.marginRight = '0'
-        input.style.display = 'none'
-        if (timerDisplay && timerDisplay.parentNode) {
-            timerDisplay.parentNode.insertBefore(input, timerDisplay)
-        } else {
-            timerSelect && timerSelect.after(input)
-        }
-        input.addEventListener('change', () => {
-            if (mode === 'custom' && !isRunning) {
-                const mins = parseInt(input.value, 10)
-                if (!isNaN(mins) && mins > 0) {
-                    timeLeft = Math.max(1, mins) * 60
-                    updateDisplay()
-                }
-            }
-        })
-    }
-}
+updateDisplay();
 
-function applyMode(newMode) {
-    const existingInput = document.getElementById('timer_custom_minutes')
-    if (existingInput) existingInput.remove()
-    mode = newMode
-    if (mode === 'pomodoro') {
-        timeLeft = DEFAULT_POMODORO
-        elapsed = 0
-    } else if (mode === 'stopwatch') {
-        elapsed = 0
-        timeLeft = 0
-    } else if (mode === 'custom') {
-        CustomInput()
-        const input = document.getElementById('timer_custom_minutes')
-        const mins = parseInt((input && input.value) || '5', 10) || 5
-        timeLeft = Math.max(1, mins) * 60
-        elapsed = 0
-        if (input) {
-            input.value = String(mins)
-            input.style.display = 'inline-block'
-            input.readOnly = false
-        }
-        if (timerDisplay) timerDisplay.style.display = 'none'
-    } else {
-        const input = document.getElementById('timer_custom_minutes')
-        if (input) {
-            input.remove()
-        }
-        if (timerDisplay) timerDisplay.style.display = ''
-    }
-    if (timer) { 
-        clearInterval(timer) 
-        timer = null 
-    }
-    
-    isRunning = false
-    startB.disabled = false
-    pauseB.disabled = true
-    updateDisplay()
-}
 
-if (timerSelect) {
-    applyMode(timerSelect.value)
-    timerSelect.addEventListener('change', (e) => applyMode(e.target.value))
-}
-
-function formatTime(sec) {
-    const minutes = Math.floor(sec / 60)
-    const seconds = sec % 60
-    return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`
-}
+select.addEventListener('change', (e) => {
+    reset();
+    currentMode = e.target.value;
+    updateDisplay();
+});
 
 function updateDisplay() {
-    const input = document.getElementById('timer_custom_minutes')
-    if (mode === 'custom' && input) {
-        if (isRunning) {
-            input.readOnly = true
-            input.value = formatTime(Math.max(0, Math.floor(timeLeft)))
-        } else {
-            input.readOnly = false
-            const mins = Math.max(1, Math.ceil(timeLeft / 60))
-            input.value = String(mins)
-        }
-        if (timerDisplay) timerDisplay.style.display = 'none'
-        return
-    }
-    if (timerDisplay) timerDisplay.style.display = ''
-    if (mode === 'stopwatch') {
-        timerDisplay.textContent = formatTime(Math.floor(elapsed))
+    if (currentMode === 'custom' && !isRunning) {
+        document.createElement('input');
+
+
+        display.innerHTML = `<input type="number" id="timer_custom_minutes" placeholder="00" min="1" max="999">`;
     } else {
-        timerDisplay.textContent = formatTime(Math.max(0, Math.floor(timeLeft)))
+        const mins = Math.floor(Math.abs(seconds) / 60);
+        const secs = Math.abs(seconds) % 60;
+        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 }
 
 function start() {
-    if (!isRunning) {
-        if (mode === 'custom') {
-            const input = document.getElementById('timer_custom_minutes')
+    if (isRunning) return;
+    else{
+        if (currentMode === 'custom') {
+            const input = document.getElementById('timer_custom_minutes');
             if (input) {
-                const raw = (input.value || '5').trim()
-                let mins = parseInt(raw, 10)
-                if (isNaN(mins) && raw.includes(':')) {
-                    const parts = raw.split(':')
-                    mins = parseInt(parts[0], 10) || 0
-                }
-                mins = (!isNaN(mins) && mins > 0) ? mins : 5
-                timeLeft = Math.max(1, mins) * 60
+                seconds = parseInt(input.value) * 60 || 0;
+                if (seconds <= 0) return alert("Adj meg egy érvényes percet!");
             }
-            const inputElem = document.getElementById('timer_custom_minutes')
-            if (inputElem) inputElem.readOnly = true
-            if (timerDisplay) timerDisplay.style.display = 'none'
+        } else if (currentMode === 'pomodoro' && seconds === 0) {
+            seconds = 25 * 60;
         }
-        isRunning = true
-        startB.disabled = true
-        pauseB.disabled = false
-        if (mode === 'stopwatch') {
-            timer = setInterval(() => {
-                elapsed += 1
-                updateDisplay()
-            }, 1000)
+    }
+
+    isRunning = true;
+    timer = setInterval(() => {
+        if (currentMode === 'stopwatch') {
+            seconds++;
         } else {
-            timer = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft -= 1
-                    updateDisplay()
-                } else {
-                    clearInterval(timer)
-                    timer = null
-                    isRunning = false
-                    const message = document.createElement('span')
-                    message.className = 'timer_message'
-                    message.textContent = 'Idő lejárt! Ideje egy kis szünetet tartani.'
-                    timerDisplay.innerHTML = ''
-                    timerDisplay.appendChild(message)
-                    pauseB.disabled = true
-                    startB.disabled = false
-                }
-            }, 1000)
+            seconds--;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                isRunning = false;
+                seconds = 0;
+                alert("Idő lejárt!");
+            }
         }
-    } else { return }
+        updateDisplay();
+    }, 1000);
 }
 
 function pause() {
-    if (isRunning) {
-        if (timer) { clearInterval(timer); timer = null }
-        isRunning = false
-        startB.disabled = false
-        pauseB.disabled = true
-        if (mode === 'custom') {
-            const input = document.getElementById('timer_custom_minutes')
-            if (input) input.readOnly = false
-            if (timerDisplay) timerDisplay.style.display = 'none'
-        }
-    } else { return }
+    clearInterval(timer);
+    isRunning = false;
 }
 
 function reset() {
-    if (timer) { clearInterval(timer); timer = null }
-    isRunning = false
-    startB.disabled = false
-    pauseB.disabled = true
-    if (mode === 'stopwatch') {
-        elapsed = 0
-    } else if (mode === 'pomodoro') {
-        timeLeft = DEFAULT_POMODORO
-    } else if (mode === 'custom') {
-        const input = document.getElementById('timer_custom_minutes')
-        const mins = parseInt(input && input.value, 10) || 5
-        timeLeft = Math.max(1, mins) * 60
-        if (input) {
-            input.readOnly = false
-            input.value = String(Math.max(1, Math.ceil(timeLeft / 60)))
-            input.style.display = 'inline-block'
-        }
-        if (timerDisplay) timerDisplay.style.display = 'none'
-    }
-    updateDisplay()
+    pause();
+    seconds = 0;
+    if (currentMode === 'pomodoro') seconds = 25 * 60;
+    updateDisplay();
 }
-
-updateDisplay()
 
 // ToDo
 async function submitTask() {

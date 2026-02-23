@@ -256,6 +256,12 @@
     white-space: normal;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .todo_tasks::-webkit-scrollbar {
@@ -479,6 +485,16 @@
     padding: 2px;
 }
 
+.calendar_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    text-align: center;
+}
+
+
+/*naptar*/
 .calendar_header {
     display: flex;
     justify-content: space-between;
