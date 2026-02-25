@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event } = require("../sql/querys.js");
+const { add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, get_calendar_events, Insert_calendar_event } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -281,7 +281,7 @@ router.post("/save_new_event", authenticateToken, async (req, res, next) => {
 
 router.post("/get_events", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id   
+    const id = req.user.id
     const [rows] = await get_events(id)
     const [weektype_rows] = await get_saved_weektype(id)
     res.status(200).json({ write: false, events: rows, selected_week_type: weektype_rows[0].selected_week_type })
@@ -296,7 +296,7 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
     const id = req.user.id
     const week_type = req.body.week_type
     await changeselectedweek(id, week_type)
-    res.status(200).json({ write: false})
+    res.status(200).json({ write: false })
   }
   catch (error) {
     next(error)
@@ -304,7 +304,7 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
 })
 
 router.post("/updateevent", authenticateToken, async (req, res, next) => {
-  try {    
+  try {
     const data = req.body
     lengthtest(data.start_time, 5, 5)
     lengthtest(data.end_time, 5, 5)
@@ -319,7 +319,7 @@ router.post("/updateevent", authenticateToken, async (req, res, next) => {
 })
 
 router.post("/delete_event", authenticateToken, async (req, res, next) => {
-  try {    
+  try {
     const data = req.body
     await delete_event(data.event_id)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
@@ -401,5 +401,26 @@ router.post("/toggletaskcompletion", authenticateToken, async (req, res, next) =
   }
 });
 
+// switched to POST so that year/month can be sent in the request body
+router.post("/get_calendar_events", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const [rows] = await get_calendar_events(data.year, data.month, req.user.id);
+    res.status(200).json({ write: false, events: rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/insert_calendar_event", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    lengthtest(data.title, 1, 255)
+    await Insert_calendar_event(data.date, data.title, req.user.id);
+    res.status(200).json({ write: true, message: "Esemény hozzáadva!" });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

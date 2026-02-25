@@ -1,17 +1,34 @@
 // Naptár 
-
 const monthYear = document.getElementById(`monthYear`)
 const dates = document.getElementById(`dates`)
 const backBtn = document.getElementById(`calendar_backBTN`)
 const nextBtn = document.getElementById(`calendar_nextBTN`)
 
+// helper used by several requests to attach auth & JSON header
+function getAuthHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+    };
+}
+
 let current_date = new Date()
 
-let update_Cal = () => {
-    const currentY = current_date.getFullYear()
-    const currentM = current_date.getMonth()
+async function update_Cal() {
+    try {
+        const currentY = current_date.getFullYear()
+        const currentM = current_date.getMonth()
 
-    const firstD = new Date(currentY, currentM, 0)
+        // fetch events for this month (backend reads year/month from body)
+        // apiFetch returns parsed JSON, so don't call .json() again
+        const data = await apiFetch('http://localhost:4000/api/get_calendar_events', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ year: currentY, month: currentM })
+        });
+        const events = data.events || []; // array of events from server
+
+        const firstD = new Date(currentY, currentM, 0)
     const lastD = new Date(currentY, currentM + 1, 0)
     const totalD = lastD.getDate()
     const firstD_index = firstD.getDay()
@@ -30,7 +47,11 @@ let update_Cal = () => {
     for (let i = 1; i <= totalD; i++) {
         const date = new Date(currentY, currentM, i)
         const active = date.toDateString() === new Date().toDateString() ? 'active' : ''
-        res += `<div class="date ${active}">${i}</div>`
+        // mark if there is an event on this day
+        const iso = date.toISOString().split('T')[0];
+        const hasEvent = events.some(e => e.event_date && e.event_date.startsWith(iso));
+        const eventAttr = hasEvent ? ' data-event="true"' : '';
+        res += `<div class="date ${active}"${eventAttr}>${i}</div>`
     }
 
     for (let i = 1; i <= 7 - lastD_index; i++) {
@@ -39,7 +60,11 @@ let update_Cal = () => {
     }
 
     dates.innerHTML = res
+  } catch (err) {
+      console.error('Calendar update failed:', err);
+  }
 }
+
 backBtn.addEventListener('click', () => {
     current_date.setMonth(current_date.getMonth() - 1)
     update_Cal()
@@ -52,7 +77,16 @@ nextBtn.addEventListener('click', () => {
 
 })
 
-update_Cal()
+async function addNewEvent(date) {
+    const title = prompt(`Új privát esemény (${date}):`);
+    if (title) {
+        const response = await apiFetch('http://localhost:4000/api/insert_calendar_event', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ date, title })
+        });
+    }
+}
 
 //Időzítő
 let timer
@@ -478,7 +512,7 @@ function updateStatisticsChart() {
     circleElement.style.setProperty('--low-p', lowP + '%')
     circleElement.style.setProperty('--done-p', doneP + '%')
 
-    caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
+    caption.innerText = `Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
 
 }
 

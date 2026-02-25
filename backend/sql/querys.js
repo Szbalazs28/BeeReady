@@ -216,6 +216,20 @@ async function restore_task(task_id) {
     );
 }
 
+async function get_calendar_events(yrs, mnth, user_id) {
+    return await pool.execute(
+        "SELECT event_date, title FROM events WHERE YEAR(event_date) = ? AND MONTH(event_date) = ? AND user_id = ?",
+        [yrs, mnth, user_id]
+    );
+}
+
+async function Insert_calendar_event(date, title, user_id) {
+    await pool.execute(
+        "INSERT INTO events (event_date, title, user_id) VALUES (?, ?, ?)",
+        [date, title, user_id]
+    );
+}
+
 
 module.exports = {
     userexists,
@@ -247,5 +261,7 @@ module.exports = {
     update_task,
     mark_task_done,
     toggle_task_completion,
-    restore_task
+    restore_task,
+    get_calendar_events,
+    Insert_calendar_event
 };

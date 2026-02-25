@@ -632,6 +632,35 @@
     color: black;
 }
 
+.date { position: relative; }
+
+/* A kis narancssárga pötty */
+.event-dot {
+    position: absolute;
+    bottom: 3px;
+    width: 5px;
+    height: 5px;
+    background-color: #f1b43c;
+    border-radius: 50%;
+}
+
+/* Tooltip (hover szöveg) */
+.date[data-event]::after {
+    content: attr(data-event);
+    position: absolute;
+    bottom: 45px;
+    background: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    display: none;
+    z-index: 100;
+}
+
+.date:hover::after { display: block; }
+
 /*Statisztika*/
 .statistics {
     display: grid;

@@ -60,6 +60,15 @@ CREATE TABLE
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 
+CREATE TABLE events (
+    event_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_date DATE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 VALUES 
   (
     'teszt1',
