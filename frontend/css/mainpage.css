@@ -554,112 +554,257 @@
 
 
 /*naptar*/
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    padding: 10px;
+    width: 100%;
+    max-width: 350px;
+}
+
 .calendar_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    text-align: center;
+    margin-bottom: 15px;
 }
 
 .monthYear {
     background-color: #f1b43c;
-    padding: 10px;
+    padding: 8px 20px;
     border-radius: 2rem;
     text-align: center;
     font-weight: 600;
-    width: 150px;
-    box-shadow: 0 0 10px #f1b43c88;
-
+    font-size: 0.9rem;
+    color: #333;
+    min-width: 150px;
+    box-shadow: 0 4px 10px rgba(241, 180, 60, 0.3);
 }
 
 .calendar_header button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border: none;
     border-radius: 50%;
     background-color: #fff;
     cursor: pointer;
-    height: 40px;
-    width: 40px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    height: 35px;
+    width: 35px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
 }
 
-.days {
+.calendar_header button:active {
+    transform: scale(0.9);
+}
+
+.days, .dates {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    width: 100%;
 }
 
 .day {
     text-align: center;
-    padding: 5px;
+    padding: 10px 0;
     color: #949494;
     font-weight: 500;
-}
-
-.dates {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    font-size: 0.8rem;
 }
 
 .date {
+    position: relative;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    margin: auto;
     cursor: pointer;
     font-weight: 600;
+    font-size: 0.9rem;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    margin: 2px;
+    transition: all 0.2s ease;
+    color: #333;
 }
 
-.date:hover,
 .date.active {
     background-color: #d99c2c;
     color: white;
-    box-shadow: 0 0 10px #f1b43c88;
+    box-shadow: 0 4px 8px rgba(217, 156, 44, 0.4);
 }
 
 .date.inactive {
     color: #d3d3d3;
+    cursor: default;
 }
 
-.date.inactive:hover {
-    color: black;
+.date:hover:not(.inactive) {
+    background-color: rgba(241, 180, 60, 0.2);
 }
 
-.date { position: relative; }
-
-/* A kis narancssárga pötty */
 .event-dot {
     position: absolute;
-    bottom: 3px;
-    width: 5px;
-    height: 5px;
+    bottom: 5px;
+    width: 4px;
+    height: 4px;
     background-color: #f1b43c;
     border-radius: 50%;
 }
 
-/* Tooltip (hover szöveg) */
-.date[data-event]::after {
-    content: attr(data-event);
-    position: absolute;
-    bottom: 45px;
-    background: #333;
-    color: #fff;
-    padding: 5px;
-    border-radius: 4px;
-    font-size: 11px;
-    white-space: nowrap;
-    display: none;
-    z-index: 100;
+.date.active .event-dot {
+    background-color: white;
 }
 
-.date:hover::after { display: block; }
+.date[data-title]:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    bottom: 125%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    pointer-events: none;
+}
+
+.date[data-title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+    z-index: 100;
+}
+/* 1. Sötétített háttér (Overlay) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Finomabb sötétítés */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Legyen minden felett */
+    backdrop-filter: blur(2px); /* Enyhe homályosítás a háttérnek */
+}
+
+/* 2. A Modal kártya */
+.modal-content {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 420px;
+    padding: 30px;
+    border-radius: 24px; /* BeeReady kerekítés */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 3. Feliratok és Cím */
+.modal-content h3 {
+    text-align: center;
+    color: #333;
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+    padding-left: 4px;
+}
+
+/* 4. Beviteli mezők (Input) */
+.modal-content input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #333;
+    transition: all 0.2s ease;
+    outline: none;
+    box-sizing: border-box; /* Hogy ne lógjon ki a padding miatt */
+}
+
+.modal-content input:focus {
+    border-color: #f1b43c; /* BeeReady sárga fókusz */
+    background-color: #fffdf8;
+}
+
+/* 5. Időpontok elrendezése (Kezdés/Vége) */
+.time-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* 6. Gombok stílusa */
+.modal-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.save-btn {
+    background-color: #28a745; /* Pontosan olyan zöld, mint a képen */
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.cancel-btn {
+    background-color: #6c757d; /* Pontosan olyan szürke, mint a képen */
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.save-btn:hover { background-color: #218838; }
+.cancel-btn:hover { background-color: #5a6268; }
+
+.save-btn:active, .cancel-btn:active {
+    transform: scale(0.97); /* Kicsi benyomódás effekt */
+}
 
 /*Statisztika*/
 .statistics {

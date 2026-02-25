@@ -1,10 +1,9 @@
 // Naptár 
-const monthYear = document.getElementById(`monthYear`)
-const dates = document.getElementById(`dates`)
-const backBtn = document.getElementById(`calendar_backBTN`)
-const nextBtn = document.getElementById(`calendar_nextBTN`)
+const monthYear = document.getElementById('monthYear');
+const datesContainer = document.getElementById('dates');
+const eventModal = document.getElementById('eventModal');
+let current_date = new Date();
 
-// helper used by several requests to attach auth & JSON header
 function getAuthHeaders() {
     return {
         'Content-Type': 'application/json',
@@ -12,81 +11,117 @@ function getAuthHeaders() {
     };
 }
 
-let current_date = new Date()
-
+// 1. NAPTÁR GENERÁLÁSA
 async function update_Cal() {
     try {
-        const currentY = current_date.getFullYear()
-        const currentM = current_date.getMonth()
+        const currentY = current_date.getFullYear();
+        const currentM = current_date.getMonth();
 
-        // fetch events for this month (backend reads year/month from body)
-        // apiFetch returns parsed JSON, so don't call .json() again
         const data = await apiFetch('http://localhost:4000/api/get_calendar_events', {
             method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify({ year: currentY, month: currentM })
+            body: JSON.stringify({ year: currentY, month: currentM + 1 })
         });
-        const events = data.events || []; // array of events from server
 
-        const firstD = new Date(currentY, currentM, 0)
-    const lastD = new Date(currentY, currentM + 1, 0)
-    const totalD = lastD.getDate()
-    const firstD_index = firstD.getDay()
-    const lastD_index = lastD.getDay()
+        const events = data.events || [];
+        monthYear.textContent = current_date.toLocaleString('hu-HU', { year: 'numeric', month: 'long' });
 
-    const monthY_ToString = current_date.toLocaleString(`default`, { month: `long`, year: `numeric` })
-    monthYear.textContent = monthY_ToString
+        let firstDay = new Date(currentY, currentM, 1).getDay();
+        let startOffset = firstDay === 0 ? 6 : firstDay - 1;
+        const daysInMonth = new Date(currentY, currentM + 1, 0).getDate();
+        const prevMonthLastDay = new Date(currentY, currentM, 0).getDate();
 
-    let res = ``
+        let res = "";
 
-    for (let i = firstD_index; i > 0; i--) {
-        const prevD = new Date(currentY, currentM, 0 - i + 1)
-        res += `<div class="date inactive">${prevD.getDate()}</div>`
+        for (let i = startOffset; i > 0; i--) {
+            res += `<div class="date inactive">${prevMonthLastDay - i + 1}</div>`;
+        }
+        
+        //Aktualis honapok napjai
+        for (let i = 1; i <= daysInMonth; i++) {
+             const dateStr = `${currentY}-${String(currentM + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            const isToday = todayStr === dateStr;
+
+            // events coming from server now already have YYYY-MM-DD strings
+            const dayEvents = events.filter(e => e.event_date === dateStr);
+
+            const hasEvent = dayEvents.length > 0;
+            const dot = hasEvent ? `<div class="event-dot"></div>` : '';
+            const tooltipContent = dayEvents.map(e => `${e.title}${e.description ? ': ' + e.description : ''}`).join(" | ");
+            const tooltipAttr = hasEvent ? `data-title="${tooltipContent}"` : '';
+
+            res += `<div class="date ${isToday ? 'active' : ''}" ${tooltipAttr} onclick="openEventModal('${dateStr}')">
+                        ${i}${dot}
+                    </div>`;
+        }
+
+        const totalCells = 42;
+        const filledCells = startOffset + daysInMonth;
+        for (let i = 1; i <= (totalCells - filledCells); i++) {
+            res += `<div class="date inactive">${i}</div>`;
+        }
+        datesContainer.innerHTML = res;
+
+    } catch (err) {
+        console.error('Naptár hiba:', err);
     }
-
-    for (let i = 1; i <= totalD; i++) {
-        const date = new Date(currentY, currentM, i)
-        const active = date.toDateString() === new Date().toDateString() ? 'active' : ''
-        // mark if there is an event on this day
-        const iso = date.toISOString().split('T')[0];
-        const hasEvent = events.some(e => e.event_date && e.event_date.startsWith(iso));
-        const eventAttr = hasEvent ? ' data-event="true"' : '';
-        res += `<div class="date ${active}"${eventAttr}>${i}</div>`
-    }
-
-    for (let i = 1; i <= 7 - lastD_index; i++) {
-        const nextD = new Date(currentY, currentM + 1, i)
-        res += `<div class="date inactive">${nextD.getDate()}</div>`
-    }
-
-    dates.innerHTML = res
-  } catch (err) {
-      console.error('Calendar update failed:', err);
-  }
 }
 
-backBtn.addEventListener('click', () => {
-    current_date.setMonth(current_date.getMonth() - 1)
-    update_Cal()
+function closeEventModal() {
+    eventModal.style.display = 'none';
+    document.getElementById('event_title').value = '';
+    document.getElementById('event_desc').value = '';
+}
 
-})
+function openEventModal(dateStr) {
+    eventModal.dataset.selectedDate = dateStr;
+    const dateInput = document.getElementById('event_date');
+    if(dateInput) dateInput.value = dateStr;
+    
+    document.getElementById('modalTitle').textContent = `Esemény: ${dateStr}`;
+    eventModal.style.display = 'flex';
+}
 
-nextBtn.addEventListener('click', () => {
-    current_date.setMonth(current_date.getMonth() + 1)
-    update_Cal()
+async function saveCalendarEvent() {
+    const dateStr = eventModal.dataset.selectedDate;
+    const title = document.getElementById('event_title').value;
+    const desc = document.getElementById('event_desc').value;
 
-})
+    if (!title) return alert("Kérlek, add meg az esemény nevét!");
 
-async function addNewEvent(date) {
-    const title = prompt(`Új privát esemény (${date}):`);
-    if (title) {
-        const response = await apiFetch('http://localhost:4000/api/insert_calendar_event', {
+    try {
+        await apiFetch('http://localhost:4000/api/insert_calendar_event', {
             method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify({ date, title })
+            body: JSON.stringify({
+                date: dateStr,
+                title: title,
+                description: desc,
+            })
         });
+
+        closeEventModal(); 
+        update_Cal(); 
+    } catch (err) {
+        console.error("Mentési hiba:", err);
     }
 }
+
+// 4. GOMBOK
+document.getElementById('calendar_backBTN').onclick = () => {
+    current_date.setMonth(current_date.getMonth() - 1);
+    update_Cal();
+};
+
+document.getElementById('calendar_nextBTN').onclick = () => {
+    current_date.setMonth(current_date.getMonth() + 1);
+    update_Cal();
+};
+
+update_Cal();
 
 //Időzítő
 let timer
@@ -281,7 +316,7 @@ async function loadTasks() {
 function createTaskElement(task) {
     // Fallback: ha nincs is_completed, akkor a régi logika alapján (importance === 'done')
     const isCompleted = task.is_completed !== undefined ? task.is_completed : (task.importance === 'done');
-    
+
     const div = document.createElement('div')
     div.className = `task-card ${task.importance}${isCompleted ? ' completed' : ''}`
     div.id = `task-${task.id}`
@@ -464,12 +499,12 @@ function updateStatisticsChart() {
 
     tasks.forEach(task => {
         const isCompleted = task.classList.contains('completed')
-        
+
         if (isCompleted) {
             counts.done++
         } else {
-           
-            const importance = task.classList[1] 
+
+            const importance = task.classList[1]
             if (counts.hasOwnProperty(importance)) {
                 counts[importance]++
             }

@@ -218,7 +218,7 @@ async function restore_task(task_id) {
 
 async function get_calendar_events(yrs, mnth, user_id) {
     return await pool.execute(
-        "SELECT event_date, title FROM events WHERE YEAR(event_date) = ? AND MONTH(event_date) = ? AND user_id = ?",
+        "SELECT DATE_FORMAT(event_date, '%Y-%m-%d') AS event_date, title FROM events WHERE YEAR(event_date) = ? AND MONTH(event_date) = ? AND user_id = ?",
         [yrs, mnth, user_id]
     );
 }
