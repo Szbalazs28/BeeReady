@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, get_calendar_events, Insert_calendar_event } = require("../sql/querys.js");
+const { add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, get_calendar_events, Insert_calendar_event, delete_calendar_event } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -416,11 +416,22 @@ router.post("/insert_calendar_event", authenticateToken, async (req, res, next) 
   try {
     const data = req.body;
     lengthtest(data.title, 1, 255)
-    await Insert_calendar_event(data.date, data.title, req.user.id);
+    await Insert_calendar_event(data.date, data.title, req.user.id, data.description);
     res.status(200).json({ write: true, message: "Esemény hozzáadva!" });
   } catch (error) {
     next(error);
   }
 });
+
+router.post("/delete_calendar_event", authenticateToken, async (req, res, next) => {
+    try {
+        const data = req.body;
+        await delete_calendar_event(data.event_id, req.user.id);
+        res.status(200).json({ write: true, message: "Esemény törölve!" });
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 module.exports = router;

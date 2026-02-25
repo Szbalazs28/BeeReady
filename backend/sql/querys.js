@@ -217,16 +217,25 @@ async function restore_task(task_id) {
 }
 
 async function get_calendar_events(yrs, mnth, user_id) {
+    // return id, formatted date, title and description so front end can display/delete
     return await pool.execute(
-        "SELECT DATE_FORMAT(event_date, '%Y-%m-%d') AS event_date, title FROM events WHERE YEAR(event_date) = ? AND MONTH(event_date) = ? AND user_id = ?",
+        "SELECT event_id, DATE_FORMAT(event_date, '%Y-%m-%d') AS event_date, title, description " +
+        "FROM events WHERE YEAR(event_date) = ? AND MONTH(event_date) = ? AND user_id = ?",
         [yrs, mnth, user_id]
     );
 }
 
-async function Insert_calendar_event(date, title, user_id) {
+async function Insert_calendar_event(date, title, user_id, description = null) {
     await pool.execute(
-        "INSERT INTO events (event_date, title, user_id) VALUES (?, ?, ?)",
-        [date, title, user_id]
+        "INSERT INTO events (event_date, title, user_id, description) VALUES (?, ?, ?, ?)",
+        [date, title, user_id, description]
+    );
+}
+
+async function delete_calendar_event(event_id, user_id) {
+    await pool.execute(
+        "DELETE FROM events WHERE event_id = ? AND user_id = ?",
+        [event_id, user_id]
     );
 }
 
@@ -263,5 +272,6 @@ module.exports = {
     toggle_task_completion,
     restore_task,
     get_calendar_events,
-    Insert_calendar_event
+    Insert_calendar_event,
+    delete_calendar_event
 };

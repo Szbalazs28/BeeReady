@@ -21,6 +21,33 @@
     justify-content: center;
 }
 
+#existingEvents {
+    margin-bottom: 1rem;
+}
+
+#existingEvents .existing-event {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.25rem 0;
+}
+
+#existingEvents .existing-event button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.2rem 0.4rem;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+#existingEvents .existing-event button:hover {
+    background: #c0392b;
+}
+
 .calendar {
     display: flex;
     flex-direction: column;
@@ -601,7 +628,8 @@
     transform: scale(0.9);
 }
 
-.days, .dates {
+.days,
+.dates {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     width: 100%;
@@ -661,7 +689,7 @@
 .date[data-title]:hover::after {
     content: attr(data-title);
     position: absolute;
-    bottom: 125%; 
+    bottom: 125%;
     left: 50%;
     transform: translateX(-50%);
     background-color: #333;
@@ -671,7 +699,7 @@
     font-size: 0.75rem;
     white-space: nowrap;
     z-index: 100;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     pointer-events: none;
 }
 
@@ -686,28 +714,27 @@
     border-color: #333 transparent transparent transparent;
     z-index: 100;
 }
-/* 1. Sötétített háttér (Overlay) */
+
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Finomabb sötétítés */
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2000; /* Legyen minden felett */
-    backdrop-filter: blur(2px); /* Enyhe homályosítás a háttérnek */
+    z-index: 2000;
+    backdrop-filter: blur(2px);
 }
 
-/* 2. A Modal kártya */
 .modal-content {
     background-color: #ffffff;
     width: 90%;
     max-width: 420px;
     padding: 30px;
-    border-radius: 24px; /* BeeReady kerekítés */
+    border-radius: 24px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
@@ -716,11 +743,17 @@
 }
 
 @keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* 3. Feliratok és Cím */
 .modal-content h3 {
     text-align: center;
     color: #333;
@@ -742,7 +775,6 @@
     padding-left: 4px;
 }
 
-/* 4. Beviteli mezők (Input) */
 .modal-content input {
     width: 100%;
     padding: 12px 16px;
@@ -752,22 +784,20 @@
     color: #333;
     transition: all 0.2s ease;
     outline: none;
-    box-sizing: border-box; /* Hogy ne lógjon ki a padding miatt */
+    box-sizing: border-box;
 }
 
 .modal-content input:focus {
-    border-color: #f1b43c; /* BeeReady sárga fókusz */
+    border-color: #f1b43c;
     background-color: #fffdf8;
 }
 
-/* 5. Időpontok elrendezése (Kezdés/Vége) */
 .time-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-/* 6. Gombok stílusa */
 .modal-btns {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -776,7 +806,7 @@
 }
 
 .save-btn {
-    background-color: #28a745; /* Pontosan olyan zöld, mint a képen */
+    background-color: #28a745;
     color: white;
     border: none;
     padding: 14px;
@@ -788,7 +818,7 @@
 }
 
 .cancel-btn {
-    background-color: #6c757d; /* Pontosan olyan szürke, mint a képen */
+    background-color: #6c757d;
     color: white;
     border: none;
     padding: 14px;
@@ -799,11 +829,72 @@
     transition: transform 0.1s, background-color 0.2s;
 }
 
-.save-btn:hover { background-color: #218838; }
-.cancel-btn:hover { background-color: #5a6268; }
+.save-btn:hover {
+    background-color: #218838;
+}
 
-.save-btn:active, .cancel-btn:active {
-    transform: scale(0.97); /* Kicsi benyomódás effekt */
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.save-btn:active,
+.cancel-btn:active {
+    transform: scale(0.97);
+}
+
+.existing-event {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 10px 15px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: transform 0.2s;
+}
+
+.existing-event:hover {
+    transform: translateX(2px);
+    border-color: #f1b43c;
+}
+
+.existing_div{
+    font-size:0.8rem; 
+    color:gray;
+}
+
+.delete-event-btn {
+    background-color: #ff4d4d22;
+    color: #ff4d4d;
+    border: none;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete-event-btn:hover {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.event-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.event-info strong{
+    font-size:0.9rem;
+}
+
+.event-info span{
+    font-size:0.75rem; 
+    color:#666;
 }
 
 /*Statisztika*/
@@ -841,13 +932,13 @@
 .circle_stats {
     display: flex;
     /* border: 1px solid black; */
-    border-radius: 12px; 
-    flex-direction: column; 
+    border-radius: 12px;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1.5rem;
     padding: 2rem;
-    background-color: #fcfcfc; 
+    background-color: #fcfcfc;
 }
 
 .circle {
@@ -879,21 +970,22 @@
             var(--done) calc(var(--high-p) + var(--medium-p) + var(--low-p)) 100%);
 }
 
-.circle_stats, .study_time {
+.circle_stats,
+.study_time {
     box-sizing: border-box;
     height: 220px;
 }
 
 /*Tanulassal toltott ido*/
 .study_time {
-    margin-top: 0; 
+    margin-top: 0;
     text-align: center;
     border-radius: 12px;
     /* border: 1px solid black;  */
     background-image: url(../img/hourglass.png);
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 60%; 
+    background-size: 60%;
     display: flex;
     flex-direction: column;
     align-items: center;

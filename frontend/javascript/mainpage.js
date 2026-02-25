@@ -11,7 +11,6 @@ function getAuthHeaders() {
     };
 }
 
-// 1. NAPTÁR GENERÁLÁSA
 async function update_Cal() {
     try {
         const currentY = current_date.getFullYear();
@@ -36,16 +35,14 @@ async function update_Cal() {
         for (let i = startOffset; i > 0; i--) {
             res += `<div class="date inactive">${prevMonthLastDay - i + 1}</div>`;
         }
-        
-        //Aktualis honapok napjai
+
         for (let i = 1; i <= daysInMonth; i++) {
-             const dateStr = `${currentY}-${String(currentM + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            
+            const dateStr = `${currentY}-${String(currentM + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+
             const today = new Date();
             const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const isToday = todayStr === dateStr;
 
-            // events coming from server now already have YYYY-MM-DD strings
             const dayEvents = events.filter(e => e.event_date === dateStr);
 
             const hasEvent = dayEvents.length > 0;
@@ -76,13 +73,94 @@ function closeEventModal() {
     document.getElementById('event_desc').value = '';
 }
 
-function openEventModal(dateStr) {
+async function openEventModal(dateStr) {
     eventModal.dataset.selectedDate = dateStr;
     const dateInput = document.getElementById('event_date');
-    if(dateInput) dateInput.value = dateStr;
-    
-    document.getElementById('modalTitle').textContent = `Esemény: ${dateStr}`;
+    if (dateInput) dateInput.value = dateStr;
+
+    document.getElementById('modalTitle').textContent = `Események: ${dateStr}`;
+
+    document.getElementById('event_title').value = '';
+    document.getElementById('event_desc').value = '';
+
+    await refreshModalEvents(dateStr);
+
     eventModal.style.display = 'flex';
+}
+
+async function refreshModalEvents(dateStr) {
+    const existingDiv = document.getElementById('existingEvents');
+    existingDiv.textContent = 'Betöltés...';
+
+    try {
+
+        const currentY = new Date(dateStr).getFullYear();
+        const currentM = new Date(dateStr).getMonth() + 1;
+
+        const data = await apiFetch('http://localhost:4000/api/get_calendar_events', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ year: currentY, month: currentM })
+        });
+
+        const allEvents = data.events || [];
+
+        const dailyEvents = allEvents.filter(e => {
+            const eDate = e.event_date.includes('T') ? e.event_date.split('T')[0] : e.event_date;
+            return eDate === dateStr;
+        });
+
+        existingDiv.innerHTML = '';
+
+        if (dailyEvents.length === 0) {
+            existingDiv.textContent = 'Nincsenek események ezen a napon.';
+        }
+
+        dailyEvents.forEach(ev => {
+            const row = document.createElement('div');
+            row.className = 'existing-event'; 
+
+            const evDiv = document.createElement('div');
+            evDiv.className = 'event-info';
+            row.appendChild(evDiv);
+
+            const strong = document.createElement('strong');
+            strong.textContent = ev.title;
+            evDiv.appendChild(strong);
+
+            const span = document.createElement('span');
+            span.textContent = ev.description || '';
+            evDiv.appendChild(span);
+
+            evDelBtn = document.createElement('button');
+            evDelBtn.className = 'delete-event-btn';
+            evDelBtn.textContent = 'Törlés';
+            evDelBtn.onclick = () => DeleteEvent(ev.event_id, ev.title, dateStr);
+
+            row.appendChild(evDiv);
+            row.appendChild(evDelBtn);
+            existingDiv.appendChild(row);
+        });
+    } catch (err) {
+        existingDiv.textContent = 'Hiba az adatok betöltésekor.';
+    }
+}
+
+async function DeleteEvent(eventId, eventTitle, dateStr) {
+    if (!confirm(`Biztosan törlöd a(z) "${eventTitle}" eseményt?`)) return;
+
+    try {
+        await apiFetch('http://localhost:4000/api/delete_calendar_event', {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ event_id: eventId })
+        });
+
+        await update_Cal(); 
+        await refreshModalEvents(dateStr); 
+    } catch (err) {
+        console.error('Hiba a törlésnél:', err);
+    }
 }
 
 async function saveCalendarEvent() {
@@ -103,14 +181,13 @@ async function saveCalendarEvent() {
             })
         });
 
-        closeEventModal(); 
-        update_Cal(); 
+        closeEventModal();
+        update_Cal();
     } catch (err) {
         console.error("Mentési hiba:", err);
     }
 }
 
-// 4. GOMBOK
 document.getElementById('calendar_backBTN').onclick = () => {
     current_date.setMonth(current_date.getMonth() - 1);
     update_Cal();
