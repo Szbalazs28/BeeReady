@@ -25,48 +25,63 @@ async function update_Cal() {
         const events = data.events || [];
         monthYear.textContent = current_date.toLocaleString('hu-HU', { year: 'numeric', month: 'long' });
 
+        datesContainer.innerHTML = '';
+
         let firstDay = new Date(currentY, currentM, 1).getDay();
         let startOffset = firstDay === 0 ? 6 : firstDay - 1;
         const daysInMonth = new Date(currentY, currentM + 1, 0).getDate();
         const prevMonthLastDay = new Date(currentY, currentM, 0).getDate();
 
-        let res = "";
-
         for (let i = startOffset; i > 0; i--) {
-            res += `<div class="date inactive">${prevMonthLastDay - i + 1}</div>`;
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'date inactive';
+            dayDiv.textContent = prevMonthLastDay - i + 1;
+            datesContainer.appendChild(dayDiv);
         }
 
         for (let i = 1; i <= daysInMonth; i++) {
             const dateStr = `${currentY}-${String(currentM + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-
+            
             const today = new Date();
             const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const isToday = todayStr === dateStr;
+            
+            const dayEvents = events.filter(e => {
+                const eDate = e.event_date.includes('T') ? e.event_date.split('T')[0] : e.event_date;
+                return eDate === dateStr;
+            });
 
-            const dayEvents = events.filter(e => e.event_date === dateStr);
+            const dayDiv = document.createElement('div');
+            dayDiv.className = `date ${isToday ? 'active' : ''}`;
+            dayDiv.textContent = i;
+            
+            dayDiv.onclick = () => openEventModal(dateStr);
 
-            const hasEvent = dayEvents.length > 0;
-            const dot = hasEvent ? `<div class="event-dot"></div>` : '';
-            const tooltipContent = dayEvents.map(e => `${e.title}${e.description ? ': ' + e.description : ''}`).join(" | ");
-            const tooltipAttr = hasEvent ? `data-title="${tooltipContent}"` : '';
+            if (dayEvents.length > 0) {
+                const dot = document.createElement('div');
+                dot.className = 'event-dot';
+                dayDiv.appendChild(dot);
 
-            res += `<div class="date ${isToday ? 'active' : ''}" ${tooltipAttr} onclick="openEventModal('${dateStr}')">
-                        ${i}${dot}
-                    </div>`;
+                const tooltipContent = dayEvents.map(e => `${e.title}${e.description ? ': ' + e.description : ''}`).join(" | ");
+                dayDiv.setAttribute('data-title', tooltipContent);
+            }
+
+            datesContainer.appendChild(dayDiv);
         }
 
         const totalCells = 42;
         const filledCells = startOffset + daysInMonth;
         for (let i = 1; i <= (totalCells - filledCells); i++) {
-            res += `<div class="date inactive">${i}</div>`;
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'date inactive';
+            dayDiv.textContent = i;
+            datesContainer.appendChild(dayDiv);
         }
-        datesContainer.innerHTML = res;
 
     } catch (err) {
         console.error('Naptár hiba:', err);
     }
 }
-
 function closeEventModal() {
     eventModal.style.display = 'none';
     document.getElementById('event_title').value = '';
