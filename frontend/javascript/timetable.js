@@ -182,6 +182,15 @@ async function load_events() {
             }
 
         }
+        let eventcards = document.querySelectorAll(".day-column");
+        eventcards.forEach((e, index) => {
+            if(e.classList.contains("active-day") && !e.classList.contains("today_highlight")){
+                e.classList.remove("active-day");
+                document.querySelectorAll('.day-btn')[index].classList.remove("active-day-btn");
+            }
+        });
+
+
 
         document.querySelectorAll(".event-card").forEach(e => e.remove());
         const token = localStorage.getItem("token");

@@ -269,7 +269,7 @@
 
 
 
-@media (max-width: 768px) {
+@media (max-width: 1300px) {
     .mobile-day-selector {
         display: flex;
     }
