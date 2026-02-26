@@ -39,7 +39,7 @@
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
-                <div onclick="navbar_click('quiz',4), backToQuizzes(), load_quizzes()" class="nav_items">Kvíz</div>
+                <div onclick="navbar_click('quiz',4), load_quizzes()" class="nav_items">Kvíz</div>
                 <div onclick="navbar_click('chat',5)" class="nav_items">Chat</div>
                 <div onclick="navbar_click('felhasznalo',6), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
@@ -382,7 +382,7 @@
                         <div class="quiz-title-row">
                             <input type="text" id="quizTitle" placeholder="Kvíz címe (pl. Történelem 9. osztály)"
                                 class="quiz-title-input" required>
-                            <button type="button" class="quiz-back-button" onclick="backToQuizzes()">Vissza</button>
+                            <button type="button" class="quiz-back-button" onclick="load_quizzes()">Vissza</button>
                         </div>
                         <div class="quiz-meta-controls">
                             <input type="text" id="quizDescription" placeholder="Kvíz leírása"

@@ -1,5 +1,10 @@
 async function load_quizzes() {
     try {
+        if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
+            document.querySelector(".quiz-create-container").classList.add("dnone");
+            document.querySelector(".quiz-action-div").classList.remove("dnone");
+            document.querySelector(".quiz-container").classList.remove("dnone");
+        }
         const quizContainer = document.querySelector(".quiz-container");
         quizContainer.innerHTML = "";
         const token = localStorage.getItem("token");
@@ -19,7 +24,7 @@ async function load_quizzes() {
             dataIdAttr: 'data-id',
             onEnd: function (evt) {
                 const currentorder = Sortable.get(evt.from).toArray();
-                save_current_quiz_order(currentorder)   
+                save_current_quiz_order(currentorder)
             }
         });
     }
@@ -244,8 +249,8 @@ function addAnswerToBlock(question_id) {
     return answerRow;
 }
 
-function min_blocks(blocks){
-    if(blocks.length == 0){
+function min_blocks(blocks) {
+    if (blocks.length == 0) {
         alertell("Legalább egy kérdésnek és egy válasznak lennie kell!", 2.5);
         throw new Error("Legalább egy kérdésnek és egy válasznak lennie kell!");
     }
@@ -254,6 +259,9 @@ function min_blocks(blocks){
 async function saveQuiz(e) {
     e.preventDefault();
     try {
+        let save_switch = true;
+        let quiz_id = null;
+        let question_id = null;
         const ispublic = document.querySelector("#isPublicQuiz").checked;
         const quiz_title = document.querySelector(".quiz-title-input").value;
         const quiz_description = document.querySelector(".quiz-description-input").value;
@@ -269,8 +277,12 @@ async function saveQuiz(e) {
                 const right_answer = ans.querySelector(".correct-check").checked;
                 const ansText = ans.querySelector(".ans-input").value;
                 speclengthtest(ansText, 1, 1000, "A válasz szövegének hossza");
-                const quiz_id = await save_quiz(quiz_title, quiz_description, ispublic);
-                const question_id = await save_question(question_text, quiz_id);
+                if (save_switch) {
+                    save_switch = false;
+                    quiz_id = await save_quiz(quiz_title, quiz_description, ispublic);
+                    question_id = await save_question(question_text, quiz_id);
+                }
+
                 await save_answer(question_id, ansText, right_answer);
             }
         }
@@ -338,17 +350,10 @@ function showcreatequiz() {
     document.querySelector(".quiz-container").classList.add("dnone");
 }
 
-function backToQuizzes() {
-    if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
-        document.querySelector(".quiz-create-container").classList.add("dnone");
-        document.querySelector(".quiz-action-div").classList.remove("dnone");
-        document.querySelector(".quiz-container").classList.remove("dnone");
-    }
 
-}
 
 async function save_current_quiz_order(currentorder) {
-    try{
+    try {
         const token = localStorage.getItem("token");
         await apiFetch("http://localhost:4000/api/save_current_quiz_order", {
             method: "POST",
@@ -356,10 +361,10 @@ async function save_current_quiz_order(currentorder) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({currentorder: currentorder})
+            body: JSON.stringify({ currentorder: currentorder })
         })
-    }catch(err){
+    } catch (err) {
         console.error(err);
     }
-    
+
 }
