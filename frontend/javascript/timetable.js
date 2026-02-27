@@ -195,7 +195,7 @@ async function load_events() {
         document.querySelectorAll(".event-card").forEach(e => e.remove());
         const token = localStorage.getItem("token");
         const result = await apiFetch("http://127.0.0.1:4000/api/get_events", {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
@@ -407,13 +407,12 @@ async function updateevent(event_id) {
 async function delete_event(event_id) {
     try {
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/delete_event", {
-            method: "POST",
+        await apiFetch(`http://127.0.0.1:4000/api/delete_event?event_id=${event_id}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ event_id: event_id })
+            }
         })
         load_events();
     } catch (error) {

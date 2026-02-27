@@ -125,7 +125,7 @@ function timetest(start, end) {
 
 function affectedRowscheck(rows){
     if(rows.affectedRows === 0){
-        throw new Error("Nincs hozzáférése az adatok módosításához!") 
+        throw new Error("Nem sikerült az adatok módosítása!") 
     }
 }
 
