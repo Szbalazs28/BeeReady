@@ -645,7 +645,7 @@
     transform: scale(0.95);
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 720px) {
     #flashcard_form{
         flex-direction: column;
     }

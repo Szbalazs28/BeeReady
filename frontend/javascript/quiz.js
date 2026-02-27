@@ -9,7 +9,7 @@ async function load_quizzes() {
         quizContainer.innerHTML = "";
         const token = localStorage.getItem("token");
         const result = await apiFetch("http://127.0.0.1:4000/api/getquizzes", {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`

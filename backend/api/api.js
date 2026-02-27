@@ -19,7 +19,7 @@ const loginLimiter = rateLimit({
 });
 
 
-router.post("/registration", async (req, res, next) => {
+router.post("/registration", loginLimiter, async (req, res, next) => {
   try {
     const data = req.body
     lengthtest(data.username, 3, 20)
@@ -55,7 +55,7 @@ router.post("/login", loginLimiter, async (req, res, next) => {
 router.get("/edit_user", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
-    const rows = await getuserbyid(id)
+    const rows = await getuserbyid(id)    
     res.status(200).json({ username: rows[0].username, email: rows[0].email, profil_pic_url: rows[0].profil_pic_url });
   } catch (error) {
     next(error)
@@ -93,10 +93,10 @@ router.post("/add_deck", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/change_share_code", authenticateToken, async (req, res, next) => {
+router.get("/change_share_code", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
-    const deck_id = req.body.deck_id
+    const deck_id = req.query.deck_id
     const result = await change_share_code(deck_id, id)
     affectedRowscheck(result.rows)
     res.status(200).json({ write: false, share_code: result.share_code })
@@ -117,7 +117,7 @@ router.post("/copy_deck", authenticateToken, async (req, res, next) => {
 })
 
 
-router.post("/deck_load", authenticateToken, async (req, res, next) => {
+router.get("/deck_load", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
     const [rows] = await getdeck(id)
@@ -127,10 +127,10 @@ router.post("/deck_load", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
+router.get("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
-    const deck_id = req.body.deck_id
+    const deck_id = req.query.deck_id
     const [rows] = await getdeckbydeck_id(deck_id, id)
     affectedRowscheck(rows)
     res.status(200).json({ write: false, decks: rows })
@@ -139,10 +139,10 @@ router.post("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/getcards", authenticateToken, async (req, res, next) => {
+router.get("/getcards", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
-    const deck_id = req.body.deck_id
+    const deck_id = req.query.deck_id
     const [rows] = await getcards(deck_id, id)
     res.status(200).json({ write: false, cards: rows })
   } catch (error) {
@@ -163,10 +163,10 @@ router.post("/addnewcard", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/deletecard", authenticateToken, async (req, res, next) => {
+router.delete("/deletecard", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
-    const card_id = req.body.card_id
+    const card_id = req.query.card_id
     const [rows] = await deletecard(card_id, id)
     affectedRowscheck(rows)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
@@ -190,10 +190,10 @@ router.post("/updatecard", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/getcardbyid", authenticateToken, async (req, res, next) => {
+router.get("/getcardbyid", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
-    const card_id = req.body.card_id
+    const card_id = req.query.card_id
     const [rows] = await getcardbyid(card_id, id)
     res.status(200).json({ write: false, rows: rows[0] })
   } catch (error) {
@@ -214,10 +214,10 @@ router.post("/updatedeck", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/deletedeck", authenticateToken, async (req, res, next) => {
+router.delete("/deletedeck", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
-    const deck_id = req.body.deck_id
+    const deck_id = req.query.deck_id
     const [rows] =  await deletedeck(deck_id, id)
     affectedRowscheck(rows)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
@@ -271,7 +271,7 @@ router.post("/save_new_event", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/get_events", authenticateToken, async (req, res, next) => {
+router.get("/get_events", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
     const [rows] = await get_events(id)
@@ -310,11 +310,11 @@ router.post("/updateevent", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.post("/delete_event", authenticateToken, async (req, res, next) => {
+router.delete("/delete_event", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
-    const data = req.body
-    await delete_event(data.event_id, id)
+    const event_id = req.query.event_id
+    await delete_event(event_id, id)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
   }
   catch (error) {
@@ -344,11 +344,11 @@ router.get("/gettasks", authenticateToken, async (req, res, next) => {
   }
 });
 
-router.post("/deletetask", authenticateToken, async (req, res, next) => {
+router.delete("/deletetask", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
-    const data = req.body;
-    await delete_task(data.task_id, id);
+    const task_id = req.query.task_id;
+    await delete_task(task_id, id);
     res.status(200).json({ write: true, message: "Feladat törölve!" });
   } catch (error) {
     next(error);
@@ -378,7 +378,7 @@ router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
   }
 });
 
-router.post("/getquizzes", authenticateToken, async (req, res, next) => {
+router.get("/getquizzes", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
     const [rows] = await getquizzes(id);
