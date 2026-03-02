@@ -209,25 +209,25 @@ async function save_quiz(title, description, public, user_id) {
     return result.insertId;
 } 
 
-async function save_question(quiz_id, question_text, id) {
+async function save_question(quiz_id, question_text, id, type, position) {
     const [checkexistquiz] = await pool.execute("SELECT quiz_id FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, id]);
     isexistscheck(checkexistquiz, "Kvíz", false)
     const [checkexistquestion] = await pool.execute("SELECT quiz_questions.question_id FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.quiz_id = ? AND quizzes.user_id = ? AND quiz_questions.question_text = ?", [quiz_id, id, question_text]);
     isexistscheck(checkexistquestion, "Kérdés", true)
-    const [result] = await pool.execute("INSERT INTO quiz_questions (quiz_id, question_text) VALUES (?, ?)", [quiz_id, question_text]);
+    const [result] = await pool.execute("INSERT INTO quiz_questions (quiz_id, question_text, question_type, position) VALUES (?, ?, ?, ?)", [quiz_id, question_text, type, position]);
     return result.insertId;
 }
 
-async function save_answer(question_id, answer_text, right_answer, id) {
+async function save_answer(question_id, answer_text, right_answer, id, position) {
     const [checkexistquestion] = await pool.execute("SELECT question_id FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE question_id = ? AND quizzes.user_id = ?", [question_id, id]);
     isexistscheck(checkexistquestion, "Kérdés", false)
     const [checkexistanswer] = await pool.execute("SELECT answer_id FROM quiz_answers WHERE question_id = ? AND answer_text = ?", [question_id, answer_text]);
     isexistscheck(checkexistanswer, "Válasz", true)
-    await pool.execute("INSERT INTO quiz_answers (question_id, answer_text, right_answer) VALUES (?, ?, ?)", [question_id, answer_text, right_answer]);
+    await pool.execute("INSERT INTO quiz_answers (question_id, answer_text, right_answer, position) VALUES (?, ?, ?, ?)", [question_id, answer_text, right_answer, position]);
 }
 
-async function save_current_quiz_order(quiz_id, postion, user_id) {
-    await pool.execute("UPDATE quizzes SET position = ? WHERE quiz_id = ? AND user_id = ?", [postion, quiz_id, user_id])
+async function save_current_quiz_order(quiz_id, position, user_id) {
+    await pool.execute("UPDATE quizzes SET position = ? WHERE quiz_id = ? AND user_id = ?", [position, quiz_id, user_id])
 }
 
 

@@ -129,13 +129,77 @@ function max_q_block_id() {
     return max_id + 1;
 }
 
-function addNewQuestionBlock() {
+function showQuizTypeSelector() {
+    const modalOverlay = document.createElement("div");
+    modalOverlay.className = "quiz-modal-overlay";
+
+    const modalContent = document.createElement("div");
+    modalContent.className = "quiz-modal-content";
+
+    const actionDiv = document.createElement("div");
+    actionDiv.className = "quiz-create-action-div";
+
+    const standardQuizBtn = document.createElement("button");
+    standardQuizBtn.className = "quiz-create-button";
+    standardQuizBtn.textContent = "Feleletválasztós kérdés";
+    standardQuizBtn.onclick = function () {
+        addNewStandardQuestionBlock();
+        modalOverlay.remove();
+    }
+
+    const shortAnswerBtn = document.createElement("button");
+    shortAnswerBtn.className = "quiz-create-button";
+    shortAnswerBtn.textContent = "Rövid válasz";
+    shortAnswerBtn.onclick = function () {
+        addNewShortAnswerQuestionBlock();
+        modalOverlay.remove();
+    }
+
+    const OrderBtn = document.createElement("button");
+    OrderBtn.className = "quiz-create-button";
+    OrderBtn.textContent = "Sorba rendező feladat";
+    OrderBtn.onclick = function () {
+        addNewOrderQuestionBlock();
+        modalOverlay.remove();
+    }
+
+    const FillBtn = document.createElement("button");
+    FillBtn.className = "quiz-create-button";
+    FillBtn.textContent = "Kitöltő feladat";
+    FillBtn.onclick = function () {
+        addNewFillQuestionBlock();
+        modalOverlay.remove();
+    }
+
+    const CloseModal = document.createElement("button");
+    CloseModal.classList.add("quiz-create-button", "quiz-create-close");
+    CloseModal.textContent = "Bezárás";
+    CloseModal.onclick = function () {
+        modalOverlay.remove();
+    }
+
+    actionDiv.appendChild(standardQuizBtn);
+    actionDiv.appendChild(shortAnswerBtn);
+    actionDiv.appendChild(OrderBtn);
+    actionDiv.appendChild(FillBtn);
+    actionDiv.appendChild(CloseModal);
+    modalContent.appendChild(actionDiv);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+}
+
+function addNewOrderQuestionBlock() {
     const question_id = max_q_block_id();
 
     const questionCard = document.createElement('div');
     questionCard.className = 'question-card';
+    questionCard.setAttribute('data-question-type', 'order');
+    questionCard.setAttribute('data-id', question_id);
     questionCard.id = `q_block_${question_id}`;
 
+    const grab = document.createElement('p');
+    grab.textContent = '::';
+    grab.style.cursor = 'move';
 
     const qHeader = document.createElement('div');
     qHeader.className = 'question-header';
@@ -150,21 +214,11 @@ function addNewQuestionBlock() {
     qSettings.className = 'q-settings';
 
 
-    const label = document.createElement('label');
-    label.className = 'checkbox-container';
 
-    const isMultiple = document.createElement('input');
-    isMultiple.type = 'checkbox';
-    isMultiple.className = 'is-multiple-choice';
-
-    const labelText = document.createElement('span');
-    labelText.className = 'checkmark-label';
-    labelText.textContent = 'Több helyes válasz';
-
-    label.append(isMultiple, labelText);
 
 
     const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
     deleteBtn.className = 'delete-q-btn';
     deleteBtn.onclick = function () { questionCard.remove(); };
 
@@ -174,8 +228,107 @@ function addNewQuestionBlock() {
     trashImg.style.width = '26px';
 
     deleteBtn.appendChild(trashImg);
-    qSettings.append(label, deleteBtn);
-    qHeader.append(qInput, qSettings);
+    qSettings.append(deleteBtn);
+    qHeader.append(grab, qInput, qSettings);
+
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    answersContainer.id = `answers_${question_id}`;
+    Sortable.create(answersContainer, {
+        animation: 150,
+        dataIdAttr: 'data-id',
+        onEnd: function (evt) {
+            const currentorder = Sortable.get(evt.from).toArray();
+
+        }
+    });
+
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", 0);
+    const dragIcon = document.createElement('p');
+    dragIcon.textContent = '::';
+    dragIcon.style.cursor = 'move';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Válaszlehetőség';
+    answerRow.setAttribute("data-id", 0);
+    ansInput.className = 'ans-input';
+    ansInput.required = true;
+
+    const delAnsBtn = document.createElement('button');
+    delAnsBtn.type = 'button';
+    delAnsBtn.className = 'delete-ans-btn';
+    delAnsBtn.textContent = '×';
+    delAnsBtn.onclick = function () { this.parentElement.remove(); };
+
+    answerRow.append(dragIcon, ansInput, delAnsBtn);
+    answersContainer.appendChild(answerRow);
+
+
+    const qActions = document.createElement('div');
+    qActions.className = 'question-actions';
+
+    const addAnsBtn = document.createElement('button');
+    addAnsBtn.type = 'button';
+    addAnsBtn.className = 'add-ans-btn';
+    addAnsBtn.textContent = '+ Válasz hozzáadása';
+    addAnsBtn.onclick = function () {
+        document.getElementById(`answers_${question_id}`).appendChild(addOrderAnswerToBlock(question_id));
+    };
+
+    qActions.appendChild(addAnsBtn);
+
+
+    questionCard.append(qHeader, answersContainer, qActions);
+
+    document.querySelector('#questionsContainer').appendChild(questionCard);
+}
+
+function addNewShortAnswerQuestionBlock() {
+    const question_id = max_q_block_id();
+
+    const questionCard = document.createElement('div');
+    questionCard.className = 'question-card';
+    questionCard.setAttribute('data-question-type', 'short_answer');
+    questionCard.setAttribute('data-id', question_id);
+    questionCard.id = `q_block_${question_id}`;
+
+
+    const qHeader = document.createElement('div');
+    qHeader.className = 'question-header';
+
+    const grab = document.createElement('p');
+    grab.textContent = '::';
+    grab.style.cursor = 'move';
+
+    const qInput = document.createElement('input');
+    qInput.type = 'text';
+    qInput.placeholder = `${question_id}. Kérdés szövege: `;
+    qInput.className = 'q-input';
+    qInput.required = true;
+
+    const qSettings = document.createElement('div');
+    qSettings.className = 'q-settings';
+
+
+
+
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'delete-q-btn';
+    deleteBtn.onclick = function () { questionCard.remove(); };
+
+    const trashImg = document.createElement('img');
+    trashImg.src = '../img/icons/trash.png';
+    trashImg.alt = 'Törlés';
+    trashImg.style.width = '26px';
+
+    deleteBtn.appendChild(trashImg);
+    qSettings.append(deleteBtn);
+    qHeader.append(grab, qInput, qSettings);
 
 
     const answersContainer = document.createElement('div');
@@ -185,7 +338,94 @@ function addNewQuestionBlock() {
 
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", 0);
 
+
+
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Helyes válasz';
+    ansInput.className = 'ans-input';
+    ansInput.required = true;
+
+    const delAnsBtn = document.createElement('button');
+    delAnsBtn.type = 'button';
+    delAnsBtn.className = 'delete-ans-btn';
+    delAnsBtn.textContent = '×';
+    delAnsBtn.onclick = function () { this.parentElement.remove(); };
+
+    answerRow.append(ansInput, delAnsBtn);
+    answersContainer.appendChild(answerRow);
+
+
+    const qActions = document.createElement('div');
+    qActions.className = 'question-actions';
+
+    const addAnsBtn = document.createElement('button');
+    addAnsBtn.type = 'button';
+    addAnsBtn.className = 'add-ans-btn';
+    addAnsBtn.textContent = '+ Válasz hozzáadása';
+    addAnsBtn.onclick = function () {
+        document.getElementById(`answers_${question_id}`).appendChild(addShortAnswerToBlock(question_id));
+    };
+
+    qActions.appendChild(addAnsBtn);
+
+
+    questionCard.append(qHeader, answersContainer, qActions);
+
+    document.querySelector('#questionsContainer').appendChild(questionCard);
+
+}
+
+function addNewStandardQuestionBlock() {
+    const question_id = max_q_block_id();
+
+    const questionCard = document.createElement('div');
+    questionCard.className = 'question-card';
+    questionCard.setAttribute('data-question-type', 'standard');
+    questionCard.setAttribute('data-id', question_id);
+    questionCard.id = `q_block_${question_id}`;
+
+
+    const qHeader = document.createElement('div');
+    qHeader.className = 'question-header';
+
+    const qInput = document.createElement('input');
+    qInput.type = 'text';
+    qInput.placeholder = `${question_id}. Kérdés szövege: `;
+    qInput.className = 'q-input';
+    qInput.required = true;
+
+    const qSettings = document.createElement('div');
+    qSettings.className = 'q-settings';
+    const grab = document.createElement('p');
+    grab.textContent = '::';
+    grab.style.cursor = 'move';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'delete-q-btn';
+    deleteBtn.onclick = function () { questionCard.remove(); };
+
+    const trashImg = document.createElement('img');
+    trashImg.src = '../img/icons/trash.png';
+    trashImg.alt = 'Törlés';
+    trashImg.style.width = '26px';
+
+    deleteBtn.appendChild(trashImg);
+    qSettings.append(deleteBtn);
+    qHeader.append(grab, qInput, qSettings);
+
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    answersContainer.id = `answers_${question_id}`;
+
+
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", 0);
     const ansCheck = document.createElement('input');
     ansCheck.type = 'checkbox';
     ansCheck.name = `correct_${question_id}`;
@@ -198,6 +438,7 @@ function addNewQuestionBlock() {
     ansInput.required = true;
 
     const delAnsBtn = document.createElement('button');
+    delAnsBtn.type = 'button';
     delAnsBtn.className = 'delete-ans-btn';
     delAnsBtn.textContent = '×';
     delAnsBtn.onclick = function () { this.parentElement.remove(); };
@@ -210,10 +451,11 @@ function addNewQuestionBlock() {
     qActions.className = 'question-actions';
 
     const addAnsBtn = document.createElement('button');
+    addAnsBtn.type = 'button';
     addAnsBtn.className = 'add-ans-btn';
     addAnsBtn.textContent = '+ Válasz hozzáadása';
     addAnsBtn.onclick = function () {
-        document.getElementById(`answers_${question_id}`).appendChild(addAnswerToBlock(question_id));
+        document.getElementById(`answers_${question_id}`).appendChild(addStandardAnswerToBlock(question_id));
     };
 
     qActions.appendChild(addAnsBtn);
@@ -225,10 +467,120 @@ function addNewQuestionBlock() {
 
 }
 
-function addAnswerToBlock(question_id) {
+function addNewFillQuestionBlock() {
+    const question_id = max_q_block_id();
+
+    const questionCard = document.createElement('div');
+    questionCard.className = 'question-card';
+    questionCard.setAttribute('data-question-type', 'fill');
+    questionCard.setAttribute('data-id', question_id);
+    questionCard.id = `q_block_${question_id}`;
+
+
+    const qHeader = document.createElement('div');
+    qHeader.className = 'question-header';
+
+    const qInput = document.createElement('input');
+    qInput.type = 'text';
+    qInput.placeholder = `${question_id}. Kérdés szövege: `;
+    qInput.className = 'q-input';
+    qInput.required = true;
+
+    const qSettings = document.createElement('div');
+    qSettings.className = 'q-settings';
+    const grab = document.createElement('p');
+    grab.textContent = '::';
+    grab.style.cursor = 'move';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'delete-q-btn';
+    deleteBtn.onclick = function () { questionCard.remove(); };
+
+    const trashImg = document.createElement('img');
+    trashImg.src = '../img/icons/trash.png';
+    trashImg.alt = 'Törlés';
+    trashImg.style.width = '26px';
+
+    deleteBtn.appendChild(trashImg);
+    qSettings.append(deleteBtn);
+    qHeader.append(grab, qInput, qSettings);
+
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    answersContainer.id = `answers_${question_id}`;
+
+
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", 0);
 
+
+    const ansInput = document.createElement('textarea');
+    ansInput.placeholder = 'Írja be a helyes választ ide, a szövegben ahol a kitöltendő rész van, használja a {blank} jelölést!';
+    ansInput.classList.add('ans-input', 'fill-ans-input');
+
+    ansInput.required = true;
+
+
+
+    answerRow.append(ansInput);
+    answersContainer.appendChild(answerRow);
+
+    questionCard.append(qHeader, answersContainer,);
+
+    document.querySelector('#questionsContainer').appendChild(questionCard);
+}
+
+function addOrderAnswerToBlock(question_id) {
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    const dragIcon = document.createElement('p');
+    dragIcon.textContent = '::';
+    dragIcon.style.cursor = 'move';
+
+    const ansInput = document.createElement('input');
+    answerRow.setAttribute("data-id", document.querySelectorAll(`#answers_${question_id} .answer-row`).length);
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Válaszlehetőség';
+    ansInput.className = 'ans-input';
+    ansInput.required = true;
+
+    const delAnsBtn = document.createElement('button');
+    delAnsBtn.type = 'button';
+    delAnsBtn.className = 'delete-ans-btn';
+    delAnsBtn.textContent = '×';
+    delAnsBtn.onclick = function () { this.parentElement.remove(); };
+
+    answerRow.append(dragIcon, ansInput, delAnsBtn);
+    return answerRow;
+}
+
+function addShortAnswerToBlock(question_id) {
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", document.querySelectorAll(`#answers_${question_id} .answer-row`).length);
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Helyes válasz';
+    ansInput.className = 'ans-input';
+    ansInput.required = true;
+
+    const delAnsBtn = document.createElement('button');
+    delAnsBtn.type = 'button';
+    delAnsBtn.className = 'delete-ans-btn';
+    delAnsBtn.textContent = '×';
+    delAnsBtn.onclick = function () { this.parentElement.remove(); };
+
+    answerRow.append(ansInput, delAnsBtn);
+    return answerRow;
+}
+
+function addStandardAnswerToBlock(question_id) {
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", document.querySelectorAll(`#answers_${question_id} .answer-row`).length);
     const ansCheck = document.createElement('input');
     ansCheck.type = 'checkbox';
     ansCheck.name = `correct_${question_id}`;
@@ -241,6 +593,7 @@ function addAnswerToBlock(question_id) {
     ansInput.required = true;
 
     const delAnsBtn = document.createElement('button');
+    delAnsBtn.type = 'button';
     delAnsBtn.className = 'delete-ans-btn';
     delAnsBtn.textContent = '×';
     delAnsBtn.onclick = function () { this.parentElement.remove(); };
@@ -259,49 +612,102 @@ function min_blocks(blocks) {
 async function saveQuiz(e) {
     e.preventDefault();
     try {
-        let save_switch = true;
-        let quiz_id = null;
+        quiz_check();
         let question_id = null;
         const ispublic = document.querySelector("#isPublicQuiz").checked;
         const quiz_title = document.querySelector(".quiz-title-input").value;
         const quiz_description = document.querySelector(".quiz-description-input").value;
         const questionBlocks = document.querySelectorAll(".question-card");
-        speclengthtest(quiz_title, 1, 200, "A kvíz címének hossza");
-        min_blocks(questionBlocks);
+        let quiz_id = await save_quiz(quiz_title, quiz_description, ispublic);
         for (const block of questionBlocks) {
             const question_text = block.querySelector(".q-input").value;
+            question_id = await save_question(question_text, quiz_id, block.getAttribute("data-question-type"), block.getAttribute("data-id"));
             const answers = block.querySelectorAll(".answer-row");
-            min_blocks(answers);
-            speclengthtest(question_text, 1, 1000, "A kérdés szövegének hossza");
             for (const ans of answers) {
-                const right_answer = ans.querySelector(".correct-check").checked;
-                const ansText = ans.querySelector(".ans-input").value;
-                speclengthtest(ansText, 1, 1000, "A válasz szövegének hossza");
-                if (save_switch) {
-                    save_switch = false;
-                    quiz_id = await save_quiz(quiz_title, quiz_description, ispublic);
-                    question_id = await save_question(question_text, quiz_id);
+                let right_answer = true;
+                if (block.getAttribute("data-question-type") === "standard") {
+                    right_answer = ans.querySelector(".correct-check").checked;
+                }
+                let ansText = ans.querySelector(".ans-input").value;
+                if (block.getAttribute("data-question-type") === "fill") {
+                    ansText = fill_get_data(ansText);
                 }
 
-                await save_answer(question_id, ansText, right_answer);
+                await save_answer(question_id, ansText, right_answer, ans.getAttribute("data-id"));
             }
         }
-
     } catch (error) {
         console.error(error);
     }
 }
 
-async function save_answer(question_id, answer_text, right_answer) {
+function fill_get_data(ansText) {
+    let text = ""
+    let words = []
+    let word = ""
+    let found = false
+    let specindex = []
+    for (let index = 0; index < ansText.length; index++) {
+        if (!found && ansText[index] != '{' && ansText[index] != '}') {
+            text += ansText[index]
+        }
+        else {
+            if (ansText[index] == '{') {
+                found = true;
+                specindex.push(index);
+            }
+            else {
+                if (found) {
+                    if (ansText[index] != '}') {
+                        word += ansText[index]
+                    }
+                    else {
+                        found = false;
+                        specindex.push(index);
+                        if (word.length > 0) {
+                            text += "{}"
+                            words.push(word)
+                            word = ""                            
+                        }
+                        specindex = []
+                    }
+                }
+            }
+
+        }
+    }
+
+    return words
+}
+
+function quiz_check() {
+    const quiz_title = document.querySelector(".quiz-title-input").value;
+    const questionBlocks = document.querySelectorAll(".question-card");
+    speclengthtest(quiz_title, 1, 200, "A kvíz címének hossza");
+    min_blocks(questionBlocks);
+
+    for (const block of questionBlocks) {
+        const question_text = block.querySelector(".q-input").value;
+        const answers = block.querySelectorAll(".answer-row");
+        min_blocks(answers);
+        speclengthtest(question_text, 1, 1000, "A kérdés szövegének hossza");
+        for (const ans of answers) {
+            const ansText = ans.querySelector(".ans-input").value;
+            speclengthtest(ansText, 1, 1000, "A válasz szövegének hossza");
+        }
+    }
+}
+
+async function save_answer(question_id, answer_text, right_answer, position) {
     try {
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/saveanswer", {
+        await apiFetch("http://127.0.0.1:4000/api/saveanswer", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ question_id: question_id, answer_text: answer_text, right_answer: right_answer })
+            body: JSON.stringify({ question_id: question_id, answer_text: answer_text, right_answer: right_answer, position: position })
         });
     } catch (err) {
         throw err;
@@ -327,7 +733,7 @@ async function save_quiz(title, description, public) {
     }
 }
 
-async function save_question(question_text, quiz_id) {
+async function save_question(question_text, quiz_id, type, position) {
     try {
         const token = localStorage.getItem("token");
         const result = await apiFetch("http://127.0.0.1:4000/api/savequestion", {
@@ -336,7 +742,7 @@ async function save_question(question_text, quiz_id) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ question_text: question_text, quiz_id: quiz_id })
+            body: JSON.stringify({ question_text: question_text, quiz_id: quiz_id, type: type, position: position })
         })
         return result.question_id;
     } catch (err) {
@@ -348,6 +754,15 @@ function showcreatequiz() {
     document.querySelector(".quiz-create-container").classList.remove("dnone");
     document.querySelector(".quiz-action-div").classList.add("dnone");
     document.querySelector(".quiz-container").classList.add("dnone");
+    const questionsContainer = document.querySelector("#questionsContainer");
+    Sortable.create(questionsContainer, {
+        animation: 150,
+        dataIdAttr: 'data-id',
+        onEnd: function (evt) {
+            // const currentorder = Sortable.get(evt.from).toArray();
+            // localStorage.setItem("current_quiz_order", JSON.stringify(currentorder));            
+        }
+    });
 }
 
 

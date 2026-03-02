@@ -405,7 +405,7 @@ router.post("/savequestion", authenticateToken, async (req, res, next) => {
     const id = req.user.id;
     const data = req.body
     lengthtest(data.question_text, 1, 1000)
-    const insertedID = await save_question(data.quiz_id,data.question_text, id);
+    const insertedID = await save_question(data.quiz_id,data.question_text, id, data.type, data.position);
     res.status(200).json({ write: false, question_id: insertedID});
   } catch (error) {
     next(error);
@@ -417,7 +417,7 @@ router.post("/saveanswer", authenticateToken, async (req, res, next) => {
     const id = req.user.id;
     const data = req.body
     lengthtest(data.answer_text, 1, 1000)
-    await save_answer(data.question_id,data.answer_text, data.right_answer, id);
+    await save_answer(data.question_id,data.answer_text, data.right_answer, id, data.position);
     res.status(200).json({ write: true, message: "Sikeres mentés!" });
   } catch (error) {
     next(error);

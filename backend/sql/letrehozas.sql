@@ -69,6 +69,8 @@ CREATE TABLE IF NOT EXISTS quiz_questions (
   question_id INT AUTO_INCREMENT PRIMARY KEY,
   quiz_id INT NOT NULL,
   question_text TEXT NOT NULL,
+  question_type ENUM('standard', 'order', 'short_answer', 'fill') default 'standard',
+  position INT NOT NULL,
   FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE
 );
 
@@ -77,6 +79,7 @@ CREATE TABLE IF NOT EXISTS quiz_answers (
   question_id INT NOT NULL,
   answer_text TEXT NOT NULL,
   right_answer BOOLEAN NOT NULL,
+  position INT NOT NULL,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
 );
 
