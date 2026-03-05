@@ -212,10 +212,7 @@ async function load_events() {
             for (let i = 0; i < events.length; i++) {
                 build_event(events[i]);
             }
-        }
-        else {
-            alertell("Nincsenek események a kiválasztott héten.", 2.5);
-        }
+        }        
 
     } catch (error) {
         console.error(error)

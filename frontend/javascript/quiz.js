@@ -16,7 +16,7 @@ async function load_quizzes() {
             }
         });
         for (let i = 0; i < result.quizzes.length; i++) {
-            quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by))
+            quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by,result.quizzes[i].public))
         }
         const el = document.getElementById('quizContainer');
         Sortable.create(el, {
@@ -33,7 +33,8 @@ async function load_quizzes() {
     }
 }
 
-function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by) {
+
+function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public) {
     const quiz_element = document.createElement("div")
     quiz_element.draggable = true
     quiz_element.setAttribute("data-id", quiz_id)
@@ -103,7 +104,8 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
     edit_button.type = "button"
     edit_button.classList.add("quiz-button", "edit-quiz-button")
     edit_button.textContent = "Szerkesztés"
-    edit_button.onclick = () => { quiz_edit_user(quiz_id) }
+    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public}
+    edit_button.onclick = () => { quiz_edit_user(quiz) }
 
     quiz_actions.appendChild(start_button)
     quiz_actions.appendChild(edit_button)
@@ -609,6 +611,11 @@ function min_blocks(blocks) {
     }
 }
 
+function quiz_creator_reset() {
+    document.getElementById("quizCreateForm").reset();
+    document.querySelector("#questionsContainer").innerHTML = "";
+}
+
 async function saveQuiz(e) {
     e.preventDefault();
     try {
@@ -636,6 +643,7 @@ async function saveQuiz(e) {
                 await save_answer(question_id, ansText, right_answer, ans.getAttribute("data-id"));
             }
         }
+        quiz_creator_reset();
     } catch (error) {
         console.error(error);
     }
@@ -667,7 +675,7 @@ function fill_get_data(ansText) {
                         if (word.length > 0) {
                             text += "{}"
                             words.push(word)
-                            word = ""                            
+                            word = ""
                         }
                         specindex = []
                     }
@@ -677,7 +685,7 @@ function fill_get_data(ansText) {
         }
     }
 
-    return words
+    return { words: words, text: text };
 }
 
 function quiz_check() {
@@ -707,7 +715,7 @@ async function save_answer(question_id, answer_text, right_answer, position) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ question_id: question_id, answer_text: answer_text, right_answer: right_answer, position: position })
+            body: JSON.stringify({ question_id: question_id, answer_text: JSON.stringify(answer_text), right_answer: right_answer, position: position })
         });
     } catch (err) {
         throw err;
@@ -782,4 +790,15 @@ async function save_current_quiz_order(currentorder) {
         console.error(err);
     }
 
+}
+
+
+async function quiz_edit_user(quiz) {
+    quiz_creator_reset();
+    showcreatequiz()
+    document.getElementById("quizTitle").value = quiz.title;
+    document.getElementById("quizDescription").value = quiz.description;
+    document.getElementById("isPublicQuiz").checked = quiz.ispublic;
+    const token = localStorage.getItem("token");
+    
 }

@@ -198,7 +198,7 @@ async function mark_task_done(task_id, user_id) {
 }
 
 async function getquizzes(user_id) {
-    return await pool.execute("SELECT quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quizzes.last_result,quizzes.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by FROM quizzes LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id JOIN users ON quizzes.user_id=users.id WHERE user_id = ? GROUP BY quizzes.quiz_id ORDER BY quizzes.position;", [user_id]);
+    return await pool.execute("SELECT quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quizzes.last_result,quizzes.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public FROM quizzes LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id JOIN users ON quizzes.user_id=users.id WHERE user_id = ? GROUP BY quizzes.quiz_id ORDER BY quizzes.position;", [user_id]);
 }
 
 async function save_quiz(title, description, public, user_id) {
@@ -230,6 +230,14 @@ async function save_current_quiz_order(quiz_id, position, user_id) {
     await pool.execute("UPDATE quizzes SET position = ? WHERE quiz_id = ? AND user_id = ?", [position, quiz_id, user_id])
 }
 
+
+
+async function loadquestions(quiz_id, user_id) {
+    const [questions] = await pool.execute("SELECT * FROM quiz_questions WHERE quiz_id = ? AND user_id = ?", [quiz_id, user_id]);
+    return questions;
+}
+
+async function loadanswers(quiz_id, user_id) {}
 
 
 
