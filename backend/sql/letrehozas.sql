@@ -14,21 +14,21 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS flashcard_deck(
-deck_id int not null AUTO_INCREMENT PRIMARY KEY,
-deck_name varchar(200),
-create_date TIMESTAMP,
-position int not null,
-share_code varchar(8) UNIQUE DEFAULT NULL,
-user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  deck_id int not null AUTO_INCREMENT PRIMARY KEY,
+  deck_name varchar(200),
+  create_date TIMESTAMP,
+  position int not null,
+  share_code varchar(8) UNIQUE DEFAULT NULL,
+  user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS flashcard_card(
-card_id int not null AUTO_INCREMENT PRIMARY KEY,
-deck_id int not null, 
-front_text varchar(255),
-back_text TEXT,
-position int not null,
-FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id) ON DELETE CASCADE
+  card_id int not null AUTO_INCREMENT PRIMARY KEY,
+  deck_id int not null, 
+  front_text varchar(255),
+  back_text TEXT,
+  position int not null,
+  FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS timetable (
@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS quizzes (
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   public BOOLEAN DEFAULT FALSE,
   last_result INT DEFAULT NULL,
+  randomize_questions BOOLEAN DEFAULT FALSE,
   position INT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -69,8 +70,9 @@ CREATE TABLE IF NOT EXISTS quiz_questions (
   question_id INT AUTO_INCREMENT PRIMARY KEY,
   quiz_id INT NOT NULL,
   question_text TEXT NOT NULL,
-  question_type ENUM('standard', 'order', 'short_answer', 'fill') default 'standard',
-  position INT NOT NULL,
+  question_type ENUM('standard', 'order', 'short', 'fill') default 'standard',
+  points INT NOT NULL,
+  position INT NOT NULL default 1,
   FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE
 );
 

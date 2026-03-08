@@ -378,7 +378,7 @@
                 </div>
 
 
-                <form class="quiz-create-container dnone" id="quizCreateForm" onsubmit="saveQuiz(event)">
+                <form class="quiz-create-container dnone" id="quizCreateForm">
                     <div class="quiz-create-header">
                         <div class="quiz-title-row">
                             <input type="text" id="quizTitle" placeholder="Kvíz címe (pl. Történelem 9. osztály)"
@@ -388,9 +388,17 @@
                         <div class="quiz-meta-controls">
                             <input type="text" id="quizDescription" placeholder="Kvíz leírása"
                                 class="quiz-description-input">
-                            <div>
-                                <label for="isPublicQuiz" class="public-quiz-label">Nyilvánosan elérhető:</label>
-                                <input type="checkbox" id="isPublicQuiz" class="public-quiz-checkbox">
+                            <div class="quiz-settings-row">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="isPublicQuiz">
+                                    <span class="checkmark"></span>
+                                    Publikus kvíz
+                                </label>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="randomOrder">
+                                    <span class="checkmark"></span>
+                                    Véletlenszerű kérdésrend
+                                </label>
                             </div>
 
                         </div>

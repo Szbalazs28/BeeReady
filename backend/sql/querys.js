@@ -201,20 +201,20 @@ async function getquizzes(user_id) {
     return await pool.execute("SELECT quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quizzes.last_result,quizzes.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public FROM quizzes LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id JOIN users ON quizzes.user_id=users.id WHERE user_id = ? GROUP BY quizzes.quiz_id ORDER BY quizzes.position;", [user_id]);
 }
 
-async function save_quiz(title, description, public, user_id) {
+async function save_quiz(title, description, public, user_id, randomize_questions) {
     const [data] = await pool.execute("SELECT title FROM quizzes WHERE user_id = ? AND title = ?", [user_id, title]);
     isexistscheck(data, title, true)
     const [maxposition] = await pool.execute("SELECT COALESCE(MAX(position) + 1, 0) AS max_position FROM quizzes WHERE user_id = ?", [user_id]);
-    const [result] = await pool.execute("INSERT INTO quizzes (user_id, title, description, public, position) VALUES (?, ?, ?, ?, ?)", [user_id, title, description, public, maxposition[0].max_position]);
+    const [result] = await pool.execute("INSERT INTO quizzes (user_id, title, description, public, position, randomize_questions) VALUES (?, ?, ?, ?, ?, ?)", [user_id, title, description, public, maxposition[0].max_position, randomize_questions]);
     return result.insertId;
 } 
 
-async function save_question(quiz_id, question_text, id, type, position) {
+async function save_question(quiz_id, question_text, id, type, position, points) {
     const [checkexistquiz] = await pool.execute("SELECT quiz_id FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, id]);
     isexistscheck(checkexistquiz, "Kvíz", false)
     const [checkexistquestion] = await pool.execute("SELECT quiz_questions.question_id FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.quiz_id = ? AND quizzes.user_id = ? AND quiz_questions.question_text = ?", [quiz_id, id, question_text]);
     isexistscheck(checkexistquestion, "Kérdés", true)
-    const [result] = await pool.execute("INSERT INTO quiz_questions (quiz_id, question_text, question_type, position) VALUES (?, ?, ?, ?)", [quiz_id, question_text, type, position]);
+    const [result] = await pool.execute("INSERT INTO quiz_questions (quiz_id, question_text, question_type, position, points) VALUES (?, ?, ?, ?, ?)", [quiz_id, question_text, type, position, points]);
     return result.insertId;
 }
 
@@ -232,12 +232,19 @@ async function save_current_quiz_order(quiz_id, position, user_id) {
 
 
 
-async function loadquestions(quiz_id, user_id) {
-    const [questions] = await pool.execute("SELECT * FROM quiz_questions WHERE quiz_id = ? AND user_id = ?", [quiz_id, user_id]);
-    return questions;
+async function loadquestions(quiz_id, user_id) {     
+    const [rows] = await pool.execute("SELECT quiz_questions.question_id, quiz_questions.quiz_id, quiz_questions.question_text, quiz_questions.question_type, quiz_questions.position, quiz_questions.points FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.quiz_id = ? AND quizzes.user_id = ? order by quiz_questions.position", [quiz_id, user_id]);
+    return rows
 }
 
-async function loadanswers(quiz_id, user_id) {}
+async function loadanswers(question_id, user_id) {
+    const [rows] = await pool.execute("SELECT quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.right_answer FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND quizzes.user_id = ? order by quiz_answers.position", [question_id, user_id]);
+    return rows
+}
+
+async function delete_quiz(quiz_id, user_id) {
+    await pool.execute("DELETE FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, user_id]);
+}
 
 
 
@@ -285,6 +292,9 @@ async function isexist(data){
 
 
 module.exports = {
+    delete_quiz,
+    loadquestions,
+    loadanswers,
     save_current_quiz_order,
     save_answer,
     save_question,

@@ -526,9 +526,121 @@
     color: white;
 }
 
+.quiz-delete-modal-content {
+    max-width: 420px;
+}
+
+.quiz-delete-modal-title {
+    margin: 0;
+    font-size: 1.35rem;
+    color: #1f2937;
+}
+
+.quiz-delete-modal-text {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.45;
+}
+
+.quiz-delete-action-div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.quiz-delete-cancel {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.quiz-delete-cancel:hover {
+    background: #d1d5db;
+}
+
+.quiz-delete-confirm {
+    background: #dc2626;
+    color: #fff;
+}
+
+.quiz-delete-confirm:hover {
+    background: #b91c1c;
+}
+
 .fill-ans-input {
     font-family: 'Courier New', Courier, monospace;
     background: #f0f0f0;
     border: 1px solid #ccc;
     resize: vertical;
+}
+
+.q-points-container {
+    display: flex;
+    align-items: center;
+    background: #f1f1f1;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.points-label {
+    margin-right: 2px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.q-points-input {
+    width: 50px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+}
+
+.q-points-input:focus {
+    border-color: #f39c12;
+}
+
+.random-questions-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #f39c12;
+}
+
+
+@media (max-width: 480px) {
+    .q-settings {
+        justify-content: flex-start;
+    }
+}
+
+.quiz-settings-row {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+    gap: 8px;
+    color: #444;
+}
+
+.checkbox-container input {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: #f39c12; /* Passzol a designhoz */
 }

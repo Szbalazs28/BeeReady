@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const {affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const {save_current_quiz_order, save_answer,save_question,save_quiz,getquizzes,  add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
+const {delete_quiz,loadquestions,loadanswers, save_current_quiz_order, save_answer,save_question,save_quiz,getquizzes,  add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -393,7 +393,7 @@ router.post("/savequiz", authenticateToken, async (req, res, next) => {
     const id = req.user.id;
     const data = req.body
     lengthtest(data.title, 1, 200)
-    const insertedID = await save_quiz(data.title, data.description, data.public, id);
+    const insertedID = await save_quiz(data.title, data.description, data.public, id, data.randomize_questions);
     res.status(200).json({ write: false, quiz_id: insertedID});
   } catch (error) {
     next(error);
@@ -405,7 +405,7 @@ router.post("/savequestion", authenticateToken, async (req, res, next) => {
     const id = req.user.id;
     const data = req.body
     lengthtest(data.question_text, 1, 1000)
-    const insertedID = await save_question(data.quiz_id,data.question_text, id, data.type, data.position);
+    const insertedID = await save_question(data.quiz_id,data.question_text, id, data.type, data.position, data.points);
     res.status(200).json({ write: false, question_id: insertedID});
   } catch (error) {
     next(error);
@@ -436,6 +436,41 @@ router.post("/save_current_quiz_order", authenticateToken, async (req, res, next
     next(error);
   }
 });
+
+
+router.get("/getquizquestions", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const quiz_id = req.query.quiz_id
+    const questions = await loadquestions(quiz_id, id)
+    res.status(200).json({ write: false, questions: questions});
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/getquestionanswers", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const question_id = req.query.question_id
+    const answers = await loadanswers(question_id, id)
+    res.status(200).json({ write: false, answers: answers});
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/deletequiz", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const quiz_id = req.query.quiz_id
+    await delete_quiz(quiz_id, id);
+    res.status(200).json({ write: true, message: "Kvíz törölve!" });
+  } catch (error) {
+    next(error);
+  }  
+});
+
 
   
 
