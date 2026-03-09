@@ -92,3 +92,4 @@ VALUES
   );
 
 -- Teszt1$
+-- Admin jelszo: Admin1_

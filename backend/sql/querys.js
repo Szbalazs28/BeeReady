@@ -17,10 +17,6 @@ async function userbyid(id) {
     return await pool.execute("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
 }
 
-async function adminCheck(user_id) {
-    return await pool.execute("SELECT * FROM admins WHERE user_id = ?", [user_id]);
-}
-
 async function add_deck(id, name) {
     
     const [maxposition] = await maxdeckposition(id);
@@ -243,6 +239,26 @@ async function delete_calendar_event(event_id, user_id) {
     );
 }
 
+async function adminCheck(id) {
+    return await pool.execute("SELECT * FROM admins WHERE user_id = ?", [id]);
+}
+
+async function admin_get_users() {
+    return await pool.execute(
+        "SELECT id, username, email, profil_pic_url FROM users"
+    );
+}
+
+async function admin_update_user(user_id, username, email, profil_pic_url) {
+    await pool.execute(
+        "UPDATE users SET username=?, email=?, profil_pic_url=? WHERE id=?",
+        [username, email, profil_pic_url, user_id]
+    );
+}
+
+async function admin_delete_user(user_id) {
+    await pool.execute("DELETE FROM users WHERE id=?", [user_id]);
+}
 
 module.exports = {
     userexists,
@@ -250,6 +266,9 @@ module.exports = {
     userbyemail,
     userbyid,
     adminCheck,
+    admin_delete_user,
+    admin_get_users,
+    admin_update_user,
     updateuser,
     add_deck,
     getdeck,

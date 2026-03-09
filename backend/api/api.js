@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { adminCheck, add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, get_calendar_events, Insert_calendar_event, delete_calendar_event } = require("../sql/querys.js");
+const { adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, get_calendar_events, Insert_calendar_event, delete_calendar_event } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -441,5 +441,35 @@ router.post("/delete_calendar_event", authenticateToken, async (req, res, next) 
   }
 });
 
+router.get("/admin/users", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    if (!adminRows.length) return res.status(403).json({ message: "Nincs jogosultságod!" });
+
+    const [rows] = await admin_get_users();  
+    res.status(200).json({ users: rows });
+  } catch (error) { next(error); }
+});
+
+router.post("/admin/update_user", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    if (!adminRows.length) return res.status(403).json({ message: "Nincs jogosultságod!" });
+
+    const { user_id, username, email, profil_pic_url } = req.body;
+    await admin_update_user(user_id, username, email, profil_pic_url);
+    res.status(200).json({ write: true, message: "Sikeres mentés!" });
+  } catch (error) { next(error); }
+});
+
+router.post("/admin/delete_user", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    if (!adminRows.length) return res.status(403).json({ message: "Nincs jogosultságod!" });
+
+    await admin_delete_user(req.body.user_id); 
+    res.status(200).json({ write: true, message: "Törölve!" });
+  } catch (error) { next(error); }
+});
 
 module.exports = router;
