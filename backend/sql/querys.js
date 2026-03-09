@@ -17,6 +17,10 @@ async function userbyid(id) {
     return await pool.execute("SELECT username, email, profil_pic_url, password FROM users WHERE id = ?", [id]);
 }
 
+async function adminCheck(user_id) {
+    return await pool.execute("SELECT * FROM admins WHERE user_id = ?", [user_id]);
+}
+
 async function add_deck(id, name) {
     
     const [maxposition] = await maxdeckposition(id);
@@ -245,6 +249,7 @@ module.exports = {
     newuser,
     userbyemail,
     userbyid,
+    adminCheck,
     updateuser,
     add_deck,
     getdeck,

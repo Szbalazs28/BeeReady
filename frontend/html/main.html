@@ -40,7 +40,7 @@
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <!-- <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div> -->
 
-                <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
+                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
@@ -188,9 +188,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!--Chat-->
-                <!-- <div class="chatclass dnone mainelem" id="chat">
+            </div>
+            <!--Chat-->
+            <!-- <div class="chatclass dnone mainelem" id="chat">
                     <div class="chat_div">
                         <div class="chat_header">
                             <h1><span>Chatnev</span></h1>
@@ -219,62 +219,62 @@
                     </div>
                 </div> -->
 
-                <!--tanulokartyak-->
-                <div class="cards dnone mainelem" id="tanulokartyak">
-                    <div id="decks">
-                        <div class="deck_creator">
-                            <form id="flashcard_form">
-                                <input type="text" class="newflashcard_input" id="newDeckName"
-                                    placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
-                                <button type="submit" id="createDeckButton">Pakli hozzáadása</button>
-                            </form>
-                        </div>
-
-                        <h3>Jelenlegi paklijaid:</h3>
-                        <div class="flashcard_container" id="deckList">
-
-                        </div>
+            <!--tanulokartyak-->
+            <div class="cards dnone mainelem" id="tanulokartyak">
+                <div id="decks">
+                    <div class="deck_creator">
+                        <form id="flashcard_form">
+                            <input type="text" class="newflashcard_input" id="newDeckName"
+                                placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
+                            <button type="submit" id="createDeckButton">Pakli hozzáadása</button>
+                        </form>
                     </div>
-                    <div id="cards" class="dnone">
-                        <div class="deck_header">
-                            <h2 id="currentDeckName">Pakli Neve Betöltés alatt...</h2>
 
-                            <div class="deck_header_actions dnone_on_start">
-                                <button id="startStudyButton" class="action_button start_button ">Indítás</button>
-                                <button id="editDeckButton" class="action_button edit_button ">Szerkesztés</button>
-                                <button id="addCardButton" onclick="add_new_card_modal()"
-                                    class="action_button add_button ">Kártya hozzáadása</button>
-                                <button id="backToDecksButton" onclick="load_deck()"
-                                    class="action_button back_button">Vissza a paklikhoz</button>
-                            </div>
-                            <button id="backToCardsButton" class="dnone action_button back_button">Vissza a
-                                kártyákhoz</button>
+                    <h3>Jelenlegi paklijaid:</h3>
+                    <div class="flashcard_container" id="deckList">
+
+                    </div>
+                </div>
+                <div id="cards" class="dnone">
+                    <div class="deck_header">
+                        <h2 id="currentDeckName">Pakli Neve Betöltés alatt...</h2>
+
+                        <div class="deck_header_actions dnone_on_start">
+                            <button id="startStudyButton" class="action_button start_button ">Indítás</button>
+                            <button id="editDeckButton" class="action_button edit_button ">Szerkesztés</button>
+                            <button id="addCardButton" onclick="add_new_card_modal()"
+                                class="action_button add_button ">Kártya hozzáadása</button>
+                            <button id="backToDecksButton" onclick="load_deck()"
+                                class="action_button back_button">Vissza a paklikhoz</button>
                         </div>
-                        <div class="flashcard_game_container " id="flashcardGameContainer">
-                            <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn"
-                                onclick="changeCard(-1)" disabled>
-                                &#10094;
-                            </button>
+                        <button id="backToCardsButton" class="dnone action_button back_button">Vissza a
+                            kártyákhoz</button>
+                    </div>
+                    <div class="flashcard_game_container " id="flashcardGameContainer">
+                        <button class="game_nav_button disabled_game_button prev_card" id="prevCardBtn"
+                            onclick="changeCard(-1)" disabled>
+                            &#10094;
+                        </button>
 
-                            <div class="flashcard_game_card" id="flashcardGameCard">
-                                <div class="flashcard" id="flashcard">
-                                    <div class="flashcard-front" id="flashcard_front">
-                                        A kérdés helye:
-                                    </div>
-                                    <div class="flashcard-back" id="flashcard_back">
-                                        A válasz helye:
-                                    </div>
+                        <div class="flashcard_game_card" id="flashcardGameCard">
+                            <div class="flashcard" id="flashcard">
+                                <div class="flashcard-front" id="flashcard_front">
+                                    A kérdés helye:
+                                </div>
+                                <div class="flashcard-back" id="flashcard_back">
+                                    A válasz helye:
                                 </div>
                             </div>
-
-                            <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
-                                onclick="changeCard(1)">
-                                &#10095;
-                            </button>
                         </div>
-                        <div class="flashcard_container dnone_on_start" id="cardList">
 
-                            <!--
+                        <button class="game_nav_button activ_game_button next_card" id="nextCardBtn"
+                            onclick="changeCard(1)">
+                            &#10095;
+                        </button>
+                    </div>
+                    <div class="flashcard_container dnone_on_start" id="cardList">
+
+                        <!--
                         <div class="card_item">
                             <div class="card_info">
                                 <p class="card_front">Példa kártya</p>
@@ -287,140 +287,138 @@
                         </div>
                     
                     -->
-                        </div>
-
                     </div>
 
                 </div>
-                <!--Órarend-->
-                <div class=" dnone mainelem" id="timetable">
-                    <div class="create_event_container">
-                        <div class="controls_group">
-                            <div class="select_wrapper">
-                                <select title="Válasszon hét típust:" id="weekSelector" class="custom_select">
-                                    <option value="A">"A" hét</option>
-                                    <option value="B">"B" hét</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mobile-day-selector">
-                            <button class="day-btn" onclick="showDay(0)">H</button>
-                            <button class="day-btn" onclick="showDay(1)">K</button>
-                            <button class="day-btn" onclick="showDay(2)">SZ</button>
-                            <button class="day-btn" onclick="showDay(3)">CS</button>
-                            <button class="day-btn" onclick="showDay(4)">P</button>
-                        </div>
 
-                        <button id="addEventButton" class="add_btn" title="Esemény hozzáadása"
-                            onclick="createEventModal()">
-                            <span>+</span>
-
-                        </button>
+            </div>
+            <!--Órarend-->
+            <div class=" dnone mainelem" id="timetable">
+                <div class="create_event_container">
+                    <div class="controls_group">
+                        <div class="select_wrapper">
+                            <select title="Válasszon hét típust:" id="weekSelector" class="custom_select">
+                                <option value="A">"A" hét</option>
+                                <option value="B">"B" hét</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="timetable-flex-container">
-                        <div class="day-column day0">
-                            <div class="day-header">Hétfő</div>
-                            <div class="events-container" id="day_0">
-                                <!--
+                    <div class="mobile-day-selector">
+                        <button class="day-btn" onclick="showDay(0)">H</button>
+                        <button class="day-btn" onclick="showDay(1)">K</button>
+                        <button class="day-btn" onclick="showDay(2)">SZ</button>
+                        <button class="day-btn" onclick="showDay(3)">CS</button>
+                        <button class="day-btn" onclick="showDay(4)">P</button>
+                    </div>
+
+                    <button id="addEventButton" class="add_btn" title="Esemény hozzáadása" onclick="createEventModal()">
+                        <span>+</span>
+
+                    </button>
+                </div>
+                <div class="timetable-flex-container">
+                    <div class="day-column day0">
+                        <div class="day-header">Hétfő</div>
+                        <div class="events-container" id="day_0">
+                            <!--
                             <div class="event-card lesson-theory">
                                 <span class="event-time">08:00 - 09:30</span>
                                 <h4 class="event-title">Dig kult</h4>
                                 <p class="event-location">B29</p>
                             </div>                                                    
                             -->
+                        </div>
+                    </div>
+                    <div class="day-column day1">
+                        <div class="day-header">Kedd</div>
+                        <div class="events-container" id="day_1">
+                        </div>
+                    </div>
+                    <div class="day-column day2">
+                        <div class="day-header">Szerda</div>
+                        <div class="events-container" id="day_2">
+                        </div>
+                    </div>
+                    <div class="day-column day3">
+                        <div class="day-header">Csütörtök</div>
+                        <div class="events-container" id="day_3">
+                        </div>
+                    </div>
+                    <div class="day-column day4">
+                        <div class="day-header">Péntek</div>
+                        <div class="events-container" id="day_4">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--profil kezeles-->
+            <div class="account dnone mainelem" id="felhasznalo">
+                <form id="edit_user">
+                    <div class="account_div">
+                        <div class="profil_img_div">
+                            <div class="profil_img" id="prof_img">
+                                <img id="editprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
+                            </div>
+                            <div class="account_buttons">
+                                <button type="submit" class="account_button">Mentés</button>
+                                <a onclick="logout()">Kijelentkezés</a>
                             </div>
                         </div>
-                        <div class="day-column day1">
-                            <div class="day-header">Kedd</div>
-                            <div class="events-container" id="day_1">
+                        <div class="modal" id="profil_modal">
+                            <div class="modal_content">
+                                <div class="avatar_options">
+                                    <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/oroszlan.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
+                                    <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
+                                </div>
+                                <button type="button" class="account_button" id="close">Bezár</button>
                             </div>
                         </div>
-                        <div class="day-column day2">
-                            <div class="day-header">Szerda</div>
-                            <div class="events-container" id="day_2">
-                            </div>
-                        </div>
-                        <div class="day-column day3">
-                            <div class="day-header">Csütörtök</div>
-                            <div class="events-container" id="day_3">
-                            </div>
-                        </div>
-                        <div class="day-column day4">
-                            <div class="day-header">Péntek</div>
-                            <div class="events-container" id="day_4">
+                        <div class="account_edit_div">
+                            <div class="account_inputs input-group">
+                                <div class="account_border_div">
+                                    <label for="felh">Felhasználónév</label>
+                                    <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
+                                        required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="email">E-mail</label>
+                                    <input type="email" id="editemail" name="email" placeholder="E-mail" required>
+                                </div>
+                                <div class="account_border_div">
+
+                                    <label for="jelenlegijelszo">Jelenlegi jelszó</label>
+                                    <input type="password" id="currentpassword" name="jelenlegijelszo"
+                                        placeholder="Jelenlegi jelszó" required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="ujjelszo">Új jelszó</label>
+                                    <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                </div>
-                <!--profil kezeles-->
-                <div class="account dnone mainelem" id="felhasznalo">
-                    <form id="edit_user">
-                        <div class="account_div">
-                            <div class="profil_img_div">
-                                <div class="profil_img" id="prof_img">
-                                    <img id="editprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
-                                </div>
-                                <div class="account_buttons">
-                                    <button type="submit" class="account_button">Mentés</button>
-                                    <a onclick="logout()">Kijelentkezés</a>
-                                </div>
-                            </div>
-                            <div class="modal" id="profil_modal">
-                                <div class="modal_content">
-                                    <div class="avatar_options">
-                                        <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/oroszlan.webp" alt=""
-                                            class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
-                                        <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
-                                    </div>
-                                    <button type="button" class="account_button" id="close">Bezár</button>
-                                </div>
-                            </div>
-                            <div class="account_edit_div">
-                                <div class="account_inputs input-group">
-                                    <div class="account_border_div">
-                                        <label for="felh">Felhasználónév</label>
-                                        <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
-                                            required>
-                                    </div>
-                                    <div class="account_border_div">
-                                        <label for="email">E-mail</label>
-                                        <input type="email" id="editemail" name="email" placeholder="E-mail" required>
-                                    </div>
-                                    <div class="account_border_div">
-
-                                        <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                                        <input type="password" id="currentpassword" name="jelenlegijelszo"
-                                            placeholder="Jelenlegi jelszó" required>
-                                    </div>
-                                    <div class="account_border_div">
-                                        <label for="ujjelszo">Új jelszó</label>
-                                        <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                </form>
             </div>
-
-
         </div>
-        <script src="../javascript/main.js"></script>
-        <script src="../javascript/profil_szerk.js"></script>
-        <script src="../javascript/navbar.js"></script>
-        <script src="../javascript/flashcards.js"></script>
-        <script src="../javascript/libs/Sortable.min.js"></script>
-        <script src="../javascript/timetable.js"></script>
-        <script src="../javascript/libs/Sortable.min.js"></script>
-        <script src="../javascript/mainpage.js"></script>
+
+
+    </div>
+    <script src="../javascript/main.js"></script>
+    <script src="../javascript/profil_szerk.js"></script>
+    <script src="../javascript/navbar.js"></script>
+    <script src="../javascript/flashcards.js"></script>
+    <script src="../javascript/libs/Sortable.min.js"></script>
+    <script src="../javascript/timetable.js"></script>
+    <script src="../javascript/libs/Sortable.min.js"></script>
+    <script src="../javascript/mainpage.js"></script>
 </body>
 
 <!--

@@ -689,7 +689,7 @@
 .date[data-title]:hover::after {
     content: attr(data-title);
     position: absolute;
-    bottom: 125%;
+    bottom: 90%;
     left: 50%;
     transform: translateX(-50%);
     background-color: #333;
@@ -697,10 +697,11 @@
     padding: 5px 10px;
     border-radius: 8px;
     font-size: 0.75rem;
-    white-space: nowrap;
+    white-space: pre-line;
     z-index: 100;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    pointer-events: none;
+    /* pointer-events: none; */
+    min-width: 5.5rem;
 }
 
 .date[data-title]:hover::before {

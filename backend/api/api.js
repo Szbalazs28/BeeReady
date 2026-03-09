@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { passwordTest, titkositas, compare, usernameTest, emailTest, lengthtest } = require("../data_test.js");
-const { add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, get_calendar_events, Insert_calendar_event, delete_calendar_event } = require("../sql/querys.js");
+const { adminCheck, add_task, get_tasks, delete_task, update_task, mark_task_done, toggle_task_completion, restore_task, userexists, newuser, userbyemail, userbyid, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, get_calendar_events, Insert_calendar_event, delete_calendar_event } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -64,7 +64,16 @@ router.post("/login", loginLimiter, async (req, res, next) => {
           expiresInTime = "7d";
         }
         const token = await generateToken(rows[0].id, expiresInTime);
-        res.status(200).json({ success: true, token, redirect: "./main.html" });
+
+        // Admin ellenőrzés
+        const [adminRows] = await adminCheck(rows[0].id);
+        const isAdmin = adminRows.length > 0;
+
+        res.status(200).json({
+          success: true,
+          token,
+          redirect: isAdmin ? "./admin.html" : "./main.html"
+        });
       } else {
         res.status(409).json({ success: false, message: "Hibás jelszó!" });
       }
@@ -72,7 +81,7 @@ router.post("/login", loginLimiter, async (req, res, next) => {
       res.status(409).json({ success: false, message: "Nem található emailcím!" });
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
 });
 
@@ -401,7 +410,6 @@ router.post("/toggletaskcompletion", authenticateToken, async (req, res, next) =
   }
 });
 
-// switched to POST so that year/month can be sent in the request body
 router.post("/get_calendar_events", authenticateToken, async (req, res, next) => {
   try {
     const data = req.body;
@@ -424,13 +432,13 @@ router.post("/insert_calendar_event", authenticateToken, async (req, res, next) 
 });
 
 router.post("/delete_calendar_event", authenticateToken, async (req, res, next) => {
-    try {
-        const data = req.body;
-        await delete_calendar_event(data.event_id, req.user.id);
-        res.status(200).json({ write: true, message: "Esemény törölve!" });
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const data = req.body;
+    await delete_calendar_event(data.event_id, req.user.id);
+    res.status(200).json({ write: true, message: "Esemény törölve!" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 

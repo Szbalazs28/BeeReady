@@ -57,19 +57,33 @@ CREATE TABLE
     importance ENUM ('high', 'medium', 'low') NOT NULL,
     is_completed BOOLEAN DEFAULT FALSE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
 
-CREATE TABLE events (
+CREATE TABLE
+  events (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     event_date DATE NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
 
-VALUES 
+CREATE TABLE
+  admins (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
+
+INSERT INTO admins (user_id) 
+	VALUES (0) 
+
+
+INSERT INTO
+  users (username, email, password, profil_pic_url)
+VALUES
   (
     'teszt1',
     'teszt1@gmail.com',

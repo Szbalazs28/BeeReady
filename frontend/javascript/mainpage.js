@@ -69,7 +69,7 @@ async function update_Cal() {
                 dot.className = 'event-dot';
                 dayDiv.appendChild(dot);
 
-                const tooltipContent = dayEvents.map(e => `${e.title}${e.description ? ': ' + e.description : ''}`).join(" | ");
+                const tooltipContent = dayEvents.map(e => `${e.title}${e.description ? ' - ' + e.description : ''}`).join("\n");
                 dayDiv.setAttribute('data-title', tooltipContent);
             }
 
