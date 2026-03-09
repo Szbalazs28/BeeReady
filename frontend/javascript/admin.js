@@ -90,9 +90,12 @@ async function saveUser(id, username, email, profil_pic_url, inputUsername, inpu
         lengthtest(username, 3, 100);
         lengthtest(email, 5, 255);
 
-        await apiFetch(`http://localhost:4000/api/admin/update_user`, {
+        await apiFetch(`${API}/admin/update_user`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` },
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ user_id: id, username, email, profil_pic_url })
         });
 
@@ -109,9 +112,12 @@ async function saveUser(id, username, email, profil_pic_url, inputUsername, inpu
 async function deleteUser(id, username, tr) {
     if (!confirm(`Biztosan törlöd a(z) "${username}" felhasználót?`)) return;
     try {
-        await apiFetch(`http://localhost:4000/api/admin/delete_user`, {
+        await apiFetch(`${API}/admin/delete_user`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` },
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ user_id: id })
         });
         tr.remove();
