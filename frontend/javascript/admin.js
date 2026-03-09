@@ -20,71 +20,71 @@ async function loadUsers() {
         tdId.innerHTML = `<span class="badge bg-secondary">${u.id}</span>`;
 
         // Username
-        const tdUsername = document.createElement('td');
-        const inputUsername = document.createElement('input');
-        inputUsername.type = 'text';
-        inputUsername.className = 'form-control form-control-sm';
-        inputUsername.value = u.username;
-        inputUsername.disabled = true;
-        tdUsername.appendChild(inputUsername);
+        const td_Username = document.createElement('td');
+        const input_Username = document.createElement('input');
+        input_Username.type = 'text';
+        input_Username.className = 'form-control form-control-sm';
+        input_Username.value = u.username;
+        input_Username.disabled = true;
+        td_Username.appendChild(input_Username);
 
         // Email
-        const tdEmail = document.createElement('td');
-        const inputEmail = document.createElement('input');
-        inputEmail.type = 'email';
-        inputEmail.className = 'form-control form-control-sm';
-        inputEmail.value = u.email;
-        inputEmail.disabled = true;
-        tdEmail.appendChild(inputEmail);
+        const td_Email = document.createElement('td');
+        const input_Email = document.createElement('input');
+        input_Email.type = 'email';
+        input_Email.className = 'form-control form-control-sm';
+        input_Email.value = u.email;
+        input_Email.disabled = true;
+        td_Email.appendChild(input_Email);
 
         // Profilkép
-        const tdPic = document.createElement('td');
-        const inputPic = document.createElement('input');
-        inputPic.type = 'text';
-        inputPic.className = 'form-control form-control-sm';
-        inputPic.value = u.profil_pic_url || '';
-        inputPic.disabled = true;
-        tdPic.appendChild(inputPic);
+        const td_Pic = document.createElement('td');
+        const input_Pic = document.createElement('input');
+        input_Pic.type = 'text';
+        input_Pic.className = 'form-control form-control-sm';
+        input_Pic.value = u.profil_pic_url || '';
+        input_Pic.disabled = true;
+        td_Pic.appendChild(input_Pic);
 
         // Módosítás gomb
-        const tdEdit = document.createElement('td');
-        tdEdit.className = 'text-center';
-        const btnEdit = document.createElement('button');
-        btnEdit.className = 'btn btn-outline-warning btn-sm me-1';
-        btnEdit.innerHTML = 'Szerkesztés';
-        btnEdit.onclick = () => {
-            const editing = inputUsername.disabled === false;
+        const td_Edit = document.createElement('td');
+        td_Edit.className = 'text-center';
+        const btn_Edit = document.createElement('button');
+        btn_Edit.className = 'btn btn-outline-warning btn-sm me-1';
+        btn_Edit.innerHTML = 'Szerkesztés';
+        btn_Edit.onclick = () => {
+            const editing = input_Username.disabled === false;
             if (!editing) {
                 // szerkesztés mód bekapcsolása
-                inputUsername.disabled = false;
-                inputEmail.disabled = false;
-                inputPic.disabled = false;
-                btnEdit.className = 'btn btn-success btn-sm me-1';
-                btnEdit.innerHTML = 'Mentés';
+                input_Username.disabled = false;
+                input_Email.disabled = false;
+                input_Pic.disabled = false;
+                btn_Edit.className = 'btn btn-success btn-sm me-1';
+                btn_Edit.innerHTML = 'Mentés';
             } else {
                 // mentés
-                saveUser(u.id, inputUsername.value.trim(), inputEmail.value.trim(), inputPic.value.trim(), inputUsername, inputEmail, inputPic, btnEdit);
+                saveUser(u.id, input_Username.value.trim(), input_Email.value.trim(), input_Pic.value.trim(), input_Username, input_Email, input_Pic, btn_Edit);
             }
         };
-        tdEdit.appendChild(btnEdit);
+        td_Edit.appendChild(btn_Edit);
 
         // Törlés gomb
-        const tdDelete = document.createElement('td');
-        tdDelete.className = 'text-center';
-        const btnDelete = document.createElement('button');
-        btnDelete.className = 'btn btn-outline-danger btn-sm';
-        btnDelete.innerHTML = 'Törlés';
-        btnDelete.onclick = () => deleteUser(u.id, u.username, tr);
-        tdDelete.appendChild(btnDelete);
+        const td_Delete = document.createElement('td');
+        td_Delete.className = 'text-center';
+        const btn_Delete = document.createElement('button');
+        btn_Delete.className = 'btn btn-outline-danger btn-sm';
+        btn_Delete.innerHTML = 'Törlés';
+        btn_Delete.onclick = () => deleteUser(u.id, u.username, tr);
+        td_Delete.appendChild(btn_Delete);
 
-        tr.append(tdId, tdUsername, tdEmail, tdPic, tdEdit, tdDelete);
+        tr.append(tdId, td_Username, td_Email, td_Pic, td_Edit, td_Delete);
         tbody.appendChild(tr);
     });
 
     document.getElementById('user-count').textContent = `${data.users.length} felhasználó`;
 }
 
-async function saveUser(id, username, email, profil_pic_url, inputUsername, inputEmail, inputPic, btnEdit) {
+async function saveUser(id, username, email, profil_pic_url, input_Username, input_Email, input_Pic, btn_Edit) {
     try {
         lengthtest(username, 3, 100);
         lengthtest(email, 5, 255);
@@ -98,11 +98,11 @@ async function saveUser(id, username, email, profil_pic_url, inputUsername, inpu
             body: JSON.stringify({ user_id: id, username, email, profil_pic_url })
         });
 
-        inputUsername.disabled = true;
-        inputEmail.disabled = true;
-        inputPic.disabled = true;
-        btnEdit.className = 'btn btn-outline-warning btn-sm me-1';
-        btnEdit.innerHTML = 'Szerkesztés';
+        input_Username.disabled = true;
+        input_Email.disabled = true;
+        input_Pic.disabled = true;
+        btn_Edit.className = 'btn btn-outline-warning btn-sm me-1';
+        btn_Edit.innerHTML = 'Szerkesztés';
     } catch (err) {
         console.log(err);
     }
