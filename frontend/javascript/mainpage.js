@@ -629,16 +629,6 @@ function updateStatisticsChart() {
         circleElement.style.setProperty('--done-p', '100%')
 
         caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
-        /*
-            circleElement.style.backgroundImage = `
-            radial-gradient(#F8F8F8 40%, transparent 0 70%, #F8F8F8 0),
-            conic-gradient(from 20deg,
-                #ef4444 0 25%, 
-                #F1B43C 25% 50%, 
-                #10b981 50% 75%, 
-                #6b7280 75% 100%
-            )` 
-        */
     }
 
     // ertekek szamolasa es cssbe helyezes
@@ -658,3 +648,21 @@ function updateStatisticsChart() {
 }
 
 updateStatisticsChart()
+
+// Event listener a statisztika select-re
+document.getElementById('stat_select').addEventListener('change', function() {
+    const selectedValue = this.value
+    const circleStats = document.querySelector('.circle_stats')
+    const studyTime = document.querySelector('.study_time')
+    const headlines = document.querySelector('.h3_statistics_headlines')
+
+    if (selectedValue === 'hide') {
+        circleStats.style.display = 'none'
+        studyTime.style.display = 'none'
+        headlines.style.display = 'none'
+    } else {
+        circleStats.style.display = 'flex'
+        studyTime.style.display = 'flex'
+        headlines.style.display = 'flex'
+    }
+})
