@@ -11,6 +11,13 @@ function getAuthHeaders() {
     };
 }
 
+function dateChangeHandler() {
+    const newDate = this.value;
+    document.getElementById('modalTitle').textContent = `Események: ${newDate}`;
+    eventModal.dataset.selectedDate = newDate;
+    refreshModalEvents(newDate);
+}
+
 async function update_Cal() {
     try {
         const currentY = current_date.getFullYear();
@@ -84,6 +91,10 @@ async function update_Cal() {
 }
 function closeEventModal() {
     eventModal.style.display = 'none';
+    const dateInput = document.getElementById('event_date');
+    if (dateInput) {
+        dateInput.removeEventListener('change', dateChangeHandler);
+    }
     document.getElementById('event_title').value = '';
     document.getElementById('event_desc').value = '';
 }
@@ -91,7 +102,10 @@ function closeEventModal() {
 async function openEventModal(dateStr) {
     eventModal.dataset.selectedDate = dateStr;
     const dateInput = document.getElementById('event_date');
-    if (dateInput) dateInput.value = dateStr;
+    if (dateInput) {
+        dateInput.value = dateStr;
+        dateInput.addEventListener('change', dateChangeHandler);
+    }
 
     document.getElementById('modalTitle').textContent = `Események: ${dateStr}`;
 
@@ -179,7 +193,7 @@ async function DeleteEvent(eventId, eventTitle, dateStr) {
 }
 
 async function saveCalendarEvent() {
-    const dateStr = eventModal.dataset.selectedDate;
+    const date = document.getElementById('event_date').value;
     const title = document.getElementById('event_title').value;
     const desc = document.getElementById('event_desc').value;
 
@@ -190,7 +204,7 @@ async function saveCalendarEvent() {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({
-                date: dateStr,
+                date: date,
                 title: title,
                 description: desc,
             })
