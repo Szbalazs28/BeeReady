@@ -235,7 +235,106 @@ async function isexist(data){
     return await pool.execute(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
+async function add_task(user_id, task_name, task_description, importance) {
+    await pool.execute(
+        "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)", 
+        [user_id, task_name, task_description, importance]
+    );
+}
 
+// Feladatok lekérése felhasználó szerint (időrendben visszafelé)
+async function get_tasks(user_id) {
+    return await pool.execute(`SELECT 
+        id,
+        user_id,
+        task_name,
+        task_description,
+        importance,
+        is_completed,
+        created_at
+    FROM todo_tasks 
+    WHERE user_id = ? 
+    ORDER BY 
+    is_completed ASC,
+    importance ASC, 
+    created_at ASC;`, [user_id]);
+}
+
+async function delete_task(task_id) {
+    await pool.execute("DELETE FROM todo_tasks WHERE id = ?", [task_id]);
+}
+
+async function update_task(task_id, task_name, task_description, importance) {
+    await pool.execute(
+        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?", 
+        [task_name, task_description, importance, task_id]
+    );
+}
+
+async function toggle_task_completion(task_id, is_completed) {
+    await pool.execute(
+        "UPDATE todo_tasks SET is_completed = ? WHERE id = ?",
+        [is_completed, task_id]
+    );
+}
+
+async function mark_task_done(task_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET is_completed = TRUE WHERE id = ?",
+        [task_id]
+    );
+}
+
+async function restore_task(task_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET is_completed = FALSE WHERE id = ?",
+        [task_id]
+    );
+}
+
+async function get_calendar_events(yrs, mnth, user_id) {
+    // return id, formatted date, title and description so front end can display/delete
+    return await pool.execute(
+        "SELECT event_id, DATE_FORMAT(event_date, '%Y-%m-%d') AS event_date, title, description " +
+        "FROM events WHERE YEAR(event_date) = ? AND MONTH(event_date) = ? AND user_id = ?",
+        [yrs, mnth, user_id]
+    );
+}
+
+async function Insert_calendar_event(date, title, user_id, description = null) {
+    await pool.execute(
+        "INSERT INTO events (event_date, title, user_id, description) VALUES (?, ?, ?, ?)",
+        [date, title, user_id, description]
+    );
+}
+
+async function delete_calendar_event(event_id, user_id) {
+    await pool.execute(
+        "DELETE FROM events WHERE event_id = ? AND user_id = ?",
+        [event_id, user_id]
+    );
+}
+
+async function adminCheck(id) {
+    return await pool.execute("SELECT * FROM admins WHERE user_id = ?", [id]);
+}
+
+async function admin_get_users() {
+    return await pool.execute(
+        "SELECT id, username, email, profil_pic_url FROM users"
+    );
+}
+
+async function admin_update_user(user_id, username, email, profil_pic_url) {
+    await pool.execute(
+        "UPDATE users SET username=?, email=?, profil_pic_url=? WHERE id=?",
+        [username, email, profil_pic_url, user_id]
+    );
+}
+
+async function admin_delete_user(user_id) {
+    await pool.execute("DELETE FROM users WHERE id=?", [user_id]);
+}
 
 module.exports = {
     delete_task,
@@ -247,6 +346,10 @@ module.exports = {
     newuser,
     userbyemail,
     userbyid,
+    adminCheck,
+    admin_delete_user,
+    admin_get_users,
+    admin_update_user,
     updateuser,
     add_deck,
     getdeck,
@@ -266,6 +369,11 @@ module.exports = {
     get_saved_weektype,
     updateevent,
     delete_event,
+    toggle_task_completion,
+    restore_task,
+    get_calendar_events,
+    Insert_calendar_event,
+    delete_calendar_event
     change_share_code,
     copy_deck
 };

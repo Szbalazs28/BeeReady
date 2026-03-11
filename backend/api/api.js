@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
+const { adminCheck, admin_get_users, admin_update_user, admin_delete_user,add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -41,14 +41,16 @@ router.post("/login", loginLimiter, async (req, res, next) => {
     const data = req.body;
     const rows = await getuserbyemail(data.email);
     await compare(data.password, rows[0].password)
+    const [adminRows] = await adminCheck(rows[0].id);
+    const isAdmin = adminRows.length > 0;
     let expiresInTime = "1h";
     if (data.stay) {
       expiresInTime = "7d";
     }
     const token = await generateToken(rows[0].id, expiresInTime);
-    res.status(200).json({ token, redirect: "./main.html" })
+    res.status(200).json({ token, redirect: isAdmin ? "./admin.html" : "./main.html" })
   } catch (error) {
-    next(error)
+    next(error);
   }
 });
 
@@ -355,5 +357,86 @@ router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
   }
 });
 
+router.post("/restoretask", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    await restore_task(data.task_id);
+    res.status(200).json({ write: true, message: "Feladat visszahozva!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/toggletaskcompletion", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    await toggle_task_completion(data.task_id, data.is_completed);
+    res.status(200).json({ write: true, message: "Feladat állapota frissítve!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/get_calendar_events", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const [rows] = await get_calendar_events(data.year, data.month, req.user.id);
+    res.status(200).json({ write: false, events: rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/insert_calendar_event", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    lengthtest(data.title, 1, 255)
+    await Insert_calendar_event(data.date, data.title, req.user.id, data.description);
+    res.status(200).json({ write: true, message: "Esemény hozzáadva!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/delete_calendar_event", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    await delete_calendar_event(data.event_id, req.user.id);
+    res.status(200).json({ write: true, message: "Esemény törölve!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/admin/users", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    if (!adminRows.length) return res.status(403).json({ message: "Nincs jogosultságod!" });
+
+    const [rows] = await admin_get_users();  
+    res.status(200).json({ users: rows });
+  } catch (error) { next(error); }
+});
+
+router.post("/admin/update_user", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    if (!adminRows.length) return res.status(403).json({ message: "Nincs jogosultságod!" });
+
+    const { user_id, username, email, profil_pic_url } = req.body;
+    await admin_update_user(user_id, username, email, profil_pic_url);
+    res.status(200).json({ write: true, message: "Sikeres mentés!" });
+  } catch (error) { next(error); }
+});
+
+router.post("/admin/delete_user", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    if (!adminRows.length) return res.status(403).json({ message: "Nincs jogosultságod!" });
+
+    await admin_delete_user(req.body.user_id); 
+    res.status(200).json({ write: true, message: "Törölve!" });
+  } catch (error) { next(error); }
+});
 
 module.exports = router;

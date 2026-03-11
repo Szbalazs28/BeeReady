@@ -97,4 +97,40 @@
     .dnone {
         display: none;
     }
+
+    #statistics.statistics {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 1rem !important;
+        gap: 20px !important;
+    }
+
+    .h3_statistics_headlines {
+        display: none !important;
+    }
+
+    .circle_stats, 
+    .study_time {
+        padding-top: 40px !important; 
+        margin-top: 10px !important;
+        position: static !important; 
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 20px 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transform: none !important; 
+    }
+
+    .circle {
+        max-height: 100px !important;
+        max-width: 100px !important;
+    }
+
+    .study_time {
+        padding: 40px 20px !important;
+        background-size: 60% !important; 
+    }
 }

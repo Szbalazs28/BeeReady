@@ -11,7 +11,7 @@ const port = 4000;
 const rateLimit = require('express-rate-limit');
 const globalLimiter = rateLimit({
     windowMs: 60 * 1000, // 1 perces időablak
-    max: 300, // Maximum 100 kérés 1 percen belül IP címenként
+    max: 500, // Maximum 100 kérés 1 percen belül IP címenként
     message: {
         success: false,
         message: "Túl sok kérés. Kérem, várjon egy percet."
