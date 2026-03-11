@@ -31,6 +31,8 @@ body {
     border: 1px solid #ddd;    
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #FFCC00 #f4f4f4;
 }
 
 

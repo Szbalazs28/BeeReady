@@ -14,39 +14,6 @@ CREATE TABLE
     selected_week_type VARCHAR(2) DEFAULT 'A'
   );
 
-CREATE TABLE
-  IF NOT EXISTS flashcard_deck (
-    deck_id int not null AUTO_INCREMENT PRIMARY KEY,
-    deck_name varchar(200),
-    create_date TIMESTAMP,
-    position int not null,
-    share_code varchar(8) UNIQUE DEFAULT NULL,
-    user_id int not null,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-  );
-
-CREATE TABLE
-  IF NOT EXISTS flashcard_card (
-    card_id int not null AUTO_INCREMENT PRIMARY KEY,
-    deck_id int not null,
-    front_text varchar(255),
-    back_text TEXT,
-    position int not null,
-    FOREIGN KEY (deck_id) REFERENCES flashcard_deck (deck_id) ON DELETE CASCADE
-  );
-
-CREATE TABLE
-  IF NOT EXISTS timetable (
-    event_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    day INT NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    subject VARCHAR(100),
-    location VARCHAR(50),
-    week_type VARCHAR(2),
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-  );
 
 CREATE TABLE
   todo_tasks (
@@ -77,8 +44,36 @@ CREATE TABLE
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
 
-INSERT INTO admins (user_id) 
-	VALUES (0) 
+
+CREATE TABLE IF NOT EXISTS flashcard_deck(
+deck_id int not null AUTO_INCREMENT PRIMARY KEY,
+deck_name varchar(200),
+create_date TIMESTAMP,
+position int not null,
+share_code varchar(8) UNIQUE DEFAULT NULL,
+user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS flashcard_card(
+card_id int not null AUTO_INCREMENT PRIMARY KEY,
+deck_id int not null, 
+front_text varchar(255),
+back_text TEXT,
+position int not null,
+FOREIGN KEY (deck_id) REFERENCES flashcard_deck(deck_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS timetable (
+  event_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  day INT NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  subject VARCHAR(100),
+  location VARCHAR(50),    
+  week_type VARCHAR(2), 
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 
 INSERT INTO
@@ -90,6 +85,16 @@ VALUES
     '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC',
     '../img/allatos_profilkepek/oroszlan.webp'
   );
+  INSERT INTO
+  users (username, email, password, profil_pic_url)
+VALUES
+  (
+    'admin1',
+    'admin1@gmail.com',
+    '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC',
+    '../img/allatos_profilkepek/oroszlan.webp'
+  );
+  INSERT INTO admins (user_id) 
+	VALUES (2) 
 
 -- Teszt1$
--- Admin jelszo: Admin1_

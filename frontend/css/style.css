@@ -238,6 +238,10 @@ a:hover {
   font-weight: bold;
 }
 
+.alertell p {
+    white-space: pre-line;
+}
+
 .dnone{
   display: none !important;
 }

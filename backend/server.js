@@ -48,7 +48,7 @@ app.use(express.json());
 app.use(globalLimiter);
 
 router.get('/', (request, response) => {
-  response.sendFile(path.join(__dirname, '../frontend/html/main.html'));
+  response.sendFile(path.join(__dirname, '../frontend/html/index.html'));
 });
 
 app.use('/', router);
