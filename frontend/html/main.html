@@ -315,13 +315,13 @@
             </div>
             <!--quiz-->
             <div class="dnone mainelem" id="quiz">
-                <div class="quiz-action-div ">
+                <div class="quiz-action-div dnone">
                     <input type="text" class="quiz-input" id="newDeckName" placeholder="Keressen kvízt..." required>
                     <button onclick="showcreatequiz()" class="quiz-plus-button">+</button>
                 </div>
 
-                <div class="quiz-container " id="quizContainer">
-                    <div class="quiz-element">
+                <div class="quiz-container dnone" id="quizContainer">
+                    <!-- <div class="quiz-element">
                         <div class="quiz-info">
                             <h2 class="quiz-title">IT kvíz</h2>
                             <div class="quiz-meta-row">
@@ -373,8 +373,8 @@
                         <div class="quiz-actions">
                             <button type="button" class="quiz-button start-quiz-button">Indítás</button>
                             <button type="button" class="quiz-button edit-quiz-button">Szerkesztés</button>
-                        </div>
-                    </div>
+                        </div> 
+                    </div>-->
                 </div>
 
 
@@ -440,6 +440,17 @@
                             hozzáadása</button>
                         <button type="submit" class="btn-save-quiz">Kvíz mentése</button>
                     </div>
+                </form>
+                <form class="quiz_start_container" id="quizStart">
+                    <div class="quiz_start_header">
+                        <h1 id="quiz_title">Itt lesz a cím</h1>
+                        <p id="quiz_description">Itt lesz a leírás</p>
+                        <p id="author">Szerző</p>
+                    </div>
+                    <div class="quiz_question_container">
+                        
+                    </div>
+                    <input type="submit" id="quizSubmit" class="quiz_submit_btn">
                 </form>
             </div>
             <!--profil kezeles-->

@@ -104,13 +104,14 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
     start_button.type = "button"
     start_button.classList.add("quiz-button", "start-quiz-button")
     start_button.textContent = "Indítás"
-    start_button.onclick = () => { quiz_start(quiz_id) }
+    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by}
+    start_button.onclick = () => { quiz_start(quiz) }
 
     const edit_button = document.createElement("button")
     edit_button.type = "button"
     edit_button.classList.add("quiz-button", "edit-quiz-button")
     edit_button.textContent = "Szerkesztés"
-    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public }
+    
     edit_button.onclick = () => { quiz_edit_user(quiz) }
 
     quiz_actions.appendChild(start_button)
@@ -399,7 +400,7 @@ function addNewFillQuestionBlock(answers = null, question = null) {
 
 
     const ansInput = document.createElement('textarea');
-    ansInput.placeholder = 'Írja be a helyes választ ide, a szövegben ahol a kitöltendő rész van, használja a {blank} jelölést!';
+    ansInput.placeholder = 'Írja be a helyes választ a szövegben, ahol a kitöltendő rész van, használja a {blank} jelölést!';
     ansInput.classList.add('ans-input', 'fill-ans-input');
     ansInput.required = true;
     if (answers) {
@@ -843,4 +844,144 @@ async function quiz_delete(quiz_id) {
     } catch (err) {
         console.error(err);
     }
+}
+
+// START KÉRDÉS BLOKKOK
+function startBaseQuestionBlock(type, question) {    
+    const questionCard = document.createElement('div');
+    questionCard.className = 'question-card';
+    questionCard.setAttribute('data-question-type', type);
+    questionCard.setAttribute('data-id', question.question_id);
+    questionCard.id = `q_block_${question.question_id}`;
+
+
+    const qHeader = document.createElement('div');
+    qHeader.className = 'question-header';
+
+    const qInput = document.createElement('input');
+    qInput.type = 'text';
+    qInput.className = 'q-input';
+    qInput.value = question.question_text;
+    qInput.enabled = false;    
+
+    const pointsContainer = document.createElement('div');
+    pointsContainer.className = 'q-points-container';
+
+    const pointsLabel = document.createElement('span');
+    pointsLabel.textContent = 'Pont:';
+    pointsLabel.className = 'points-label';
+
+    const pointsInput = document.createElement('input');
+    pointsInput.type = 'number';
+    pointsInput.value =  question.points;
+    pointsInput.className = 'q-points-input';
+    
+    
+    pointsInput.title = 'Pontszám ehhez a kérdéshez';
+
+    pointsContainer.append(pointsLabel, pointsInput);
+
+
+    qSettings.append(pointsContainer);
+    qHeader.append(qInput);
+
+    questionCard.append(qHeader);
+
+    return questionCard;
+}
+
+function addNewShortAnswerQuestionBlock(question) {
+    const questionCard = startBaseQuestionBlock('short', question);    
+    
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    answersContainer.id = `answers_${question.question_id}`;
+
+    const qActions = document.createElement('div');
+    qActions.className = 'question-actions';
+
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", question.question_id);
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Helyes válasz:';
+    ansInput.className = 'ans-input';
+    ansInput.required = true;
+    
+    answerRow.append(ansInput);    
+
+
+
+
+    questionCard.append(answersContainer, qActions);
+
+    document.querySelector('#questionsContainer').appendChild(questionCard);
+
+}
+
+function start_addFillQuestionBlock(question) {
+    const questionCard = startBaseQuestionBlock('fill', question);    
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    answersContainer.id = `answers_${question.question_id}`;
+
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+
+    const ansInput = document.createElement('textarea');    
+    ansInput.classList.add('ans-input', 'fill-ans-input');
+    ansInput.disabled = true;
+    // Itt kell kialakítani az inputokat!!!!    
+    answerRow.append(ansInput);
+    answersContainer.appendChild(answerRow);
+
+    questionCard.append(answersContainer,);
+
+    document.querySelector('#questionsContainer').appendChild(questionCard);
+}
+
+async function quiz_start(quiz) {
+    quiz_start_reset();
+    showstartquiz()    
+    document.getElementById("quiz_title").value = quiz.title;
+    document.getElementById("quiz_description").value = quiz.description;    
+    document.getElementById("author").value = quiz.author;    
+    const token = localStorage.getItem("token");
+    try {
+        const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            }
+        })
+        for (let i = 0; i < result.questions.length; i++) {
+            const question = result.questions[i];            
+            if (question.question_type === "standard") {
+                addNewStandardQuestionBlock(question);
+            }
+            else {
+                if (question.question_type === "short") {
+                    addNewShortAnswerQuestionBlock(question);
+                }
+                else {
+                    if (question.question_type === "fill") {
+                        addNewFillQuestionBlock(answers, question);
+                    }
+                    else {
+                        if (question.question_type === "order") {
+                            addNewOrderQuestionBlock(answers, question);
+                        }
+                    }
+
+                }
+            }                        
+        }
+    } catch (err) {
+        console.error(err);
+    }
+    
 }
