@@ -602,9 +602,7 @@ function fill_give_data(ansText) {
     return ans;
 }
 
-function fill_insert(text, insert, position) {
-    return text.slice(0, position) + insert + text.slice(position);
-}
+
 
 function quiz_check() {
     const quiz_title = document.querySelector(".quiz-title-input").value;
@@ -882,15 +880,70 @@ function startBaseQuestionBlock(type, question) {
     pointsContainer.append(pointsLabel, pointsInput);
 
 
-    qSettings.append(pointsContainer);
+   
     qHeader.append(qInput);
 
     questionCard.append(qHeader);
-
+    
     return questionCard;
 }
 
-function addNewShortAnswerQuestionBlock(question) {
+function start_addStandardAnswerToBlock(answer) {
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    answerRow.setAttribute("data-id", document.querySelectorAll(`#answers_${question_id} .answer-row`).length);
+    const ansCheck = document.createElement('input');
+    ansCheck.type = 'checkbox';
+    ansCheck.className = 'correct-check';
+
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Válaszlehetőség';
+    ansInput.className = 'ans-input';
+    ansInput.enabled = false;
+    ansInput.value = answer.answer_text;
+
+    answerRow.append(ansCheck, ansInput);
+    return answerRow;
+}
+
+//---------------------------------------
+
+function start_addNewStandardQuestionBlock(answers, question) {
+    const questionCard = startBaseQuestionBlock('standard', question);    
+    const question_id = questionCard.getAttribute('data-id');
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    answersContainer.id = `answers_${question_id}`;
+    if (answers && answers.length > 0) {
+        answers.forEach(() => {
+            answersContainer.appendChild(start_addStandardAnswerToBlock(answer));
+        })
+    }
+
+
+    const qActions = document.createElement('div');
+    qActions.className = 'question-actions';
+
+    const addAnsBtn = document.createElement('button');
+    addAnsBtn.type = 'button';
+    addAnsBtn.className = 'add-ans-btn';
+    addAnsBtn.textContent = '+ Válasz hozzáadása';
+    addAnsBtn.onclick = function () {
+        document.getElementById(`answers_${question_id}`).appendChild(addStandardAnswerToBlock(question_id));
+    };
+
+    qActions.appendChild(addAnsBtn);
+
+
+    questionCard.append(answersContainer, qActions);
+
+    document.querySelector('#questionsContainer').appendChild(questionCard);
+
+}
+
+function start_addNewShortAnswerQuestionBlock(question) {
     const questionCard = startBaseQuestionBlock('short', question);    
     
 
@@ -914,14 +967,13 @@ function addNewShortAnswerQuestionBlock(question) {
 
 
 
-
     questionCard.append(answersContainer, qActions);
 
-    document.querySelector('#questionsContainer').appendChild(questionCard);
+    document.querySelector('#start_question_container').appendChild(questionCard);
 
 }
 
-function start_addFillQuestionBlock(question) {
+function start_addNewFillQuestionBlock(question, answer) {
     const questionCard = startBaseQuestionBlock('fill', question);    
 
     const answersContainer = document.createElement('div');
@@ -934,13 +986,34 @@ function start_addFillQuestionBlock(question) {
     const ansInput = document.createElement('textarea');    
     ansInput.classList.add('ans-input', 'fill-ans-input');
     ansInput.disabled = true;
-    // Itt kell kialakítani az inputokat!!!!    
+    ansInput.textContent = insertinput(answer[0].answer_text)
     answerRow.append(ansInput);
     answersContainer.appendChild(answerRow);
 
-    questionCard.append(answersContainer,);
+    questionCard.append(answersContainer);
 
-    document.querySelector('#questionsContainer').appendChild(questionCard);
+    document.querySelector('#start_question_container').appendChild(questionCard);
+}
+
+function insertinput(ansText){
+    let text = JSON.parse(ansText).text;
+    text = text.replaceAll("{}", '<input type="text">');
+    return text
+}
+
+function fill_insert(text, insert, position) {
+    return text.slice(0, position) + insert + text.slice(position);
+}
+
+function showstartquiz() {
+    document.querySelector(".quiz_start_container").classList.remove("dnone");
+   document.querySelector(".quiz-action-div").classList.add("dnone");
+    document.querySelector(".quiz-container").classList.add("dnone");
+
+}
+
+function quiz_start_reset() {
+    document.getElementById("start_question_container").innerHTML = "";
 }
 
 async function quiz_start(quiz) {
@@ -959,17 +1032,18 @@ async function quiz_start(quiz) {
             }
         })
         for (let i = 0; i < result.questions.length; i++) {
-            const question = result.questions[i];            
+            const question = result.questions[i];  
+            const answers = await getAnswersByQuestionId(question.question_id);          
             if (question.question_type === "standard") {
-                addNewStandardQuestionBlock(question);
+                start_addNewStandardQuestionBlock(question);
             }
             else {
                 if (question.question_type === "short") {
-                    addNewShortAnswerQuestionBlock(question);
+                    start_addNewShortAnswerQuestionBlock(question);
                 }
                 else {
                     if (question.question_type === "fill") {
-                        addNewFillQuestionBlock(answers, question);
+                        start_addNewFillQuestionBlock(question, answers);
                     }
                     else {
                         if (question.question_type === "order") {

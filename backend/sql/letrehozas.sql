@@ -87,4 +87,4 @@ CREATE TABLE IF NOT EXISTS quiz_answers (
 
 INSERT INTO `users` (username, email, password, profil_pic_url) VALUES
   ('teszt1', 'teszt1@gmail.com', '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC', '../img/allatos_profilkepek/oroszlan.webp');
---Teszt1$
+-- Teszt1$
