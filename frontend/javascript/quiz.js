@@ -1,32 +1,42 @@
 async function load_quizzes() {
     try {
-        if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
-            document.querySelector(".quiz-create-container").classList.add("dnone");
-            document.querySelector(".quiz-action-div").classList.remove("dnone");
-            document.querySelector(".quiz-container").classList.remove("dnone");
-        }
-        const quizContainer = document.querySelector(".quiz-container");
-        quizContainer.innerHTML = "";
-        const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/getquizzes", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${token}`
+        if (localStorage.getItem("quiz_started") !== "true") {
+            if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
+                document.querySelector(".quiz-create-container").classList.add("dnone");
+                document.querySelector(".quiz-action-div").classList.remove("dnone");
+                document.querySelector(".quiz-container").classList.remove("dnone");
             }
-        });
-        for (let i = 0; i < result.quizzes.length; i++) {
-            quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public))
-        }
-        const el = document.getElementById('quizContainer');
-        Sortable.create(el, {
-            animation: 150,
-            dataIdAttr: 'data-id',
-            onEnd: function (evt) {
-                const currentorder = Sortable.get(evt.from).toArray();
-                save_current_quiz_order(currentorder)
+            if (!document.getElementById("quizStart").classList.contains("dnone")) {
+                document.getElementById("quizStart").classList.add("dnone");
+                document.querySelector(".quiz-action-div").classList.remove("dnone");
+                document.querySelector(".quiz-container").classList.remove("dnone");
             }
-        });
+            quiz_start_reset();
+            const quizContainer = document.querySelector(".quiz-container");
+            quizContainer.innerHTML = "";
+            const token = localStorage.getItem("token");
+            const result = await apiFetch("http://127.0.0.1:4000/api/getquizzes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": `Bearer ${token}`
+                }
+            });
+            for (let i = 0; i < result.quizzes.length; i++) {
+                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public))
+            }
+            const el = document.getElementById('quizContainer');
+            Sortable.create(el, {
+                animation: 150,
+                dataIdAttr: 'data-id',
+                onEnd: function (evt) {
+                    const currentorder = Sortable.get(evt.from).toArray();
+                    save_current_quiz_order(currentorder)
+                }
+            });
+        }
+
+        
     }
     catch (err) {
         console.error(err);
@@ -104,14 +114,14 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
     start_button.type = "button"
     start_button.classList.add("quiz-button", "start-quiz-button")
     start_button.textContent = "Indítás"
-    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by}
+    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by }
     start_button.onclick = () => { quiz_start(quiz) }
 
     const edit_button = document.createElement("button")
     edit_button.type = "button"
     edit_button.classList.add("quiz-button", "edit-quiz-button")
     edit_button.textContent = "Szerkesztés"
-    
+
     edit_button.onclick = () => { quiz_edit_user(quiz) }
 
     quiz_actions.appendChild(start_button)
@@ -249,7 +259,7 @@ function createBaseQuestionBlock(type, question = null) {
     pointsInput.type = 'number';
     pointsInput.className = 'q-points-input';
     pointsInput.min = '1';
-    pointsInput.value =  1;
+    pointsInput.value = 1;
     if (question) {
         pointsInput.value = question.points;
     }
@@ -267,7 +277,7 @@ function createBaseQuestionBlock(type, question = null) {
 }
 
 function addNewOrderQuestionBlock(answers = null, question = null) {
-    const questionCard = createBaseQuestionBlock('order', question);    
+    const questionCard = createBaseQuestionBlock('order', question);
     const question_id = questionCard.getAttribute('data-id');
 
     const answersContainer = document.createElement('div');
@@ -311,7 +321,7 @@ function addNewOrderQuestionBlock(answers = null, question = null) {
 }
 
 function addNewShortAnswerQuestionBlock(answers = null, question = null) {
-    const questionCard = createBaseQuestionBlock('short', question);    
+    const questionCard = createBaseQuestionBlock('short', question);
     const question_id = questionCard.getAttribute('data-id');
 
     const answersContainer = document.createElement('div');
@@ -348,7 +358,7 @@ function addNewShortAnswerQuestionBlock(answers = null, question = null) {
 }
 
 function addNewStandardQuestionBlock(answers = null, question = null) {
-    const questionCard = createBaseQuestionBlock('standard', question);    
+    const questionCard = createBaseQuestionBlock('standard', question);
     const question_id = questionCard.getAttribute('data-id');
 
     const answersContainer = document.createElement('div');
@@ -385,7 +395,7 @@ function addNewStandardQuestionBlock(answers = null, question = null) {
 }
 
 function addNewFillQuestionBlock(answers = null, question = null) {
-    const questionCard = createBaseQuestionBlock('fill', question);    
+    const questionCard = createBaseQuestionBlock('fill', question);
     const question_id = questionCard.getAttribute('data-id');
 
 
@@ -554,7 +564,6 @@ function fill_get_data(ansText) {
     let words = []
     let word = ""
     let found = false
-    let specindex = []
     for (let index = 0; index < ansText.length; index++) {
         if (!found && ansText[index] != '{' && ansText[index] != '}') {
             text += ansText[index]
@@ -562,7 +571,6 @@ function fill_get_data(ansText) {
         else {
             if (ansText[index] == '{') {
                 found = true;
-                specindex.push(index);
             }
             else {
                 if (found) {
@@ -571,7 +579,6 @@ function fill_get_data(ansText) {
                     }
                     else {
                         found = false;
-                        specindex.push(index);
                         if (word.length > 0) {
                             text += "{}"
                             words.push(word)
@@ -595,7 +602,7 @@ function fill_give_data(ansText) {
     let words_index = 0;
     for (let i = 0; i < text.length; i++) {
         if (text[i] == "{") {
-            ans = fill_insert(ans, words[words_index], i+1);
+            ans = fill_insert(ans, words[words_index], i + 1);
             words_index++;
         }
     }
@@ -751,7 +758,7 @@ async function quiz_edit_user(quiz) {
                     }
 
                 }
-            }                        
+            }
         }
     } catch (err) {
         console.error(err);
@@ -778,7 +785,7 @@ document.getElementById("quizCreateForm").addEventListener("submit", async (e) =
         await quiz_delete(quiz_id);
         await saveQuiz(e);
     }
-    else{
+    else {
         await saveQuiz(e);
     }
 });
@@ -811,14 +818,14 @@ function show_quiz_delete_modal(quiz_id) {
     confirmBtn.type = "button";
     confirmBtn.classList.add("quiz-create-button", "quiz-delete-confirm");
     confirmBtn.textContent = "Igen, törlés";
-    cancelBtn.onclick = () => {closeModal();};
+    cancelBtn.onclick = () => { closeModal(); };
 
-    confirmBtn.onclick = async () => {await quiz_delete(quiz_id); closeModal(); await load_quizzes();};
+    confirmBtn.onclick = async () => { await quiz_delete(quiz_id); closeModal(); await load_quizzes(); };
 
     actionDiv.append(cancelBtn, confirmBtn);
     modalContent.append(title, message, actionDiv);
     modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay); 
+    document.body.appendChild(modalOverlay);
 }
 
 function closeModal() {
@@ -845,22 +852,18 @@ async function quiz_delete(quiz_id) {
 }
 
 // START KÉRDÉS BLOKKOK
-function startBaseQuestionBlock(type, question) {    
+function startBaseQuestionBlock(question) {
     const questionCard = document.createElement('div');
     questionCard.className = 'question-card';
-    questionCard.setAttribute('data-question-type', type);
+    questionCard.setAttribute('data-question-type', question.question_type);
     questionCard.setAttribute('data-id', question.question_id);
-    questionCard.id = `q_block_${question.question_id}`;
-
 
     const qHeader = document.createElement('div');
     qHeader.className = 'question-header';
 
-    const qInput = document.createElement('input');
-    qInput.type = 'text';
+    const qInput = document.createElement('p');
     qInput.className = 'q-input';
-    qInput.value = question.question_text;
-    qInput.enabled = false;    
+    qInput.textContent = question.question_text;
 
     const pointsContainer = document.createElement('div');
     pointsContainer.className = 'q-points-container';
@@ -871,88 +874,84 @@ function startBaseQuestionBlock(type, question) {
 
     const pointsInput = document.createElement('input');
     pointsInput.type = 'number';
-    pointsInput.value =  question.points;
+    pointsInput.value = question.points;
     pointsInput.className = 'q-points-input';
-    
-    
+
+
     pointsInput.title = 'Pontszám ehhez a kérdéshez';
 
     pointsContainer.append(pointsLabel, pointsInput);
 
 
-   
+
     qHeader.append(qInput);
 
     questionCard.append(qHeader);
-    
+
     return questionCard;
 }
 
 function start_addStandardAnswerToBlock(answer) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
-    answerRow.setAttribute("data-id", document.querySelectorAll(`#answers_${question_id} .answer-row`).length);
+    answerRow.setAttribute("data-id", answer.answer_id);
     const ansCheck = document.createElement('input');
     ansCheck.type = 'checkbox';
     ansCheck.className = 'correct-check';
 
     const ansInput = document.createElement('input');
     ansInput.type = 'text';
-    ansInput.placeholder = 'Válaszlehetőség';
     ansInput.className = 'ans-input';
-    ansInput.enabled = false;
+    ansInput.disabled = true;
     ansInput.value = answer.answer_text;
 
     answerRow.append(ansCheck, ansInput);
     return answerRow;
 }
 
-//---------------------------------------
+function start_addOrderAnswerToBlock(answer) {
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    const dragIcon = document.createElement('p');
+    dragIcon.textContent = '::';
+    dragIcon.style.cursor = 'move';
 
-function start_addNewStandardQuestionBlock(answers, question) {
-    const questionCard = startBaseQuestionBlock('standard', question);    
-    const question_id = questionCard.getAttribute('data-id');
-
-    const answersContainer = document.createElement('div');
-    answersContainer.className = 'answers-container';
-    answersContainer.id = `answers_${question_id}`;
-    if (answers && answers.length > 0) {
-        answers.forEach(() => {
-            answersContainer.appendChild(start_addStandardAnswerToBlock(answer));
-        })
+    const ansInput = document.createElement('input');
+    answerRow.setAttribute("data-id", answer.answer_id);
+    ansInput.type = 'text';
+    ansInput.disabled = true;
+    ansInput.className = 'ans-input';
+    if (answer) {
+        ansInput.value = answer.answer_text;
     }
 
 
-    const qActions = document.createElement('div');
-    qActions.className = 'question-actions';
+    answerRow.append(dragIcon, ansInput);
+    return answerRow;
+}
 
-    const addAnsBtn = document.createElement('button');
-    addAnsBtn.type = 'button';
-    addAnsBtn.className = 'add-ans-btn';
-    addAnsBtn.textContent = '+ Válasz hozzáadása';
-    addAnsBtn.onclick = function () {
-        document.getElementById(`answers_${question_id}`).appendChild(addStandardAnswerToBlock(question_id));
-    };
+//---------------------------------------
 
-    qActions.appendChild(addAnsBtn);
+function start_addNewStandardQuestionBlock(question, answers) {
+    const questionCard = startBaseQuestionBlock(question);
 
-
-    questionCard.append(answersContainer, qActions);
-
-    document.querySelector('#questionsContainer').appendChild(questionCard);
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    if (answers && answers.length > 0) {
+        answers.forEach(answer => {
+            answersContainer.appendChild(start_addStandardAnswerToBlock(answer));
+        })
+    }
+    questionCard.append(answersContainer);
+    document.querySelector('#start_question_container').appendChild(questionCard);
 
 }
 
 function start_addNewShortAnswerQuestionBlock(question) {
-    const questionCard = startBaseQuestionBlock('short', question);    
-    
+    const questionCard = startBaseQuestionBlock(question);
 
     const answersContainer = document.createElement('div');
     answersContainer.className = 'answers-container';
-    answersContainer.id = `answers_${question.question_id}`;
-
-    const qActions = document.createElement('div');
-    qActions.className = 'question-actions';
 
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
@@ -962,19 +961,19 @@ function start_addNewShortAnswerQuestionBlock(question) {
     ansInput.placeholder = 'Helyes válasz:';
     ansInput.className = 'ans-input';
     ansInput.required = true;
-    
-    answerRow.append(ansInput);    
+
+    answerRow.append(ansInput);
+    answersContainer.append(answerRow)
 
 
-
-    questionCard.append(answersContainer, qActions);
+    questionCard.append(answersContainer);
 
     document.querySelector('#start_question_container').appendChild(questionCard);
 
 }
 
 function start_addNewFillQuestionBlock(question, answer) {
-    const questionCard = startBaseQuestionBlock('fill', question);    
+    const questionCard = startBaseQuestionBlock(question);
 
     const answersContainer = document.createElement('div');
     answersContainer.className = 'answers-container';
@@ -983,10 +982,9 @@ function start_addNewFillQuestionBlock(question, answer) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
 
-    const ansInput = document.createElement('textarea');    
+    const ansInput = document.createElement('div');
     ansInput.classList.add('ans-input', 'fill-ans-input');
-    ansInput.disabled = true;
-    ansInput.textContent = insertinput(answer[0].answer_text)
+    ansInput.innerHTML = insertinput(answer[0].answer_text)
     answerRow.append(ansInput);
     answersContainer.appendChild(answerRow);
 
@@ -995,9 +993,35 @@ function start_addNewFillQuestionBlock(question, answer) {
     document.querySelector('#start_question_container').appendChild(questionCard);
 }
 
-function insertinput(ansText){
+function start_addNewOrderQuestionBlock(question, answers) {
+    const questionCard = startBaseQuestionBlock(question);
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    Sortable.create(answersContainer, {
+        animation: 150,
+        dataIdAttr: 'data-id',
+    });
+
+    let random_answers = [];
+    while (random_answers.length != answers.length) {
+        let randnumber = getRandomInt(0, answers.length);
+        if (!random_answers.includes(randnumber)) {
+            random_answers.push(randnumber);
+        }
+    }
+
+    for (let i = 0; i < random_answers.length; i++) {
+        answersContainer.appendChild(start_addOrderAnswerToBlock(answers[random_answers[i]]));
+    }
+
+    questionCard.append(answersContainer);
+    document.querySelector('#start_question_container').appendChild(questionCard);
+}
+
+function insertinput(ansText) {
     let text = JSON.parse(ansText).text;
-    text = text.replaceAll("{}", '<input type="text">');
+    text = text.replaceAll("{}", '<input type="text" class="fill-input">');
     return text
 }
 
@@ -1007,9 +1031,14 @@ function fill_insert(text, insert, position) {
 
 function showstartquiz() {
     document.querySelector(".quiz_start_container").classList.remove("dnone");
-   document.querySelector(".quiz-action-div").classList.add("dnone");
+    document.querySelector(".quiz-action-div").classList.add("dnone");
     document.querySelector(".quiz-container").classList.add("dnone");
 
+}
+
+async function exit_quiz() {
+    localStorage.removeItem("quiz_started");
+    await load_quizzes();
 }
 
 function quiz_start_reset() {
@@ -1017,11 +1046,12 @@ function quiz_start_reset() {
 }
 
 async function quiz_start(quiz) {
+    localStorage.setItem("quiz_started", "true");
     quiz_start_reset();
-    showstartquiz()    
-    document.getElementById("quiz_title").value = quiz.title;
-    document.getElementById("quiz_description").value = quiz.description;    
-    document.getElementById("author").value = quiz.author;    
+    showstartquiz()
+    document.getElementById("quiz_title").textContent = quiz.title;
+    document.getElementById("quiz_description").textContent = quiz.description;
+    document.getElementById("author").textContent = quiz.author;
     const token = localStorage.getItem("token");
     try {
         const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
@@ -1032,10 +1062,10 @@ async function quiz_start(quiz) {
             }
         })
         for (let i = 0; i < result.questions.length; i++) {
-            const question = result.questions[i];  
-            const answers = await getAnswersByQuestionId(question.question_id);          
+            const question = result.questions[i];
+            const answers = await getAnswersByQuestionId(question.question_id);
             if (question.question_type === "standard") {
-                start_addNewStandardQuestionBlock(question);
+                start_addNewStandardQuestionBlock(question, answers);
             }
             else {
                 if (question.question_type === "short") {
@@ -1047,15 +1077,15 @@ async function quiz_start(quiz) {
                     }
                     else {
                         if (question.question_type === "order") {
-                            addNewOrderQuestionBlock(answers, question);
+                            start_addNewOrderQuestionBlock(question, answers);
                         }
                     }
 
                 }
-            }                        
+            }
         }
     } catch (err) {
         console.error(err);
     }
-    
+
 }
