@@ -373,7 +373,7 @@ module.exports = {
     restore_task,
     get_calendar_events,
     Insert_calendar_event,
-    delete_calendar_event
+    delete_calendar_event,
     change_share_code,
     copy_deck
 };
