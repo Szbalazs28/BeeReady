@@ -768,6 +768,10 @@
     border-radius: 10px;
 }
 
+.result-quiz-button{
+    background-color: #f0c979;
+}
+
 
 @media (max-width: 600px) {
     .quiz_start_header {

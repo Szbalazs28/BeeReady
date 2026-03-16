@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS quizzes (
   public BOOLEAN DEFAULT FALSE,
   last_result INT DEFAULT NULL,
   randomize_questions BOOLEAN DEFAULT FALSE,
+  total_points INT DEFAULT 0,
   position INT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -82,6 +83,19 @@ CREATE TABLE IF NOT EXISTS quiz_answers (
   answer_text TEXT NOT NULL,
   right_answer BOOLEAN NOT NULL,
   position INT NOT NULL,
+  FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS quiz_results (
+  result_id INT AUTO_INCREMENT PRIMARY KEY,
+  quiz_id INT NOT NULL,
+  user_id INT NOT NULL,
+  question_id INT NOT NULL,
+  answer TEXT NOT NULL,
+  taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  correct BOOLEAN NOT NULL default FALSE,
+  FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
 );
 

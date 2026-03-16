@@ -393,7 +393,7 @@ router.post("/savequiz", authenticateToken, async (req, res, next) => {
     const id = req.user.id;
     const data = req.body
     lengthtest(data.title, 1, 200)
-    const insertedID = await save_quiz(data.title, data.description, data.public, id, data.randomize_questions);
+    const insertedID = await save_quiz(data.title, data.description, data.public, id, data.randomize_questions, data.total_points);
     res.status(200).json({ write: false, quiz_id: insertedID});
   } catch (error) {
     next(error);

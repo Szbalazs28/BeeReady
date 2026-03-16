@@ -50,6 +50,17 @@ function timetest(start, end) {
 
 }
 
+function random_array(array){
+    let random_numbers = [];
+    while (random_numbers.length != array.length) {
+        let randnumber = getRandomInt(0, array.length);
+        if (!random_numbers.includes(randnumber)) {
+            random_numbers.push(randnumber);
+        }
+    }
+    return random_numbers;
+}
+
 async function index_apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options)

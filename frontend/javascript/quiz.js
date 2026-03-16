@@ -1,6 +1,6 @@
 async function load_quizzes() {
     try {
-        if (localStorage.getItem("quiz_started") !== "true") {
+        if (sessionStorage.getItem("quiz_started") !== "true") {
             if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
                 document.querySelector(".quiz-create-container").classList.add("dnone");
                 document.querySelector(".quiz-action-div").classList.remove("dnone");
@@ -23,7 +23,7 @@ async function load_quizzes() {
                 }
             });
             for (let i = 0; i < result.quizzes.length; i++) {
-                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public))
+                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions));
             }
             const el = document.getElementById('quizContainer');
             Sortable.create(el, {
@@ -36,7 +36,7 @@ async function load_quizzes() {
             });
         }
 
-        
+
     }
     catch (err) {
         console.error(err);
@@ -44,7 +44,7 @@ async function load_quizzes() {
 }
 
 
-function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public) {
+function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions) {
     const quiz_element = document.createElement("div")
     quiz_element.draggable = true
     quiz_element.setAttribute("data-id", quiz_id)
@@ -110,11 +110,17 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
     delete_button.textContent = "Törlés"
     delete_button.onclick = () => { show_quiz_delete_modal(quiz_id) }
 
+    const result_button = document.createElement("button")
+    result_button.type = "button"
+    result_button.classList.add("quiz-button", "result-quiz-button")
+    result_button.textContent = "Eredmények"
+    result_button.onclick = () => { show_quiz_result_modal(quiz_id) }
+
     const start_button = document.createElement("button")
     start_button.type = "button"
     start_button.classList.add("quiz-button", "start-quiz-button")
     start_button.textContent = "Indítás"
-    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by }
+    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by, randomize_questions: randomize_questions }
     start_button.onclick = () => { quiz_start(quiz) }
 
     const edit_button = document.createElement("button")
@@ -126,6 +132,7 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
 
     quiz_actions.appendChild(start_button)
     quiz_actions.appendChild(edit_button)
+    quiz_actions.appendChild(result_button)
     quiz_actions.appendChild(delete_button)
 
     quiz_element.appendChild(quiz_info)
@@ -527,14 +534,14 @@ function quiz_creator_reset() {
 async function saveQuiz(e) {
     e.preventDefault();
     try {
-        quiz_check();
+        const total_points =quiz_check();
         let question_id = null;
         const ispublic = document.querySelector("#isPublicQuiz").checked;
         const quiz_title = document.querySelector(".quiz-title-input").value;
         const quiz_description = document.querySelector(".quiz-description-input").value;
         const questionBlocks = document.querySelectorAll(".question-card");
         const randomize_questions = document.querySelector("#randomOrder").checked;
-        let quiz_id = await save_quiz(quiz_title, quiz_description, ispublic, randomize_questions);
+        let quiz_id = await save_quiz(quiz_title, quiz_description, ispublic, randomize_questions, total_points);
         for (const block of questionBlocks) {
             const question_text = block.querySelector(".q-input").value;
             const points = block.querySelector(".q-points-input").value;
@@ -554,6 +561,7 @@ async function saveQuiz(e) {
             }
         }
         quiz_creator_reset();
+        await load_quizzes();
     } catch (error) {
         console.error(error);
     }
@@ -599,10 +607,12 @@ function fill_give_data(ansText) {
     let words = JSON.parse(ansText).words
     let text = JSON.parse(ansText).text;
     let ans = text;
+    let length = 1
     let words_index = 0;
     for (let i = 0; i < text.length; i++) {
         if (text[i] == "{") {
-            ans = fill_insert(ans, words[words_index], i + 1);
+            ans = fill_insert(ans, words[words_index], i + length);
+            length += words[words_index].length
             words_index++;
         }
     }
@@ -612,12 +622,14 @@ function fill_give_data(ansText) {
 
 
 function quiz_check() {
+    let points_sum = 0;
     const quiz_title = document.querySelector(".quiz-title-input").value;
     const questionBlocks = document.querySelectorAll(".question-card");
     speclengthtest(quiz_title, 1, 200, "A kvíz címének hossza");
     min_blocks(questionBlocks);
 
-    for (const block of questionBlocks) {
+    for (const block of questionBlocks) {       
+        points_sum += parseInt(block.querySelector(".q-points-input").value);                
         const question_text = block.querySelector(".q-input").value;
         const answers = block.querySelectorAll(".answer-row");
         min_blocks(answers);
@@ -627,6 +639,7 @@ function quiz_check() {
             speclengthtest(ansText, 1, 1000, "A válasz szövegének hossza");
         }
     }
+    return points_sum;
 }
 
 async function save_answer(question_id, answer_text, right_answer, position) {
@@ -648,7 +661,7 @@ async function save_answer(question_id, answer_text, right_answer, position) {
     }
 }
 
-async function save_quiz(title, description, public, randomize_questions) {
+async function save_quiz(title, description, public, randomize_questions, total_points) {
     try {
 
         const token = localStorage.getItem("token");
@@ -658,7 +671,7 @@ async function save_quiz(title, description, public, randomize_questions) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ title: title, description: description, public: public, randomize_questions: randomize_questions })
+            body: JSON.stringify({ title: title, description: description, public: public, randomize_questions: randomize_questions, total_points: total_points })
         });
         return result.quiz_id;
     }
@@ -694,8 +707,11 @@ function showcreatequiz() {
         animation: 150,
         dataIdAttr: 'data-id',
         onEnd: function (evt) {
-            // const currentorder = Sortable.get(evt.from).toArray();
-            // localStorage.setItem("current_quiz_order", JSON.stringify(currentorder));            
+            const questionBlocks = document.querySelectorAll(".question-card");
+            questionBlocks.forEach((block, index) => {
+                block.setAttribute("data-id", index);
+                block.id = `q_block_${index}`;
+            });
         }
     });
 }
@@ -728,6 +744,7 @@ async function quiz_edit_user(quiz) {
     document.getElementById("quizTitle").value = quiz.title;
     document.getElementById("quizDescription").value = quiz.description;
     document.getElementById("isPublicQuiz").checked = quiz.ispublic;
+    document.getElementById("randomOrder").checked = quiz.randomize_questions;
     const token = localStorage.getItem("token");
     try {
         const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
@@ -1003,13 +1020,7 @@ function start_addNewOrderQuestionBlock(question, answers) {
         dataIdAttr: 'data-id',
     });
 
-    let random_answers = [];
-    while (random_answers.length != answers.length) {
-        let randnumber = getRandomInt(0, answers.length);
-        if (!random_answers.includes(randnumber)) {
-            random_answers.push(randnumber);
-        }
-    }
+    let random_answers = random_array(answers);
 
     for (let i = 0; i < random_answers.length; i++) {
         answersContainer.appendChild(start_addOrderAnswerToBlock(answers[random_answers[i]]));
@@ -1037,7 +1048,7 @@ function showstartquiz() {
 }
 
 async function exit_quiz() {
-    localStorage.removeItem("quiz_started");
+    sessionStorage.removeItem("quiz_started");
     await load_quizzes();
 }
 
@@ -1046,7 +1057,7 @@ function quiz_start_reset() {
 }
 
 async function quiz_start(quiz) {
-    localStorage.setItem("quiz_started", "true");
+    sessionStorage.setItem("quiz_started", "true");
     quiz_start_reset();
     showstartquiz()
     document.getElementById("quiz_title").textContent = quiz.title;
@@ -1061,8 +1072,17 @@ async function quiz_start(quiz) {
                 "authorization": `Bearer ${token}`
             }
         })
-        for (let i = 0; i < result.questions.length; i++) {
-            const question = result.questions[i];
+        let question_indexes = [];
+        if (quiz.randomize_questions) {
+            question_indexes = random_array(result.questions);
+        }
+        else {
+            for (let i = 0; i < result.questions.length; i++) {
+                question_indexes.push(i);
+            }
+        }
+        for (let i = 0; i < question_indexes.length; i++) {
+            const question = result.questions[question_indexes[i]];
             const answers = await getAnswersByQuestionId(question.question_id);
             if (question.question_type === "standard") {
                 start_addNewStandardQuestionBlock(question, answers);
@@ -1089,3 +1109,25 @@ async function quiz_start(quiz) {
     }
 
 }
+
+function warn_before_unload_with_active_quiz(event) {
+    if (sessionStorage.getItem("quiz_started") === "true") {
+        event.preventDefault();
+        event.returnValue = "";
+    }
+}
+
+function wasReload() {
+    const nav = performance.getEntriesByType("navigation");
+    if (nav.length > 0) return nav[0].type === "reload";
+    return performance.navigation && performance.navigation.type === 1; // fallback
+}
+
+window.addEventListener("load", () => {
+    if (wasReload()) {
+        console.log("Újratöltés történt");
+        sessionStorage.removeItem("quiz_started");
+    }
+});
+
+window.addEventListener("beforeunload", warn_before_unload_with_active_quiz);

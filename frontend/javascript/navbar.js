@@ -1,7 +1,6 @@
 window.addEventListener('load', load_image);
 
-function navbar_click(id, index) {
-    const quiz_started = localStorage.getItem("quiz_started");
+function navbar_click(id, index) {    
     document.querySelectorAll(".mainelem").forEach(element => {
         if (!element.classList.contains("dnone")) {
             element.classList.add("dnone")
@@ -55,7 +54,7 @@ function show_exit_modal() {
             document.body.removeChild(modal);
         }
     };
-    confirmBtn.onclick = async () => { document.body.removeChild(modalOverlay); localStorage.setItem("quiz_started", "false"); await load_quizzes(); };
+    confirmBtn.onclick = async () => { document.body.removeChild(modalOverlay); sessionStorage.removeItem("quiz_started"); await load_quizzes(); };
     actionDiv.append(cancelBtn, confirmBtn);
     modalContent.append(title, message, actionDiv);
     modalOverlay.appendChild(modalContent);
