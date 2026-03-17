@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS quiz_results (
   answer TEXT NOT NULL,
   taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   correct BOOLEAN NOT NULL default FALSE,
+  points_earned INT NOT NULL default 0,
   FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE

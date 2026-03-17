@@ -534,7 +534,7 @@ function quiz_creator_reset() {
 async function saveQuiz(e) {
     e.preventDefault();
     try {
-        const total_points =quiz_check();
+        const total_points = quiz_check();
         let question_id = null;
         const ispublic = document.querySelector("#isPublicQuiz").checked;
         const quiz_title = document.querySelector(".quiz-title-input").value;
@@ -628,8 +628,8 @@ function quiz_check() {
     speclengthtest(quiz_title, 1, 200, "A kvíz címének hossza");
     min_blocks(questionBlocks);
 
-    for (const block of questionBlocks) {       
-        points_sum += parseInt(block.querySelector(".q-points-input").value);                
+    for (const block of questionBlocks) {
+        points_sum += parseInt(block.querySelector(".q-points-input").value);
         const question_text = block.querySelector(".q-input").value;
         const answers = block.querySelectorAll(".answer-row");
         min_blocks(answers);
@@ -1063,6 +1063,7 @@ async function quiz_start(quiz) {
     document.getElementById("quiz_title").textContent = quiz.title;
     document.getElementById("quiz_description").textContent = quiz.description;
     document.getElementById("author").textContent = quiz.author;
+    document.getElementById("quizSubmit").setAttribute("data-quiz-id", quiz.quiz_id);
     const token = localStorage.getItem("token");
     try {
         const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
@@ -1131,3 +1132,63 @@ window.addEventListener("load", () => {
 });
 
 window.addEventListener("beforeunload", warn_before_unload_with_active_quiz);
+
+async function submitQuiz(e) {
+    e.preventDefault();
+    try {
+        const quiz_id = document.querySelector(".btn-submit-quiz").getAttribute("data-quiz-id");
+        for (const block of questionBlocks) {
+            const question_id = block.getAttribute("data-id");
+            const question_type = block.getAttribute("data-question-type");
+            const answers = block.querySelectorAll(".answer-row");
+            let answer_data = [quiz_id]
+            let data = {qestion_id: question_id, question_type: question_type, answers: [] };
+            if (question_type === "order") {
+                for (const ans of answers) {
+                    data.answers.push(ans.getAttribute("data-id"));
+                }
+                answer_data.push(data);
+            }
+            else {
+                if (question_type === "fill") {
+                    const ansInput = block.querySelectorAll(".fill-ans-input .fill-input");
+                    for (const input of ansInput) {
+                        data.answers.push(input.value);
+                    }
+                    answer_data.push(data);
+                }
+                else {
+                    if (question_type === "short") {
+                        const ansInput = block.querySelector(".ans-input");
+                        data.answers.push(ansInput.value);
+                        answer_data.push(data);
+                    }
+                    else {
+                        if (question_type === "standard") {
+
+                            const answer_rows = block.querySelectorAll(".answer-row");
+                            for (const ans of answer_rows) {
+                                const ansCheck = ans.querySelector(".correct-check").checked;
+                                data.answers.push(ansCheck);
+                                answer_data.push(data);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        const token = localStorage.getItem("token");
+        await apiFetch("http://127.0.0.1:4000/api/submitquiz", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(answer_data)
+        });
+        quiz_creator_reset();
+        await load_quizzes();
+    } catch (error) {
+        console.error(error);
+    }
+}

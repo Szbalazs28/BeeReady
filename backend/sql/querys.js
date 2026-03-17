@@ -246,6 +246,10 @@ async function delete_quiz(quiz_id, user_id) {
     await pool.execute("DELETE FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, user_id]);
 }
 
+async function save_result(quiz_id, user_id, question_id, answer, correct, points_earned) {
+ await pool.execute("INSERT INTO quiz_results (quiz_id, user_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?, ?)", [quiz_id, user_id, question_id, answer, correct, points_earned])    
+}
+
 
 
 async function updateuser(rows, newdata, id) {
@@ -292,6 +296,7 @@ async function isexist(data){
 
 
 module.exports = {
+    save_result,
     delete_quiz,
     loadquestions,
     loadanswers,
