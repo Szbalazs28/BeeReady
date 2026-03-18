@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const {userexists, userbyemail, userbyid} = require("./sql/querys.js");
+const { save_result, loadcorrectanswers, userexists, userbyemail, userbyid, loadanswers } = require("./sql/querys.js");
 
 function passwordTest(password) {
     let issue = false
@@ -78,26 +78,26 @@ async function checkuserexists(email, username) {
     }
 }
 
-async function getuserbyemail(email){
+async function getuserbyemail(email) {
     const [rows] = await userbyemail(email);
-    if(rows.length==0){
+    if (rows.length == 0) {
         const err = new Error("Nem található E-mail cím!")
         err.status = 409;
         throw err;
     }
     return rows
-    
+
 }
 
-async function getuserbyid(id){
+async function getuserbyid(id) {
     const [rows] = await userbyid(id);
-    if(rows.length==0){
+    if (rows.length == 0) {
         const err = new Error("Nem található a felhasználó!")
         err.status = 409;
         throw err;
     }
     return rows
-    
+
 }
 
 async function compare(password, hash) {
@@ -123,9 +123,9 @@ function timetest(start, end) {
 
 }
 
-function affectedRowscheck(rows){
-    if(rows.affectedRows === 0){
-        throw new Error("Nem sikerült az adatok módosítása!") 
+function affectedRowscheck(rows) {
+    if (rows.affectedRows === 0) {
+        throw new Error("Nem sikerült az adatok módosítása!")
     }
 }
 
@@ -137,4 +137,55 @@ function lengthtest(input, min, max) {
     }
 }
 
-module.exports = {affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest};
+async function answer_validation(data, id) {
+    lengthtest(data.answer_text, 1, 1000)
+    let correct = false
+    const answers = await loadcorrectanswers(data.question_id, id)
+    if (data.question_type === "order") {
+        let j = 0
+        while ((j < answers.length && j < data.answers.length) && answers[j].answer_id != data.answers[j]) {
+            j++
+        }
+        if (j != answers.length) {
+            correct = true
+        }
+    }
+    else {
+        if (data.question_type === "short") {
+            let j = 0
+            while (j < answers.length && answers[j].answer_text != data.answers[0]) {
+                j++
+            }
+            if (j != answers.length) {
+                correct = true
+            }
+        }
+        else {
+            if (data.question_type === "fill") {
+                const answer_words = JSON.parse(answers[0].answer_text)
+                let keys = Object.keys(answer_words);
+                let index = 0;
+                while (index < keys.length && answers.answer_text[index] != keys[index]) {
+                    index++;
+                }
+                if (index < keys.length) {
+                    correct = true
+                }
+            }
+            else {
+                if (data.question_type === "standard") {
+                    const all_answers = await loadanswers(data.question_id, id)
+                    let index = 0;
+                    while (index < all_answers.length && all_answers[index].correct != data.answers[index]) {
+                        index++;
+                    }
+                    if (index >= keys.length) {
+                        correct = true
+                    }
+                }
+            }
+        }
+    }
+    await save_result(data.quiz_id, id, data.question_id, data.answer_text, correct, data.points_earned)
+}
+module.exports = { answer_validation, affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest };

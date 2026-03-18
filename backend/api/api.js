@@ -488,6 +488,9 @@ router.post("/savequizresult", authenticateToken, async (req, res, next) => {
         }
         await save_result(data[i].quiz_id, id, data[i].question_id, data[i].answer_text, correct, data[i].points_earned)
       } else {
+        if (data[i].question_type === "short"){
+          
+        }
         
       }
     }
