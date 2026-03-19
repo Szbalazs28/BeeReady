@@ -148,7 +148,7 @@ function max_q_block_id() {
     const q_blocks = document.querySelectorAll(".question-card");
     let max_id = 0;
     q_blocks.forEach(block => {
-        const id = parseInt(block.id.split("_")[2]);
+        const id = parseInt(block.getAttribute("data-id"));
         if (id > max_id) {
             max_id = id;
         }
@@ -493,7 +493,7 @@ function addStandardAnswerToBlock(question_id, answer = null) {
     ansCheck.type = 'checkbox';
     ansCheck.className = 'correct-check';
     if (answer) {
-        ansCheck.checked = answer.correct;
+        ansCheck.checked = answer.right_answer;
     }
 
     const ansInput = document.createElement('input');

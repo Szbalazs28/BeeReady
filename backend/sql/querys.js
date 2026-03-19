@@ -251,8 +251,12 @@ async function delete_quiz(quiz_id, user_id) {
     await pool.execute("DELETE FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, user_id]);
 }
 
-async function save_result(quiz_id, user_id, question_id, answer, correct, points_earned) {
- await pool.execute("INSERT INTO quiz_results (quiz_id, user_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?, ?)", [quiz_id, user_id, question_id, JSON.stringify(answer), correct, points_earned])    
+async function quiz_submit(quiz_id, user_id, total_points) {
+    await pool.execute("INSERT INTO quiz_submit (quiz_id, user_id, total_points) VALUES (?, ?, ?)", [quiz_id, user_id, total_points]);
+}
+
+async function save_result(question_id, answer, correct, points_earned) {
+ await pool.execute("INSERT INTO quiz_results (question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?)", [question_id, JSON.stringify(answer), correct, points_earned])    
 }
 
 
@@ -301,6 +305,7 @@ async function isexist(data){
 
 
 module.exports = {
+    quiz_submit,
     loadcorrectanswers,
     save_result,
     delete_quiz,

@@ -87,17 +87,23 @@ CREATE TABLE IF NOT EXISTS quiz_answers (
 );
 
 CREATE TABLE IF NOT EXISTS quiz_results (
+  result_id INT not null,
+  question_id INT NOT NULL,
+  answer TEXT NOT NULL,
+  correct BOOLEAN NOT NULL default FALSE,
+  points_earned INT NOT NULL default 0,
+  FOREIGN KEY (result_id) REFERENCES quiz_submit(result_id) ON DELETE CASCADE,
+  FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS quiz_submit (
   result_id INT AUTO_INCREMENT PRIMARY KEY,
   quiz_id INT NOT NULL,
   user_id INT NOT NULL,
-  question_id INT NOT NULL,
-  answer TEXT NOT NULL,
   taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  correct BOOLEAN NOT NULL default FALSE,
-  points_earned INT NOT NULL default 0,
+  total_points INT NOT NULL default 0,
   FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 INSERT INTO `users` (username, email, password, profil_pic_url) VALUES
