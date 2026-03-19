@@ -243,7 +243,7 @@ async function loadanswers(question_id, user_id) {
 }
 
 async function loadcorrectanswers(question_id, user_id) {
-    const [rows] = await pool.execute("SELECT quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.right_answer FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND quizzes.user_id = ? order by quiz_answers.position where quiz_answers.right_answer = 1", [question_id, user_id]);
+    const [rows] = await pool.execute("SELECT quiz_questions.points, quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.right_answer FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_answers.right_answer = 1 AND quiz_questions.question_id = ? AND quizzes.user_id = ? order by quiz_answers.position ", [question_id, user_id]);
     return rows
 }
 
@@ -252,7 +252,7 @@ async function delete_quiz(quiz_id, user_id) {
 }
 
 async function save_result(quiz_id, user_id, question_id, answer, correct, points_earned) {
- await pool.execute("INSERT INTO quiz_results (quiz_id, user_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?, ?)", [quiz_id, user_id, question_id, answer, correct, points_earned])    
+ await pool.execute("INSERT INTO quiz_results (quiz_id, user_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?, ?)", [quiz_id, user_id, question_id, JSON.stringify(answer), correct, points_earned])    
 }
 
 

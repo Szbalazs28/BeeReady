@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
+const { answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
 const { delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
@@ -476,23 +476,7 @@ router.post("/savequizresult", authenticateToken, async (req, res, next) => {
     const id = req.user.id;
     const data = req.body
     for (let i = 1; i < data.length; i++) {
-      if (data[i].question_type === "order") {
-        const answers = await loadanswers(data[i].question_id, id)
-        let j = 0
-        let correct = false
-        while ((j < answers.length && j < data[i].answers.length) && answers[j].answer_id != data[i].answers[j]) {
-          j++
-        }
-        if (j != answers.length) {
-          correct = true
-        }
-        await save_result(data[i].quiz_id, id, data[i].question_id, data[i].answer_text, correct, data[i].points_earned)
-      } else {
-        if (data[i].question_type === "short"){
-          
-        }
-        
-      }
+      await answer_validation(data[0], data[i], id)
     }
     res.status(200).json({ write: true, message: "A kvíz beadva!" });
   }
