@@ -1,0 +1,38 @@
+.hive_header{
+    text-align: center;
+    padding: 10px 0;
+    color: #949494;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.hive_container button{
+    background-color: #e5e7eb;
+    color: #374151;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    height: 50px;
+    width: 100px;
+}
+
+.active{
+    
+}
+
+.hive_btn_all{
+    
+}
+
+.hive_btn_saved{
+
+}
+
+.hive_container button:hover{
+
+}

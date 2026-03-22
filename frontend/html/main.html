@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="../css/flashcards.css">
     <link rel="stylesheet" href="../css/timetable.css">
     <link rel="stylesheet" href="../css/mainpage.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+    <link rel="stylesheet" href="../css/hive.css">
+    
     <title>BeeReady</title>
 </head>
 
@@ -39,8 +42,9 @@
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <!-- <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div> -->
+                <div onclick="navbar_click('hive',4)" class="nav_items">Hive</div> 
 
-                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
+                <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
@@ -351,6 +355,28 @@
                 </div>
 
             </div>
+
+            <!--Hive-->
+            <div class="dnone mainelem" id="hive">
+                <div class="hive_container">
+                    <div class="hive_header">
+                        <input type="text" placeholder="Keressen egy publikus tanulokártya paklira vagy quizre">
+                        <button type="button" id="hive_search">Keresés</button>
+                        <hr>
+                    </div>
+
+                    <div class="hive_body">
+                        <div class="hive_buttons">
+                            <button type="button" class="hive_btn_all">Összes</button>
+                            <button type="button" class="hive_btn_saved">Mentett</button>
+                        </div>
+                        <div class="hive_results">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
                 <form id="edit_user">
