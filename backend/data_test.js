@@ -137,7 +137,7 @@ function lengthtest(input, min, max) {
     }
 }
 
-async function answer_validation(quiz_id, data, id) {    
+async function answer_validation(result_id, data, id) {    
     let correct = false
     const answers = await loadcorrectanswers(data.question_id, id)
     if (data.question_type === "order") {
@@ -162,12 +162,12 @@ async function answer_validation(quiz_id, data, id) {
         else {
             if (data.question_type === "fill") {
                 const answer_words = JSON.parse(answers[0].answer_text)
-                let keys = Object.keys(answer_words);
+                let keys = Object.values(answer_words)[0];
                 let index = 0;
-                while (index < keys.length && answers.answer_text[index] != keys[index]) {
+                while (index < keys.length && data.answers[index] === keys[index]) {
                     index++;
                 }
-                if (index < keys.length) {
+                if (index == keys.length) {
                     correct = true
                 }
             }
@@ -189,6 +189,6 @@ async function answer_validation(quiz_id, data, id) {
     if (correct) {
         points = answers[0].points
     }    
-    await save_result(quiz_id, id, data.question_id, JSON.stringify(data.answers), correct, points)
+    await save_result(result_id, data.question_id, JSON.stringify(data.answers), correct, points)
 }
 module.exports = { answer_validation, affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest };

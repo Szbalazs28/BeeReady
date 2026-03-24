@@ -198,7 +198,7 @@ async function mark_task_done(task_id, user_id) {
 }
 
 async function getquizzes(user_id) {
-    return await pool.execute("SELECT quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quizzes.last_result,quizzes.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public, quizzes.randomize_questions FROM quizzes LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id JOIN users ON quizzes.user_id=users.id WHERE user_id = ? GROUP BY quizzes.quiz_id ORDER BY quizzes.position;", [user_id]);
+    return await pool.execute("SELECT quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quizzes.last_result,quizzes.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public, quizzes.randomize_questions, quizzes.total_points FROM quizzes LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id JOIN users ON quizzes.user_id=users.id WHERE user_id = ? GROUP BY quizzes.quiz_id ORDER BY quizzes.position;", [user_id]);
 }
 
 async function save_quiz(title, description, public, user_id, randomize_questions, total_points) {
@@ -252,11 +252,12 @@ async function delete_quiz(quiz_id, user_id) {
 }
 
 async function quiz_submit(quiz_id, user_id, total_points) {
-    await pool.execute("INSERT INTO quiz_submit (quiz_id, user_id, total_points) VALUES (?, ?, ?)", [quiz_id, user_id, total_points]);
+    const [result] = await pool.execute("INSERT INTO quiz_submit (quiz_id, user_id, total_points) VALUES (?, ?, ?)", [quiz_id, user_id, total_points]);
+    return result.insertId;
 }
 
-async function save_result(question_id, answer, correct, points_earned) {
- await pool.execute("INSERT INTO quiz_results (question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?)", [question_id, JSON.stringify(answer), correct, points_earned])    
+async function save_result(result_id, question_id, answer, correct, points_earned) {
+ await pool.execute("INSERT INTO quiz_results (result_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?)", [result_id, question_id, JSON.stringify(answer), correct, points_earned])    
 }
 
 

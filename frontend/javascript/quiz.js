@@ -23,7 +23,7 @@ async function load_quizzes() {
                 }
             });
             for (let i = 0; i < result.quizzes.length; i++) {
-                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions));
+                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions, result.quizzes[i].total_points));
             }
             const el = document.getElementById('quizContainer');
             Sortable.create(el, {
@@ -44,7 +44,7 @@ async function load_quizzes() {
 }
 
 
-function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions) {
+function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions, total_points) {
     const quiz_element = document.createElement("div")
     quiz_element.draggable = true
     quiz_element.setAttribute("data-id", quiz_id)
@@ -120,7 +120,7 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
     start_button.type = "button"
     start_button.classList.add("quiz-button", "start-quiz-button")
     start_button.textContent = "Indítás"
-    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by, randomize_questions: randomize_questions }
+    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by, randomize_questions: randomize_questions, total_points: total_points }
     start_button.onclick = () => { quiz_start(quiz) }
 
     const edit_button = document.createElement("button")
@@ -1063,6 +1063,7 @@ async function quiz_start(quiz) {
     quiz_start_reset();
     showstartquiz()
     document.getElementById("quiz_title").textContent = quiz.title;
+    document.getElementById("quiz_title").setAttribute("data-total-points", quiz.total_points);
     document.getElementById("quiz_description").textContent = quiz.description;
     document.getElementById("author").textContent = quiz.author;
     document.getElementById("quizSubmit").setAttribute("data-quiz-id", quiz.quiz_id);
@@ -1141,29 +1142,30 @@ async function submitQuiz(e) {
         const token = localStorage.getItem("token");
         const quiz_id = document.getElementById("quizSubmit").getAttribute("data-quiz-id");
         const questionBlocks = document.querySelector(".quiz_question_container").querySelectorAll(".question-card");
+        const total_points = document.getElementById("quiz_title").getAttribute("data-total-points");
+        let answer_data = [quiz_id, total_points];
         for (const block of questionBlocks) {
             const question_id = block.getAttribute("data-id");
             const question_type = block.getAttribute("data-question-type");
             const answers = block.querySelectorAll(".answer-row");
-            let answer_data = [quiz_id]
+            
             let data = { question_id: question_id, question_type: question_type, answers: [] };
             if (question_type === "order") {
                 for (const ans of answers) {
                     data.answers.push(ans.getAttribute("data-id"));
                 }
-                answer_data.push(data);
             }
             else {
                 if (question_type === "fill") {
                     const ansInput = block.querySelectorAll(".fill-ans-input .fill-input");
                     for (const input of ansInput) {
                         data.answers.push(input.value);
-                    }                    
+                    }
                 }
                 else {
                     if (question_type === "short") {
                         const ansInput = block.querySelector(".ans-input");
-                        data.answers.push(ansInput.value);                        
+                        data.answers.push(ansInput.value);
                     }
                     else {
                         if (question_type === "standard") {
@@ -1172,22 +1174,23 @@ async function submitQuiz(e) {
                             for (const ans of answer_rows) {
                                 const ansCheck = ans.querySelector(".correct-check").checked;
                                 data.answers.push(ansCheck);
-                                
+
                             }
                         }
                     }
                 }
             }
             answer_data.push(data);
-            await apiFetch("http://127.0.0.1:4000/api/savequizresult", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(answer_data)
-            });
+
         }
+        await apiFetch("http://127.0.0.1:4000/api/savequizresult", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(answer_data)
+        });
         sessionStorage.removeItem("quiz_started");
         quiz_creator_reset();
         await load_quizzes();
