@@ -261,6 +261,12 @@ async function save_result(result_id, question_id, answer, correct, points_earne
 }
 
 
+async function calcquizpoints(result_id, user_id) {
+    const [sum] = await pool.execute("SELECT SUM(quiz_results.points_earned) as earned_points FROM `quiz_results` JOIN quiz_submit ON quiz_results.result_id=quiz_submit.result_id WHERE quiz_submit.user_id=? AND quiz_results.result_id = ?", [user_id, result_id]);
+    await pool.execute("UPDATE quiz_submit set earned_points = ? where quiz_submit.result_id = ? and quiz_submit.user_id = ?", [sum[0].earned_points, result_id, user_id]);
+
+}
+
 
 async function updateuser(rows, newdata, id) {
     let changes = updatebuild(rows, newdata);
@@ -306,6 +312,7 @@ async function isexist(data){
 
 
 module.exports = {
+    calcquizpoints,
     quiz_submit,
     loadcorrectanswers,
     save_result,

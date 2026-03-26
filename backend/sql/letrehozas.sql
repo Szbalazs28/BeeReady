@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS quiz_submit (
   user_id INT NOT NULL,
   taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   total_points INT NOT NULL default 0,
+  earned_points INT NOT NULL default 0,
   FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
