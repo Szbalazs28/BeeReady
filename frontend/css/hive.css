@@ -5,12 +5,14 @@
 
 .hive_header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 1rem;
     padding-bottom: 1.2rem;
     border-bottom: 2px solid #f1b43c;
     margin-bottom: 1.2rem;
+    width: 50%;
+    margin: auto;
 }
 
 .hive_header h2 {
@@ -64,6 +66,8 @@
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
     margin-bottom: 1.2rem;
 }
 

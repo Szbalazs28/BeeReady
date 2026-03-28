@@ -4,3 +4,4 @@ heartBtn.addEventListener('click', () => {
     const isSaved = heartBtn.classList.toggle('saved');
     heartBtn.textContent = isSaved ? '♥' : '♡';
 });
+
