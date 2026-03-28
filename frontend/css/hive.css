@@ -1,38 +1,269 @@
-.hive_header{
-    text-align: center;
-    padding: 10px 0;
-    color: #949494;
-    font-weight: 500;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+/* Hive */
+.hive_container {
+    padding: 1.5rem;
 }
 
-.hive_container button{
+.hive_header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 2px solid #f1b43c;
+    margin-bottom: 1.2rem;
+}
+
+.hive_header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.5px;
+}
+
+.hive_search_row {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 520px;
+}
+
+.hive_header input {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.6rem;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fafafa;
+}
+
+.hive_header input:focus {
+    border-color: #f1b43c;
+    background: #fffdf8;
+}
+
+#hive_search {
+    background-color: #f1b43c;
+    color: #333;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+#hive_search:hover {
+    background-color: #e0a92f;
+    box-shadow: 0 0 8px #e0a92f77;
+}
+
+.hive_buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+}
+
+.hive_container button {
     background-color: #e5e7eb;
     color: #374151;
     border: none;
-    padding: 6px 12px;
+    padding: 0.45rem 1rem;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
-    height: 50px;
-    width: 100px;
+    height: auto;
+    width: auto;
 }
 
-.active{
-    
+.hive_container button:hover {
+    background-color: #d1d5db;
+    color: #111827;
 }
 
-.hive_btn_all{
-    
+.hive_btn_filter.active {
+    background-color: #f1b43c;
+    color: #333;
+    box-shadow: 0 0 6px #f1b43c66;
 }
 
-.hive_btn_saved{
-
+/* Kártyák */
+.hive_results {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
-.hive_container button:hover{
+.hive_card {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 15px;
+    padding: 1rem;
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
 
+.hive_card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 5px;
+    border-radius: 0 5px 5px 0;
+}
+
+.hive_card.quiz::before {
+    background-color: #f1b43c;
+}
+
+.hive_card.flashcard::before {
+    background-color: #10b981;
+}
+
+.hive_card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hive_card_type {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+.hive_card_type.quiz {
+    background: #fff4d6;
+    color: #92600a;
+}
+
+.hive_card_type.flashcard {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.hive_card_header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+    word-break: break-word;
+}
+
+.hive_card_header p {
+    font-size: 0.78rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin: 0;
+}
+
+.hive_card hr {
+    border: none;
+    border-top: 1px solid #f3f4f6;
+}
+
+.hive_card_desc {
+    font-size: 0.88rem;
+    color: #4b5563;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+.hive_card_footer {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+}
+
+.hive_btn_save {
+    background-color: #e5e7eb;
+    color: #374151;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    transition: background-color 0.2s;
+}
+
+.hive_btn_save:hover {
+    background-color: #d1d5db;
+}
+
+.hive_btn_save.saved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.hive_btn_view {
+    background-color: #f1b43c;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 1;
+    transition: background-color 0.2s;
+}
+
+.hive_btn_view:hover {
+    background-color: #e0a92f;
+}
+
+.hive_card_title_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+}
+
+.hive_card_title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+    word-break: break-word;
+    flex: 1;
+}
+
+.hive_save_heart {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #d1d5db;
+    padding: 0;
+    width: auto;
+    height: auto;
+    line-height: 1;
+    transition: color 0.2s, transform 0.15s;
+    flex-shrink: 0;
+}
+
+
+.hive_save_heart:hover {
+    color: #f1b43c;
+    transform: scale(1.1);
+    background: none;
+    box-shadow: none;
+}
+
+.hive_save_heart.saved {
+    color: #ff0000;
 }

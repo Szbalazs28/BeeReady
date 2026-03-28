@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="../css/mainpage.css">
     <link rel="stylesheet" href="../css/quiz.css">
     <link rel="stylesheet" href="../css/hive.css">
-    
+
     <title>BeeReady</title>
 </head>
 
@@ -42,7 +42,7 @@
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <!-- <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div> -->
-                <div onclick="navbar_click('hive',4)" class="nav_items">Hive</div> 
+                <div onclick="navbar_click('hive',4)" class="nav_items">Hive</div>
 
                 <div onclick="navbar_click('felhasznalo',5), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
@@ -361,90 +361,111 @@
                     <div class="hive_header">
                         <input type="text" placeholder="Keressen egy publikus tanulokártya paklira vagy quizre">
                         <button type="button" id="hive_search">Keresés</button>
-                        <hr>
                     </div>
 
                     <div class="hive_body">
                         <div class="hive_buttons">
                             <button type="button" class="hive_btn_all">Összes</button>
+                            <button type="button" class="hive_btn_onlyFlashcard">Csak Flashcardok</button>
+                            <button type="button" class="hive_btn_onlyQuiz">Csak Quizek</button>
                             <button type="button" class="hive_btn_saved">Mentett</button>
                         </div>
                         <div class="hive_results">
-                            <div class="hive_quiz">
-                                <div class="hive_quiz_header">
-                                    <h3>Quiz cím</h3>
-                                    <p>Készítő</p>
+                            <div class="hive_card quiz">
+                                <span class="hive_card_type quiz">Quiz</span>
+                                <div class="hive_card_header">
+                                    <div class="hive_card_title_row">
+                                        <h3 class="hive_card_title">Quiz cím</h3>
+                                        <button type="button" class="hive_save_heart" aria-label="Mentés"
+                                            id="hive_btn_save">♡</button>
+                                    </div>
+                                    <p>Készítő neve</p>
                                 </div>
                                 <hr>
-                                <p>quiz leírás</p>
-                                <div class="hive_quiz_buttons">
-                                    
+                                <p class="hive_card_desc">Quiz leírás szövege itt.</p>
+                                <div class="hive_card_footer">
+                                    <button type="button" class="hive_btn_view">Megtekint</button>
                                 </div>
-                            </div>
-                            <div class="hive_flashcard">
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!--profil kezeles-->
-            <div class="account dnone mainelem" id="felhasznalo">
-                <form id="edit_user">
-                    <div class="account_div">
-                        <div class="profil_img_div">
-                            <div class="profil_img" id="prof_img">
-                                <img id="editprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
-                            </div>
-                            <div class="account_buttons">
-                                <button type="submit" class="account_button">Mentés</button>
-                                <a onclick="logout()">Kijelentkezés</a>
-                            </div>
-                        </div>
-                        <div class="modal" id="profil_modal">
-                            <div class="modal_content">
-                                <div class="avatar_options">
-                                    <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/oroszlan.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
-                                    <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
-                                </div>
-                                <button type="button" class="account_button" id="close">Bezár</button>
-                            </div>
-                        </div>
-                        <div class="account_edit_div">
-                            <div class="account_inputs input-group">
-                                <div class="account_border_div">
-                                    <label for="felh">Felhasználónév</label>
-                                    <input type="text" id="editusername" name="felh" placeholder="Felhasználónév"
-                                        required>
-                                </div>
-                                <div class="account_border_div">
-                                    <label for="email">E-mail</label>
-                                    <input type="email" id="editemail" name="email" placeholder="E-mail" required>
-                                </div>
-                                <div class="account_border_div">
-
-                                        <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                                        <input type="password" id="currentpassword" name="jelenlegijelszo"
-                                            placeholder="Jelenlegi jelszó" required>
-                                    </div>
-                                    <div class="account_border_div">
-                                        <label for="ujjelszo">Új jelszó</label>
-                                        <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </form>
-            </div>
         </div>
+
+        <!-- 
+            <div class="hive_card quiz">
+                <span class="hive_card_type quiz">Quiz</span>
+                <div class="hive_card_header">
+                    <div class="hive_card_title_row">
+                        <h3 class="hive_card_title">Quiz cím</h3>
+                        <button type="button" class="hive_save_heart" aria-label="Mentés" id="hive_btn_save">♡</button>
+                    </div>
+                    <p>Készítő neve</p>
+                </div>
+                <hr>
+                <p class="hive_card_desc">Quiz leírás szövege itt.</p>
+                <div class="hive_card_footer">
+                    <button type="button" class="hive_btn_view">Megtekint</button>
+                </div>
+            </div> 
+            -->
+
+        <!--profil kezeles-->
+        <div class="account dnone mainelem" id="felhasznalo">
+            <form id="edit_user">
+                <div class="account_div">
+                    <div class="profil_img_div">
+                        <div class="profil_img" id="prof_img">
+                            <img id="editprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
+                        </div>
+                        <div class="account_buttons">
+                            <button type="submit" class="account_button">Mentés</button>
+                            <a onclick="logout()">Kijelentkezés</a>
+                        </div>
+                    </div>
+                    <div class="modal" id="profil_modal">
+                        <div class="modal_content">
+                            <div class="avatar_options">
+                                <img src="../img/allatos_profilkepek/farkas.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/roka.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/medve.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/oroszlan.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/tigris.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/bagoly.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/solyom.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/hollo.webp" alt="" class="avatar_option">
+                                <img src="../img/allatos_profilkepek/sas.webp" alt="" class="avatar_option">
+                            </div>
+                            <button type="button" class="account_button" id="close">Bezár</button>
+                        </div>
+                    </div>
+                    <div class="account_edit_div">
+                        <div class="account_inputs input-group">
+                            <div class="account_border_div">
+                                <label for="felh">Felhasználónév</label>
+                                <input type="text" id="editusername" name="felh" placeholder="Felhasználónév" required>
+                            </div>
+                            <div class="account_border_div">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="editemail" name="email" placeholder="E-mail" required>
+                            </div>
+                            <div class="account_border_div">
+
+                                <label for="jelenlegijelszo">Jelenlegi jelszó</label>
+                                <input type="password" id="currentpassword" name="jelenlegijelszo"
+                                    placeholder="Jelenlegi jelszó" required>
+                            </div>
+                            <div class="account_border_div">
+                                <label for="ujjelszo">Új jelszó</label>
+                                <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
     </div>
@@ -456,6 +477,7 @@
     <script src="../javascript/timetable.js"></script>
     <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/mainpage.js"></script>
+    <script src="../javascript/hive.js"></script>
 </body>
 
 <!--
