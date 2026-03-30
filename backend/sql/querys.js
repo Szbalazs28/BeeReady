@@ -23,27 +23,27 @@ async function exists_share_code(share_code) {
     return exists.length > 0;
 }
 
-async function  copy_deck(share_code, user_id) {
-    if(await exists_share_code(share_code)){
+async function copy_deck(share_code, user_id) {
+    if (await exists_share_code(share_code)) {
         const [deck] = await pool.execute("SELECT deck_name FROM flashcard_deck WHERE share_code = ?", [share_code]);
         let new_share_code = await uniquesharecode()
         await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [user_id, deck[0].deck_name, 0, new_share_code])
         const [cards] = await pool.execute("SELECT front_text, back_text FROM flashcard_card WHERE deck_id = (SELECT deck_id FROM flashcard_deck WHERE share_code = ?)", [share_code]);
-        for(let i = 0; i<cards.length; i++){
+        for (let i = 0; i < cards.length; i++) {
             await pool.execute("INSERT INTO flashcard_card (deck_id, front_text, back_text, position) VALUES ((SELECT deck_id FROM flashcard_deck WHERE share_code = ?), ?, ?, ?)", [new_share_code, cards[i].front_text, cards[i].back_text, i])
         }
     }
-    else{
+    else {
         let error = new Error("Nincs ilyen megosztási kód!")
         error.status = 400;
         throw error
     }
 }
 
-async function uniquesharecode(){
+async function uniquesharecode() {
     let share_code = share_code_generator()
-    while(await exists_share_code(share_code)){
-        share_code = share_code_generator()        
+    while (await exists_share_code(share_code)) {
+        share_code = share_code_generator()
     }
     return share_code
 }
@@ -51,10 +51,10 @@ async function uniquesharecode(){
 async function add_deck(id, name) {
     let share_code = await uniquesharecode()
     const [maxposition] = await maxdeckposition(id);
-    if(maxposition[0].max_position === null){
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, 0, ?)", [id, name, share_code])    
+    if (maxposition[0].max_position === null) {
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, 0, ?)", [id, name, share_code])
     }
-    else{
+    else {
         await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [id, name, maxposition[0].max_position + 1, share_code])
     }
 
@@ -63,7 +63,7 @@ async function add_deck(id, name) {
 async function change_share_code(id) {
     let share_code = share_code_generator()
     let [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
-    while(exists.length > 0){
+    while (exists.length > 0) {
         share_code = share_code_generator()
         [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
     }
@@ -71,36 +71,36 @@ async function change_share_code(id) {
     return share_code;
 }
 
-async function  getdeck(id) {
-    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id ORDER BY flashcard_deck.position ASC",[id])
+async function getdeck(id) {
+    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id ORDER BY flashcard_deck.position ASC", [id])
 }
 
-async function  getdeckbydeck_id(deck_id) {
-    return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ?",[deck_id])
+async function getdeckbydeck_id(deck_id) {
+    return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ?", [deck_id])
 }
 
 async function updatedeck(deck_name, deck_id) {
     await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
 }
 
-async function  deletedeck(deck_id) {    
+async function deletedeck(deck_id) {
     await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ?", [deck_id])
-    
+
 }
 
 async function getcards(deck_id) {
-    return await pool.execute("SELECT * FROM flashcard_card WHERE deck_id = ? ORDER BY position ASC",[deck_id])
+    return await pool.execute("SELECT * FROM flashcard_card WHERE deck_id = ? ORDER BY position ASC", [deck_id])
 }
 
 async function addnewcard(deck_id, front_text, back_text) {
     const [maxposition] = await maxcardposition(deck_id);
-    if(maxposition[0].max_position === null){
+    if (maxposition[0].max_position === null) {
         await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, 0);", [deck_id, front_text, back_text])
     }
-    else{
+    else {
         await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, ?);", [deck_id, front_text, back_text, maxposition[0].max_position + 1])
     }
-    
+
 }
 
 async function maxdeckposition(user_id) {
@@ -115,9 +115,9 @@ async function deletecard(card_id) {
     await pool.execute("DELETE FROM flashcard_card WHERE flashcard_card.card_id = ?", [card_id])
 }
 
-async function  updatecard(front_text, back_text, card_id) {
+async function updatecard(front_text, back_text, card_id) {
     await pool.execute("UPDATE flashcard_card SET front_text=?, back_text=? WHERE card_id=?", [front_text, back_text, card_id])
-    
+
 }
 
 async function getcardbyid(card_id) {
@@ -142,7 +142,7 @@ async function get_saved_weektype(user_id) {
 
 async function save_new_event(id, day, startTime, endTime, subject, location, weekType) {
     await pool.execute("INSERT INTO timetable (user_id, day, start_time, end_time, subject, location, week_type) VALUES (?,?,?,?,?,?,?)", [id, day, startTime, endTime, subject, location, weekType]);
-    
+
 }
 
 async function changeselectedweek(id, week_type) {
@@ -159,7 +159,7 @@ async function delete_event(event_id) {
 
 async function add_task(user_id, task_name, task_description, importance) {
     await pool.execute(
-        "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)", 
+        "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)",
         [user_id, task_name, task_description, importance]
     );
 }
@@ -179,7 +179,7 @@ async function delete_task(task_id) {
 
 async function update_task(task_id, task_name, task_description, importance) {
     await pool.execute(
-        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?", 
+        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?",
         [task_name, task_description, importance, task_id]
     );
 }
@@ -197,21 +197,21 @@ async function mark_task_done(task_id) {
 async function updateuser(rows, newdata, id) {
     let changes = updatebuild(rows, newdata);
     for (let i = 0; i < changes.length; i++) {
-        if(changes[i][0] === "username" || changes[i][0] === "email"){
+        if (changes[i][0] === "username" || changes[i][0] === "email") {
             const [exists] = await isexist(changes[i]);
-            if(exists.length > 0){
+            if (exists.length > 0) {
                 throw new Error(`A ${changes[i][1]} már foglalt!`);
             }
-            else{
+            else {
                 await pool.query(`UPDATE users SET ${changes[i][0]} = ?  WHERE id=?`, [changes[i][1], id]);
             }
         }
-        else{
+        else {
             await pool.query(`UPDATE users SET ${changes[i][0]} = ?  WHERE id=?`, [changes[i][1], id]);
         }
-        
+
     }
-    
+
 }
 
 function updatebuild(rows, newdata) {
@@ -225,19 +225,19 @@ function updatebuild(rows, newdata) {
     if (rows[0].profil_pic_url != `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`) {
         changes.push(["profil_pic_url", `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`])
     }
-    if(newdata.newpassword.length > 0){
+    if (newdata.newpassword.length > 0) {
         changes.push(["password", newdata.newpassword])
     }
     return changes;
 }
 
-async function isexist(data){
+async function isexist(data) {
     return await pool.execute(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
 }
 
 async function add_task(user_id, task_name, task_description, importance) {
     await pool.execute(
-        "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)", 
+        "INSERT INTO todo_tasks (user_id, task_name, task_description, importance) VALUES (?, ?, ?, ?)",
         [user_id, task_name, task_description, importance]
     );
 }
@@ -266,7 +266,7 @@ async function delete_task(task_id) {
 
 async function update_task(task_id, task_name, task_description, importance) {
     await pool.execute(
-        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?", 
+        "UPDATE todo_tasks SET task_name = ?, task_description = ?, importance = ? WHERE id = ?",
         [task_name, task_description, importance, task_id]
     );
 }
@@ -321,8 +321,13 @@ async function adminCheck(id) {
 
 async function admin_get_users() {
     return await pool.execute(
-        "SELECT id, username, email, profil_pic_url FROM users"
+        `SELECT id, username, email, profil_pic_url
+        FROM users 
+        LEFT JOIN admins ON users.id = admins.user_id 
+        WHERE admins.user_id IS NULL 
+        ORDER BY users.id DESC;`
     );
+    //left join csak a nem admin felhasznalokat adja vissza
 }
 
 async function admin_update_user(user_id, username, email, profil_pic_url) {
@@ -335,6 +340,46 @@ async function admin_update_user(user_id, username, email, profil_pic_url) {
 async function admin_delete_user(user_id) {
     await pool.execute("DELETE FROM users WHERE id=?", [user_id]);
 }
+
+
+/**
+ 
+SELECT
+    'flashcard' AS type,
+    fd.deck_id AS id,
+    fd.deck_name AS title,
+    u.username AS author,
+    fd.create_date AS created_at,
+    NULL AS description,
+    COUNT(fc.card_id) AS item_count,
+    COUNT(DISTINCT uf.id) AS favorite_count
+FROM flashcard_deck fd
+JOIN users u ON fd.user_id = u.id
+LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
+LEFT JOIN user_favorites uf ON fd.deck_id = uf.item_id AND uf.item_type = 'flashcard'
+GROUP BY fd.deck_id, fd.deck_name, u.username, fd.create_date
+
+UNION ALL 
+-- ---> a két lekérdezés eredményét egyesíti, így visszaadja mindkét típusú elemet
+
+SELECT
+    'quiz' AS type, 
+    -- ---> item.type == 'quiz' vagy 'flashcard' -el tudunk hivatkozni a mintha enum() lenne
+    q.quiz_id AS id,
+    q.title AS title,
+    u.username AS author,
+    q.last_modified AS created_at,
+    q.description AS description,
+    COUNT(qq.question_id) AS item_count,
+    COUNT(DISTINCT uf.id) AS favorite_count
+FROM quizzes q
+JOIN users u ON q.user_id = u.id
+LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
+WHERE q.public = TRUE
+GROUP BY q.quiz_id, q.title, u.username, q.last_modified, q.description
+
+ORDER BY created_at DESC;
+ */
 
 module.exports = {
     delete_task,
@@ -355,7 +400,7 @@ module.exports = {
     getdeck,
     getdeckbydeck_id,
     getcards,
-    addnewcard, 
+    addnewcard,
     deletecard,
     updatecard,
     getcardbyid,
