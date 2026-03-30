@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const {calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, quiz_submit } = require("../sql/querys.js");
+const {getuseranswers,getquizresult, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, quiz_submit } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -29,7 +29,7 @@ router.post("/registration", loginLimiter, async (req, res, next) => {
     const password = await encrypt(data.password)
     const [user] = await newuser(data.username, data.email, password, data.profil_pic_url)
     const token = await generateToken(user[0].id, "1h")
-    res.status(200).json({ token, redirect: "./main.html" })
+    res.status(200).json({ token, redirect: "../html/main.html" })
   } catch (error) {
     next(error)
   }
@@ -46,7 +46,7 @@ router.post("/login", loginLimiter, async (req, res, next) => {
       expiresInTime = "7d";
     }
     const token = await generateToken(rows[0].id, expiresInTime);
-    res.status(200).json({ token, redirect: "./main.html" })
+    res.status(200).json({ token, redirect: "../html/main.html" })
   } catch (error) {
     next(error)
   }
@@ -486,6 +486,31 @@ router.post("/savequizresult", authenticateToken, async (req, res, next) => {
     next(error);
   }
 
+});
+
+router.get("/getquizresult", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const quiz_id = req.query.quiz_id
+    const result = await getquizresult(id, quiz_id)
+    res.status(200).json({ write: false, result: result });
+  }
+  catch (error) {
+    next(error);
+  }
+});
+
+router.get("/getuseranswers", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const result_id = req.query.result_id
+    const question_id = req.query.question_id
+    const user_answer = await getuseranswers(id, result_id, question_id)
+    res.status(200).json({ write: false, user_answer: user_answer });
+  }
+  catch (error) {
+    next(error);
+  }
 });
 
 

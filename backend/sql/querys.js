@@ -267,12 +267,21 @@ async function calcquizpoints(result_id, user_id) {
 
 }
 
+async function getquizresult(user_id, quiz_id) {
+    const [rows] = await pool.execute("SELECT ROUND((quiz_submit.earned_points/quiz_submit.total_points)*100, 2) AS result, quiz_submit.taken_at, quiz_submit.total_points, quiz_submit.earned_points, quiz_submit.result_id FROM `quiz_submit` WHERE quiz_submit.quiz_id = ? AND quiz_submit.user_id = ?", [quiz_id, user_id]);
+    return rows;
+}
+
+async function getuseranswers(id, result_id, question_id) {
+    const [rows] = await pool.execute("SELECT quiz_results.question_id, quiz_results.answer, quiz_results.correct, quiz_results.points_earned FROM `quiz_results` JOIN quiz_submit ON quiz_results.result_id=quiz_submit.result_id WHERE quiz_results.question_id = ? AND quiz_results.result_id = ? AND quiz_submit.user_id = ?", [question_id, result_id, id]);
+    return rows;
+}
 
 async function updateuser(rows, newdata, id) {
     let changes = updatebuild(rows, newdata);
     for (let i = 0; i < changes.length; i++) {
         if(changes[i][0] === "username" || changes[i][0] === "email"){
-            const [exists] = await isexist(changes[i]);
+             const [exists] = await isexist(changes[i]);
             if(exists.length > 0){
                 throw new Error(`A ${changes[i][1]} már foglalt!`);
             }
@@ -312,6 +321,8 @@ async function isexist(data){
 
 
 module.exports = {
+    getuseranswers,
+    getquizresult,
     calcquizpoints,
     quiz_submit,
     loadcorrectanswers,

@@ -110,13 +110,11 @@ async function compare(password, hash) {
 }
 
 function timetest(start, end) {
-    if (start.length < 5 || end.length < 5 || start[2] !== ':' || end[2] !== ':') {
-        alertell("Az időpontnak HH:MM formátumúnak kell lennie!", 2.5);
+    if (start.length < 5 || end.length < 5 || start[2] !== ':' || end[2] !== ':') {        
         throw new Error("Az időpontnak HH:MM formátumúnak kell lennie!");
     }
     else {
-        if (start >= end) {
-            alertell("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!", 2.5);
+        if (start >= end) {            
             throw new Error("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!");
         }
     }
@@ -142,10 +140,10 @@ async function answer_validation(result_id, data, id) {
     const answers = await loadcorrectanswers(data.question_id, id)
     if (data.question_type === "order") {
         let j = 0
-        while ((j < answers.length && j < data.answers.length) && answers[j].answer_id != data.answers[j]) {
+        while ((j < answers.length && j < data.answers.length) && answers[j].answer_id !== data.answers[j]) {
             j++
         }
-        if (j != answers.length) {
+        if (j == answers.length) {
             correct = true
         }
     }
@@ -175,10 +173,10 @@ async function answer_validation(result_id, data, id) {
                 if (data.question_type === "standard") {
                     const all_answers = await loadanswers(data.question_id, id)
                     let index = 0;
-                    while (index < all_answers.length && !!all_answers[index].right_answer === data.answers[index]) {
+                    while (index < all_answers.length && all_answers[index].right_answer !== data.answers[index]) {
                         index++;
                     }
-                    if (index >= all_answers.length) {
+                    if (index == all_answers.length) {
                         correct = true
                     }
                 }
