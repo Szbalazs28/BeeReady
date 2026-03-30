@@ -99,20 +99,26 @@ function attachHiveEventListeners() {
     if (!container) return;
 
     container.addEventListener('click', (e) => {
-        // Szív gomb
+        // Sziv gomb (meg nem teljesen mukodik)
         if (e.target.classList.contains('hive_save_heart')) {
             e.preventDefault();
             const isSaved = e.target.classList.toggle('saved');
             e.target.textContent = isSaved ? '♥' : '♡';
         }
 
-        // Indítás gomb
+        // Inditas
         if (e.target.classList.contains('hive_btn_view')) {
             e.preventDefault();
             const card = e.target.closest('.hive_card');
             const deckId = card.getAttribute('data-deck-id');
             if (deckId) {
-                deck_open(parseInt(deckId));
+                const numDeckId = parseInt(deckId);
+                navbar_click('tanulokartyak', 2);
+                
+                setTimeout(async () => {
+                    await deck_open(numDeckId);
+                    flashcard_start(numDeckId);
+                }, 300);
             }
         }
     });
