@@ -883,3 +883,13 @@
         white-space: normal;
     }
 }
+
+.order-point-label{
+    font-size: 0.85rem;
+    color: #555;    
+}
+.order-point-div{
+    display: flex;
+    align-items: center;
+    
+}

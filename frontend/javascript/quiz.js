@@ -234,7 +234,7 @@ function createBaseQuestionBlock(type, question = null) {
     const qInput = document.createElement('input');
     qInput.type = 'text';
     qInput.className = 'q-input';
-    qInput.placeholder = `${question_id}. Kérdés szövege: `;
+    qInput.placeholder = `${question_id + 1}. Kérdés szövege: `;
     qInput.required = true;
     if (question) {
         qInput.value = question.question_text;
@@ -255,6 +255,57 @@ function createBaseQuestionBlock(type, question = null) {
     trashImg.style.width = '26px';
     deleteBtn.appendChild(trashImg);
 
+    qSettings.append(deleteBtn);
+    if (type != "short") {
+        qHeader.append(grab, qInput, qSettings);
+        if (type == "order") {
+            qHeader.children[1].after(specpointtoorder(question_id));
+        }
+
+
+    }
+    else {
+        if (type == "short" && question) {
+            qHeader.append(grab, qInput, pointelement(question.points), qSettings);
+        }
+        else {
+            qHeader.append(grab, qInput, pointelement(), qSettings);
+        }
+
+    }
+
+
+    questionCard.append(qHeader);
+
+    return questionCard;
+}
+
+function specpointtoorder(question_id) {
+    const div = document.createElement('div');
+    div.className = 'order-point-div';
+    const checkbox = document.createElement('input');
+    checkbox.id = `order_point_check_${question_id}`;
+    checkbox.type = 'checkbox';
+    checkbox.className = 'correct-check';
+    const label = document.createElement('label');
+    label.className = 'order-point-label';
+    label.htmlFor = `order_point_check_${question_id}`;
+    label.textContent = `Egyéni pontozás: `;
+    label.style.cursor = 'help';
+    label.title = 'Jelöld be, ha szeretnél egyéni pontokat megadni ehhez a válaszhoz! Alapértelmezetten a helyes válasz 1 pontot ér, a helytelen válasz pedig 0 pontot. Az egyéni pont nem bontható!';
+    checkbox.addEventListener('change', function () {
+        if (this.checked) {
+            this.parentElement.parentElement.children[1].after(pointelement());
+        }
+        else {
+            this.parentElement.parentElement.removeChild(this.parentElement.parentElement.querySelector('.q-points-container'));
+        }
+    })
+    div.append(label, checkbox);
+    return div;
+}
+
+function pointelement(points = null) {
     const pointsContainer = document.createElement('div');
     pointsContainer.className = 'q-points-container';
 
@@ -267,20 +318,13 @@ function createBaseQuestionBlock(type, question = null) {
     pointsInput.className = 'q-points-input';
     pointsInput.min = '1';
     pointsInput.value = 1;
-    if (question) {
-        pointsInput.value = question.points;
+    if (points) {
+        pointsInput.value = points;
     }
     pointsInput.title = 'Pontszám ehhez a kérdéshez';
 
     pointsContainer.append(pointsLabel, pointsInput);
-
-
-    qSettings.append(pointsContainer, deleteBtn);
-    qHeader.append(grab, qInput, qSettings);
-
-    questionCard.append(qHeader);
-
-    return questionCard;
+    return pointsContainer;
 }
 
 function addNewOrderQuestionBlock(answers = null, question = null) {
@@ -417,7 +461,7 @@ function addNewFillQuestionBlock(answers = null, question = null) {
 
 
     const ansInput = document.createElement('textarea');
-    ansInput.placeholder = 'Írja be a helyes választ a szövegben, ahol a kitöltendő rész van, használja a {blank} jelölést!';
+    ansInput.placeholder = 'Írja be a helyes választ a szövegben, ahol a kitöltendő rész van, használja a {blank; pontszám} jelölést!';
     ansInput.classList.add('ans-input', 'fill-ans-input');
     ansInput.required = true;
     if (answers) {
@@ -510,7 +554,13 @@ function addStandardAnswerToBlock(question_id, answer = null) {
     delAnsBtn.textContent = '×';
     delAnsBtn.onclick = function () { this.parentElement.remove(); };
 
-    answerRow.append(ansCheck, ansInput, delAnsBtn);
+    if (answer) {
+        answerRow.append(ansCheck, ansInput, pointelement(answer.points), delAnsBtn);
+    }
+    else {
+        answerRow.append(ansCheck, ansInput, pointelement(), delAnsBtn);
+    }
+
     return answerRow;
 }
 // ------------------------------------------------
@@ -571,6 +621,7 @@ function fill_get_data(ansText) {
     let text = ""
     let words = []
     let word = ""
+    let points = []
     let found = false
     for (let index = 0; index < ansText.length; index++) {
         if (!found && ansText[index] != '{' && ansText[index] != '}') {
@@ -589,7 +640,9 @@ function fill_get_data(ansText) {
                         found = false;
                         if (word.length > 0) {
                             text += "{}"
-                            words.push(word)
+                            let search_result = fill_search_points(word);
+                            points.push(search_result.points);
+                            words.push(search_result.word);
                             word = ""
                         }
                         specindex = []
@@ -600,19 +653,37 @@ function fill_get_data(ansText) {
         }
     }
 
-    return { words: words, text: text };
+    return { words: words, text: text, points: points };
+}
+
+function fill_search_points(word) {
+    let i = word.length - 1
+    let number = 1
+    while (i > 0 && word[i] != ';') {
+        i--;
+    }
+    if (i >= 0) {
+        let number_part = word.slice(i + 1).replaceAll(' ', '')
+        if (!isNaN(number_part) && parseInt(number_part) > 0) {
+            number = parseInt(number_part);
+            word = word.slice(0, i);
+        }
+    }
+    return { word: word, points: number };
+
 }
 
 function fill_give_data(ansText) {
     let words = JSON.parse(ansText).words
     let text = JSON.parse(ansText).text;
+    let points = JSON.parse(ansText).points;
     let ans = text;
     let length = 1
     let words_index = 0;
     for (let i = 0; i < text.length; i++) {
         if (text[i] == "{") {
-            ans = fill_insert(ans, words[words_index], i + length);
-            length += words[words_index].length
+            ans = fill_insert(ans, `${words[words_index]}; ${points[words_index]}`, i + length);
+            length += words[words_index].length + points[words_index].toString().length + 2;
             words_index++;
         }
     }
@@ -629,17 +700,45 @@ function quiz_check() {
     min_blocks(questionBlocks);
 
     for (const block of questionBlocks) {
-        points_sum += parseInt(block.querySelector(".q-points-input").value);
         const question_text = block.querySelector(".q-input").value;
         const answers = block.querySelectorAll(".answer-row");
         min_blocks(answers);
         speclengthtest(question_text, 1, 1000, "A kérdés szövegének hossza");
+        if (block.getAttribute("data-question-type") == "short" || (block.getAttribute("data-question-type") == "order" && block.querySelector(".order-point-check").checked)) {
+
+            points_sum += point_check(block.querySelector(".q-points-input").value);
+        }
+        else {
+            if (block.getAttribute("data-question-type") == "order") {
+                points_sum += point_check(block.querySelectorAll(".answers-container").children.length);
+            }
+        }
         for (const ans of answers) {
             const ansText = ans.querySelector(".ans-input").value;
             speclengthtest(ansText, 1, 1000, "A válasz szövegének hossza");
+            if (block.getAttribute("data-question-type") == "standard") {
+                points_sum += point_check(ans.querySelector(".q-points-input").value);
+            }
+            else{
+                if (block.getAttribute("data-question-type") == "fill") {
+                    let array = fill_get_data(ansText).points.toArray();
+                    for(let i = 0; i < array.length; i++){
+                        points_sum += point_check(array[i]);
+                    }
+                }
+            }
+            
         }
     }
     return points_sum;
+}
+
+function point_check(point) {
+    if (isNaN(point) || parseInt(point) < 1) {
+        alertell("A pontszámnak pozitív egész számnak kell lennie!", 2.5);
+        throw new Error("A pontszámnak pozitív egész számnak kell lennie!");
+    }
+    return parseInt(point);
 }
 
 async function save_answer(question_id, answer_text, right_answer, position) {
@@ -1075,7 +1174,7 @@ function result_addNewStandardQuestionBlock(question, answers, user_answer) {
     answersContainer.className = 'answers-container';
     if (answers && answers.length > 0 && user_answer.correct === true) {
         answers.forEach((answer, index) => {
-            answersContainer.appendChild(result_addStandardAnswerToBlock(answer, toArray(user_answer.answer)[index], user_answer.correct));
+            answersContainer.appendChild(result_addStandardAnswerToBlock(answer, user_answer.answer.toArray()[index], user_answer.correct));
         })
     }
     questionCard.append(answersContainer);
