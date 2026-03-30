@@ -342,8 +342,8 @@ async function admin_delete_user(user_id) {
 }
 
 
-/**
- 
+async function getQnF() {
+    return await pool.execute(`
 SELECT
     'flashcard' AS type,
     fd.deck_id AS id,
@@ -351,35 +351,33 @@ SELECT
     u.username AS author,
     fd.create_date AS created_at,
     NULL AS description,
-    COUNT(fc.card_id) AS item_count,
-    COUNT(DISTINCT uf.id) AS favorite_count
+    COUNT(DISTINCT fc.card_id) AS item_count,
+    COUNT(DISTINCT uf.user_id) AS favorite_count
 FROM flashcard_deck fd
 JOIN users u ON fd.user_id = u.id
 LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
-LEFT JOIN user_favorites uf ON fd.deck_id = uf.item_id AND uf.item_type = 'flashcard'
-GROUP BY fd.deck_id, fd.deck_name, u.username, fd.create_date
+LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
+GROUP BY fd.deck_id, fd.deck_name, u.username, fd.create_date, fd.share_code
 
-UNION ALL 
--- ---> a két lekérdezés eredményét egyesíti, így visszaadja mindkét típusú elemet
+UNION ALL
 
 SELECT
-    'quiz' AS type, 
-    -- ---> item.type == 'quiz' vagy 'flashcard' -el tudunk hivatkozni a mintha enum() lenne
+    'quiz' AS type,
     q.quiz_id AS id,
     q.title AS title,
     u.username AS author,
     q.last_modified AS created_at,
     q.description AS description,
-    COUNT(qq.question_id) AS item_count,
-    COUNT(DISTINCT uf.id) AS favorite_count
+    COUNT(DISTINCT qq.question_id) AS item_count,
+    COUNT(DISTINCT uf.user_id) AS favorite_count
 FROM quizzes q
 JOIN users u ON q.user_id = u.id
 LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
+LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
 WHERE q.public = TRUE
 GROUP BY q.quiz_id, q.title, u.username, q.last_modified, q.description
 
-ORDER BY created_at DESC;
- */
+ORDER BY created_at DESC;`)};
 
 module.exports = {
     delete_task,
@@ -420,5 +418,6 @@ module.exports = {
     Insert_calendar_event,
     delete_calendar_event,
     change_share_code,
-    copy_deck
+    copy_deck,
+    getQnF
 };
