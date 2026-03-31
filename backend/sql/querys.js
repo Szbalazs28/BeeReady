@@ -321,11 +321,11 @@ async function adminCheck(id) {
 
 async function admin_get_users() {
     return await pool.execute(
-        `SELECT id, username, email, profil_pic_url
+        `SELECT users.id, users.username, users.email, users.profil_pic_url
         FROM users 
         LEFT JOIN admins ON users.id = admins.user_id 
         WHERE admins.user_id IS NULL 
-        ORDER BY users.id DESC;`
+        ORDER BY users.id DESC`
     );
     //left join csak a nem admin felhasznalokat adja vissza
 }
