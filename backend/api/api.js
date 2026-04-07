@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
+const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, getFlashcardsOnly, getQuizzesOnly, getUserFavorites, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -444,7 +444,8 @@ router.post("/admin/delete_user", authenticateToken, async (req, res, next) => {
 
 router.get("/getQnF", authenticateToken, async (req, res, next) => {
   try {
-    const [qnf_rows] = await getQnF();
+    const user_id = req.user.id;
+    const [qnf_rows] = await getQnF(user_id);
     res.status(200).json({
       write: false,
       qnf: qnf_rows
@@ -557,6 +558,52 @@ router.post("/savequizresult", authenticateToken, async (req, res, next) => {
     res.status(200).json({ write: true, message: "A kvíz beadva!" });
   }
   catch (error) {
+    next(error);
+  }
+});
+
+router.post("/toggleFavorite", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const { item_type, item_id } = req.body;
+    
+    if (!item_type || !item_id) {
+      return res.status(400).json({ success: false, message: "Hiányzó paraméterek" });
+    }
+    
+    const is_favorited = await toggleFavorite(user_id, item_type, item_id);
+    res.status(200).json({ success: true, is_favorited });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/getflashcardsonly", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const [result] = await getFlashcardsOnly(user_id);
+    res.status(200).json({ qnf: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/getquizzesonly", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const [result] = await getQuizzesOnly(user_id);
+    res.status(200).json({ qnf: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/getfavorites", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const [result] = await getUserFavorites(user_id);
+    res.status(200).json({ qnf: result });
+  } catch (error) {
     next(error);
   }
 });
