@@ -44,6 +44,14 @@ function timetest(start, end) {
 
 }
 
+function speclengthtest(input, min, max, text) {
+    if (input.length < min || input.length > max) {
+        alertell(`${text}  ${min} és ${max} karakter között kell lennie!`, 2.5);
+        throw new Error(`${text} ${min} és ${max} karakter között kell lennie!`);
+    }
+}
+
+
 async function index_apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options)
