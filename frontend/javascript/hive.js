@@ -9,7 +9,7 @@ async function loadQnF() {
             console.error('Nincs token - bejelentkezés szükséges');
             return;
         }
-        const result = await apiFetch('http://localhost:4000/api/getQnF', {
+        const result = await apiFetch('http://127.0.0.1:4000/api/getQnF', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -22,13 +22,23 @@ async function loadQnF() {
         if (qnfContainer) {
             result.qnf.forEach(qnf => {
                 const qnfCard = document.createElement('div');
+                qnfCard.classList.add('hive_card');
+                
                 if (qnf.type === 'flashcard') {
-                    qnfCard.classList.add('hive_card', 'flashcard');
+                    qnfCard.classList.add('flashcard');
                     qnfCard.setAttribute('data-deck-id', qnf.id);
 
                     const card_type = document.createElement('span');
                     card_type.classList.add('hive_card_type', 'flashcard');
                     card_type.textContent = 'FLASHCARD';
+                    qnfCard.appendChild(card_type);
+                } else if (qnf.type === 'quiz') {
+                    qnfCard.classList.add('quiz');
+                    qnfCard.setAttribute('data-quiz-id', qnf.id);
+
+                    const card_type = document.createElement('span');
+                    card_type.classList.add('hive_card_type', 'quiz');
+                    card_type.textContent = 'KVÍZ';
                     qnfCard.appendChild(card_type);
                 }
                 
@@ -63,7 +73,11 @@ async function loadQnF() {
 
                 const desc = document.createElement('p');
                 desc.classList.add('hive_card_desc');
-                desc.textContent = `${qnf.item_count} db kártya`;
+                if (qnf.type === 'flashcard') {
+                    desc.textContent = `${qnf.item_count} db kártya`;
+                } else if (qnf.type === 'quiz') {
+                    desc.textContent = `${qnf.item_count} kérdés`;
+                }
                 qnfCard.appendChild(desc);
 
                 const stats = document.createElement('div');
@@ -80,7 +94,7 @@ async function loadQnF() {
                 const view_button = document.createElement('button');
                 view_button.type = 'button';
                 view_button.classList.add('hive_btn_view');
-                view_button.textContent = 'Indítás';
+                view_button.textContent = qnf.type === 'quiz' ? 'Indítás' : 'Indítás';
 
                 card_footer.appendChild(view_button);
                 qnfCard.appendChild(card_footer);
@@ -111,15 +125,48 @@ function attachHiveEventListeners() {
             if (e.target.classList.contains('hive_btn_view')) {
                 e.preventDefault();
                 const card = e.target.closest('.hive_card');
-                const deckId = card.getAttribute('data-deck-id');
-                if (deckId) {
-                    const numDeckId = parseInt(deckId);
-                    navbar_click('tanulokartyak', 2);
+                
+                // Flashcard
+                if (card.classList.contains('flashcard')) {
+                    const deckId = card.getAttribute('data-deck-id');
+                    if (deckId) {
+                        const numDeckId = parseInt(deckId);
+                        navbar_click('tanulokartyak', 2);
 
-                    setTimeout(async () => {
-                        await deck_open(numDeckId);
-                        flashcard_start(numDeckId);
-                    }, 300);
+                        setTimeout(async () => {
+                            await deck_open(numDeckId);
+                            flashcard_start(numDeckId);
+                        }, 300);
+                    }
+                }
+                // Kvíz
+                else if (card.classList.contains('quiz')) {
+                    const quizId = card.getAttribute('data-quiz-id');
+                    if (quizId) {
+                        const numQuizId = parseInt(quizId);
+                        navbar_click('quiz', 4);
+
+                        setTimeout(async () => {
+                            // Betöltjük a kvíz kérdéseit
+                            const token = localStorage.getItem("token");
+                            const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${numQuizId}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'authorization': `Bearer ${token}`
+                                }
+                            });
+                            
+                            // Kezdjük el a kvízt
+                            quiz_start_shared({
+                                quiz_id: numQuizId,
+                                title: card.querySelector('.hive_card_title').textContent,
+                                description: card.querySelector('.hive_card_desc').textContent,
+                                created_by: card.querySelector('.hive_card_header p').textContent,
+                                questions: result.questions
+                            });
+                        }, 300);
+                    }
                 }
             }
         });

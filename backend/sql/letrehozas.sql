@@ -51,6 +51,7 @@ CREATE TABLE
     position int not null,
     share_code varchar(8) UNIQUE DEFAULT NULL,
     user_id int not null,
+    public BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
 

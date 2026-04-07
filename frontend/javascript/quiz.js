@@ -563,7 +563,8 @@ async function saveQuiz(e) {
         quiz_creator_reset();
         await load_quizzes();
     } catch (error) {
-        console.error(error);
+        console.error("Kvíz mentési hiba:", error);
+        alertell("Hiba a kvíz mentésekor: " + (error.message || "Ismeretlen hiba"), 5);
     }
 }
 
@@ -657,6 +658,7 @@ async function save_answer(question_id, answer_text, right_answer, position) {
             body: JSON.stringify({ question_id: question_id, answer_text: answer_text, right_answer: right_answer, position: position })
         });
     } catch (err) {
+        console.error("Válasz mentésének hibája:", err);
         throw err;
     }
 }
@@ -721,7 +723,7 @@ function showcreatequiz() {
 async function save_current_quiz_order(currentorder) {
     try {
         const token = localStorage.getItem("token");
-        await apiFetch("http://localhost:4000/api/save_current_quiz_order", {
+        await apiFetch("http://127.0.0.1:4000/api/save_current_quiz_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -730,7 +732,7 @@ async function save_current_quiz_order(currentorder) {
             body: JSON.stringify({ currentorder: currentorder })
         })
     } catch (err) {
-        console.error(err);
+        console.error("Kvíz sorrend mentésének hibája:", err);
     }
 
 }

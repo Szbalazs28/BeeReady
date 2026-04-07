@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const {calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
+const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -88,7 +88,8 @@ router.post("/add_deck", authenticateToken, async (req, res, next) => {
     const adatok = req.body
     const id = req.user.id
     lengthtest(adatok.deck_name, 1, 200)
-    await add_deck(id, adatok.deck_name)
+    const isPublic = adatok.isPublic || false
+    await add_deck(id, adatok.deck_name, isPublic)
     res.status(200).json({ write: true, message: "Sikeres hozzáadás!" })
   } catch (error) {
     next(error)
@@ -196,7 +197,8 @@ router.post("/updatedeck", authenticateToken, async (req, res, next) => {
   try {
     const data = req.body
     lengthtest(data.deck_name, 1, 200)
-    await updatedeck(data.deck_name, data.deck_id)
+    const isPublic = data.hasOwnProperty('isPublic') ? data.isPublic : null
+    await updatedeck(data.deck_name, data.deck_id, isPublic)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   } catch (error) {
     next(error)

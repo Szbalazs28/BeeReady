@@ -1,5 +1,6 @@
 const { share_code_generator } = require("../utils.js");
 const pool = require('../sql/database');
+const { isexistscheck } = require("../utils.js");
 
 async function userexists(email, username) {
     return await pool.execute("SELECT email, username FROM users WHERE email= ? or username=?", [email, username]);
@@ -48,14 +49,14 @@ async function uniquesharecode() {
     return share_code
 }
 
-async function add_deck(id, name) {
+async function add_deck(id, name, isPublic = false) {
     let share_code = await uniquesharecode()
     const [maxposition] = await maxdeckposition(id);
     if (maxposition[0].max_position === null) {
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, 0, ?)", [id, name, share_code])
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code, public) VALUES(?, ?, 0, ?, ?)", [id, name, share_code, isPublic])
     }
     else {
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [id, name, maxposition[0].max_position + 1, share_code])
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code, public) VALUES(?, ?, ?, ?, ?)", [id, name, maxposition[0].max_position + 1, share_code, isPublic])
     }
 
 }
@@ -79,8 +80,12 @@ async function getdeckbydeck_id(deck_id) {
     return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ?", [deck_id])
 }
 
-async function updatedeck(deck_name, deck_id) {
-    await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
+async function updatedeck(deck_name, deck_id, isPublic = null) {
+    if (isPublic !== null) {
+        await pool.execute("UPDATE flashcard_deck SET deck_name=?, public=? WHERE deck_id=?", [deck_name, isPublic, deck_id])
+    } else {
+        await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=?", [deck_name, deck_id])
+    }
 }
 
 async function deletedeck(deck_id) {
@@ -321,7 +326,7 @@ async function adminCheck(id) {
 
 async function admin_get_users() {
     return await pool.execute(
-        `SELECT id, username, email, profil_pic_url
+        `SELECT users.id, users.username, users.email, users.profil_pic_url
         FROM users 
         LEFT JOIN admins ON users.id = admins.user_id 
         WHERE admins.user_id IS NULL 
@@ -357,7 +362,8 @@ FROM flashcard_deck fd
 JOIN users u ON fd.user_id = u.id
 LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
 LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
-GROUP BY fd.deck_id, fd.deck_name, u.username, fd.create_date, fd.share_code
+WHERE fd.public = TRUE
+GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
 
 UNION ALL
 
@@ -375,7 +381,7 @@ JOIN users u ON q.user_id = u.id
 LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
 LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
 WHERE q.public = TRUE
-GROUP BY q.quiz_id, q.title, u.username, q.last_modified, q.description
+GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
 
 ORDER BY created_at DESC;`)
 };

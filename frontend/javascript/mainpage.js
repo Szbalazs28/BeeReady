@@ -23,7 +23,7 @@ async function update_Cal() {
         const currentY = current_date.getFullYear();
         const currentM = current_date.getMonth();
 
-        const data = await apiFetch('http://localhost:4000/api/get_calendar_events', {
+        const data = await apiFetch('http://127.0.0.1:4000/api/get_calendar_events', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ year: currentY, month: currentM + 1 })
@@ -126,7 +126,7 @@ async function refreshModalEvents(dateStr) {
         const currentY = new Date(dateStr).getFullYear();
         const currentM = new Date(dateStr).getMonth() + 1;
 
-        const data = await apiFetch('http://localhost:4000/api/get_calendar_events', {
+        const data = await apiFetch('http://127.0.0.1:4000/api/get_calendar_events', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ year: currentY, month: currentM })
@@ -179,7 +179,7 @@ async function DeleteEvent(eventId, eventTitle, dateStr) {
     if (!confirm(`Biztosan törlöd a(z) "${eventTitle}" eseményt?`)) return;
 
     try {
-        await apiFetch('http://localhost:4000/api/delete_calendar_event', {
+        await apiFetch('http://127.0.0.1:4000/api/delete_calendar_event', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ event_id: eventId })
@@ -197,10 +197,10 @@ async function saveCalendarEvent() {
     const title = document.getElementById('event_title').value;
     const desc = document.getElementById('event_desc').value;
 
-    if (!title) return alert("Kérlek, add meg az esemény nevét!");
+    if (!title) return alertell("Kérlek, add meg az esemény nevét!", 2.5);
 
     try {
-        await apiFetch('http://localhost:4000/api/insert_calendar_event', {
+        await apiFetch('http://127.0.0.1:4000/api/insert_calendar_event', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({
@@ -375,7 +375,7 @@ async function submitTask() {
         const task_name = document.getElementById('task_name').value
         const task_description = document.getElementById('task_description').value
         const importance = document.getElementById('importance').value
-        const result = await apiFetch('http://localhost:4000/api/taskadd', {
+        const result = await apiFetch('http://127.0.0.1:4000/api/taskadd', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -398,7 +398,7 @@ async function submitTask() {
 
 async function loadTasks() {
     try {
-        const result = await apiFetch('http://localhost:4000/api/gettasks', {
+        const result = await apiFetch('http://127.0.0.1:4000/api/gettasks', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', loadTasks)
 
 async function markTaskDone(id) {
     try {
-        const response = await apiFetch('http://localhost:4000/api/marktaskdone', {
+        const response = await apiFetch('http://127.0.0.1:4000/api/marktaskdone', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -513,7 +513,7 @@ async function markTaskDone(id) {
 
 async function restoreTask(id) {
     try {
-        const response = await apiFetch('http://localhost:4000/api/restoretask', {
+        const response = await apiFetch('http://127.0.0.1:4000/api/restoretask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -532,7 +532,7 @@ async function deleteTask(id) {
     if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return
 
     try {
-        const response = await apiFetch('http://localhost:4000/api/deletetask', {
+        const response = await apiFetch('http://127.0.0.1:4000/api/deletetask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -571,7 +571,7 @@ async function saveTask(id, card_div, saveBtn) {
         const newDesc = descElement.value
         const importanceValue = importanceSpan.dataset.value
 
-        const response = await apiFetch('http://localhost:4000/api/updatetask', {
+        const response = await apiFetch('http://127.0.0.1:4000/api/updatetask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
