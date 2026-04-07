@@ -76,7 +76,6 @@ async function renderHiveCards(data) {
         save_button.setAttribute('data-item-type', qnf.type);
         save_button.setAttribute('data-item-id', qnf.id);
         
-        // Ha az elem már van mentve, akkor Törlés szöveg és saved classe
         if (qnf.is_saved_by_user === 1 || qnf.is_saved_by_user === true) {
             save_button.textContent = 'Törlés';
             save_button.classList.add('saved');
@@ -84,7 +83,6 @@ async function renderHiveCards(data) {
             save_button.textContent = 'Mentés';
         }
 
-        // Event listener a mentés/törlés gombhoz
         save_button.addEventListener('click', async (e) => {
             e.preventDefault();
             await handleSaveItem(save_button, qnf.type, qnf.id);
@@ -109,13 +107,9 @@ function initializeHiveFilters() {
         button.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            // Távolítsd el az active class-t mindenhonnan
             filterButtons.forEach(btn => btn.classList.remove('active'));
             
-            // Add meg az active class-t az aktuális gombra
             button.classList.add('active');
-            
-            // Határozd meg a szűrés típusát
             let filterType = 'all';
             if (button.classList.contains('hive_btn_onlyFlashcard')) {
                 filterType = 'flashcard';
@@ -194,21 +188,34 @@ async function handleSaveItem(button, itemType, itemId) {
             const favoriteSpan = card.querySelector('.hive_card_likes span:last-child');
             
             if (result.is_favorited) {
-                // Most már mentett
                 button.textContent = 'Törlés';
                 button.classList.add('saved');
-                if (favoriteSpan) {
-                    favoriteSpan.textContent = parseInt(favoriteSpan.textContent) + 1;
-                }
                 alertell('Elem mentve!', 2);
             } else {
-                // Most már nem mentett
                 button.textContent = 'Mentés';
                 button.classList.remove('saved');
-                if (favoriteSpan) {
-                    favoriteSpan.textContent = parseInt(favoriteSpan.textContent) - 1;
-                }
                 alertell('Elem törölve!', 2);
+            }
+            
+            if (favoriteSpan) {
+                try {
+                    const countResult = await apiFetch('http://127.0.0.1:4000/api/getfavoritecount', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            item_type: itemType,
+                            item_id: itemId
+                        })
+                    });
+                    if (countResult.success) {
+                        favoriteSpan.textContent = countResult.count;
+                    }
+                } catch (error) {
+                    console.error('Hiba a kedvelések számának lekérésekor:', error);
+                }
             }
         }
     } catch (error) {

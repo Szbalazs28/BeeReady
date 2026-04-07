@@ -495,6 +495,14 @@ async function toggleFavorite(user_id, item_type, item_id) {
     }
 }
 
+async function getFavoriteCount(item_type, item_id) {
+    const [result] = await pool.execute(
+        "SELECT COUNT(id) as count FROM user_favorites WHERE item_type = ? AND item_id = ?",
+        [item_type, item_id]
+    );
+    return result[0].count;
+}
+
 async function calcquizpoints(result_id, user_id) {
     const [sum] = await pool.execute("SELECT SUM(quiz_results.points_earned) as earned_points FROM `quiz_results` JOIN quiz_submit ON quiz_results.result_id=quiz_submit.result_id WHERE quiz_submit.user_id=? AND quiz_results.result_id = ?", [user_id, result_id]);
     await pool.execute("UPDATE quiz_submit set earned_points = ? where quiz_submit.result_id = ? and quiz_submit.user_id = ?", [sum[0].earned_points, result_id, user_id]);
@@ -617,5 +625,6 @@ module.exports = {
     save_question,
     save_quiz,
     getquizzes,
-    toggleFavorite
+    toggleFavorite,
+    getFavoriteCount
 };
