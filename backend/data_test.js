@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { save_result, loadcorrectanswers, userexists, userbyemail, userbyid, loadanswers } = require("./sql/querys.js");
+const { save_result, userexists, userbyemail, userbyid, loadanswers } = require("./sql/querys.js");
 
 function passwordTest(password) {
     let issue = false
@@ -110,11 +110,11 @@ async function compare(password, hash) {
 }
 
 function timetest(start, end) {
-    if (start.length < 5 || end.length < 5 || start[2] !== ':' || end[2] !== ':') {        
+    if (start.length < 5 || end.length < 5 || start[2] !== ':' || end[2] !== ':') {
         throw new Error("Az időpontnak HH:MM formátumúnak kell lennie!");
     }
     else {
-        if (start >= end) {            
+        if (start >= end) {
             throw new Error("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!");
         }
     }
@@ -135,58 +135,79 @@ function lengthtest(input, min, max) {
     }
 }
 
-async function answer_validation(result_id, data, id) {    
+async function answer_validation(result_id, user, id) {
     let correct = false
-    const answers = await loadcorrectanswers(data.question_id, id)
-    if (data.question_type === "order") {
-        let j = 0
-        while ((j < answers.length && j < data.answers.length) && answers[j].answer_id !== data.answers[j]) {
-            j++
-        }
-        if (j == answers.length) {
-            correct = true
-        }
-    }
-    else {
-        if (data.question_type === "short") {
-            let j = 0
-            while (j < answers.length && answers[j].answer_text != data.answers[0]) {
-                j++
-            }
-            if (j != answers.length) {
-                correct = true
+    let points = 0
+    const answers = await loadanswers(user.question_id, id)
+    let answers_text = { answers: [] }
+    if (user.question_type == "order") {
+        if (answers[0].question_points != 0) {
+            answers_text.ispartial = false
+            points = answers[0].question_points
+            for (let i = 0; i < answers.length && i < user.answers.length; i++) {
+                let correct = true
+                if (answers[i].answer_id != user.answers[i]) {                    
+                    correct = false
+                    points = 0
+                }
+                answers_text.answers.push({ answer: user.answers[i], correct: correct });
             }
         }
         else {
-            if (data.question_type === "fill") {
-                const answer_words = JSON.parse(answers[0].answer_text)
-                let keys = Object.values(answer_words)[0];
-                let index = 0;
-                while (index < keys.length && data.answers[index] === keys[index]) {
-                    index++;
-                }
-                if (index == keys.length) {
+            answers_text.ispartial = true
+            for (let i = 0; i < answers.length && i < user.answers.length; i++) {
+                let correct = false
+                if (answers[i].answer_id == user.answers[i]) {
+                    points++;
                     correct = true
                 }
+                answers_text.answers.push({ answer: user.answers[i], points: correct ? 1 : 0, correct: correct });
+            }
+        }
+    }
+    else {
+        if (user.question_type == "short") {
+            let j = 0
+            while (j < answers.length && answers[j].answer_text != user.answers[0]) {
+                j++
+            }
+            if (j < answers.length) {
+                correct = true
+                answers_text.answers.push({ answer: user.answers[0], correct: true });
+                points = answers[0].question_points
+            }
+            else{
+                answers_text.answers.push({ answer: user.answers[0], correct: false });
+            }
+        }
+        else {
+            if (user.question_type == "fill") {
+                const answer_words = JSON.parse(answers[0].answer_text).words
+                const answer_points = JSON.parse(answers[0].answer_text).points
+                for (let i = 0; i < answer_words.length && i < user.answers.length; i++) {
+                    let correct = false
+                    if (answer_words[i] == user.answers[i]) {
+                        correct = true
+                        points += answer_points[i]
+                    }
+                    answers_text.answers.push({ answer: user.answers[i], points: correct ? answer_points[i] : 0, correct: correct });
+                }
+                
             }
             else {
-                if (data.question_type === "standard") {
-                    const all_answers = await loadanswers(data.question_id, id)
-                    let index = 0;
-                    while (index < all_answers.length && all_answers[index].right_answer !== data.answers[index]) {
-                        index++;
-                    }
-                    if (index == all_answers.length) {
-                        correct = true
+                if (user.question_type == "standard") {                    
+                    for (let i = 0; i < answers.length && i < user.answers.length; i++) {
+                        let correct = false
+                        if (answers[i].right_answer == user.answers[i]) {
+                            correct = true
+                            points += answers[i].points
+                        }
+                        answers_text.answers.push({ answer: user.answers[i], points: correct ? answers[i].points : 0, correct: correct });
                     }
                 }
             }
         }
     }
-    let points = 0
-    if (correct) {
-        points = answers[0].points
-    }    
-    await save_result(result_id, data.question_id, JSON.stringify(data.answers), correct, points)
+    await save_result(result_id, user.question_id, JSON.stringify(answers_text), points)
 }
 module.exports = { answer_validation, affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest };

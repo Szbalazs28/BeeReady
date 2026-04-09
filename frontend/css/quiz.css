@@ -884,6 +884,12 @@
     }
 }
 
+.disabled-submit-btn {
+    background: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .order-point-label{
     font-size: 0.85rem;
     color: #555;    
@@ -892,4 +898,12 @@
     display: flex;
     align-items: center;
     
+}
+
+.wrong_answer{
+    background-color: #ffe5e5;
+}
+
+.correct-answer{
+    background-color: #e5ffe5;
 }
