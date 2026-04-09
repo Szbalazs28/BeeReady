@@ -1,11 +1,11 @@
 async function renderHiveCards(data) {
     const qnfContainer = document.querySelector('.hive_results');
     qnfContainer.innerHTML = '';
-    
+
     data.forEach(qnf => {
         const qnfCard = document.createElement('div');
         qnfCard.classList.add('hive_card');
-        
+
         if (qnf.type === 'flashcard') {
             qnfCard.classList.add('flashcard');
             qnfCard.setAttribute('data-deck-id', qnf.id);
@@ -23,7 +23,7 @@ async function renderHiveCards(data) {
             card_type.textContent = 'KVÍZ';
             qnfCard.appendChild(card_type);
         }
-        
+
         const card_header = document.createElement('div');
         card_header.classList.add('hive_card_header');
 
@@ -75,7 +75,7 @@ async function renderHiveCards(data) {
         save_button.classList.add('hive_btn_save');
         save_button.setAttribute('data-item-type', qnf.type);
         save_button.setAttribute('data-item-id', qnf.id);
-        
+
         if (qnf.is_saved_by_user === 1 || qnf.is_saved_by_user === true) {
             save_button.textContent = 'Törlés';
             save_button.classList.add('saved');
@@ -96,19 +96,20 @@ async function renderHiveCards(data) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    initializeHiveFilters();
+    HiveFilters();
+    HiveSearch();
     loadHiveData('all');
 });
 
-function initializeHiveFilters() {
+function HiveFilters() {
     const filterButtons = document.querySelectorAll('.hive_btn_filter');
-    
+
     filterButtons.forEach(button => {
         button.addEventListener('click', async (e) => {
             e.preventDefault();
-            
+
             filterButtons.forEach(btn => btn.classList.remove('active'));
-            
+
             button.classList.add('active');
             let filterType = 'all';
             if (button.classList.contains('hive_btn_onlyFlashcard')) {
@@ -118,9 +119,41 @@ function initializeHiveFilters() {
             } else if (button.classList.contains('hive_btn_saved')) {
                 filterType = 'saved';
             }
-            
+
             await loadHiveData(filterType);
         });
+    });
+}
+
+function HiveSearch() {
+    const searchInput = document.getElementById('hive_search_input');
+    let searchTimeout;
+    searchInput.addEventListener('input', async (e) => {
+        clearTimeout(searchTimeout);
+        const searchTerm = e.target.value.trim();
+
+        if (searchTerm.length === 0) {
+            await loadHiveData('all');
+            return;
+        }
+
+        searchTimeout = setTimeout(async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const result = await apiFetch('http://127.0.0.1:4000/api/qnfsearch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ search: searchTerm })
+                });
+
+                renderHiveCards(result.results || []);
+            } catch (error) {
+                console.error('Keresési hiba:', error);
+            }
+        }, 1500);
     });
 }
 
@@ -131,9 +164,9 @@ async function loadHiveData(filterType = 'all') {
             console.error('Nincs token - bejelentkezés szükséges');
             return;
         }
-        
+
         let endpoint = 'http://127.0.0.1:4000/api/getQnF';
-        
+
         switch (filterType) {
             case 'flashcard':
                 endpoint = 'http://127.0.0.1:4000/api/getflashcardsonly';
@@ -148,7 +181,7 @@ async function loadHiveData(filterType = 'all') {
             default:
                 endpoint = 'http://127.0.0.1:4000/api/getQnF';
         }
-        
+
         const result = await apiFetch(endpoint, {
             method: 'GET',
             headers: {
@@ -186,7 +219,7 @@ async function handleSaveItem(button, itemType, itemId) {
         if (result.success) {
             const card = button.closest('.hive_card');
             const favoriteSpan = card.querySelector('.hive_card_likes span:last-child');
-            
+
             if (result.is_favorited) {
                 button.textContent = 'Törlés';
                 button.classList.add('saved');
@@ -196,7 +229,7 @@ async function handleSaveItem(button, itemType, itemId) {
                 button.classList.remove('saved');
                 alertell('Elem törölve!', 2);
             }
-            
+
             if (favoriteSpan) {
                 try {
                     const countResult = await apiFetch('http://127.0.0.1:4000/api/getfavoritecount', {

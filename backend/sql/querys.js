@@ -472,35 +472,45 @@ GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
 ORDER BY created_at DESC;`, [user_id, user_id])
 };
 
-async function QnFSearch(name) {
+async function QnFSearch(name, user_id) {
     return await pool.execute(`
-SELECT 
-    u.username, 
-    'flashcard' AS type, 
-    fd.deck_name AS name, 
-    COUNT(fc.card_id) AS item_count,
+SELECT
+    'flashcard' AS type,
+    fd.deck_id AS id,
+    fd.deck_name AS title,
+    u.username AS author,
     fd.create_date AS created_at,
-FROM users u 
-JOIN flashcard_deck fd ON u.id = fd.user_id
-LEFT JOIN flashcard_card fc ON fc.deck_id = fd.deck_id
+    NULL AS description,
+    COUNT(DISTINCT fc.card_id) AS item_count,
+    COUNT(DISTINCT uf.user_id) AS favorite_count,
+    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id)) AS is_saved_by_user
+FROM flashcard_deck fd
+JOIN users u ON fd.user_id = u.id
+LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
+LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
 WHERE fd.public = TRUE AND (u.username LIKE ? OR fd.deck_name LIKE ?)
-GROUP BY fd.deck_id, fd.deck_name, u.id, u.username
+GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
 
 UNION ALL
 
-SELECT 
-    u.username, 
-    'quiz' AS type, 
-    q.title AS name, 
-    COUNT(qq.question_id) AS item_count,
+SELECT
+    'quiz' AS type,
+    q.quiz_id AS id,
+    q.title AS title,
+    u.username AS author,
     q.last_modified AS created_at,
-FROM users u
-JOIN quizzes q ON q.user_id = u.id
+    q.description AS description,
+    COUNT(DISTINCT qq.question_id) AS item_count,
+    COUNT(DISTINCT uf.user_id) AS favorite_count,
+    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id)) AS is_saved_by_user
+FROM quizzes q
+JOIN users u ON q.user_id = u.id
 LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
+LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
 WHERE q.public = TRUE AND (u.username LIKE ? OR q.title LIKE ?)
-GROUP BY q.quiz_id, q.title, u.id, u.username
+GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
 
-ORDER BY created_at DESC;`, [`${name}%`, `${name}%`, `${name}%`, `${name}%`])
+ORDER BY created_at DESC;`, [user_id, `${name}%`, `${name}%`, user_id, `${name}%`, `${name}%`])
 }
 
 async function toggleFavorite(user_id, item_type, item_id) {
@@ -510,19 +520,17 @@ async function toggleFavorite(user_id, item_type, item_id) {
     );
 
     if (existing.length > 0) {
-        // Ha már van, törlünk
         await pool.execute(
             "DELETE FROM user_favorites WHERE user_id = ? AND item_type = ? AND item_id = ?",
             [user_id, item_type, item_id]
         );
-        return false; // Most már nem mentett
+        return false;
     } else {
-        // Ha nincs, beszúrunk
         await pool.execute(
             "INSERT INTO user_favorites (user_id, item_type, item_id) VALUES (?, ?, ?)",
             [user_id, item_type, item_id]
         );
-        return true; // Most már mentett
+        return true;
     }
 }
 
@@ -601,6 +609,7 @@ async function save_question(quiz_id, question_text, id, type, position, points)
 }
 
 module.exports = {
+    QnFSearch,
     delete_task,
     add_task,
     get_tasks,

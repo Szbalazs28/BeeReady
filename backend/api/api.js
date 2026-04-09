@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, getFlashcardsOnly, getQuizzesOnly, getUserFavorites, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount } = require("../sql/querys.js");
+const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, getFlashcardsOnly, getQuizzesOnly, getUserFavorites, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -450,6 +450,18 @@ router.get("/getQnF", authenticateToken, async (req, res, next) => {
       write: false,
       qnf: qnf_rows
     });
+  } catch (error) { next(error); }
+});
+
+router.post("/qnfsearch", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const searchTerm = req.body.search;
+    if (!searchTerm || searchTerm.trim().length === 0) {
+      return res.status(400).json({ write: false, results: [] });
+    }
+    const [results] = await QnFSearch(searchTerm, user_id);
+    res.status(200).json({ write: false, results: results });
   } catch (error) { next(error); }
 });
 
