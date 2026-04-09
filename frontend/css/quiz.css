@@ -1,6 +1,6 @@
 .quiz-container {
     flex: 1;
-    height: 75vh;
+    height: 350px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

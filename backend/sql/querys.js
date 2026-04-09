@@ -77,7 +77,7 @@ async function getdeck(id) {
 }
 
 async function getdeckbydeck_id(deck_id) {
-    return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ?", [deck_id])
+    return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ?", [deck_id])
 }
 
 async function updatedeck(deck_name, deck_id, isPublic = null) {
@@ -446,7 +446,7 @@ SELECT
 FROM flashcard_deck fd
 JOIN users u ON fd.user_id = u.id
 LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
-LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
+INNER JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
 WHERE fd.public = TRUE AND uf.user_id = ?
 GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
 
@@ -465,12 +465,43 @@ SELECT
 FROM quizzes q
 JOIN users u ON q.user_id = u.id
 LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
-LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
+INNER JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
 WHERE q.public = TRUE AND uf.user_id = ?
 GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
 
 ORDER BY created_at DESC;`, [user_id, user_id])
 };
+
+async function QnFSearch(name) {
+    return await pool.execute(`
+SELECT 
+    u.username, 
+    'flashcard' AS type, 
+    fd.deck_name AS name, 
+    COUNT(fc.card_id) AS item_count,
+    fd.create_date AS created_at,
+FROM users u 
+JOIN flashcard_deck fd ON u.id = fd.user_id
+LEFT JOIN flashcard_card fc ON fc.deck_id = fd.deck_id
+WHERE fd.public = TRUE AND (u.username LIKE ? OR fd.deck_name LIKE ?)
+GROUP BY fd.deck_id, fd.deck_name, u.id, u.username
+
+UNION ALL
+
+SELECT 
+    u.username, 
+    'quiz' AS type, 
+    q.title AS name, 
+    COUNT(qq.question_id) AS item_count,
+    q.last_modified AS created_at,
+FROM users u
+JOIN quizzes q ON q.user_id = u.id
+LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
+WHERE q.public = TRUE AND (u.username LIKE ? OR q.title LIKE ?)
+GROUP BY q.quiz_id, q.title, u.id, u.username
+
+ORDER BY created_at DESC;`, [`${name}%`, `${name}%`, `${name}%`, `${name}%`])
+}
 
 async function toggleFavorite(user_id, item_type, item_id) {
     const [existing] = await pool.execute(
@@ -519,7 +550,7 @@ async function loadcorrectanswers(question_id, user_id) {
 }
 
 async function save_result(result_id, question_id, answer, correct, points_earned) {
- await pool.execute("INSERT INTO quiz_results (result_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?)", [result_id, question_id, JSON.stringify(answer), correct, points_earned])    
+    await pool.execute("INSERT INTO quiz_results (result_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?)", [result_id, question_id, JSON.stringify(answer), correct, points_earned])
 }
 
 async function delete_quiz(quiz_id, user_id) {
@@ -531,7 +562,7 @@ async function loadanswers(question_id, user_id) {
     return rows
 }
 
-async function loadquestions(quiz_id, user_id) {     
+async function loadquestions(quiz_id, user_id) {
     const [rows] = await pool.execute("SELECT quiz_questions.question_id, quiz_questions.quiz_id, quiz_questions.question_text, quiz_questions.question_type, quiz_questions.position, quiz_questions.points FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.quiz_id = ? AND quizzes.user_id = ? order by quiz_questions.position", [quiz_id, user_id]);
     return rows
 }
@@ -558,7 +589,7 @@ async function save_quiz(title, description, public, user_id, randomize_question
     const [maxposition] = await pool.execute("SELECT COALESCE(MAX(position) + 1, 0) AS max_position FROM quizzes WHERE user_id = ?", [user_id]);
     const [result] = await pool.execute("INSERT INTO quizzes (user_id, title, description, public, position, randomize_questions, total_points) VALUES (?, ?, ?, ?, ?, ?, ?)", [user_id, title, description, public, maxposition[0].max_position, randomize_questions, total_points]);
     return result.insertId;
-} 
+}
 
 async function save_question(quiz_id, question_text, id, type, position, points) {
     const [checkexistquiz] = await pool.execute("SELECT quiz_id FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, id]);

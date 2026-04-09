@@ -41,6 +41,46 @@
     background-color: #d99c2c;
 }
 
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 500;
+    user-select: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.checkbox-container:hover {
+    background-color: rgba(241, 180, 60, 0.15);
+}
+
+.checkbox-container input {
+    display: none;
+}
+
+.checkbox-container .checkmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 17px;
+    border: 2px solid #f1b43c;
+    border-radius: 5px;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.checkbox-container input:checked + .checkmark {
+    background-color: #f1b43c;
+    border-color: #d99c2c;
+    box-shadow: 0 0 8px rgba(241, 180, 60, 0.4);
+}
 
 .cards {
     height: 100%;
@@ -48,7 +88,7 @@
 
 .flashcard_container {
     flex: 1;
-    height: 65vh;
+    height: 300px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

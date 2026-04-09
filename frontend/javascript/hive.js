@@ -219,7 +219,6 @@ async function handleSaveItem(button, itemType, itemId) {
             }
         }
     } catch (error) {
-        console.error('Hiba a mentés/törlés során:', error);
         alertell('Hiba történt a mentés során!', 3);
     }
 }

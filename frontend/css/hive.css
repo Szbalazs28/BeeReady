@@ -21,14 +21,7 @@
     letter-spacing: 0.5px;
 }
 
-.hive_search_row {
-    display: flex;
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 600px;
-}
-
-.hive_header input {
+.hive_buttons input {
     flex: 1;
     padding: 0.7rem 1rem;
     border: 1.5px solid #e5e7eb;
@@ -40,34 +33,16 @@
     color: #374151;
 }
 
-.hive_header input::placeholder {
+.hive_buttons input::placeholder {
     color: #9ca3af;
 }
 
-.hive_header input:focus {
+.hive_buttons input:focus {
     border-color: #f1b43c;
     background: #fffdf8;
     box-shadow: 0 0 0 3px rgba(241, 180, 60, 0.1);
 }
 
-#hive_search {
-    background-color: #f1b43c;
-    color: #333;
-    border: none;
-    padding: 0.7rem 1.5rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-#hive_search:hover {
-    background-color: #e0a92f;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
 
 .hive_buttons {
     display: flex;
