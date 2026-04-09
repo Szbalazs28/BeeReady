@@ -907,3 +907,20 @@
 .correct-answer{
     background-color: #e5ffe5;
 }
+
+.solution-answer{
+    background-color: #f0f0f0;
+    display: none !important;
+}
+
+.result-back-btn{
+    background-color: rgb(52, 73, 94);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin: auto;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    width: 10vw;
+}

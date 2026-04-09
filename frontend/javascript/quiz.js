@@ -1234,6 +1234,8 @@ function resultpointelement(points, points_earned) {
     return pointsContainer;
 }
 
+
+
 function resultBaseQuestionBlock(question, points_earned = null, answers = null) {
     const questionCard = document.createElement('div');
     questionCard.className = 'question-card';
@@ -1246,15 +1248,52 @@ function resultBaseQuestionBlock(question, points_earned = null, answers = null)
     qInput.textContent = question.question_text;
 
 
+    const div = document.createElement('div');
+    div.className = 'order-point-div';
+    const checkbox = document.createElement('input');
+    checkbox.id = `solution_check_${question.question_id}`;
+    checkbox.type = 'checkbox';
+
+    checkbox.className = 'correct-check order-point-check';
+    const label = document.createElement('label');
+    label.className = 'order-point-label';
+    label.htmlFor = `solution_check_${question.question_id}`;
+    label.textContent = `Megoldások megjelenítése: `;
+
+    checkbox.onclick = function () {
+        if (question.question_type != "fill") {
+            answers = checkbox.closest(".question-card").querySelector(".answers-container").querySelectorAll(".answer-row");
+            answers.forEach(answer => {
+                if (answer.classList.contains("dnone")) {
+                    answer.classList.remove("dnone");
+                }
+                else {
+                    answer.classList.add("dnone");
+                }
+            })
+        }
+        else{
+            answers = checkbox.closest(".question-card").querySelector(".answers-container").querySelector(".answer-row").querySelectorAll(".fill-input");
+            answers.forEach(answer => {
+                if (answer.classList.contains("dnone")) {
+                    answer.classList.remove("dnone");
+                }
+                else {
+                    answer.classList.add("dnone");
+                }
+            })
+        }
+    }
+
+    div.append(label, checkbox);
 
 
-
-    qHeader.append(qInput);
+    qHeader.append(qInput, div);
 
     if (question.question_type == "short" || (question.question_type == "order" && question.points > 0)) {
         qHeader.append(resultpointelement(question.points, points_earned));
     }
-    else{
+    else {
         if (question.question_type == "order") {
             qHeader.append(resultpointelement(answers.length, points_earned));
         }
@@ -1272,16 +1311,40 @@ function result_addNewStandardQuestionBlock(question, answers, user_answer) {
     answersContainer.className = 'answers-container';
     if (answers && answers.length > 0) {
         answers.forEach((answer, index) => {
-            answersContainer.appendChild(result_addStandardAnswerToBlock(answer, answers_text[index]));
+            answersContainer.appendChild(result_addStandardAnswerToBlock(answer, answers_text[index], false));
         })
+        answers.forEach((answer, index) => {
+            answersContainer.appendChild(result_addStandardAnswerToBlock(answer, answers_text[index], true));
+        })
+
     }
     questionCard.append(answersContainer);
     document.querySelector('#start_question_container').appendChild(questionCard);
 
 }
 
+function result_addNewFillQuestionBlock(question, answers, user_answer) {
+    const questionCard = resultBaseQuestionBlock(question);
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answers-container';
+    answersContainer.id = `answers_${question.question_id}`;
 
-function result_addNewShortAnswerQuestionBlock(question, user_answer) {
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+
+    const ansInput = document.createElement('div');
+    ansInput.classList.add('ans-input', 'fill-ans-input');
+    ansInput.innerHTML = resultinsertinput(answers[0].answer_text, user_answer);
+    answerRow.append(ansInput);
+    answersContainer.appendChild(answerRow);
+
+    questionCard.append(answersContainer);
+
+    document.querySelector('#start_question_container').appendChild(questionCard);
+}
+
+
+function result_addNewShortAnswerQuestionBlock(question, answers, user_answer) {
     const questionCard = resultBaseQuestionBlock(question, user_answer[0].points_earned);
     const answers_text = JSON.parse(user_answer[0].answer_text).answers;
     const answersContainer = document.createElement('div');
@@ -1302,9 +1365,12 @@ function result_addNewShortAnswerQuestionBlock(question, user_answer) {
     if (answers_text[0].correct) {
         answerRow.classList.add('correct-answer');
     }
-    else{
+    else {
         answerRow.classList.add('wrong_answer');
     }
+    answers.forEach((answer) => {
+        answersContainer.appendChild(result_addShortAnswerToBlock(answer));
+    })
 
     questionCard.append(answersContainer);
 
@@ -1312,7 +1378,7 @@ function result_addNewShortAnswerQuestionBlock(question, user_answer) {
 
 }
 
-function result_addNewOrderQuestionBlock(question,answers, user_answer) {
+function result_addNewOrderQuestionBlock(question, answers, user_answer) {
     const answers_text = JSON.parse(user_answer[0].answer_text).answers;
     const questionCard = resultBaseQuestionBlock(question, user_answer[0].points_earned, answers);
     const answersContainer = document.createElement('div');
@@ -1320,15 +1386,18 @@ function result_addNewOrderQuestionBlock(question,answers, user_answer) {
     if (answers && answers.length > 0) {
         answers_text.forEach((answer, index) => {
             let i = 0;
-            while(i < answers.length && answers[i].answer_id != answer.answer){
+            while (i < answers.length && answers[i].answer_id != answer.answer) {
                 i++;
             }
-            if(i < answers.length){
+            if (i < answers.length) {
                 answersContainer.appendChild(result_addOrderAnswerToBlock(answers[i], answers_text[index]));
             }
-            
+
         })
     }
+    answers.forEach(answer => {
+        answersContainer.appendChild(result_addOrderAnswerToBlock(answer));
+    });
     questionCard.append(answersContainer);
     document.querySelector('#start_question_container').appendChild(questionCard);
 }
@@ -1339,7 +1408,21 @@ function result_addNewOrderQuestionBlock(question,answers, user_answer) {
 
 
 // to block ----------------------
-function result_addOrderAnswerToBlock(answer, user_answer) {
+function result_addShortAnswerToBlock(answer) {
+    const answerRow = document.createElement('div');
+    answerRow.className = 'answer-row';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.className = 'ans-input';
+    answerRow.classList.add("correct-answer", "dnone")
+    ansInput.value = answer.answer_text;
+    ansInput.disabled = true;
+
+    answerRow.append(ansInput);
+    return answerRow;
+}
+
+function result_addOrderAnswerToBlock(answer, user_answer = null) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
 
@@ -1348,21 +1431,25 @@ function result_addOrderAnswerToBlock(answer, user_answer) {
     ansInput.type = 'text';
     ansInput.disabled = true;
     ansInput.className = 'ans-input';
-    if (answer) {
-        ansInput.value = answer.answer_text;
+    ansInput.value = answer.answer_text;
+    if (user_answer) {
+        if (user_answer.correct) {
+            answerRow.classList.add('correct-answer');
+        }
+        else {
+            answerRow.classList.add('wrong_answer');
+        }
     }
-    if (user_answer.correct) {
-        answerRow.classList.add('correct-answer');
+    else {
+        answerRow.classList.add("correct-answer", "dnone")
     }
-    else{
-        answerRow.classList.add('wrong_answer');
-    }
+
 
     answerRow.append(ansInput);
     return answerRow;
 }
 
-function result_addStandardAnswerToBlock(answer, user_answer) {
+function result_addStandardAnswerToBlock(answer, user_answer, solution_view = false) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
     const ansCheck = document.createElement('input');
@@ -1370,21 +1457,30 @@ function result_addStandardAnswerToBlock(answer, user_answer) {
     ansCheck.className = 'correct-check';
     ansCheck.disabled = true;
 
-    ansCheck.checked = answer.right_answer;
+
 
     const ansInput = document.createElement('input');
     ansInput.type = 'text';
     ansInput.className = 'ans-input';
     ansInput.disabled = true;
-    ansInput.value = answer.answer_text;
+    if (solution_view) {
+        ansInput.value = answer.answer_text;
+        ansCheck.checked = answer.right_answer;
+        answerRow.classList.add('correct-answer', 'dnone');
+        answerRow.append(ansCheck, ansInput, startpointelement(answer.points));
+    }
+    else {
+        ansInput.value = answer.answer_text;
+        ansCheck.checked = user_answer.answer;
+        if (user_answer.correct) {
+            answerRow.classList.add('correct-answer');
+        } else {
+            answerRow.classList.add('wrong_answer');
+        }
 
-    if (user_answer.correct) {
-        answerRow.classList.add('correct-answer');
-    } else {
-        answerRow.classList.add('wrong_answer');
+        answerRow.append(ansCheck, ansInput, resultpointelement(answer.points, user_answer.points));
     }
 
-    answerRow.append(ansCheck, ansInput, resultpointelement(answer.points, user_answer.points));
     return answerRow;
 
 }
@@ -1397,6 +1493,25 @@ function insertinput(ansText) {
     let index = 0;
     while (text.includes("{}")) {
         text = text.replace("{}", `<input type="text" class="fill-input" required>(${points[index]} pont)`);
+        index++;
+    }
+    return text
+}
+
+function resultinsertinput(ansText, user_answer) {
+    let text = JSON.parse(ansText).text;
+    let points = JSON.parse(ansText).points;
+    let solution = JSON.parse(ansText).words;
+    let words = JSON.parse(user_answer[0].answer_text).answers;
+
+    let index = 0;
+    while (text.includes("{}")) {
+        if (words[index].correct) {
+            text = text.replace("{}", `<span class="fill-input correct-answer">${words[index].answer}</span><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
+        }
+        else {
+            text = text.replace("{}", `<span class="fill-input wrong_answer">${words[index].answer}</span><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
+        }
         index++;
     }
     return text
@@ -1420,6 +1535,8 @@ async function exit_quiz() {
 
 function quiz_start_reset() {
     document.getElementById("start_question_container").innerHTML = "";
+    document.getElementById("quizSubmit").classList.remove("dnone");
+    document.getElementById("quizBackBTN").classList.add("dnone");
 }
 
 async function quiz_start(quiz) {
@@ -1670,8 +1787,10 @@ async function load_result_details(quiz, result_id, formattedResult, earned_poin
         document.getElementById("quiz_title").setAttribute("data-total-points", quiz.total_points);
         document.getElementById("quiz_description").textContent = quiz.description;
         document.getElementById("author").textContent = quiz.author;
-        document.getElementById("total_points").textContent  = `Összpontszám: ${earned_points}/${quiz.total_points} pont - ${formattedResult}%`;
-        
+        document.getElementById("total_points").textContent = `Összpontszám: ${earned_points}/${quiz.total_points} pont - ${formattedResult}%`;        
+        document.getElementById("quizSubmit").classList.add("dnone");
+        document.getElementById("quizBackBTN").classList.remove("dnone");
+        document.getElementById("quizBackBTN").onclick = () => show_exit_modal(true);
 
         const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
             method: "GET",
@@ -1689,7 +1808,7 @@ async function load_result_details(quiz, result_id, formattedResult, earned_poin
             }
             else {
                 if (question.question_type === "short") {
-                    result_addNewShortAnswerQuestionBlock(question, user_answer);
+                    result_addNewShortAnswerQuestionBlock(question, answers, user_answer);
                 }
                 else {
                     if (question.question_type === "fill") {
