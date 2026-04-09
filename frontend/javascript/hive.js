@@ -151,9 +151,10 @@ function HiveSearch() {
 
                 renderHiveCards(result.results || []);
             } catch (error) {
+                alertell('Hiba történt a keresés során!', 2);
                 console.error('Keresési hiba:', error);
             }
-        }, 1500);
+        }, 1000);
     });
 }
 
@@ -199,11 +200,6 @@ async function loadHiveData(filterType = 'all') {
 async function handleSaveItem(button, itemType, itemId) {
     try {
         const token = localStorage.getItem('token');
-        if (!token) {
-            alertell('Bejelentkezés szükséges!', 3);
-            return;
-        }
-
         const result = await apiFetch('http://127.0.0.1:4000/api/toggleFavorite', {
             method: 'POST',
             headers: {
