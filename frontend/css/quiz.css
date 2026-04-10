@@ -924,3 +924,9 @@
     font-weight: 700;
     width: 10vw;
 }
+
+.foreigndiv{
+    display: flex;
+    align-items: center;
+    
+}

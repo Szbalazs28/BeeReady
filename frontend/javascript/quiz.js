@@ -4,15 +4,19 @@ async function load_quizzes() {
             if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
                 document.querySelector(".quiz-create-container").classList.add("dnone");
                 document.querySelector(".quiz-action-div").classList.remove("dnone");
-                document.querySelector(".quiz-container").classList.remove("dnone");
+                document.querySelector("#quizContainer").classList.remove("dnone")
             }
             if (!document.getElementById("quizStart").classList.contains("dnone")) {
                 document.getElementById("quizStart").classList.add("dnone");
                 document.querySelector(".quiz-action-div").classList.remove("dnone");
-                document.querySelector(".quiz-container").classList.remove("dnone");
+                document.querySelector("#quizContainer").classList.remove("dnone")
             }
+            document.getElementById("foreignQuizContainer").classList.add("dnone");
+            document.getElementById("quizContainer").classList.remove("dnone");
+            document.getElementById("foreignQuizToggle").checked = false;
             quiz_start_reset();
-            const quizContainer = document.querySelector(".quiz-container");
+            const quizContainer = document.querySelector("#quizContainer");
+            const foreignQuizContainer = document.getElementById("foreignQuizContainer");
             quizContainer.innerHTML = "";
             const token = localStorage.getItem("token");
             const result = await apiFetch("http://127.0.0.1:4000/api/getquizzes", {
@@ -22,11 +26,28 @@ async function load_quizzes() {
                     "authorization": `Bearer ${token}`
                 }
             });
+            const foreignResult = await apiFetch("http://127.0.0.1:4000/api/getforeignquizzes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": `Bearer ${token}`
+                }
+            });
             for (let i = 0; i < result.quizzes.length; i++) {
-                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions, result.quizzes[i].total_points));
+                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions, result.quizzes[i].total_points, false));
             }
-            const el = document.getElementById('quizContainer');
-            Sortable.create(el, {
+            for (let i = 0; i < foreignResult.quizzes.length; i++) {
+                foreignQuizContainer.appendChild(build_quiz(foreignResult.quizzes[i].title, foreignResult.quizzes[i].description, foreignResult.quizzes[i].quiz_id, foreignResult.quizzes[i].question_count, foreignResult.quizzes[i].created_at, foreignResult.quizzes[i].last_result, foreignResult.quizzes[i].created_by, foreignResult.quizzes[i].public, foreignResult.quizzes[i].randomize_questions, foreignResult.quizzes[i].total_points, true));
+            }
+            Sortable.create(quizContainer, {
+                animation: 150,
+                dataIdAttr: 'data-id',
+                onEnd: function (evt) {
+                    const currentorder = Sortable.get(evt.from).toArray();
+                    save_current_quiz_order(currentorder)
+                }
+            });
+            Sortable.create(foreignQuizContainer, {
                 animation: 150,
                 dataIdAttr: 'data-id',
                 onEnd: function (evt) {
@@ -44,7 +65,7 @@ async function load_quizzes() {
 }
 
 
-function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions, total_points) {
+function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions, total_points, isForeign) {
     const quiz_element = document.createElement("div")
     quiz_element.draggable = true
     quiz_element.setAttribute("data-id", quiz_id)
@@ -108,7 +129,14 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
     delete_button.type = "button"
     delete_button.classList.add("quiz-button", "delete-quiz-button")
     delete_button.textContent = "Törlés"
-    delete_button.onclick = () => { show_quiz_delete_modal(quiz_id) }
+
+    if (!isForeign) {
+        delete_button.onclick = () => { show_quiz_delete_modal(quiz_id, false) }
+    }
+    else {
+        delete_button.onclick = () => { show_quiz_delete_modal(quiz_id, true) }
+    }
+
 
     const result_button = document.createElement("button")
     result_button.type = "button"
@@ -124,15 +152,18 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
 
     start_button.onclick = () => { quiz_start(quiz) }
 
-    const edit_button = document.createElement("button")
-    edit_button.type = "button"
-    edit_button.classList.add("quiz-button", "edit-quiz-button")
-    edit_button.textContent = "Szerkesztés"
+    if (!isForeign) {
+        const edit_button = document.createElement("button")
+        edit_button.type = "button"
+        edit_button.classList.add("quiz-button", "edit-quiz-button")
+        edit_button.textContent = "Szerkesztés"
+        edit_button.onclick = () => { quiz_edit_user(quiz) }
+        quiz_actions.appendChild(edit_button)
 
-    edit_button.onclick = () => { quiz_edit_user(quiz) }
+    }
 
     quiz_actions.appendChild(start_button)
-    quiz_actions.appendChild(edit_button)
+
     quiz_actions.appendChild(result_button)
     quiz_actions.appendChild(delete_button)
 
@@ -841,7 +872,7 @@ function showcreatequiz() {
     quiz_creator_reset()
     document.querySelector(".quiz-create-container").classList.remove("dnone");
     document.querySelector(".quiz-action-div").classList.add("dnone");
-    document.querySelector(".quiz-container").classList.add("dnone");
+    document.querySelector("#quizContainer").classList.add("dnone")
     const questionsContainer = document.querySelector("#questionsContainer");
     Sortable.create(questionsContainer, {
         animation: 150,
@@ -861,6 +892,23 @@ async function save_current_quiz_order(currentorder) {
     try {
         const token = localStorage.getItem("token");
         await apiFetch("http://localhost:4000/api/save_current_quiz_order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ currentorder: currentorder })
+        })
+    } catch (err) {
+        console.error(err);
+    }
+
+}
+
+async function save_current_foreign_quiz_order(currentorder) {
+    try {
+        const token = localStorage.getItem("token");
+        await apiFetch("http://localhost:4000/api/save_current_foreign_quiz_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -954,7 +1002,7 @@ document.getElementById("quizCreateForm").addEventListener("submit", async (e) =
             document.querySelector(".btn-save-quiz").disabled = true;
             document.querySelector(".btn-save-quiz").classList.add("disabled-submit-btn");
             const quiz_id = document.querySelector(".btn-save-quiz").getAttribute("data-quiz-id");
-            await quiz_delete(quiz_id);
+            await quiz_delete(quiz_id, false);
             await saveQuiz(e);
         }
         else {
@@ -972,7 +1020,7 @@ document.getElementById("quizCreateForm").addEventListener("submit", async (e) =
 document.getElementById("quizStart").addEventListener("submit", submitQuiz);
 
 
-function show_quiz_delete_modal(quiz_id) {
+function show_quiz_delete_modal(quiz_id, isForeign) {
     const modalOverlay = document.createElement("div");
     modalOverlay.className = "quiz-modal-overlay";
 
@@ -981,12 +1029,17 @@ function show_quiz_delete_modal(quiz_id) {
 
     const title = document.createElement("h3");
     title.className = "quiz-delete-modal-title";
-    title.textContent = "Kvíz törlése";
 
+    title.textContent = "Kvíz törlése";
+    if (isForeign) {
+        title.textContent = "Kvíz eredményeinek törlése";
+    }
     const message = document.createElement("p");
     message.className = "quiz-delete-modal-text";
     message.textContent = "Biztosan törölni szeretnéd ezt a kvízt? Ez a művelet nem visszavonható.";
-
+    if (isForeign) {
+        message.textContent = "Biztosan törölni szeretnéd ezt a kvíz eredményeit? Ez a művelet nem visszavonható.";
+    }
     const actionDiv = document.createElement("div");
     actionDiv.className = "quiz-delete-action-div";
 
@@ -1001,7 +1054,7 @@ function show_quiz_delete_modal(quiz_id) {
     confirmBtn.textContent = "Igen, törlés";
     cancelBtn.onclick = () => { closeModal(); };
 
-    confirmBtn.onclick = async () => { await quiz_delete(quiz_id); closeModal(); await load_quizzes(); };
+    confirmBtn.onclick = async () => { await quiz_delete(quiz_id, isForeign); closeModal(); await load_quizzes(); };
 
     actionDiv.append(cancelBtn, confirmBtn);
     modalContent.append(title, message, actionDiv);
@@ -1017,10 +1070,10 @@ function closeModal() {
 }
 
 
-async function quiz_delete(quiz_id) {
+async function quiz_delete(quiz_id, isForeign) {
     const token = localStorage.getItem("token");
     try {
-        await apiFetch(`http://127.0.0.1:4000/api/deletequiz?quiz_id=${quiz_id}`, {
+        await apiFetch(`http://127.0.0.1:4000/api/deletequiz?quiz_id=${quiz_id}&isforeign=${isForeign}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -1272,7 +1325,7 @@ function resultBaseQuestionBlock(question, points_earned = null, answers = null)
                 }
             })
         }
-        else{
+        else {
             answers = checkbox.closest(".question-card").querySelector(".answers-container").querySelector(".answer-row").querySelectorAll(".fill-input");
             answers.forEach(answer => {
                 if (answer.classList.contains("dnone")) {
@@ -1524,7 +1577,7 @@ function fill_insert(text, insert, position) {
 function showstartquiz() {
     document.querySelector(".quiz_start_container").classList.remove("dnone");
     document.querySelector(".quiz-action-div").classList.add("dnone");
-    document.querySelector(".quiz-container").classList.add("dnone");
+    document.querySelector("#quizContainer").classList.add("dnone")
 
 }
 
@@ -1787,7 +1840,7 @@ async function load_result_details(quiz, result_id, formattedResult, earned_poin
         document.getElementById("quiz_title").setAttribute("data-total-points", quiz.total_points);
         document.getElementById("quiz_description").textContent = quiz.description;
         document.getElementById("author").textContent = quiz.author;
-        document.getElementById("total_points").textContent = `Összpontszám: ${earned_points}/${quiz.total_points} pont - ${formattedResult}%`;        
+        document.getElementById("total_points").textContent = `Összpontszám: ${earned_points}/${quiz.total_points} pont - ${formattedResult}%`;
         document.getElementById("quizSubmit").classList.add("dnone");
         document.getElementById("quizBackBTN").classList.remove("dnone");
         document.getElementById("quizBackBTN").onclick = () => show_exit_modal(true);
@@ -1842,5 +1895,15 @@ async function load_user_answer(result_id, question_id) {
         return result.user_answer;
     } catch (err) {
         console.error(err)
+    }
+}
+
+function toggleForeignQuizzes() {
+    if (document.getElementById("foreignQuizToggle").checked) {
+        document.getElementById("foreignQuizContainer").classList.remove("dnone");
+        document.getElementById("quizContainer").classList.add("dnone");
+    } else {
+        document.getElementById("foreignQuizContainer").classList.add("dnone");
+        document.getElementById("quizContainer").classList.remove("dnone");
     }
 }

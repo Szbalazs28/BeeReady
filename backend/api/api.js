@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { loadanswers_withoutright,getuseranswers,getquizresult, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, quiz_submit } = require("../sql/querys.js");
+const { save_current_foreign_quiz_order,getforeignquizzes, loadanswers_withoutright,getuseranswers,getquizresult, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, quiz_submit } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -388,6 +388,16 @@ router.get("/getquizzes", authenticateToken, async (req, res, next) => {
   }
 });
 
+router.get("/getforeignquizzes", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const quizzes = await getforeignquizzes(id);
+    res.status(200).json({ write: false, quizzes: quizzes });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/savequiz", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
@@ -437,6 +447,19 @@ router.post("/save_current_quiz_order", authenticateToken, async (req, res, next
   }
 });
 
+router.post("/save_current_foreign_quiz_order", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const currentorder = req.body.currentorder
+    for (let i = 0; i < currentorder.length; i++) {
+      await save_current_foreign_quiz_order(currentorder[i], i, id)
+    }
+    res.status(200).json({ write: false });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 router.get("/getquizquestions", authenticateToken, async (req, res, next) => {
   try {
@@ -475,7 +498,8 @@ router.delete("/deletequiz", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
     const quiz_id = req.query.quiz_id
-    await delete_quiz(quiz_id, id);
+    const isForeign = req.query.isforeign === "true";
+    await delete_quiz(quiz_id, id, isForeign);
     res.status(200).json({ write: false, message: "Kvíz törölve!" });
   } catch (error) {
     next(error);
