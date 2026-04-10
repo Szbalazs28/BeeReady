@@ -158,14 +158,9 @@ function HiveSearch() {
     });
 }
 
-async function loadHiveData(filterType = 'all') {
+async function loadHiveData(filterType) {
     try {
         const token = localStorage.getItem('token');
-        if (!token) {
-            console.error('Nincs token - bejelentkezés szükséges');
-            return;
-        }
-
         let endpoint = 'http://127.0.0.1:4000/api/getQnF';
 
         switch (filterType) {
