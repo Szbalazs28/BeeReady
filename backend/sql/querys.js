@@ -201,9 +201,9 @@ async function getquizzes(user_id) {
     return await pool.execute("SELECT quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quizzes.last_result,quizzes.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public, quizzes.randomize_questions, quizzes.total_points FROM quizzes LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id JOIN users ON quizzes.user_id=users.id WHERE user_id = ? GROUP BY quizzes.quiz_id ORDER BY quizzes.position;", [user_id]);
 }
 
-async function save_quiz(title, description, public, user_id, randomize_questions, total_points) {
+async function save_quiz(title, description, public, user_id, randomize_questions, total_points) {   
     const [data] = await pool.execute("SELECT title FROM quizzes WHERE user_id = ? AND title = ?", [user_id, title]);
-    isexistscheck(data, title, true)
+    isexistscheck(data, title, true) 
     const [maxposition] = await pool.execute("SELECT COALESCE(MAX(position) + 1, 0) AS max_position FROM quizzes WHERE user_id = ?", [user_id]);
     const [result] = await pool.execute("INSERT INTO quizzes (user_id, title, description, public, position, randomize_questions, total_points) VALUES (?, ?, ?, ?, ?, ?, ?)", [user_id, title, description, public, maxposition[0].max_position, randomize_questions, total_points]);
     return result.insertId;
@@ -211,19 +211,15 @@ async function save_quiz(title, description, public, user_id, randomize_question
 
 async function save_question(quiz_id, question_text, id, type, position, points) {
     const [checkexistquiz] = await pool.execute("SELECT quiz_id FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, id]);
-    isexistscheck(checkexistquiz, "Kvíz", false)
-    const [checkexistquestion] = await pool.execute("SELECT quiz_questions.question_id FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.quiz_id = ? AND quizzes.user_id = ? AND quiz_questions.question_text = ?", [quiz_id, id, question_text]);
-    isexistscheck(checkexistquestion, "Kérdés", true)
+    isexistscheck(checkexistquiz, "Kvíz", false)    
     const [result] = await pool.execute("INSERT INTO quiz_questions (quiz_id, question_text, question_type, position, points) VALUES (?, ?, ?, ?, ?)", [quiz_id, question_text, type, position, points]);
     return result.insertId;
 }
 
-async function save_answer(question_id, answer_text, right_answer, id, position) {
+async function save_answer(question_id, answer_text, right_answer, id, position, points) {
     const [checkexistquestion] = await pool.execute("SELECT question_id FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE question_id = ? AND quizzes.user_id = ?", [question_id, id]);
     isexistscheck(checkexistquestion, "Kérdés", false)
-    const [checkexistanswer] = await pool.execute("SELECT answer_id FROM quiz_answers WHERE question_id = ? AND answer_text = ?", [question_id, answer_text]);
-    isexistscheck(checkexistanswer, "Válasz", true)
-    await pool.execute("INSERT INTO quiz_answers (question_id, answer_text, right_answer, position) VALUES (?, ?, ?, ?)", [question_id, answer_text, right_answer, position]);
+    await pool.execute("INSERT INTO quiz_answers (question_id, answer_text, right_answer, position, points) VALUES (?, ?, ?, ?, ?)", [question_id, answer_text, right_answer, position, points]);
 }
 
 async function save_current_quiz_order(quiz_id, position, user_id) {
@@ -237,13 +233,14 @@ async function loadquestions(quiz_id, user_id) {
     return rows
 }
 
-async function loadanswers(question_id, user_id) {
-    const [rows] = await pool.execute("SELECT quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.right_answer FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND quizzes.user_id = ? order by quiz_answers.position", [question_id, user_id]);
+
+async function loadanswers_withoutright(question_id, user_id) {
+    const [rows] = await pool.execute("SELECT quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND quizzes.user_id = ? order by quiz_answers.position", [question_id, user_id]);
     return rows
 }
 
-async function loadcorrectanswers(question_id, user_id) {
-    const [rows] = await pool.execute("SELECT quiz_questions.points, quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.right_answer FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_answers.right_answer = 1 AND quiz_questions.question_id = ? AND quizzes.user_id = ? order by quiz_answers.position ", [question_id, user_id]);
+async function loadanswers(question_id, user_id) {
+    const [rows] = await pool.execute("SELECT quiz_questions.points as question_points, quiz_answers.answer_id as answer_id, quiz_answers.question_id as question_id, quiz_answers.answer_text as answer_text, quiz_answers.right_answer as right_answer, quiz_answers.points as points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND quizzes.user_id = ? order by quiz_answers.position ", [question_id, user_id]);
     return rows
 }
 
@@ -256,8 +253,8 @@ async function quiz_submit(quiz_id, user_id, total_points) {
     return result.insertId;
 }
 
-async function save_result(result_id, question_id, answer, correct, points_earned) {
- await pool.execute("INSERT INTO quiz_results (result_id, question_id, answer, correct, points_earned) VALUES (?, ?, ?, ?, ?)", [result_id, question_id, JSON.stringify(answer), correct, points_earned])    
+async function save_result(result_id, question_id, answer_text, points_earned) {
+ await pool.execute("INSERT INTO quiz_results (result_id, question_id, answer_text, points_earned) VALUES (?, ?, ?, ?)", [result_id, question_id, answer_text, points_earned])    
 }
 
 
@@ -267,12 +264,21 @@ async function calcquizpoints(result_id, user_id) {
 
 }
 
+async function getquizresult(user_id, quiz_id) {
+    const [rows] = await pool.execute("SELECT ROUND((quiz_submit.earned_points/quiz_submit.total_points)*100, 2) AS result, quiz_submit.taken_at, quiz_submit.total_points, quiz_submit.earned_points, quiz_submit.result_id FROM `quiz_submit` WHERE quiz_submit.quiz_id = ? AND quiz_submit.user_id = ?", [quiz_id, user_id]);
+    return rows;
+}
+
+async function getuseranswers(id, result_id, question_id) {
+    const [rows] = await pool.execute("SELECT quiz_results.question_id as question_id, quiz_results.answer_text as answer_text, quiz_results.points_earned as points_earned FROM `quiz_results` JOIN quiz_submit ON quiz_results.result_id=quiz_submit.result_id WHERE quiz_results.question_id = ? AND quiz_results.result_id = ? AND quiz_submit.user_id = ?", [question_id, result_id, id]);
+    return rows;
+}
 
 async function updateuser(rows, newdata, id) {
     let changes = updatebuild(rows, newdata);
     for (let i = 0; i < changes.length; i++) {
         if(changes[i][0] === "username" || changes[i][0] === "email"){
-            const [exists] = await isexist(changes[i]);
+             const [exists] = await isexist(changes[i]);
             if(exists.length > 0){
                 throw new Error(`A ${changes[i][1]} már foglalt!`);
             }
@@ -312,9 +318,11 @@ async function isexist(data){
 
 
 module.exports = {
+    loadanswers_withoutright,
+    getuseranswers,
+    getquizresult,
     calcquizpoints,
     quiz_submit,
-    loadcorrectanswers,
     save_result,
     delete_quiz,
     loadquestions,

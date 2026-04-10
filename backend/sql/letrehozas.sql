@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS quiz_answers (
   answer_text TEXT NOT NULL,
   right_answer BOOLEAN NOT NULL,
   position INT NOT NULL,
+  points INT NOT NULL default 1,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
 );
 
@@ -100,8 +101,7 @@ CREATE TABLE IF NOT EXISTS quiz_submit (
 CREATE TABLE IF NOT EXISTS quiz_results (
   result_id INT not null,
   question_id INT NOT NULL,
-  answer TEXT NOT NULL,
-  correct BOOLEAN NOT NULL default FALSE,
+  answer_text TEXT NOT NULL,
   points_earned INT NOT NULL default 0,
   FOREIGN KEY (result_id) REFERENCES quiz_submit(result_id) ON DELETE CASCADE,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
