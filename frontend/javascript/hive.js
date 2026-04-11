@@ -68,7 +68,33 @@ async function renderHiveCards(data) {
         const view_button = document.createElement('button');
         view_button.type = 'button';
         view_button.classList.add('hive_btn_view');
-        view_button.textContent = qnf.type === 'quiz' ? 'Indítás' : 'Indítás';
+        view_button.textContent = 'Indítás';
+
+
+        //masik felhsznalobol nem tudja meghivi az elemet viszont puublikus
+        view_button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (qnf.type === 'flashcard') {
+                navbar_click('tanulokartyak', 2);
+                try {
+                    await deck_open(qnf.id);
+                    flashcard_start(qnf.id);
+                } catch (error) {
+                    console.error('Pakli megnyitási hiba:', error);
+                }
+            } else if (qnf.type === 'quiz') {
+                navbar_click('quiz', 4);
+                const quizObj = {
+                    quiz_id: qnf.id,
+                    title: qnf.title,
+                    description: qnf.description,
+                    author: qnf.author,
+                    total_points: qnf.item_count || 0,
+                    randomize_questions: false
+                };
+                quiz_start(quizObj);
+            }
+        });
 
         const save_button = document.createElement('button');
         save_button.type = 'button';
@@ -100,105 +126,68 @@ document.addEventListener('DOMContentLoaded', () => {
     HiveSearch();
     loadHiveData('all');
 });
+// Globális állapot, hogy a keresés és a szűrő ne üsse ki egymást
+let currentFilters = {
+    type: 'all',
+    search: '',
+    favorites: false
+};
 
-function HiveFilters() {
-    const filterButtons = document.querySelectorAll('.hive_btn_filter');
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', async (e) => {
-            e.preventDefault();
-
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-
-            button.classList.add('active');
-            let filterType;
-            if (button.classList.contains('hive_btn_onlyFlashcard')) {
-                filterType = 'flashcard';
-            } 
-            else {
-                if (button.classList.contains('hive_btn_onlyQuiz')) {
-                    filterType = 'quiz';
-                } 
-                else {
-                        if (button.classList.contains('hive_btn_saved')) {
-                            filterType = 'saved';
-                        }
-                        else{
-                            filterType = 'all';
-                        }
-                } 
-            }
-            await loadHiveData(filterType);
-        
-        });
-    });
-}
-
-function HiveSearch() {
-    const searchInput = document.getElementById('hive_search_input');
-    let searchTimeout;
-    searchInput.addEventListener('input', async (e) => {
-        clearTimeout(searchTimeout);
-        const searchTerm = e.target.value;
-
-        if (searchTerm.length === 0) {
-            await loadHiveData('all');
-        }
-        else {
-            searchTimeout = setTimeout(async () => {
-                try {
-                    const token = localStorage.getItem('token');
-                    const result = await apiFetch('http://127.0.0.1:4000/api/qnfsearch', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ search: searchTerm })
-                    });
-
-                    renderHiveCards(result.results || []);
-                } catch (error) {
-                    alertell('Hiba történt a keresés során!', 2);
-                    console.error('Keresési hiba:', error);
-                }
-            }, 1000);
-        }
-    });
-}
-
-async function loadHiveData(filterType) {
+async function loadHiveData() {
     try {
         const token = localStorage.getItem('token');
-        let endpoint = 'http://127.0.0.1:4000/api/getQnF';
-
-        switch (filterType) {
-            case 'flashcard':
-                endpoint = 'http://127.0.0.1:4000/api/getflashcardsonly';
-                break;
-            case 'quiz':
-                endpoint = 'http://127.0.0.1:4000/api/getquizzesonly';
-                break;
-            case 'saved':
-                endpoint = 'http://127.0.0.1:4000/api/getfavorites';
-                break;
-            case 'all':
-            default:
-                endpoint = 'http://127.0.0.1:4000/api/getQnF';
-        }
-
-        const result = await apiFetch(endpoint, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': `Bearer ${token}`
+        const { type, search, favorites } = currentFilters;
+        
+        const result = await apiFetch(
+            `http://127.0.0.1:4000/api/hive?type=${type}&search=${search}&favorites=${favorites}`,
+            {
+                method: 'GET',
+                headers: { 'authorization': `Bearer ${token}` }
             }
-        });
-
-        renderHiveCards(result.qnf);
+        );
+        
+        renderHiveCards(result.qnf || []);
     } catch (error) {
-        console.error(error)
+        console.error('Betöltési hiba:', error);
     }
+}
+
+// Szűrő gombok kezelése
+function HiveFilters() {
+    const buttons = document.querySelectorAll('.hive_btn_filter');
+    buttons.forEach(button => {
+        button.addEventListener('click', async () => {
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            // Állapot frissítése
+            if (button.classList.contains('hive_btn_onlyFlashcard')) currentFilters.type = 'flashcard';
+            else if (button.classList.contains('hive_btn_onlyQuiz')) currentFilters.type = 'quiz';
+            else if (button.classList.contains('hive_btn_saved')) {
+                currentFilters.type = 'all';
+                currentFilters.favorites = true;
+            } else {
+                currentFilters.type = 'all';
+                currentFilters.favorites = false;
+            }
+            
+            await loadHiveData();
+        });
+    });
+}
+
+// Keresés kezelése
+function HiveSearch() {
+    const searchInput = document.getElementById('hive_search_input');
+    let timeout;
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(async () => {
+            currentFilters.search = e.target.value;
+            await loadHiveData();
+        }, 500); // 1 mp helyett 500ms is elég általában
+    });
 }
 
 async function handleSaveItem(button, itemType, itemId) {

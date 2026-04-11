@@ -87,14 +87,10 @@
 }
 
 .flashcard_container {
-    flex: 1;
-    height: 300px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 3%;
-    row-gap: 10px;
-    min-height: 0;
+   display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 0.5rem;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 10px;
@@ -106,8 +102,8 @@
 
 
 .deck_item {
-    min-width: 200px;
-    width: 25%;
+    height: 100px;
+    width: 280px;
     padding: 16px;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);
@@ -282,11 +278,15 @@
     }
 }
 
+.disabled_card_button{
+    background-color: rgba(200, 200, 200, 0.2);
+    color: #888;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
 
 
 .card_item {
-    min-width: 200px;
-    width: 25%;
     padding: 16px;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);

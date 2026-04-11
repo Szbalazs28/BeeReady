@@ -77,7 +77,7 @@ async function getdeck(id) {
 }
 
 async function getdeckbydeck_id(deck_id) {
-    return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ?", [deck_id])
+    return await pool.execute("SELECT deck_name, deck_id, share_code, public, user_id FROM flashcard_deck WHERE deck_id = ?", [deck_id])
 }
 
 async function updatedeck(deck_name, deck_id, isPublic = null) {
@@ -388,129 +388,65 @@ GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
 ORDER BY created_at DESC;`, [user_id, user_id])
 };
 
+async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly = false }) {
+    const searchPattern = searchTerm ? `%${searchTerm}%` : null;
 
-async function getFlashcardsOnly(user_id) {
-    return await pool.execute(`
-SELECT
-    'flashcard' AS type,
-    fd.deck_id AS id,
-    fd.deck_name AS title,
-    u.username AS author,
-    fd.create_date AS created_at,
-    NULL AS description,
-    COUNT(DISTINCT fc.card_id) AS item_count,
-    COUNT(DISTINCT uf.user_id) AS favorite_count,
-    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id)) AS is_saved_by_user
-FROM flashcard_deck fd
-JOIN users u ON fd.user_id = u.id
-LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
-LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
-WHERE fd.public = TRUE
-GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
-ORDER BY fd.create_date DESC;`, [user_id])
-};
+    const query = `
+    SELECT * FROM (
+        -- FLASHCARD RÉSZ
+        SELECT 
+            'flashcard' AS type,
+            fd.deck_id AS id,
+            fd.deck_name AS title,
+            u.username AS author,
+            fd.create_date AS created_at,
+            NULL AS description,
+            COUNT(DISTINCT fc.card_id) AS item_count,
+            COUNT(DISTINCT uf_all.user_id) AS favorite_count,
+            EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id) AS is_saved_by_user
+        FROM flashcard_deck fd
+        JOIN users u ON fd.user_id = u.id
+        LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
+        LEFT JOIN user_favorites uf_all ON uf_all.item_id = fd.deck_id AND uf_all.item_type = 'flashcard'
+        WHERE fd.public = TRUE
+        GROUP BY fd.deck_id, fd.deck_name, u.username, fd.create_date
 
-async function getQuizzesOnly(user_id) {
-    return await pool.execute(`
-SELECT
-    'quiz' AS type,
-    q.quiz_id AS id,
-    q.title AS title,
-    u.username AS author,
-    q.last_modified AS created_at,
-    q.description AS description,
-    COUNT(DISTINCT qq.question_id) AS item_count,
-    COUNT(DISTINCT uf.user_id) AS favorite_count,
-    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id)) AS is_saved_by_user
-FROM quizzes q
-JOIN users u ON q.user_id = u.id
-LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
-LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
-WHERE q.public = TRUE
-GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
-ORDER BY q.last_modified DESC;`, [user_id])
-};
+        UNION ALL
 
-async function getUserFavorites(user_id) {
-    return await pool.execute(`
-SELECT
-    'flashcard' AS type,
-    fd.deck_id AS id,
-    fd.deck_name AS title,
-    u.username AS author,
-    fd.create_date AS created_at,
-    NULL AS description,
-    COUNT(DISTINCT fc.card_id) AS item_count,
-    COUNT(DISTINCT uf.user_id) AS favorite_count,
-    1 AS is_saved_by_user
-FROM flashcard_deck fd
-JOIN users u ON fd.user_id = u.id
-LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
-INNER JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
-WHERE fd.public = TRUE AND uf.user_id = ?
-GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
+        -- QUIZ RÉSZ
+        SELECT 
+            'quiz' AS type,
+            q.quiz_id AS id,
+            q.title AS title,
+            u.username AS author,
+            q.last_modified AS created_at,
+            q.description AS description,
+            COUNT(DISTINCT qq.question_id) AS item_count,
+            COUNT(DISTINCT uf_all.user_id) AS favorite_count,
+            EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id) AS is_saved_by_user
+        FROM quizzes q
+        JOIN users u ON q.user_id = u.id
+        LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
+        LEFT JOIN user_favorites uf_all ON uf_all.item_id = q.quiz_id AND uf_all.item_type = 'quiz'
+        WHERE q.public = TRUE
+        GROUP BY q.quiz_id, q.title, u.username, q.last_modified, q.description
+    ) AS results
+    WHERE 
+        (? IS NULL OR type = ?) 
+        AND (? IS NULL OR title LIKE ? OR author LIKE ?)
+        AND (? = FALSE OR is_saved_by_user = 1)
+    ORDER BY created_at DESC;
+    `;
 
-UNION ALL
+    const params = [
+        userId,          
+        userId,          
+        type, type,      
+        searchPattern, searchPattern, searchPattern, 
+        favoritesOnly    
+    ];
 
-SELECT
-    'quiz' AS type,
-    q.quiz_id AS id,
-    q.title AS title,
-    u.username AS author,
-    q.last_modified AS created_at,
-    q.description AS description,
-    COUNT(DISTINCT qq.question_id) AS item_count,
-    COUNT(DISTINCT uf.user_id) AS favorite_count,
-    1 AS is_saved_by_user
-FROM quizzes q
-JOIN users u ON q.user_id = u.id
-LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
-INNER JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
-WHERE q.public = TRUE AND uf.user_id = ?
-GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
-
-ORDER BY created_at DESC;`, [user_id, user_id])
-};
-
-async function QnFSearch(name, user_id) {
-    return await pool.execute(`
-SELECT
-    'flashcard' AS type,
-    fd.deck_id AS id,
-    fd.deck_name AS title,
-    u.username AS author,
-    fd.create_date AS created_at,
-    NULL AS description,
-    COUNT(DISTINCT fc.card_id) AS item_count,
-    COUNT(DISTINCT uf.user_id) AS favorite_count,
-    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id)) AS is_saved_by_user
-FROM flashcard_deck fd
-JOIN users u ON fd.user_id = u.id
-LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
-LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
-WHERE fd.public = TRUE AND (u.username LIKE ? OR fd.deck_name LIKE ?)
-GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
-
-UNION ALL
-
-SELECT
-    'quiz' AS type,
-    q.quiz_id AS id,
-    q.title AS title,
-    u.username AS author,
-    q.last_modified AS created_at,
-    q.description AS description,
-    COUNT(DISTINCT qq.question_id) AS item_count,
-    COUNT(DISTINCT uf.user_id) AS favorite_count,
-    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id)) AS is_saved_by_user
-FROM quizzes q
-JOIN users u ON q.user_id = u.id
-LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
-LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
-WHERE q.public = TRUE AND (u.username LIKE ? OR q.title LIKE ?)
-GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
-
-ORDER BY created_at DESC;`, [user_id, `%${name}%`, `%${name}%`, user_id, `%${name}%`, `%${name}%`])
+    return await pool.execute(query, params);
 }
 
 async function toggleFavorite(user_id, item_type, item_id) {
@@ -650,9 +586,6 @@ module.exports = {
     change_share_code,
     copy_deck,
     getQnF,
-    getFlashcardsOnly,
-    getQuizzesOnly,
-    getUserFavorites,
     calcquizpoints,
     quiz_submit,
     loadcorrectanswers,

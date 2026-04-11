@@ -1,3 +1,6 @@
+// Globális változó a csomag tulajdonosának jelzésére
+let isOwner = false;
+
 document.getElementById("flashcard_form").addEventListener("submit", async function (e) {
     try {
         e.preventDefault()
@@ -55,7 +58,7 @@ function build_deck(name, deck_id, cardcount) {
 }
 
 
-function build_card(front_text, back_text, card_id) {
+function build_card(front_text, back_text, card_id, deck_id) {
     const card_item = document.createElement('div');
     card_item.draggable = true
     card_item.setAttribute('data-id', card_id);
@@ -79,6 +82,14 @@ function build_card(front_text, back_text, card_id) {
     delete_button.classList.add("del_card_button");
     delete_button.textContent = "Törlés";
     delete_button.onclick = () => card_delete(card_id); // CARD DELETE
+
+    if (!isOwner) {
+        delete_button.disabled = true;
+        delete_button.classList.add("disabled_card_button");
+
+        edit_button.disabled = true;
+        edit_button.classList.add("disabled_card_button");
+    }
     card_info.appendChild(card_front);
     card_info.appendChild(card_back);
     card_actions.appendChild(edit_button);
@@ -461,6 +472,9 @@ async function deck_open(deck_id) {
             body: JSON.stringify({ deck_id: deck_id })
         })
 
+        // Globális isOwner beállítása
+        isOwner = deck_result.isOwner || false;
+
         currentDeckName.textContent = deck_result.decks[0].deck_name
 
         //Kártyák lekérése
@@ -478,7 +492,22 @@ async function deck_open(deck_id) {
         for (let i = 0; i < cards_result.cards.length; i++) {
             card_list.appendChild(build_card(cards_result.cards[i].front_text, cards_result.cards[i].back_text, cards_result.cards[i].card_id, cards_result.cards[i].deck_id))
         }
-        document.getElementById("editDeckButton").onclick = () => deck_edit_user(deck_id)
+        const edit_btn = document.getElementById("editDeckButton")
+        const add_new_card_btn = document.getElementById("addCardButton")
+        edit_btn.onclick = () => deck_edit_user(deck_id)
+        if(!isOwner){
+            edit_btn.disabled = true;
+            edit_btn.classList.add("disabled_card_button");
+            
+            add_new_card_btn.disabled = true;
+            add_new_card_btn.classList.add("disabled_card_button");
+        } else {
+            edit_btn.disabled = false;
+            edit_btn.classList.remove("disabled_card_button");
+            
+            add_new_card_btn.disabled = false;
+            add_new_card_btn.classList.remove("disabled_card_button");
+        }
         const el = document.getElementById('cardList');
         Sortable.create(el, {
             animation: 150,

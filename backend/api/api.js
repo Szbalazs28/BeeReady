@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, getFlashcardsOnly, getQuizzesOnly, getUserFavorites, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch } = require("../sql/querys.js");
+const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, loadquestions_public, loadanswers_public, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -131,8 +131,10 @@ router.post("/deck_load", authenticateToken, async (req, res, next) => {
 router.post("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
   try {
     const deck_id = req.body.deck_id
+    const user_id = req.user.id;
     const [rows] = await getdeckbydeck_id(deck_id)
-    res.status(200).json({ write: false, decks: rows })
+    const isOwner = rows[0].user_id === user_id;
+    res.status(200).json({ write: false, decks: rows, isOwner: isOwner })
   } catch (error) {
     next(error)
   }
@@ -587,35 +589,22 @@ router.post("/toggleFavorite", authenticateToken, async (req, res, next) => {
   }
 });
 
-router.post("/getfavoritecount", authenticateToken, async (req, res, next) => {
-  try {
-    const { item_type, item_id } = req.body;
-    
-    const count = await getFavoriteCount(item_type, item_id);
-    res.status(200).json({ success: true, count });
-  } catch (error) {
-    next(error);
-  }
-});
+router.get("/hive", authenticateToken, async (req, res, next) => {
+    try {
+        const user_id = req.user.id;
+        const { type, search, favorites } = req.query;
 
-router.get("/getflashcardsonly", authenticateToken, async (req, res, next) => {
-  try {
-    const user_id = req.user.id;
-    const [result] = await getFlashcardsOnly(user_id);
-    res.status(200).json({ qnf: result });
-  } catch (error) {
-    next(error);
-  }
-});
+        const [result] = await QnFSearch({
+            userId: user_id,
+            type: type === 'all' ? null : type,
+            searchTerm: search || null,
+            favoritesOnly: favorites === 'true'
+        });
 
-router.get("/getquizzesonly", authenticateToken, async (req, res, next) => {
-  try {
-    const user_id = req.user.id;
-    const [result] = await getQuizzesOnly(user_id);
-    res.status(200).json({ qnf: result });
-  } catch (error) {
-    next(error);
-  }
+        res.status(200).json({ success: true, qnf: result });
+    } catch (error) {
+        next(error);
+    }
 });
 
 router.get("/getfavorites", authenticateToken, async (req, res, next) => {
@@ -623,6 +612,16 @@ router.get("/getfavorites", authenticateToken, async (req, res, next) => {
     const user_id = req.user.id;
     const [result] = await getUserFavorites(user_id);
     res.status(200).json({ qnf: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/getfavoritecount", authenticateToken, async (req, res, next) => {
+  try {
+    const { item_type, item_id } = req.body;
+    const count = await getFavoriteCount(item_type, item_id);
+    res.status(200).json({ success: true, count });
   } catch (error) {
     next(error);
   }
