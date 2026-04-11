@@ -457,10 +457,11 @@ router.post("/qnfsearch", authenticateToken, async (req, res, next) => {
   try {
     const user_id = req.user.id;
     const searchTerm = req.body.search;
+    const type = req.body.type;
     if (!searchTerm || searchTerm.trim().length === 0) {
       return res.status(400).json({ write: false, results: [] });
     }
-    const [results] = await QnFSearch(searchTerm, user_id);
+    const [results] = await QnFSearch(searchTerm, user_id, );
     res.status(200).json({ write: false, results: results });
   } catch (error) { next(error); }
 });

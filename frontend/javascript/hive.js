@@ -111,16 +111,25 @@ function HiveFilters() {
             filterButtons.forEach(btn => btn.classList.remove('active'));
 
             button.classList.add('active');
-            let filterType = 'all';
+            let filterType;
             if (button.classList.contains('hive_btn_onlyFlashcard')) {
                 filterType = 'flashcard';
-            } else if (button.classList.contains('hive_btn_onlyQuiz')) {
-                filterType = 'quiz';
-            } else if (button.classList.contains('hive_btn_saved')) {
-                filterType = 'saved';
+            } 
+            else {
+                if (button.classList.contains('hive_btn_onlyQuiz')) {
+                    filterType = 'quiz';
+                } 
+                else {
+                        if (button.classList.contains('hive_btn_saved')) {
+                            filterType = 'saved';
+                        }
+                        else{
+                            filterType = 'all';
+                        }
+                } 
             }
-
             await loadHiveData(filterType);
+        
         });
     });
 }
@@ -130,31 +139,31 @@ function HiveSearch() {
     let searchTimeout;
     searchInput.addEventListener('input', async (e) => {
         clearTimeout(searchTimeout);
-        const searchTerm = e.target.value.trim();
+        const searchTerm = e.target.value;
 
         if (searchTerm.length === 0) {
             await loadHiveData('all');
-            return;
         }
+        else {
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const token = localStorage.getItem('token');
+                    const result = await apiFetch('http://127.0.0.1:4000/api/qnfsearch', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ search: searchTerm })
+                    });
 
-        searchTimeout = setTimeout(async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const result = await apiFetch('http://127.0.0.1:4000/api/qnfsearch', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ search: searchTerm })
-                });
-
-                renderHiveCards(result.results || []);
-            } catch (error) {
-                alertell('Hiba történt a keresés során!', 2);
-                console.error('Keresési hiba:', error);
-            }
-        }, 1000);
+                    renderHiveCards(result.results || []);
+                } catch (error) {
+                    alertell('Hiba történt a keresés során!', 2);
+                    console.error('Keresési hiba:', error);
+                }
+            }, 1000);
+        }
     });
 }
 

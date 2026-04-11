@@ -510,7 +510,7 @@ LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
 WHERE q.public = TRUE AND (u.username LIKE ? OR q.title LIKE ?)
 GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
 
-ORDER BY created_at DESC;`, [user_id, `${name}%`, `${name}%`, user_id, `${name}%`, `${name}%`])
+ORDER BY created_at DESC;`, [user_id, `%${name}%`, `%${name}%`, user_id, `%${name}%`, `%${name}%`])
 }
 
 async function toggleFavorite(user_id, item_type, item_id) {
