@@ -78,21 +78,24 @@ async function renderHiveCards(data) {
                 navbar_click('tanulokartyak', 2);
                 try {
                     await deck_open(qnf.id);
-                    flashcard_start(qnf.id);
                 } catch (error) {
                     console.error('Pakli megnyitási hiba:', error);
                 }
-            } else if (qnf.type === 'quiz') {
-                navbar_click('quiz', 4);
-                const quizObj = {
-                    quiz_id: qnf.id,
-                    title: qnf.title,
-                    description: qnf.description,
-                    author: qnf.author,
-                    total_points: qnf.item_count || 0,
-                    randomize_questions: false
-                };
-                quiz_start(quizObj);
+            } else {
+                if (qnf.type === 'quiz') {
+                    navbar_click('quiz', 4);
+                    const quizObj = {
+                        quiz_id: qnf.id,
+                        title: qnf.title,
+                        description: qnf.description,
+                        author: qnf.author,
+                        total_points: qnf.item_count || 0,
+                        randomize_questions: true // ezzel nemtudom pontosan mit kene csinalni
+                        // tehat jelen allapotban az inditasnal mindig a random sorrendet fogja figyelni, ami amugy lehet nem egy negativum
+                        // erre ha van otleted
+                    };
+                    quiz_start(quizObj);
+                }
             }
         });
 
@@ -111,7 +114,7 @@ async function renderHiveCards(data) {
 
         save_button.addEventListener('click', async (e) => {
             e.preventDefault();
-            await handleSaveItem(save_button, qnf.type, qnf.id);
+            await SaveItem(save_button, qnf.type, qnf.id);
         });
 
         card_footer.appendChild(view_button);
@@ -126,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     HiveSearch();
     loadHiveData('all');
 });
-// Globális állapot, hogy a keresés és a szűrő ne üsse ki egymást
+
+// aktualis szurok allapota
 let currentFilters = {
     type: 'all',
     search: '',
@@ -137,7 +141,7 @@ async function loadHiveData() {
     try {
         const token = localStorage.getItem('token');
         const { type, search, favorites } = currentFilters;
-        
+
         const result = await apiFetch(
             `http://127.0.0.1:4000/api/hive?type=${type}&search=${search}&favorites=${favorites}`,
             {
@@ -145,14 +149,14 @@ async function loadHiveData() {
                 headers: { 'authorization': `Bearer ${token}` }
             }
         );
-        
+
         renderHiveCards(result.qnf || []);
     } catch (error) {
         console.error('Betöltési hiba:', error);
     }
 }
 
-// Szűrő gombok kezelése
+// Szuro gombok 
 function HiveFilters() {
     const buttons = document.querySelectorAll('.hive_btn_filter');
     buttons.forEach(button => {
@@ -160,7 +164,7 @@ function HiveFilters() {
             buttons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
-            // Állapot frissítése
+            // filter frissitese
             if (button.classList.contains('hive_btn_onlyFlashcard')) currentFilters.type = 'flashcard';
             else if (button.classList.contains('hive_btn_onlyQuiz')) currentFilters.type = 'quiz';
             else if (button.classList.contains('hive_btn_saved')) {
@@ -170,13 +174,12 @@ function HiveFilters() {
                 currentFilters.type = 'all';
                 currentFilters.favorites = false;
             }
-            
+
             await loadHiveData();
         });
     });
 }
 
-// Keresés kezelése
 function HiveSearch() {
     const searchInput = document.getElementById('hive_search_input');
     let timeout;
@@ -186,11 +189,11 @@ function HiveSearch() {
         timeout = setTimeout(async () => {
             currentFilters.search = e.target.value;
             await loadHiveData();
-        }, 500); // 1 mp helyett 500ms is elég általában
+        }, 500);
     });
 }
 
-async function handleSaveItem(button, itemType, itemId) {
+async function SaveItem(button, itemType, itemId) {
     try {
         const token = localStorage.getItem('token');
         const result = await apiFetch('http://127.0.0.1:4000/api/toggleFavorite', {

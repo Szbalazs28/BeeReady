@@ -329,7 +329,7 @@ async function deck_edit_user(deck_id) {
         const checkmark = document.createElement("span")
         checkmark.classList.add("checkmark")
         const label_text = document.createElement("span")
-        label_text.textContent = "Nyilvános pakli"
+        label_text.textContent = "Publikus pakli"
         public_label.appendChild(public_input)
         public_label.appendChild(checkmark)
         public_label.appendChild(label_text)

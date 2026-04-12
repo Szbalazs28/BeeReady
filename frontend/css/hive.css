@@ -87,6 +87,10 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
     padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #FFCC00 #f4f4f4;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .hive_card {

@@ -98,7 +98,7 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
 
     const create_by = document.createElement("p")
     create_by.classList.add("quiz-meta", "quiz-created")
-    create_by.textContent = `Létrehozva: ${created_by}`
+    create_by.textContent = `Létrehozta: ${created_by}`
     group_div.appendChild(create_by)
 
     const quiz_actions = document.createElement("div")

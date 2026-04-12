@@ -91,19 +91,15 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
     padding: 0.5rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 10px;
     scrollbar-width: thin;
     scrollbar-color: #FFCC00 #f4f4f4;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
-
-
-
 
 .deck_item {
     height: 100px;
-    width: 280px;
+    width: 90%;
     padding: 16px;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);
