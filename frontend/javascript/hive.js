@@ -124,18 +124,20 @@ async function renderHiveCards(data) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function load_hive() {
     HiveFilters();
     HiveSearch();
     loadHiveData('all');
-});
+    
+}
 
-// aktualis szurok allapota
 let currentFilters = {
     type: 'all',
     search: '',
     favorites: false
 };
+// aktualis szurok allapota
+
 
 async function loadHiveData() {
     try {
