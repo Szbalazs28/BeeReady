@@ -152,6 +152,9 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
 
     start_button.onclick = () => { quiz_start(quiz) }
 
+
+
+    quiz_actions.appendChild(start_button)
     if (!isForeign) {
         const edit_button = document.createElement("button")
         edit_button.type = "button"
@@ -161,9 +164,6 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
         quiz_actions.appendChild(edit_button)
 
     }
-
-    quiz_actions.appendChild(start_button)
-
     quiz_actions.appendChild(result_button)
     quiz_actions.appendChild(delete_button)
 
@@ -527,8 +527,8 @@ function addOrderAnswerToBlock(question_id, answer = null) {
     dragIcon.textContent = '::';
     dragIcon.style.cursor = 'move';
 
-    const ansInput = document.createElement('input');
-    answerRow.setAttribute("data-id", document.querySelectorAll(`#answers_${question_id} .answer-row`).length);
+    const ansInput = document.createElement('input');    
+    
     ansInput.type = 'text';
     ansInput.placeholder = 'Válaszlehetőség';
     ansInput.className = 'ans-input';
@@ -667,7 +667,7 @@ async function saveQuiz(e) {
                     ansText = fill_get_data(ansText);
                 }
 
-                await save_answer(question_id, ansText, right_answer, ans.getAttribute("data-id"), apoints);
+                await save_answer(question_id, ansText, right_answer, apoints);
             }
         }
         quiz_creator_reset();
@@ -1385,8 +1385,8 @@ function result_addNewFillQuestionBlock(question, answers, user_answer) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
 
-    const ansInput = document.createElement('div');
-    ansInput.classList.add('ans-input', 'fill-ans-input');
+    const ansInput = document.createElement('p');
+    ansInput.classList.add('ans-input', 'fill-ans-input', 'fill-ans-input-result');
     ansInput.innerHTML = resultinsertinput(answers[0].answer_text, user_answer);
     answerRow.append(ansInput);
     answersContainer.appendChild(answerRow);
@@ -1560,10 +1560,10 @@ function resultinsertinput(ansText, user_answer) {
     let index = 0;
     while (text.includes("{}")) {
         if (words[index].correct) {
-            text = text.replace("{}", `<span class="fill-input correct-answer">${words[index].answer}</span><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
+            text = text.replace("{}", `<input type="text" class="fill-input correct-answer" value="${words[index].answer}" disabled><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
         }
         else {
-            text = text.replace("{}", `<span class="fill-input wrong_answer">${words[index].answer}</span><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
+            text = text.replace("{}", `<input type="text" class="fill-input wrong_answer" value="${words[index].answer}" disabled><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
         }
         index++;
     }

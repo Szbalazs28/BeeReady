@@ -930,3 +930,7 @@
     align-items: center;
     
 }
+
+.fill-ans-input-result{
+    line-height: 1.4;
+}

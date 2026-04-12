@@ -221,10 +221,10 @@ async function save_question(quiz_id, question_text, id, type, position, points)
     return result.insertId;
 }
 
-async function save_answer(question_id, answer_text, right_answer, id, position, points) {
+async function save_answer(question_id, answer_text, right_answer, id, points) {
     const [checkexistquestion] = await pool.execute("SELECT question_id FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE question_id = ? AND quizzes.user_id = ?", [question_id, id]);
     isexistscheck(checkexistquestion, "Kérdés", false)
-    await pool.execute("INSERT INTO quiz_answers (question_id, answer_text, right_answer, position, points) VALUES (?, ?, ?, ?, ?)", [question_id, answer_text, right_answer, position, points]);
+    await pool.execute("INSERT INTO quiz_answers (question_id, answer_text, right_answer, points) VALUES (?, ?, ?, ?)", [question_id, answer_text, right_answer, points]);
 }
 
 async function save_current_quiz_order(quiz_id, position, user_id) {
@@ -243,12 +243,12 @@ async function loadquestions(quiz_id, user_id) {
 
 
 async function loadanswers_withoutright(question_id, user_id) {
-    const [rows] = await pool.execute("SELECT quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND (quizzes.user_id = ? OR quizzes.public = 1) order by quiz_answers.position", [question_id, user_id]);
+    const [rows] = await pool.execute("SELECT quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND (quizzes.user_id = ? OR quizzes.public = 1)", [question_id, user_id]);
     return rows
 }
 
 async function loadanswers(question_id, user_id) {
-    const [rows] = await pool.execute("SELECT quiz_questions.points as question_points, quiz_answers.answer_id as answer_id, quiz_answers.question_id as question_id, quiz_answers.answer_text as answer_text, quiz_answers.right_answer as right_answer, quiz_answers.points as points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND (quizzes.user_id = ? OR quizzes.public = 1) order by quiz_answers.position ", [question_id, user_id]);
+    const [rows] = await pool.execute("SELECT quiz_questions.points as question_points, quiz_answers.answer_id as answer_id, quiz_answers.question_id as question_id, quiz_answers.answer_text as answer_text, quiz_answers.right_answer as right_answer, quiz_answers.points as points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND (quizzes.user_id = ? OR quizzes.public = 1) ", [question_id, user_id]);
     return rows
 }
 

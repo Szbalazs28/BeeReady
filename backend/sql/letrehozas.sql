@@ -82,7 +82,6 @@ CREATE TABLE IF NOT EXISTS quiz_answers (
   question_id INT NOT NULL,
   answer_text TEXT NOT NULL,
   right_answer BOOLEAN NOT NULL,
-  position INT NOT NULL,
   points INT NOT NULL default 1,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
 );
