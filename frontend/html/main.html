@@ -318,6 +318,15 @@
                 <div class="quiz-action-div ">
                     <input type="text" class="quiz-input" id="newDeckName" placeholder="Keressen kvízt..." required>
                     <button onclick="showcreatequiz()" class="quiz-plus-button">+</button>
+                    <div class="foreigndiv">
+                        <label for="foreignQuizToggle">Mentett kvízek</label>
+                        <input type="checkbox" name="" class="correct-check" id="foreignQuizToggle"
+                            onchange="toggleForeignQuizzes()">
+                    </div>
+                </div>
+
+                <div class="quiz-container dnone" id="foreignQuizContainer">
+
                 </div>
 
                 <div class="quiz-container " id="quizContainer">
@@ -403,7 +412,6 @@
 
                         </div>
 
-                        <p class="quiz-help-text">Tipp: Jelöld be a pipa ikonnal a helyes választ/válaszokat!</p>
                     </div>
 
                     <div id="questionsContainer">
@@ -439,7 +447,7 @@
                             hozzáadása</button>
                         <button type="submit" class="btn-save-quiz">Kvíz mentése</button>
                     </div>
-                </form>                
+                </form>
                 <form class="quiz_start_container dnone" id="quizStart">
                     <div class="quiz_start_header">
                         <h1 id="quiz_title">Itt lesz a cím</h1>
@@ -449,10 +457,10 @@
                         <button type="button" class="quiz-back-button" id="start_back_btn">Kilépés a kvízből</button>
                     </div>
                     <div id="start_question_container" class="quiz_question_container">
-                        
+
                     </div>
-                        <input type="submit" id="quizSubmit" class="quiz_submit_btn">
-                        <button type="button" id="quizBackBTN" class="result-back-btn dnone">Vissza</button>
+                    <input type="submit" id="quizSubmit" class="quiz_submit_btn">
+                    <button type="button" id="quizBackBTN" class="result-back-btn dnone">Vissza</button>
                 </form>
             </div>
             <!--profil kezeles-->
@@ -463,8 +471,8 @@
                             <div class="profil_img" id="prof_img">
                                 <img id="editprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
                             </div>
-                            
-                            
+
+
                             <div class="account_buttons">
                                 <button type="submit" class="account_button">Mentés</button>
                                 <a onclick="logout()">Kijelentkezés</a>

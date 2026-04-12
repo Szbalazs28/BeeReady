@@ -82,7 +82,6 @@ CREATE TABLE IF NOT EXISTS quiz_answers (
   question_id INT NOT NULL,
   answer_text TEXT NOT NULL,
   right_answer BOOLEAN NOT NULL,
-  position INT NOT NULL,
   points INT NOT NULL default 1,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
 );
@@ -106,6 +105,17 @@ CREATE TABLE IF NOT EXISTS quiz_results (
   FOREIGN KEY (result_id) REFERENCES quiz_submit(result_id) ON DELETE CASCADE,
   FOREIGN KEY (question_id) REFERENCES quiz_questions(question_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS quiz_share (
+  result_id INT not null,
+  quiz_id INT NOT NULL,
+  user_id INT NOT NULL,
+  position INT NOT NULL,
+  FOREIGN KEY (result_id) REFERENCES quiz_submit(result_id) ON DELETE CASCADE,
+  FOREIGN KEY (quiz_id) REFERENCES quizzes(quiz_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 
 
 
