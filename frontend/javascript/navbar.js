@@ -20,6 +20,54 @@ function navbar_click(id, index) {
 
 }
 
+async function show_exit_modal(isresultview) {
+    if (!isresultview) {
+        const modalOverlay = document.createElement("div");
+        modalOverlay.className = "quiz-modal-overlay";
+
+        const modalContent = document.createElement("div");
+        modalContent.className = "quiz-modal-content quiz-delete-modal-content";
+
+        const title = document.createElement("h3");
+        title.className = "quiz-delete-modal-title";
+        title.textContent = "Kitöltés megszakítása";
+
+        const message = document.createElement("p");
+        message.className = "quiz-delete-modal-text";
+        message.textContent = "Biztosan megszakítod a kvíz kitöltését? Az kitöltés elveszik.";
+
+        const actionDiv = document.createElement("div");
+        actionDiv.className = "quiz-delete-action-div";
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.type = "button";
+        cancelBtn.classList.add("quiz-create-button", "quiz-delete-cancel");
+        cancelBtn.textContent = "Mégse";
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.type = "button";
+        confirmBtn.id = "exit_quiz_btn";
+        confirmBtn.classList.add("quiz-create-button", "quiz-delete-confirm");
+        confirmBtn.textContent = "Kilépés";
+        cancelBtn.onclick = () => {
+            const modal = document.querySelector(".quiz-modal-overlay");
+            if (modal) {
+                document.body.removeChild(modal);
+            }
+        };
+        confirmBtn.onclick = async () => { document.body.removeChild(modalOverlay); sessionStorage.removeItem("quiz_started"); await load_quizzes(); };
+        actionDiv.append(cancelBtn, confirmBtn);
+        modalContent.append(title, message, actionDiv);
+        modalOverlay.appendChild(modalContent);
+        document.body.appendChild(modalOverlay);
+    }
+    else {
+        sessionStorage.removeItem("quiz_started"); 
+        await load_quizzes();
+    }
+
+}
+
 async function load_image() {
     try {
         const token = localStorage.getItem('token');
@@ -29,11 +77,11 @@ async function load_image() {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
-        });        
+        });
         document.getElementById("navbar_profil_pic_url").src = result.profil_pic_url
         document.getElementById("felhasznalonev").textContent = result.username
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 
 }

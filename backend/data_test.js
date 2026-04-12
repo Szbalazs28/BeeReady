@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const {userexists, userbyemail, userbyid} = require("./sql/querys.js");
+const { save_result, userexists, userbyemail, userbyid, loadanswers } = require("./sql/querys.js");
 
 function passwordTest(password) {
     let issue = false
@@ -78,26 +78,26 @@ async function checkuserexists(email, username) {
     }
 }
 
-async function getuserbyemail(email){
+async function getuserbyemail(email) {
     const [rows] = await userbyemail(email);
-    if(rows.length==0){
+    if (rows.length == 0) {
         const err = new Error("Nem található E-mail cím!")
         err.status = 409;
         throw err;
     }
     return rows
-    
+
 }
 
-async function getuserbyid(id){
+async function getuserbyid(id) {
     const [rows] = await userbyid(id);
-    if(rows.length==0){
+    if (rows.length == 0) {
         const err = new Error("Nem található a felhasználó!")
         err.status = 409;
         throw err;
     }
     return rows
-    
+
 }
 
 async function compare(password, hash) {
@@ -111,16 +111,20 @@ async function compare(password, hash) {
 
 function timetest(start, end) {
     if (start.length < 5 || end.length < 5 || start[2] !== ':' || end[2] !== ':') {
-        alertell("Az időpontnak HH:MM formátumúnak kell lennie!", 2.5);
         throw new Error("Az időpontnak HH:MM formátumúnak kell lennie!");
     }
     else {
         if (start >= end) {
-            alertell("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!", 2.5);
             throw new Error("A kezdési időpontnak kisebbnek kell lennie, mint a befejezésinek!");
         }
     }
 
+}
+
+function affectedRowscheck(rows) {
+    if (rows.affectedRows === 0) {
+        throw new Error("Nem sikerült az adatok módosítása!")
+    }
 }
 
 function lengthtest(input, min, max) {
@@ -131,4 +135,79 @@ function lengthtest(input, min, max) {
     }
 }
 
-module.exports = {getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest};
+async function answer_validation(result_id, user, id) {
+    let correct = false
+    let points = 0
+    const answers = await loadanswers(user.question_id, id)
+    let answers_text = { answers: [] }
+    if (user.question_type == "order") {
+        if (answers[0].question_points != 0) {
+            answers_text.ispartial = false
+            points = answers[0].question_points
+            for (let i = 0; i < answers.length && i < user.answers.length; i++) {
+                let correct = true
+                if (answers[i].answer_id != user.answers[i]) {                    
+                    correct = false
+                    points = 0
+                }
+                answers_text.answers.push({ answer: user.answers[i], correct: correct });
+            }
+        }
+        else {
+            answers_text.ispartial = true
+            for (let i = 0; i < answers.length && i < user.answers.length; i++) {
+                let correct = false
+                if (answers[i].answer_id == user.answers[i]) {
+                    points++;
+                    correct = true
+                }
+                answers_text.answers.push({ answer: user.answers[i], points: correct ? 1 : 0, correct: correct });
+            }
+        }
+    }
+    else {
+        if (user.question_type == "short") {
+            let j = 0
+            while (j < answers.length && answers[j].answer_text != user.answers[0]) {
+                j++
+            }
+            if (j < answers.length) {
+                correct = true
+                answers_text.answers.push({ answer: user.answers[0], correct: true });
+                points = answers[0].question_points
+            }
+            else{
+                answers_text.answers.push({ answer: user.answers[0], correct: false });
+            }
+        }
+        else {
+            if (user.question_type == "fill") {
+                const answer_words = JSON.parse(answers[0].answer_text).words
+                const answer_points = JSON.parse(answers[0].answer_text).points
+                for (let i = 0; i < answer_words.length && i < user.answers.length; i++) {
+                    let correct = false
+                    if (answer_words[i] == user.answers[i]) {
+                        correct = true
+                        points += answer_points[i]
+                    }
+                    answers_text.answers.push({ answer: user.answers[i], points: correct ? answer_points[i] : 0, correct: correct });
+                }
+                
+            }
+            else {
+                if (user.question_type == "standard") {                    
+                    for (let i = 0; i < answers.length && i < user.answers.length; i++) {
+                        let correct = false
+                        if (answers[i].right_answer == user.answers[i]) {
+                            correct = true
+                            points += answers[i].points
+                        }
+                        answers_text.answers.push({ answer: user.answers[i], points: correct ? answers[i].points : 0, correct: correct });
+                    }
+                }
+            }
+        }
+    }
+    await save_result(result_id, user.question_id, JSON.stringify(answers_text), points)
+}
+module.exports = { answer_validation, affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest };

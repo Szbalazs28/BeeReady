@@ -146,13 +146,13 @@ async function flashcard_start_ordered(deck_id) {
     try {
         document.getElementById("add_card_modal").remove()
         const token = localStorage.getItem('token');
-        const cards_result = await apiFetch("http://127.0.0.1:4000/api/getcards", {
-            method: "POST",
+        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
+        
         })
         card_length_test(cards_result.cards, deck_id)
         let cards = []
@@ -232,13 +232,12 @@ async function flashcard_start_random(deck_id) {
     try {
         document.getElementById("add_card_modal").remove()
         const token = localStorage.getItem('token');
-        const cards_result = await apiFetch("http://127.0.0.1:4000/api/getcards", {
-            method: "POST",
+        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         })
         card_length_test(cards_result.cards, deck_id)
         let order = []
@@ -270,13 +269,12 @@ async function card_delete(card_id) {
         const card = document.getElementById(`card_${card_id}`);
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch("http://127.0.0.1:4000/api/deletecard", {
-            method: "POST",
+        await apiFetch(`http://localhost:4000/api/deletecard?card_id=${card_id}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ card_id: card_id })
+            }
         })
         card.remove();
 
@@ -289,13 +287,12 @@ async function card_delete(card_id) {
 async function deck_edit_user(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://127.0.0.1:4000/api/getdeckbydeck_id", {
-            method: "POST",
+        const result = await apiFetch(`http://localhost:4000/api/getdeckbydeck_id?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         });
 
         const adatok = result.decks[0];
@@ -384,13 +381,13 @@ async function deck_edit_user(deck_id) {
 async function share_code_change(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://127.0.0.1:4000/api/change_share_code", {
-            method: "POST",
+        const result = await apiFetch(`http://localhost:4000/api/change_share_code?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ deck_id: deck_id })
+            
         })
         document.getElementById("share_code").textContent = `Megosztási kód: #${result.share_code}`;
     } catch (error) {
@@ -427,13 +424,13 @@ async function save_deck(deck_id) {
 async function delete_deck(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://127.0.0.1:4000/api/deletedeck", {
-            method: "POST",
+        await apiFetch(`http://localhost:4000/api/deletedeck?deck_id=${deck_id}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
+
         })
         cancel_flashcard_modal()
         load_deck()
@@ -463,13 +460,12 @@ async function deck_open(deck_id) {
         const currentDeckName = document.getElementById("currentDeckName")
 
         //Pakli nevének lekérése
-        const deck_result = await apiFetch("http://127.0.0.1:4000/api/getdeckbydeck_id", {
-            method: "POST",
+        const deck_result = await apiFetch(`http://localhost:4000/api/getdeckbydeck_id?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         })
 
         // Globális isOwner beállítása
@@ -478,13 +474,12 @@ async function deck_open(deck_id) {
         currentDeckName.textContent = deck_result.decks[0].deck_name
 
         //Kártyák lekérése
-        const cards_result = await apiFetch("http://127.0.0.1:4000/api/getcards", {
-            method: "POST",
+        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         })
 
         let card_list = document.getElementById("cardList");
@@ -571,8 +566,8 @@ async function load_deck() {
         const deck_list = document.getElementById("deckList")
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch("http://127.0.0.1:4000/api/deck_load", {
-            method: "POST",
+        const result = await apiFetch("http://localhost:4000/api/deck_load", {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
@@ -687,13 +682,12 @@ async function card_edit(card_id) {
     try {
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch("http://127.0.0.1:4000/api/getcardbyid", {
-            method: "POST",
+        const result = await apiFetch(`http://localhost:4000/api/getcardbyid?card_id=${card_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ card_id: card_id })
+            }
         })
         const adatok = result.rows
 
