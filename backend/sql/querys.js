@@ -172,9 +172,18 @@ async function add_task(user_id, task_name, task_description, importance) {
 
 // Feladatok lekérése felhasználó szerint (időrendben visszafelé)
 async function get_tasks(user_id) {
-    return await pool.execute(`SELECT * FROM todo_tasks 
+    return await pool.execute(`SELECT 
+        id,
+        user_id,
+        task_name,
+        task_description,
+        importance,
+        is_completed,
+        created_at
+    FROM todo_tasks 
     WHERE user_id = ? 
     ORDER BY 
+    is_completed ASC,
     importance ASC, 
     created_at ASC;`, [user_id]);
 }
@@ -190,12 +199,210 @@ async function update_task(task_id, task_name, task_description, importance, use
     );
 }
 
-async function mark_task_done(task_id, user_id) {
+async function toggle_task_completion(task_id, is_completed, user_id) {
     await pool.execute(
-        "UPDATE todo_tasks SET importance = 'done' WHERE id = ? AND user_id = ?",
+        "UPDATE todo_tasks SET is_completed = ? WHERE id = ? AND user_id = ?",
+        [is_completed, task_id, user_id]
+    );
+}
+
+
+async function restore_task(task_id, user_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET is_completed = FALSE WHERE id = ? AND user_id = ?",
         [task_id, user_id]
     );
 }
+
+async function mark_task_done(task_id, user_id) {
+    await pool.execute(
+        "UPDATE todo_tasks SET importance = TRUE WHERE id = ? AND user_id = ?",
+        [task_id, user_id]
+    );
+}
+
+async function get_calendar_events(yrs, mnth, user_id) {
+    // return id, formatted date, title and description so front end can display/delete
+    return await pool.execute(
+        "SELECT event_id, DATE_FORMAT(event_date, '%Y-%m-%d') AS event_date, title, description " +
+        "FROM events WHERE YEAR(event_date) = ? AND MONTH(event_date) = ? AND user_id = ?",
+        [yrs, mnth, user_id]
+    );
+}
+
+async function Insert_calendar_event(date, title, user_id, description = null) {
+    await pool.execute(
+        "INSERT INTO events (event_date, title, user_id, description) VALUES (?, ?, ?, ?)",
+        [date, title, user_id, description]
+    );
+}
+
+async function delete_calendar_event(event_id, user_id) {
+    await pool.execute(
+        "DELETE FROM events WHERE event_id = ? AND user_id = ?",
+        [event_id, user_id]
+    );
+}
+
+async function adminCheck(id) {
+    return await pool.execute("SELECT * FROM admins WHERE user_id = ?", [id]);
+}
+
+async function admin_get_users() {
+    return await pool.execute(
+        `SELECT users.id, users.username, users.email, users.profil_pic_url
+        FROM users 
+        LEFT JOIN admins ON users.id = admins.user_id 
+        WHERE admins.user_id IS NULL 
+        ORDER BY users.id DESC;`
+    );
+    //left join csak a nem admin felhasznalokat adja vissza
+}
+
+async function admin_update_user(user_id, username, email, profil_pic_url) {
+    await pool.execute(
+        "UPDATE users SET username=?, email=?, profil_pic_url=? WHERE id=?",
+        [username, email, profil_pic_url, user_id]
+    );
+}
+
+async function admin_delete_user(user_id) {
+    await pool.execute("DELETE FROM users WHERE id=?", [user_id]);
+}
+
+
+async function getQnF(user_id) {
+    return await pool.execute(`
+SELECT
+    'flashcard' AS type,
+    fd.deck_id AS id,
+    fd.deck_name AS title,
+    u.username AS author,
+    fd.create_date AS created_at,
+    NULL AS description,
+    COUNT(DISTINCT fc.card_id) AS item_count,
+    COUNT(DISTINCT uf.user_id) AS favorite_count,
+    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id)) AS is_saved_by_user
+FROM flashcard_deck fd
+JOIN users u ON fd.user_id = u.id
+LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
+LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
+WHERE fd.public = TRUE
+GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
+
+UNION ALL
+
+SELECT
+    'quiz' AS type,
+    q.quiz_id AS id,
+    q.title AS title,
+    u.username AS author,
+    q.last_modified AS created_at,
+    q.description AS description,
+    COUNT(DISTINCT qq.question_id) AS item_count,
+    COUNT(DISTINCT uf.user_id) AS favorite_count,
+    (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id)) AS is_saved_by_user
+FROM quizzes q
+JOIN users u ON q.user_id = u.id
+LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
+LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
+WHERE q.public = TRUE
+GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
+
+ORDER BY created_at DESC;`, [user_id, user_id])
+};
+
+async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly = false }) {
+    const searchPattern = searchTerm ? `%${searchTerm}%` : null;
+
+    const query = `
+    SELECT * FROM (
+        -- FLASHCARD RÉSZ
+        SELECT 
+            'flashcard' AS type,
+            fd.deck_id AS id,
+            fd.deck_name AS title,
+            u.username AS author,
+            fd.create_date AS created_at,
+            NULL AS description,
+            COUNT(DISTINCT fc.card_id) AS item_count,
+            COUNT(DISTINCT uf_all.user_id) AS favorite_count,
+            EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id) AS is_saved_by_user
+        FROM flashcard_deck fd
+        JOIN users u ON fd.user_id = u.id
+        LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
+        LEFT JOIN user_favorites uf_all ON uf_all.item_id = fd.deck_id AND uf_all.item_type = 'flashcard'
+        WHERE fd.public = TRUE
+        GROUP BY fd.deck_id, fd.deck_name, u.username, fd.create_date
+
+        UNION ALL
+
+        -- QUIZ RÉSZ
+        SELECT 
+            'quiz' AS type,
+            q.quiz_id AS id,
+            q.title AS title,
+            u.username AS author,
+            q.last_modified AS created_at,
+            q.description AS description,
+            COUNT(DISTINCT qq.question_id) AS item_count,
+            COUNT(DISTINCT uf_all.user_id) AS favorite_count,
+            EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id) AS is_saved_by_user
+        FROM quizzes q
+        JOIN users u ON q.user_id = u.id
+        LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
+        LEFT JOIN user_favorites uf_all ON uf_all.item_id = q.quiz_id AND uf_all.item_type = 'quiz'
+        WHERE q.public = TRUE
+        GROUP BY q.quiz_id, q.title, u.username, q.last_modified, q.description
+    ) AS results
+    WHERE 
+        (? IS NULL OR type = ?) 
+        AND (? IS NULL OR title LIKE ? OR author LIKE ?)
+        AND (? = FALSE OR is_saved_by_user = 1)
+    ORDER BY created_at DESC;
+    `;
+
+    const params = [
+        userId,          
+        userId,          
+        type, type,      
+        searchPattern, searchPattern, searchPattern, 
+        favoritesOnly    
+    ];
+
+    return await pool.execute(query, params);
+}
+
+async function toggleFavorite(user_id, item_type, item_id) {
+    const [existing] = await pool.execute(
+        "SELECT id FROM user_favorites WHERE user_id = ? AND item_type = ? AND item_id = ?",
+        [user_id, item_type, item_id]
+    );
+
+    if (existing.length > 0) {
+        await pool.execute(
+            "DELETE FROM user_favorites WHERE user_id = ? AND item_type = ? AND item_id = ?",
+            [user_id, item_type, item_id]
+        );
+        return false;
+    } else {
+        await pool.execute(
+            "INSERT INTO user_favorites (user_id, item_type, item_id) VALUES (?, ?, ?)",
+            [user_id, item_type, item_id]
+        );
+        return true;
+    }
+}
+
+async function getFavoriteCount(item_type, item_id) {
+    const [result] = await pool.execute(
+        "SELECT COUNT(id) as count FROM user_favorites WHERE item_type = ? AND item_id = ?",
+        [item_type, item_id]
+    );
+    return result[0].count;
+}
+
+
 
 async function getquizzes(user_id) {
     return await pool.execute("SELECT quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quizzes.last_result,quizzes.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public, quizzes.randomize_questions, quizzes.total_points FROM quizzes LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id JOIN users ON quizzes.user_id=users.id WHERE user_id = ? GROUP BY quizzes.quiz_id ORDER BY quizzes.position;", [user_id]);
@@ -331,6 +538,19 @@ async function isexist(data) {
 
 
 module.exports = {
+    getFavoriteCount,
+    toggleFavorite,
+    QnFSearch,
+    getQnF,
+    admin_delete_user,
+    admin_update_user,
+    admin_get_users,
+    adminCheck,
+    delete_calendar_event,
+    Insert_calendar_event,
+    get_calendar_events,
+     restore_task,
+    toggle_task_completion,
     save_current_foreign_quiz_order,
     getforeignquizzes,
     loadanswers_withoutright,

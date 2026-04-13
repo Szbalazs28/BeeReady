@@ -13,6 +13,43 @@ CREATE TABLE IF NOT EXISTS users (
   selected_week_type VARCHAR(2) DEFAULT 'A'  
 );
 
+CREATE TABLE IF NOT EXISTS admins (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS user_favorites (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    item_type ENUM ('quiz', 'flashcard') NOT NULL,
+    item_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    UNIQUE KEY unique_favorite (user_id, item_type, item_id)
+);
+
+CREATE TABLE IF NOT EXISTS todo_tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    task_name VARCHAR(255) NOT NULL,
+    task_description TEXT,
+    importance ENUM ('high', 'medium', 'low') NOT NULL,
+    is_completed BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS events (
+    event_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_date DATE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+); 
+
 CREATE TABLE IF NOT EXISTS flashcard_deck(
   deck_id int not null AUTO_INCREMENT PRIMARY KEY,
   deck_name varchar(200),
@@ -43,15 +80,7 @@ CREATE TABLE IF NOT EXISTS timetable (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS todo_tasks (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  task_name VARCHAR(100) NOT NULL,
-  task_description TEXT,
-  importance ENUM ('high', 'medium', 'low', 'done') NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-);
+
 
 CREATE TABLE IF NOT EXISTS quizzes (
   quiz_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -120,5 +149,7 @@ CREATE TABLE IF NOT EXISTS quiz_share (
 
 
 INSERT INTO `users` (username, email, password, profil_pic_url) VALUES
-  ('teszt1', 'teszt1@gmail.com', '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC', '../img/allatos_profilkepek/oroszlan.webp');
+  ('teszt1', 'teszt1@gmail.com', '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC', '../img/allatos_profilkepek/oroszlan.webp'),
+  ('admin1', 'admin1@gmail.com', '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC', '../img/allatos_profilkepek/oroszlan.webp');
+INSERT INTO admins (user_id) VALUES (2)
 -- Teszt1$

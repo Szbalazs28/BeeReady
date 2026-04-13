@@ -4,8 +4,8 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { save_current_foreign_quiz_order,getforeignquizzes, loadanswers_withoutright,getuseranswers,getquizresult, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, quiz_submit } = require("../sql/querys.js");
+const { admincheck, answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
+const { save_current_foreign_quiz_order, getforeignquizzes, loadanswers_withoutright, getuseranswers, getquizresult, restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch, quiz_submit } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -41,14 +41,16 @@ router.post("/login", loginLimiter, async (req, res, next) => {
     const data = req.body;
     const rows = await getuserbyemail(data.email);
     await compare(data.password, rows[0].password)
+    const [adminRows] = await adminCheck(rows[0].id);
+    const isAdmin = adminRows.length > 0;
     let expiresInTime = "1h";
     if (data.stay) {
       expiresInTime = "7d";
     }
     const token = await generateToken(rows[0].id, expiresInTime);
-    res.status(200).json({ token, redirect: "../html/main.html" })
+    res.status(200).json({ token, redirect: isAdmin ? "./admin.html" : "./main.html" })
   } catch (error) {
-    next(error)
+    next(error);
   }
 });
 
@@ -378,6 +380,166 @@ router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
   }
 });
 
+router.post("/restoretask", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.user.id;
+    await restore_task(data.task_id, id);
+    res.status(200).json({ write: true, message: "Feladat visszahozva!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/toggletaskcompletion", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.user.id;
+    await toggle_task_completion(data.task_id, data.is_completed, id);
+    res.status(200).json({ write: true, message: "Feladat állapota frissítve!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/get_calendar_events", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.user.id;
+    const [rows] = await get_calendar_events(data.year, data.month, id);
+    res.status(200).json({ write: false, events: rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/insert_calendar_event", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.user.id;
+    lengthtest(data.title, 1, 255)
+    await Insert_calendar_event(data.date, data.title, id, data.description);
+    res.status(200).json({ write: true, message: "Esemény hozzáadva!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/delete_calendar_event", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.user.id;
+    await delete_calendar_event(data.event_id, id);
+    res.status(200).json({ write: true, message: "Esemény törölve!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/admin/users", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    admincheck(adminRows)
+    const [rows] = await admin_get_users();
+    res.status(200).json({ users: rows });
+  } catch (error) { next(error); }
+});
+
+router.post("/admin/update_user", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    admincheck(adminRows)
+    const { user_id, username, email, profil_pic_url } = req.body;
+    await admin_update_user(user_id, username, email, profil_pic_url);
+    res.status(200).json({ write: true, message: "Sikeres mentés!" });
+  } catch (error) { next(error); }
+});
+
+router.post("/admin/delete_user", authenticateToken, async (req, res, next) => {
+  try {
+    const [adminRows] = await adminCheck(req.user.id);
+    admincheck(adminRows)
+    await admin_delete_user(req.body.user_id);
+    res.status(200).json({ write: true, message: "Törölve!" });
+  } catch (error) { next(error); }
+});
+
+router.get("/getQnF", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const [qnf_rows] = await getQnF(user_id);
+    res.status(200).json({
+      write: false,
+      qnf: qnf_rows
+    });
+  } catch (error) { next(error); }
+});
+
+router.post("/qnfsearch", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const searchTerm = req.body.search;
+    const type = req.body.type;
+    if (!searchTerm || searchTerm.trim().length === 0) {
+      return res.status(400).json({ write: false, results: [] });
+    }
+    const [results] = await QnFSearch(searchTerm, user_id,);
+    res.status(200).json({ write: false, results: results });
+  } catch (error) { next(error); }
+});
+
+router.post("/toggleFavorite", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const { item_type, item_id } = req.body;
+    
+    const is_favorited = await toggleFavorite(user_id, item_type, item_id);
+    res.status(200).json({is_favorited});
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get("/hive", authenticateToken, async (req, res, next) => {
+    try {
+        const user_id = req.user.id;
+        const { type, search, favorites } = req.query;
+
+        const [result] = await QnFSearch({
+            userId: user_id,
+            type: type === 'all' ? null : type,
+            searchTerm: search || null,
+            favoritesOnly: favorites === 'true'
+        });
+
+        res.status(200).json({qnf: result});
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/getfavorites", authenticateToken, async (req, res, next) => {
+  try {
+    const user_id = req.user.id;
+    const [result] = await getUserFavorites(user_id);
+    res.status(200).json({ qnf: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/getfavoritecount", authenticateToken, async (req, res, next) => {
+  try {
+    const { item_type, item_id } = req.body;
+    const count = await getFavoriteCount(item_type, item_id);
+    res.status(200).json({count});
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 router.get("/getquizzes", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
@@ -428,7 +590,7 @@ router.post("/saveanswer", authenticateToken, async (req, res, next) => {
     const data = req.body
     lengthtest(data.answer_text, 1, 1000)
     await save_answer(data.question_id, data.answer_text, data.right_answer, id, data.position, data.points);
-    res.status(200).json({ write: false});
+    res.status(200).json({ write: false });
   } catch (error) {
     next(error);
   }

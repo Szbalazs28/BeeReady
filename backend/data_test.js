@@ -59,6 +59,14 @@ async function encrypt(password) {
 
 }
 
+function admincheck(rows){
+    if(rows.length == 0){
+        const err = new Error("Nincs jogosultságod!")
+        err.status = 403;
+        throw err;
+    }
+}
+
 
 function emailTest(email) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -210,4 +218,4 @@ async function answer_validation(result_id, user, id) {
     }
     await save_result(result_id, user.question_id, JSON.stringify(answers_text), points)
 }
-module.exports = { answer_validation, affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest };
+module.exports = {admincheck, answer_validation, affectedRowscheck, getuserbyid, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, timetest };
