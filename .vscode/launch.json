@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "type": "msedge",
             "request": "launch",
             "name": "Open index.html",
-            "file": "c:\\Users\\2021c_szekely_b\\Downloads\\BeeReady\\frontend\\html\\index.html"
+            "file": "c:\\Users\\piszk\\Downloads\\BeeReady\\frontend\\html\\index.html"
         }
     ]
 }

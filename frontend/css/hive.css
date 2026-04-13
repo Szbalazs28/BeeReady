@@ -1,0 +1,310 @@
+.hive_container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.hive_header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f1b43c;
+    margin-bottom: 2rem;
+}
+
+.hive_header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    letter-spacing: 0.5px;
+}
+
+.hive_buttons input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s;
+    background: #fafafa;
+    color: #374151;
+}
+
+.hive_buttons input::placeholder {
+    color: #9ca3af;
+}
+
+.hive_buttons input:focus {
+    border-color: #f1b43c;
+    background: #fffdf8;
+    box-shadow: 0 0 0 3px rgba(241, 180, 60, 0.1);
+}
+
+
+.hive_buttons {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.hive_container button {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1.5px solid #e5e7eb;
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: auto;
+    width: auto;
+}
+
+.hive_container button:hover {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+    color: #1f2937;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.hive_btn_filter.active {
+    background-color: #f1b43c;
+    color: #333;
+    border-color: #f1b43c;
+    box-shadow: 0 0 0 3px rgba(241, 180, 60, 0.1);
+}
+
+/* Kártyák */
+.hive_results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #FFCC00 #f4f4f4;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.hive_card {
+    background: #ffffff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 0 12px 12px 0;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.hive_card::before {
+    content: '';
+    position: absolute;
+    left: 0.2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.hive_card.quiz::before {
+    background: linear-gradient(180deg, #f1b43c, #e0a92f);
+}
+
+.hive_card.flashcard::before {
+    background: linear-gradient(180deg, #10b981, #059669);
+}
+
+.hive_card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+}
+
+.hive_card_type {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    border-radius: 6px;
+    align-self: flex-start;
+    display: inline-block;
+}
+
+.hive_card_type.quiz {
+    background: #fff4d6;
+    color: #92600a;
+}
+
+.hive_card_type.flashcard {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.hive_card_header {
+    padding-bottom: 0.5rem;
+}
+
+.hive_card_header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    word-break: break-word;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.hive_card_header p {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    font-weight: 500;
+    margin: 0.4rem 0 0 0;
+}
+
+.hive_card hr {
+    border: none;
+    border-top: 1px solid #f3f4f6;
+    margin: 0.4rem 0;
+}
+
+.hive_card_desc {
+    font-size: 0.9rem;
+    color: #4b5563;
+    line-height: 1.5;
+    flex-grow: 1;
+    margin: 0;
+}
+
+.hive_card_stats {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0.3rem 0 0 0;
+}
+
+.hive_card_likes {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.hive_card_likes i,
+.hive_card_likes span {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.hive_card_footer {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.hive_btn_save {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1.5px solid #e5e7eb;
+    padding: 0.55rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.hive_btn_save:hover {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+    color: #1f2937;
+}
+
+.hive_btn_save.saved {
+    background-color: #fecaca;
+    color: #991b1b;
+    border-color: #ef4444;
+}
+
+.hive_btn_view {
+    background-color: #f1b43c;
+    color: #333;
+    border: none;
+    padding: 0.55rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.hive_btn_view:hover {
+    background-color: #e0a92f;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.hive_card_title_row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.hive_card_title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    word-break: break-word;
+    flex: 1;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.hive_save_heart {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #d1d5db;
+    padding: 0;
+    width: auto;
+    height: auto;
+    line-height: 1;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hive_save_heart:hover {
+    color: #f1b43c;
+    transform: scale(1.15);
+}
+
+.hive_save_heart.saved {
+    color: #ef4444;
+}
