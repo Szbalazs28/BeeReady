@@ -48,7 +48,7 @@ router.post("/login", loginLimiter, async (req, res, next) => {
       expiresInTime = "7d";
     }
     const token = await generateToken(rows[0].id, expiresInTime);
-    res.status(200).json({ token, redirect: isAdmin ? "./admin.html" : "./main.html" })
+    res.status(200).json({ token, redirect: isAdmin ? "../html/admin.html" : "../html/main.html" })
   } catch (error) {
     next(error);
   }

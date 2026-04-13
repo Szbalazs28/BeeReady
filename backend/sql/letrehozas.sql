@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS flashcard_deck(
   deck_name varchar(200),
   create_date TIMESTAMP,
   position int not null,
+  public boolean default false,
   share_code varchar(8) UNIQUE DEFAULT NULL,
   user_id int not null, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
