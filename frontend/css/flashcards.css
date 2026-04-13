@@ -41,65 +41,33 @@
     background-color: #d99c2c;
 }
 
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: #333;
-    font-weight: 500;
-    user-select: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-}
-
-.checkbox-container:hover {
-    background-color: rgba(241, 180, 60, 0.15);
-}
-
-.checkbox-container input {
-    display: none;
-}
-
-.checkbox-container .checkmark {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 17px;
-    border: 2px solid #f1b43c;
-    border-radius: 5px;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.checkbox-container input:checked + .checkmark {
-    background-color: #f1b43c;
-    border-color: #d99c2c;
-    box-shadow: 0 0 8px rgba(241, 180, 60, 0.4);
-}
 
 .cards {
     height: 100%;
 }
 
 .flashcard_container {
-   display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    padding: 0.5rem;
-    scrollbar-width: thin;
-    scrollbar-color: #FFCC00 #f4f4f4;
+    flex: 1;
+    height: 65vh;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3%;
+    row-gap: 10px;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #FFCC00 #f4f4f4;
 }
 
+
+
+
 .deck_item {
-    height: 100px;
-    width: 90%;
+    min-width: 200px;
+    width: 25%;
     padding: 16px;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);
@@ -162,10 +130,15 @@
 
 #flashcard_form {
     display: flex;
+    
     gap: 10%;
 }
 
-
+.createDeckButton_div {
+    
+    display: flex;
+    justify-content: center;
+}
 
 
 .deck_header {
@@ -274,15 +247,11 @@
     }
 }
 
-.disabled_card_button{
-    background-color: rgba(200, 200, 200, 0.2);
-    color: #888;
-    cursor: not-allowed;
-    text-decoration: line-through;
-}
 
 
 .card_item {
+    min-width: 200px;
+    width: 25%;
     padding: 16px;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);
@@ -675,11 +644,21 @@
 .game_nav_button:active {
     transform: scale(0.95);
 }
+
+@media (max-width: 720px) {
+    #flashcard_form{
+        flex-direction: column;
+    }
+    .createDeckButton_div {
+        padding: 5px;
+        
+    }
+}
 @media (max-width: 600px) {
     .flashcard_game_container {
         gap: 10px;
     }
-    
+
     .game_nav_button {
         width: 45px;
         height: 45px;

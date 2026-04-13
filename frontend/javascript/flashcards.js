@@ -1,13 +1,10 @@
-// Globális változó a csomag tulajdonosának jelzésére
-let isOwner = false;
-
 document.getElementById("flashcard_form").addEventListener("submit", async function (e) {
     try {
         e.preventDefault()
         const inputvalue = document.getElementById("newDeckName").value
         if (inputvalue[0] == "#" && inputvalue.length == 9) {
             const token = localStorage.getItem('token');
-            const result = await apiFetch("http://127.0.0.1:4000/api/copy_deck", {
+            const result = await apiFetch("http://localhost:4000/api/copy_deck", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -17,8 +14,7 @@ document.getElementById("flashcard_form").addEventListener("submit", async funct
             })
             await load_deck()
         } else {
-            const isPublic = document.getElementById("deckIsPublic").checked;
-            await add_deck(inputvalue, isPublic);
+            await add_deck(inputvalue);
         }
     } catch (error) {
         console.error(error)
@@ -58,7 +54,7 @@ function build_deck(name, deck_id, cardcount) {
 }
 
 
-function build_card(front_text, back_text, card_id, deck_id) {
+function build_card(front_text, back_text, card_id) {
     const card_item = document.createElement('div');
     card_item.draggable = true
     card_item.setAttribute('data-id', card_id);
@@ -82,14 +78,6 @@ function build_card(front_text, back_text, card_id, deck_id) {
     delete_button.classList.add("del_card_button");
     delete_button.textContent = "Törlés";
     delete_button.onclick = () => card_delete(card_id); // CARD DELETE
-
-    if (!isOwner) {
-        delete_button.disabled = true;
-        delete_button.classList.add("disabled_card_button");
-
-        edit_button.disabled = true;
-        edit_button.classList.add("disabled_card_button");
-    }
     card_info.appendChild(card_front);
     card_info.appendChild(card_back);
     card_actions.appendChild(edit_button);
@@ -146,13 +134,13 @@ async function flashcard_start_ordered(deck_id) {
     try {
         document.getElementById("add_card_modal").remove()
         const token = localStorage.getItem('token');
-        const cards_result = await apiFetch("http://127.0.0.1:4000/api/getcards", {
-            method: "POST",
+        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
+        
         })
         card_length_test(cards_result.cards, deck_id)
         let cards = []
@@ -232,13 +220,12 @@ async function flashcard_start_random(deck_id) {
     try {
         document.getElementById("add_card_modal").remove()
         const token = localStorage.getItem('token');
-        const cards_result = await apiFetch("http://127.0.0.1:4000/api/getcards", {
-            method: "POST",
+        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         })
         card_length_test(cards_result.cards, deck_id)
         let order = []
@@ -270,13 +257,12 @@ async function card_delete(card_id) {
         const card = document.getElementById(`card_${card_id}`);
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch("http://127.0.0.1:4000/api/deletecard", {
-            method: "POST",
+        await apiFetch(`http://localhost:4000/api/deletecard?card_id=${card_id}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ card_id: card_id })
+            }
         })
         card.remove();
 
@@ -289,13 +275,12 @@ async function card_delete(card_id) {
 async function deck_edit_user(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://127.0.0.1:4000/api/getdeckbydeck_id", {
-            method: "POST",
+        const result = await apiFetch(`http://localhost:4000/api/getdeckbydeck_id?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         });
 
         const adatok = result.decks[0];
@@ -318,21 +303,6 @@ async function deck_edit_user(deck_id) {
         share_code_p.textContent = `Megosztási kód: #${adatok.share_code}`
         share_code_p.classList.add("share_code_p")
         share_code_p.id = "share_code"
-
-        // Public checkbox hozzáadása
-        const public_label = document.createElement("label")
-        public_label.classList.add("checkbox-container")
-        const public_input = document.createElement("input")
-        public_input.type = "checkbox"
-        public_input.id = "editDeckIsPublic"
-        public_input.checked = adatok.public || false
-        const checkmark = document.createElement("span")
-        checkmark.classList.add("checkmark")
-        const label_text = document.createElement("span")
-        label_text.textContent = "Publikus pakli"
-        public_label.appendChild(public_input)
-        public_label.appendChild(checkmark)
-        public_label.appendChild(label_text)
 
         const actions_div = document.createElement("div")
         actions_div.classList.add("modal-actions")
@@ -371,7 +341,6 @@ async function deck_edit_user(deck_id) {
 
         modal_content.appendChild(title)
         modal_content.appendChild(deck_name)
-        modal_content.appendChild(public_label)
         modal_content.appendChild(share_code_p)
         modal_content.appendChild(actions_div)
         card_add_modal.appendChild(modal_content)
@@ -384,13 +353,13 @@ async function deck_edit_user(deck_id) {
 async function share_code_change(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://127.0.0.1:4000/api/change_share_code", {
-            method: "POST",
+        const result = await apiFetch(`http://localhost:4000/api/change_share_code?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ deck_id: deck_id })
+            
         })
         document.getElementById("share_code").textContent = `Megosztási kód: #${result.share_code}`;
     } catch (error) {
@@ -403,17 +372,16 @@ async function save_deck(deck_id) {
     try {
         const token = localStorage.getItem('token');
         const deck_name = document.getElementById("editDeckName").value
-        const isPublic = document.getElementById("editDeckIsPublic").checked
 
         lengthtest(deck_name, 1, 200)
 
-        const result = await apiFetch("http://127.0.0.1:4000/api/updatedeck", {
+        const result = await apiFetch("http://localhost:4000/api/updatedeck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name, isPublic: isPublic })
+            body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
         })
         cancel_flashcard_modal()
         deck_open(deck_id)
@@ -427,13 +395,13 @@ async function save_deck(deck_id) {
 async function delete_deck(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://127.0.0.1:4000/api/deletedeck", {
-            method: "POST",
+        await apiFetch(`http://localhost:4000/api/deletedeck?deck_id=${deck_id}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
+
         })
         cancel_flashcard_modal()
         load_deck()
@@ -463,28 +431,23 @@ async function deck_open(deck_id) {
         const currentDeckName = document.getElementById("currentDeckName")
 
         //Pakli nevének lekérése
-        const deck_result = await apiFetch("http://127.0.0.1:4000/api/getdeckbydeck_id", {
-            method: "POST",
+        const deck_result = await apiFetch(`http://localhost:4000/api/getdeckbydeck_id?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         })
-
-        // Globális isOwner beállítása
-        isOwner = deck_result.isOwner || false;
 
         currentDeckName.textContent = deck_result.decks[0].deck_name
 
         //Kártyák lekérése
-        const cards_result = await apiFetch("http://127.0.0.1:4000/api/getcards", {
-            method: "POST",
+        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ deck_id: deck_id })
+            }
         })
 
         let card_list = document.getElementById("cardList");
@@ -492,22 +455,7 @@ async function deck_open(deck_id) {
         for (let i = 0; i < cards_result.cards.length; i++) {
             card_list.appendChild(build_card(cards_result.cards[i].front_text, cards_result.cards[i].back_text, cards_result.cards[i].card_id, cards_result.cards[i].deck_id))
         }
-        const edit_btn = document.getElementById("editDeckButton")
-        const add_new_card_btn = document.getElementById("addCardButton")
-        edit_btn.onclick = () => deck_edit_user(deck_id)
-        if(!isOwner){
-            edit_btn.disabled = true;
-            edit_btn.classList.add("disabled_card_button");
-            
-            add_new_card_btn.disabled = true;
-            add_new_card_btn.classList.add("disabled_card_button");
-        } else {
-            edit_btn.disabled = false;
-            edit_btn.classList.remove("disabled_card_button");
-            
-            add_new_card_btn.disabled = false;
-            add_new_card_btn.classList.remove("disabled_card_button");
-        }
+        document.getElementById("editDeckButton").onclick = () => deck_edit_user(deck_id)
         const el = document.getElementById('cardList');
         Sortable.create(el, {
             animation: 150,
@@ -525,7 +473,7 @@ async function deck_open(deck_id) {
 async function save_new_card_order(deck_id, currentorder) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch("http://127.0.0.1:4000/api/save_new_card_order", {
+        await apiFetch("http://localhost:4000/api/save_new_card_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -539,17 +487,17 @@ async function save_new_card_order(deck_id, currentorder) {
 }
 
 
-async function add_deck(deck_name, isPublic = false) {
+async function add_deck(deck_name) {
     try {
 
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://127.0.0.1:4000/api/add_deck", {
+        const result = await apiFetch("http://localhost:4000/api/add_deck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ deck_name: deck_name, isPublic: isPublic })
+            body: JSON.stringify({ deck_name: deck_name })
         })
         await load_deck()
     }
@@ -571,8 +519,8 @@ async function load_deck() {
         const deck_list = document.getElementById("deckList")
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch("http://127.0.0.1:4000/api/deck_load", {
-            method: "POST",
+        const result = await apiFetch("http://localhost:4000/api/deck_load", {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
@@ -602,7 +550,7 @@ async function load_deck() {
 async function save_new_deck_order(currentorder) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch("http://127.0.0.1:4000/api/save_new_deck_order", {
+        await apiFetch("http://localhost:4000/api/save_new_deck_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -663,7 +611,7 @@ async function save_card(deck_id, card_id) {
         const back_text = document.getElementById("newCardBack").value
         lengthtest(front_text, 1, 255)
         lengthtest(back_text, 1, 400)
-        const result = await apiFetch("http://127.0.0.1:4000/api/updatecard", {
+        const result = await apiFetch("http://localhost:4000/api/updatecard", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -687,13 +635,12 @@ async function card_edit(card_id) {
     try {
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch("http://127.0.0.1:4000/api/getcardbyid", {
-            method: "POST",
+        const result = await apiFetch(`http://localhost:4000/api/getcardbyid?card_id=${card_id}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ card_id: card_id })
+            }
         })
         const adatok = result.rows
 
@@ -754,7 +701,7 @@ async function save_new_card(deck_id) {
         const back_text = document.getElementById("newCardBack").value
         lengthtest(front_text, 1, 255)
         lengthtest(back_text, 1, 400)
-        const result = await apiFetch("http://127.0.0.1:4000/api/addnewcard", {
+        const result = await apiFetch("http://localhost:4000/api/addnewcard", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
