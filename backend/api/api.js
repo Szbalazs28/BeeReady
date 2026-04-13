@@ -4,8 +4,8 @@ const router = express.Router();
 
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
-const { answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { toggleFavorite, getFavoriteCount, QnFSearch, adminCheck, admin_get_users, admin_update_user, admin_delete_user, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, restore_task, save_current_foreign_quiz_order,getforeignquizzes, loadanswers_withoutright,getuseranswers,getquizresult, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, quiz_submit } = require("../sql/querys.js");
+const { getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
+const { restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, loadquestions_public, loadanswers_public, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -19,7 +19,7 @@ const loginLimiter = rateLimit({
 });
 
 
-router.post("/registration", loginLimiter, async (req, res, next) => {
+router.post("/registration", async (req, res, next) => {
   try {
     const data = req.body
     lengthtest(data.username, 3, 20)
@@ -29,7 +29,7 @@ router.post("/registration", loginLimiter, async (req, res, next) => {
     const password = await encrypt(data.password)
     const [user] = await newuser(data.username, data.email, password, data.profil_pic_url)
     const token = await generateToken(user[0].id, "1h")
-    res.status(200).json({ token, redirect: "../html/main.html" })
+    res.status(200).json({ token, redirect: "./main.html" })
   } catch (error) {
     next(error)
   }
@@ -85,7 +85,7 @@ router.post("/edit_user_save", authenticateToken, async (req, res, next) => {
 
 router.post("/add_deck", authenticateToken, async (req, res, next) => {
   try {
-    const data = req.body
+    const adatok = req.body
     const id = req.user.id
     lengthtest(adatok.deck_name, 1, 200)
     const isPublic = adatok.isPublic || false
@@ -96,13 +96,11 @@ router.post("/add_deck", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.get("/change_share_code", authenticateToken, async (req, res, next) => {
+router.post("/change_share_code", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const deck_id = req.query.deck_id
-    const result = await change_share_code(deck_id, id)
-    affectedRowscheck(result.rows)
-    res.status(200).json({ write: false, share_code: result.share_code })
+    const id = req.body.deck_id
+    const new_share_code = await change_share_code(id)
+    res.status(200).json({ write: false, share_code: new_share_code })
   } catch (error) {
     next(error)
   }
@@ -120,7 +118,7 @@ router.post("/copy_deck", authenticateToken, async (req, res, next) => {
 })
 
 
-router.get("/deck_load", authenticateToken, async (req, res, next) => {
+router.post("/deck_load", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
     const [rows] = await getdeck(id)
@@ -130,23 +128,22 @@ router.get("/deck_load", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.get("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
+router.post("/getdeckbydeck_id", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const deck_id = req.query.deck_id
-    const [rows] = await getdeckbydeck_id(deck_id, id)
-    affectedRowscheck(rows)
-    res.status(200).json({ write: false, decks: rows })
+    const deck_id = req.body.deck_id
+    const user_id = req.user.id;
+    const [rows] = await getdeckbydeck_id(deck_id)
+    const isOwner = rows[0].user_id === user_id;
+    res.status(200).json({ write: false, decks: rows, isOwner: isOwner })
   } catch (error) {
     next(error)
   }
 })
 
-router.get("/getcards", authenticateToken, async (req, res, next) => {
+router.post("/getcards", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const deck_id = req.query.deck_id
-    const [rows] = await getcards(deck_id, id)
+    const deck_id = req.body.deck_id
+    const [rows] = await getcards(deck_id)
     res.status(200).json({ write: false, cards: rows })
   } catch (error) {
     next(error)
@@ -155,23 +152,20 @@ router.get("/getcards", authenticateToken, async (req, res, next) => {
 
 router.post("/addnewcard", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const data = req.body
-    lengthtest(data.front_text, 1, 255)
-    lengthtest(data.back_text, 1, 1000)
-    await addnewcard(data.deck_id, data.front_text, data.back_text, id)
+    const adatok = req.body
+    lengthtest(adatok.front_text, 1, 255)
+    lengthtest(adatok.back_text, 1, 1000)
+    await addnewcard(adatok.deck_id, adatok.front_text, adatok.back_text)
     res.status(200).json({ write: true, message: "Sikeres hozzáadás!" })
   } catch (error) {
     next(error)
   }
 })
 
-router.delete("/deletecard", authenticateToken, async (req, res, next) => {
+router.post("/deletecard", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const card_id = req.query.card_id
-    const [rows] = await deletecard(card_id, id)
-    affectedRowscheck(rows)
+    const card_id = req.body.card_id
+    await deletecard(card_id)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
   } catch (error) {
     next(error)
@@ -181,23 +175,20 @@ router.delete("/deletecard", authenticateToken, async (req, res, next) => {
 
 router.post("/updatecard", authenticateToken, async (req, res, next) => {
   try {
-    const data = req.body
-    const id = req.user.id
-    lengthtest(data.front_text, 1, 255)
-    lengthtest(data.back_text, 1, 1000)
-    const [rows] = await updatecard(data.front_text, data.back_text, data.card_id, id)
-    affectedRowscheck(rows)
+    const adatok = req.body
+    lengthtest(adatok.front_text, 1, 255)
+    lengthtest(adatok.back_text, 1, 1000)
+    await updatecard(adatok.front_text, adatok.back_text, adatok.card_id)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   } catch (error) {
     next(error)
   }
 })
 
-router.get("/getcardbyid", authenticateToken, async (req, res, next) => {
+router.post("/getcardbyid", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const card_id = req.query.card_id
-    const [rows] = await getcardbyid(card_id, id)
+    const card_id = req.body.card_id
+    const [rows] = await getcardbyid(card_id)
     res.status(200).json({ write: false, rows: rows[0] })
   } catch (error) {
     next(error)
@@ -207,22 +198,19 @@ router.get("/getcardbyid", authenticateToken, async (req, res, next) => {
 router.post("/updatedeck", authenticateToken, async (req, res, next) => {
   try {
     const data = req.body
-    const id = req.user.id
     lengthtest(data.deck_name, 1, 200)
-    const rows = await updatedeck(data.deck_name, data.deck_id, id)
-    affectedRowscheck(rows)
+    const isPublic = data.hasOwnProperty('isPublic') ? data.isPublic : null
+    await updatedeck(data.deck_name, data.deck_id, isPublic)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   } catch (error) {
     next(error)
   }
 })
 
-router.delete("/deletedeck", authenticateToken, async (req, res, next) => {
+router.post("/deletedeck", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const deck_id = req.query.deck_id
-    const [rows] = await deletedeck(deck_id, id)
-    affectedRowscheck(rows)
+    const deck_id = req.body.deck_id
+    await deletedeck(deck_id)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
   } catch (error) {
     next(error)
@@ -231,11 +219,9 @@ router.delete("/deletedeck", authenticateToken, async (req, res, next) => {
 
 router.post("/save_new_card_order", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
     const data = req.body
     for (let i = 0; i < data.currentorder.length; i++) {
-      const [rows] = await save_new_card_order(data.currentorder[i], i, id)
-      affectedRowscheck(rows)
+      await save_new_card_order(data.currentorder[i], i)
     }
     res.status(200).json({ write: false })
   }
@@ -246,11 +232,9 @@ router.post("/save_new_card_order", authenticateToken, async (req, res, next) =>
 
 router.post("/save_new_deck_order", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
     const data = req.body
     for (let i = 0; i < data.currentorder.length; i++) {
-      const [rows] = await save_new_deck_order(data.currentorder[i], i, id)
-      affectedRowscheck(rows)
+      await save_new_deck_order(data.currentorder[i], i)
     }
     res.status(200).json({ write: false })
   }
@@ -263,7 +247,8 @@ router.post("/save_new_event", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
     const data = req.body
-    timetest(data.start_time, data.end_time)
+    lengthtest(data.start_time, 5, 5)
+    lengthtest(data.end_time, 5, 5)
     lengthtest(data.subject, 1, 100)
     lengthtest(data.location, 1, 50)
     await save_new_event(id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
@@ -274,7 +259,7 @@ router.post("/save_new_event", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.get("/get_events", authenticateToken, async (req, res, next) => {
+router.post("/get_events", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id
     const [rows] = await get_events(id)
@@ -300,12 +285,12 @@ router.post("/change_selected_week", authenticateToken, async (req, res, next) =
 
 router.post("/updateevent", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
     const data = req.body
-    timetest(data.start_time, data.end_time),
+    timetest(data.start_time),
+      timetest(data.end_time),
       lengthtest(data.subject, 1, 100)
     lengthtest(data.location, 1, 50)
-    await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type, id)
+    await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   }
   catch (error) {
@@ -313,11 +298,10 @@ router.post("/updateevent", authenticateToken, async (req, res, next) => {
   }
 })
 
-router.delete("/delete_event", authenticateToken, async (req, res, next) => {
+router.post("/delete_event", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id
-    const event_id = req.query.event_id
-    await delete_event(event_id, id)
+    const data = req.body
+    await delete_event(data.event_id)
     res.status(200).json({ write: true, message: "Sikeres törlés!" })
   }
   catch (error) {
@@ -339,19 +323,17 @@ router.post("/taskadd", authenticateToken, async (req, res, next) => {
 
 router.get("/gettasks", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id;
-    const [rows] = await get_tasks(id);
+    const [rows] = await get_tasks(req.user.id);
     res.status(200).json({ write: false, tasks: rows });
   } catch (error) {
     next(error);
   }
 });
 
-router.delete("/deletetask", authenticateToken, async (req, res, next) => {
+router.post("/deletetask", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id;
-    const task_id = req.query.task_id;
-    await delete_task(task_id, id);
+    const data = req.body;
+    await delete_task(data.task_id);
     res.status(200).json({ write: true, message: "Feladat törölve!" });
   } catch (error) {
     next(error);
@@ -360,10 +342,9 @@ router.delete("/deletetask", authenticateToken, async (req, res, next) => {
 
 router.post("/updatetask", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id;
     const data = req.body;
     lengthtest(data.task_name, 1, 100)
-    await update_task(data.task_id, data.task_name, data.task_description, data.importance, id);
+    await update_task(data.task_id, data.task_name, data.task_description, data.importance);
     res.status(200).json({ write: true, message: "Feladat frissítve!" });
   } catch (error) {
     next(error);
@@ -372,9 +353,8 @@ router.post("/updatetask", authenticateToken, async (req, res, next) => {
 
 router.post("/marktaskdone", authenticateToken, async (req, res, next) => {
   try {
-    const id = req.user.id;
     const data = req.body;
-    await mark_task_done(data.task_id, id);
+    await mark_task_done(data.task_id);
     res.status(200).json({ write: true, message: "Feladat megjelölve!" });
   } catch (error) {
     next(error);
@@ -427,11 +407,6 @@ router.post("/delete_calendar_event", authenticateToken, async (req, res, next) 
     const data = req.body;
     await delete_calendar_event(data.event_id, req.user.id);
     res.status(200).json({ write: true, message: "Esemény törölve!" });
-router.get("/getquizzes", authenticateToken, async (req, res, next) => {
-  try {
-    const id = req.user.id;
-    const [rows] = await getquizzes(id);
-    res.status(200).json({ write: false, quizzes: rows });
   } catch (error) {
     next(error);
   }
@@ -492,11 +467,12 @@ router.post("/qnfsearch", authenticateToken, async (req, res, next) => {
     res.status(200).json({ write: false, results: results });
   } catch (error) { next(error); }
 });
-router.get("/getforeignquizzes", authenticateToken, async (req, res, next) => {
+
+router.get("/getquizzes", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
-    const quizzes = await getforeignquizzes(id);
-    res.status(200).json({ write: false, quizzes: quizzes });
+    const [rows] = await getquizzes(id);
+    res.status(200).json({ write: false, quizzes: rows });
   } catch (error) {
     next(error);
   }
@@ -508,7 +484,7 @@ router.post("/savequiz", authenticateToken, async (req, res, next) => {
     const data = req.body
     lengthtest(data.title, 1, 200)
     const insertedID = await save_quiz(data.title, data.description, data.public, id, data.randomize_questions, data.total_points);
-    res.status(200).json({ write: true, message: "Kvíz sikeresen mentve!", quiz_id: insertedID });
+    res.status(200).json({ write: false, quiz_id: insertedID });
   } catch (error) {
     next(error);
   }
@@ -531,8 +507,8 @@ router.post("/saveanswer", authenticateToken, async (req, res, next) => {
     const id = req.user.id;
     const data = req.body
     lengthtest(data.answer_text, 1, 1000)
-    await save_answer(data.question_id, data.answer_text, data.right_answer, id, data.position, data.points);
-    res.status(200).json({ write: false});
+    await save_answer(data.question_id, data.answer_text, data.right_answer, id, data.position);
+    res.status(200).json({ write: true, message: "Sikeres mentés!" });
   } catch (error) {
     next(error);
   }
@@ -544,19 +520,6 @@ router.post("/save_current_quiz_order", authenticateToken, async (req, res, next
     const currentorder = req.body.currentorder
     for (let i = 0; i < currentorder.length; i++) {
       await save_current_quiz_order(currentorder[i], i, id)
-    }
-    res.status(200).json({ write: false });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/save_current_foreign_quiz_order", authenticateToken, async (req, res, next) => {
-  try {
-    const id = req.user.id;
-    const currentorder = req.body.currentorder
-    for (let i = 0; i < currentorder.length; i++) {
-      await save_current_foreign_quiz_order(currentorder[i], i, id)
     }
     res.status(200).json({ write: false });
   } catch (error) {
@@ -587,24 +550,12 @@ router.get("/getquestionanswers", authenticateToken, async (req, res, next) => {
   }
 });
 
-router.get("/getquestionanswersforstart", authenticateToken, async (req, res, next) => {
-  try {
-    const id = req.user.id;
-    const question_id = req.query.question_id
-    const answers = await loadanswers_withoutright(question_id, id)
-    res.status(200).json({ write: false, answers: answers });
-  } catch (error) {
-    next(error);
-  }
-});
-
 router.delete("/deletequiz", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
     const quiz_id = req.query.quiz_id
-    const isForeign = req.query.isforeign === "true";
-    await delete_quiz(quiz_id, id, isForeign);
-    res.status(200).json({ write: false, message: "Kvíz törölve!" });
+    await delete_quiz(quiz_id, id);
+    res.status(200).json({ write: true, message: "Kvíz törölve!" });
   } catch (error) {
     next(error);
   }
@@ -662,17 +613,6 @@ router.get("/getfavorites", authenticateToken, async (req, res, next) => {
     const [result] = await getUserFavorites(user_id);
     res.status(200).json({ qnf: result });
   } catch (error) {
-
-});
-
-router.get("/getquizresult", authenticateToken, async (req, res, next) => {
-  try {
-    const id = req.user.id;
-    const quiz_id = req.query.quiz_id
-    const result = await getquizresult(id, quiz_id)
-    res.status(200).json({ write: false, result: result });
-  }
-  catch (error) {
     next(error);
   }
 });
@@ -686,22 +626,5 @@ router.post("/getfavoritecount", authenticateToken, async (req, res, next) => {
     next(error);
   }
 });
-router.get("/getuseranswers", authenticateToken, async (req, res, next) => {
-  try {
-    const id = req.user.id;
-    const result_id = req.query.result_id
-    const question_id = req.query.question_id
-    const user_answer = await getuseranswers(id, result_id, question_id)
-    res.status(200).json({ write: false, user_answer: user_answer });
-  }
-  catch (error) {
-    next(error);
-  }
-});
-
-
-
-
-
 
 module.exports = router;

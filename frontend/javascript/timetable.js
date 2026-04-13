@@ -182,20 +182,11 @@ async function load_events() {
             }
 
         }
-        let eventcards = document.querySelectorAll(".day-column");
-        eventcards.forEach((e, index) => {
-            if(e.classList.contains("active-day") && !e.classList.contains("today_highlight")){
-                e.classList.remove("active-day");
-                document.querySelectorAll('.day-btn')[index].classList.remove("active-day-btn");
-            }
-        });
-
-
 
         document.querySelectorAll(".event-card").forEach(e => e.remove());
         const token = localStorage.getItem("token");
         const result = await apiFetch("http://127.0.0.1:4000/api/get_events", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
@@ -212,7 +203,10 @@ async function load_events() {
             for (let i = 0; i < events.length; i++) {
                 build_event(events[i]);
             }
-        }        
+        }
+        else {
+            alertell("Nincsenek események a kiválasztott héten.", 2.5);
+        }
 
     } catch (error) {
         console.error(error)
@@ -404,12 +398,13 @@ async function updateevent(event_id) {
 async function delete_event(event_id) {
     try {
         const token = localStorage.getItem("token");
-        await apiFetch(`http://127.0.0.1:4000/api/delete_event?event_id=${event_id}`, {
-            method: "DELETE",
+        const result = await apiFetch("http://127.0.0.1:4000/api/delete_event", {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            }
+            },
+            body: JSON.stringify({ event_id: event_id })
         })
         load_events();
     } catch (error) {

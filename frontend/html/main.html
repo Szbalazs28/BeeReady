@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="../css/mainpage.css">
     <link rel="stylesheet" href="../css/quiz.css">
     <link rel="stylesheet" href="../css/hive.css">
+
     <title>BeeReady</title>
 </head>
 
@@ -42,7 +43,8 @@
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
                 <div onclick="navbar_click('quiz',4), load_quizzes()" class="nav_items">Kvíz</div>
                 <!-- <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div> -->
-                <div onclick="navbar_click('hive',5), load_hive()" class="nav_items">Hive</div>                
+                <div onclick="navbar_click('hive',5), load_hive()" class="nav_items">Hive</div>
+
                 <div onclick="navbar_click('felhasznalo',6), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
@@ -225,11 +227,14 @@
                 <div id="decks">
                     <div class="deck_creator">
                         <form id="flashcard_form">
-                            <div><input type="text" class="newflashcard_input" id="newDeckName"
-                                    placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required></div>
-                            <div class="createDeckButton_div"><button type="submit" id="createDeckButton">Pakli
-                                    hozzáadása</button> </div>
-
+                            <input type="text" class="newflashcard_input" id="newDeckName"
+                                placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="deckIsPublic">
+                                <span class="checkmark"></span>
+                                Nyilvános pakli
+                            </label>
+                            <button type="submit" id="createDeckButton">Pakli hozzáadása</button>
                         </form>
                     </div>
 
@@ -420,20 +425,10 @@
                 </div>
             </div>
 
-            <!--quiz-->
             <div class="dnone mainelem" id="quiz">
                 <div class="quiz-action-div ">
                     <input type="text" class="quiz-input" id="newDeckName" placeholder="Keressen kvízt..." required>
                     <button onclick="showcreatequiz()" class="quiz-plus-button">+</button>
-                    <div class="foreigndiv">
-                        <label for="foreignQuizToggle">Mentett kvízek</label>
-                        <input type="checkbox" name="" class="correct-check" id="foreignQuizToggle"
-                            onchange="toggleForeignQuizzes()">
-                    </div>
-                </div>
-
-                <div class="quiz-container dnone" id="foreignQuizContainer">
-
                 </div>
 
                 <div class="quiz-container " id="quizContainer">
@@ -519,6 +514,7 @@
 
                         </div>
 
+                        <p class="quiz-help-text">Tipp: Jelöld be a pipa ikonnal a helyes választ/válaszokat!</p>
                     </div>
 
                     <div id="questionsContainer">
@@ -560,16 +556,37 @@
                         <h1 id="quiz_title">Itt lesz a cím</h1>
                         <p id="quiz_description">Itt lesz a leírás</p>
                         <p id="author">Szerző</p>
-                        <p id="total_points">Összpontszám: <span id="total_points_value"></span> pont</p>
-                        <button type="button" class="quiz-back-button" id="start_back_btn">Kilépés a kvízből</button>
+                        <button type="button" class="quiz-back-button" onclick="show_exit_modal()">Kilépés a
+                            kvízből</button>
                     </div>
                     <div id="start_question_container" class="quiz_question_container">
 
                     </div>
                     <input type="submit" id="quizSubmit" class="quiz_submit_btn">
-                    <button type="button" id="quizBackBTN" class="result-back-btn dnone">Vissza</button>
                 </form>
             </div>
+
+
+
+
+            <!-- 
+            <div class="hive_card quiz">
+                <span class="hive_card_type quiz">Quiz</span>
+                <div class="hive_card_header">
+                    <div class="hive_card_title_row">
+                        <h3 class="hive_card_title">Quiz cím</h3>
+                        <button type="button" class="hive_save_heart" aria-label="Mentés" id="hive_btn_save">♡</button>
+                    </div>
+                    <p>Készítő neve</p>
+                </div>
+                <hr>
+                <p class="hive_card_desc">Quiz leírás szövege itt.</p>
+                <div class="hive_card_footer">
+                    <button type="button" class="hive_btn_view">Megtekint</button>
+                </div>
+            </div> 
+            -->
+
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
                 <form id="edit_user">
@@ -578,8 +595,6 @@
                             <div class="profil_img" id="prof_img">
                                 <img id="editprofilpic" src="../img/allatos_profilkepek/ures.webp" alt="">
                             </div>
-
-
                             <div class="account_buttons">
                                 <button type="submit" class="account_button">Mentés</button>
                                 <a onclick="logout()">Kijelentkezés</a>

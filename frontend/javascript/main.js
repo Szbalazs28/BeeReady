@@ -22,12 +22,6 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function speclengthtest(input, min, max, text) {
-    if (input.length < min || input.length > max) {
-        alertell(`${text}  ${min} és ${max} karakter között kell lennie!`, 2.5);
-        throw new Error(`${text} ${min} és ${max} karakter között kell lennie!`);
-    }
-}
 
 function lengthtest(input, min, max) {
     if (input.length < min || input.length > max) {
@@ -50,16 +44,13 @@ function timetest(start, end) {
 
 }
 
-function random_array(array){
-    let random_numbers = [];
-    while (random_numbers.length != array.length) {
-        let randnumber = getRandomInt(0, array.length);
-        if (!random_numbers.includes(randnumber)) {
-            random_numbers.push(randnumber);
-        }
+function speclengthtest(input, min, max, text) {
+    if (input.length < min || input.length > max) {
+        alertell(`${text}  ${min} és ${max} karakter között kell lennie!`, 2.5);
+        throw new Error(`${text} ${min} és ${max} karakter között kell lennie!`);
     }
-    return random_numbers;
 }
+
 
 async function index_apiFetch(url, options = {}) {
     try {
@@ -128,10 +119,6 @@ async function apiFetch(url, options = {}) {
                     alertell(data.message || "Hibás kérés.", 5);
                 }
 
-
-            }
-            else if(response.status===409){
-                alertell(data.message || "Hibás adat!", 5);
 
             }
             else {

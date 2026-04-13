@@ -401,7 +401,6 @@ async function loadTasks() {
         const result = await apiFetch('http://127.0.0.1:4000/api/gettasks', {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         })
@@ -533,15 +532,15 @@ async function deleteTask(id) {
     if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return
 
     try {
-        if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return;
-        await apiFetch(`http://localhost:4000/api/deletetask?task_id=${id}`, {
-            method: 'DELETE',
+        const response = await apiFetch('http://127.0.0.1:4000/api/deletetask', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-        loadTasks();
+            },
+            body: JSON.stringify({ task_id: id })
+        })
+        loadTasks()
     }
     catch (error) {
         console.error(error)

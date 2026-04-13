@@ -162,15 +162,10 @@
 
 #flashcard_form {
     display: flex;
-    
     gap: 10%;
 }
 
-.createDeckButton_div {
-    
-    display: flex;
-    justify-content: center;
-}
+
 
 
 .deck_header {
@@ -680,21 +675,11 @@
 .game_nav_button:active {
     transform: scale(0.95);
 }
-
-@media (max-width: 720px) {
-    #flashcard_form{
-        flex-direction: column;
-    }
-    .createDeckButton_div {
-        padding: 5px;
-        
-    }
-}
 @media (max-width: 600px) {
     .flashcard_game_container {
         gap: 10px;
     }
-
+    
     .game_nav_button {
         width: 45px;
         height: 45px;
