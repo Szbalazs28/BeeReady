@@ -393,7 +393,9 @@
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 5px;
 }
 
 

@@ -330,6 +330,14 @@ async function deck_edit_user(deck_id) {
         share_button.classList.add("share_deck_button")
         share_button.onclick = () => share_code_change(deck_id);
 
+        const label = document.createElement("label")
+        label.textContent = "Publikus pakli"
+        label.htmlFor = "publicDeckCheckbox"
+
+        const publicDeckCheckbox = document.createElement("input")
+        publicDeckCheckbox.type = "checkbox"
+        publicDeckCheckbox.id = "publicDeckCheckbox"
+        publicDeckCheckbox.checked = adatok.public
 
         right_actions_div.appendChild(save_button)
         right_actions_div.appendChild(cancel_button)
@@ -337,6 +345,8 @@ async function deck_edit_user(deck_id) {
 
         actions_div.appendChild(delete_button)
         actions_div.appendChild(share_button)
+        actions_div.appendChild(label)
+        actions_div.appendChild(publicDeckCheckbox)
         actions_div.appendChild(right_actions_div)
 
         modal_content.appendChild(title)

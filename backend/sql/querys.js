@@ -77,7 +77,7 @@ async function getdeck(id) {
 }
 
 async function getdeckbydeck_id(deck_id, user_id) {
-    return await pool.execute("SELECT deck_name, deck_id, share_code FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
+    return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
 }
 
 async function updatedeck(deck_name, deck_id, user_id) {
@@ -216,7 +216,7 @@ async function restore_task(task_id, user_id) {
 
 async function mark_task_done(task_id, user_id) {
     await pool.execute(
-        "UPDATE todo_tasks SET importance = TRUE WHERE id = ? AND user_id = ?",
+        "UPDATE todo_tasks SET is_completed = true WHERE id = ? AND user_id = ?",
         [task_id, user_id]
     );
 }
@@ -287,8 +287,8 @@ FROM flashcard_deck fd
 JOIN users u ON fd.user_id = u.id
 LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
 LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
-WHERE fd.public = TRUE
-GROUP BY fd.deck_id, fd.deck_name, fd.share_code, u.username, u.id, fd.create_date
+WHERE fd.public
+GROUP BY fd.deck_id
 
 UNION ALL
 
@@ -306,12 +306,13 @@ FROM quizzes q
 JOIN users u ON q.user_id = u.id
 LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
 LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
-WHERE q.public = TRUE
-GROUP BY q.quiz_id, q.title, u.username, u.id, q.last_modified, q.description
+WHERE q.public
+GROUP BY q.quiz_id
 
 ORDER BY created_at DESC;`, [user_id, user_id])
 };
 
+// Szavakra bontani!!!
 async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly = false }) {
     const searchPattern = searchTerm ? `%${searchTerm}%` : null;
 
@@ -332,8 +333,8 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
         JOIN users u ON fd.user_id = u.id
         LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
         LEFT JOIN user_favorites uf_all ON uf_all.item_id = fd.deck_id AND uf_all.item_type = 'flashcard'
-        WHERE fd.public = TRUE
-        GROUP BY fd.deck_id, fd.deck_name, u.username, fd.create_date
+        WHERE fd.public
+        GROUP BY fd.deck_id
 
         UNION ALL
 
@@ -352,8 +353,8 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
         JOIN users u ON q.user_id = u.id
         LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
         LEFT JOIN user_favorites uf_all ON uf_all.item_id = q.quiz_id AND uf_all.item_type = 'quiz'
-        WHERE q.public = TRUE
-        GROUP BY q.quiz_id, q.title, u.username, q.last_modified, q.description
+        WHERE q.public
+        GROUP BY q.quiz_id
     ) AS results
     WHERE 
         (? IS NULL OR type = ?) 

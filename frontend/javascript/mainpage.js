@@ -48,11 +48,11 @@ async function update_Cal() {
 
         for (let i = 1; i <= daysInMonth; i++) {
             const dateStr = `${currentY}-${String(currentM + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            
+
             const today = new Date();
             const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const isToday = todayStr === dateStr;
-            
+
             const dayEvents = events.filter(e => {
                 const eDate = e.event_date.includes('T') ? e.event_date.split('T')[0] : e.event_date;
                 return eDate === dateStr;
@@ -61,7 +61,7 @@ async function update_Cal() {
             const dayDiv = document.createElement('div');
             dayDiv.className = `date ${isToday ? 'active' : ''}`;
             dayDiv.textContent = i;
-            
+
             dayDiv.onclick = () => openEventModal(dateStr);
 
             if (dayEvents.length > 0) {
@@ -147,7 +147,7 @@ async function refreshModalEvents(dateStr) {
 
         dailyEvents.forEach(ev => {
             const row = document.createElement('div');
-            row.className = 'existing-event'; 
+            row.className = 'existing-event';
 
             const evDiv = document.createElement('div');
             evDiv.className = 'event-info';
@@ -185,8 +185,8 @@ async function DeleteEvent(eventId, eventTitle, dateStr) {
             body: JSON.stringify({ event_id: eventId })
         });
 
-        await update_Cal(); 
-        await refreshModalEvents(dateStr); 
+        await update_Cal();
+        await refreshModalEvents(dateStr);
     } catch (err) {
         console.error('Hiba a törlésnél:', err);
     }
@@ -529,24 +529,21 @@ async function restoreTask(id) {
 }
 
 async function deleteTask(id) {
-    if (!confirm("Biztosan törölni szeretnéd ezt a feladatot?")) return
-
-    try {
-        const response = await apiFetch('http://127.0.0.1:4000/api/deletetask', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify({ task_id: id })
-        })
-        loadTasks()
+    if (confirm("Biztosan törölni szeretnéd ezt a feladatot?")) {
+        try {
+            await apiFetch(`http://127.0.0.1:4000/api/deletetask?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            loadTasks()
+        }
+        catch (error) {
+            console.error(error)
+        }
     }
-    catch (error) {
-        console.error(error)
-    }
-
-
 }
 
 function enableEditMode(id, card_div, editBtn) {
@@ -650,7 +647,7 @@ function updateStatisticsChart() {
 updateStatisticsChart()
 
 // Event listener a statisztika select-re
-document.getElementById('stat_select').addEventListener('change', function() {
+document.getElementById('stat_select').addEventListener('change', function () {
     const selectedValue = this.value
     const circleStats = document.querySelector('.circle_stats')
     const studyTime = document.querySelector('.study_time')

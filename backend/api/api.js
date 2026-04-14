@@ -349,7 +349,7 @@ router.get("/gettasks", authenticateToken, async (req, res, next) => {
 router.delete("/deletetask", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
-    const task_id = req.query.task_id;
+    const task_id = req.query.id;
     await delete_task(task_id, id);
     res.status(200).json({ write: true, message: "Feladat törölve!" });
   } catch (error) {

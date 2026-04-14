@@ -115,6 +115,7 @@ async function renderHiveCards(data) {
         save_button.addEventListener('click', async (e) => {
             e.preventDefault();
             await SaveItem(save_button, qnf.type, qnf.id);
+            loadHiveData();
         });
 
         card_footer.appendChild(view_button);
