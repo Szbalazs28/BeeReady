@@ -48,9 +48,9 @@ async function renderHiveCards(data) {
         const desc = document.createElement('p');
         desc.classList.add('hive_card_desc');
         if (qnf.type === 'flashcard') {
-            desc.textContent = `${qnf.item_count} db kártya`;
+            desc.innerHTML = `${qnf.item_count} db kártya <br>Share code: ${qnf.share_code}`;
         } else if (qnf.type === 'quiz') {
-            desc.textContent = `${qnf.item_count} kérdés`;
+            desc.innerHTML = `${qnf.item_count} kérdés <br>${qnf.description}`;
         }
         qnfCard.appendChild(desc);
 
@@ -83,18 +83,9 @@ async function renderHiveCards(data) {
                 }
             } else {
                 if (qnf.type === 'quiz') {
-                    navbar_click('quiz', 4);
-                    const quizObj = {
-                        quiz_id: qnf.id,
-                        title: qnf.title,
-                        description: qnf.description,
-                        author: qnf.author,
-                        total_points: qnf.item_count || 0,
-                        randomize_questions: true // ezzel nemtudom pontosan mit kene csinalni
-                        // tehat jelen allapotban az inditasnal mindig a random sorrendet fogja figyelni, ami amugy lehet nem egy negativum
-                        // erre ha van otleted
-                    };
-                    quiz_start(quizObj);
+                    navbar_click('quiz', 4);                    
+                    const quiz_id = qnf.id;                        
+                    quiz_start(null, quiz_id);
                 }
             }
         });

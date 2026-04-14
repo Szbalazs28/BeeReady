@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { admincheck, answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
-const { save_current_foreign_quiz_order, getforeignquizzes, loadanswers_withoutright, getuseranswers, getquizresult, restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch, quiz_submit } = require("../sql/querys.js");
+const {loadquizmeta, save_foreign_quiz, save_current_foreign_quiz_order, getforeignquizzes, loadanswers_withoutright, getuseranswers, getquizresult, restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch, quiz_submit } = require("../sql/querys.js");
 
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 percos időablak
@@ -208,7 +208,7 @@ router.post("/updatedeck", authenticateToken, async (req, res, next) => {
     const data = req.body
     const id = req.user.id
     lengthtest(data.deck_name, 1, 200)
-    const rows = await updatedeck(data.deck_name, data.deck_id, id)
+    const rows = await updatedeck(data.deck_name, data.deck_id, data.public, id)
     affectedRowscheck(rows)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   } catch (error) {
@@ -634,6 +634,27 @@ router.get("/getquizquestions", authenticateToken, async (req, res, next) => {
   }
 });
 
+router.get("/getforeignquizquestions", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const quiz_id = req.query.quiz_id
+    const questions = await loadquestions(quiz_id, id)
+    res.status(200).json({ write: false, questions: questions });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/getquizmeta", authenticateToken, async (req, res, next) => {
+  try {
+    const quiz_id = req.query.quiz_id
+    const quiz_meta = await loadquizmeta(quiz_id)
+    res.status(200).json({ write: false, quiz_meta: quiz_meta });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/getquestionanswers", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
@@ -668,6 +689,18 @@ router.delete("/deletequiz", authenticateToken, async (req, res, next) => {
   }
 });
 
+router.post("/saveForeignquiz", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const quiz_id = req.query.quiz_id
+    const result_id = req.query.result_id
+    await save_foreign_quiz(result_id, quiz_id, id);
+    res.status(200).json({ write: false});
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/savequizresult", authenticateToken, async (req, res, next) => {
   try {
     const id = req.user.id;
@@ -677,7 +710,7 @@ router.post("/savequizresult", authenticateToken, async (req, res, next) => {
       await answer_validation(result_id, data[i], id)
     }
     await calcquizpoints(result_id, id)
-    res.status(200).json({ write: true, message: "A kvíz beadva!" });
+    res.status(200).json({ write: true, message: "A kvíz beadva!", result_id: result_id });
   }
   catch (error) {
     next(error);

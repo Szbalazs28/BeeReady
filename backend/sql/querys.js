@@ -80,8 +80,8 @@ async function getdeckbydeck_id(deck_id, user_id) {
     return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
 }
 
-async function updatedeck(deck_name, deck_id, user_id) {
-    return await pool.execute("UPDATE flashcard_deck SET deck_name=? WHERE deck_id=? AND user_id = ?", [deck_name, deck_id, user_id])
+async function updatedeck(deck_name, deck_id, public, user_id) {
+    return await pool.execute("UPDATE flashcard_deck SET deck_name=?, public=? WHERE deck_id=? AND user_id = ?", [deck_name, public, deck_id, user_id])
 }
 
 async function deletedeck(deck_id, user_id) {
@@ -279,6 +279,7 @@ SELECT
     fd.deck_name AS title,
     u.username AS author,
     fd.create_date AS created_at,
+    fd.share_code AS share_code,
     NULL AS description,
     COUNT(DISTINCT fc.card_id) AS item_count,
     COUNT(DISTINCT uf.user_id) AS favorite_count,
@@ -298,6 +299,7 @@ SELECT
     q.title AS title,
     u.username AS author,
     q.last_modified AS created_at,
+    null as share_code,
     q.description AS description,
     COUNT(DISTINCT qq.question_id) AS item_count,
     COUNT(DISTINCT uf.user_id) AS favorite_count,
@@ -325,6 +327,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
             fd.deck_name AS title,
             u.username AS author,
             fd.create_date AS created_at,
+            fd.share_code AS share_code,
             NULL AS description,
             COUNT(DISTINCT fc.card_id) AS item_count,
             COUNT(DISTINCT uf_all.user_id) AS favorite_count,
@@ -345,6 +348,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
             q.title AS title,
             u.username AS author,
             q.last_modified AS created_at,
+            null AS share_code,
             q.description AS description,
             COUNT(DISTINCT qq.question_id) AS item_count,
             COUNT(DISTINCT uf_all.user_id) AS favorite_count,
@@ -469,6 +473,17 @@ async function delete_quiz(quiz_id, user_id, isForeign) {
     }
 }
 
+async function loadquizmeta(quiz_id) {
+    const [row] = await pool.execute("SELECT quizzes.quiz_id, quizzes.title, quizzes.description, quizzes.public, users.username as author, quizzes.randomize_questions, quizzes.total_points FROM quizzes JOIN users ON quizzes.user_id=users.id WHERE quizzes.quiz_id = ? AND quizzes.public", [quiz_id]);
+    return row;
+}
+
+async function save_foreign_quiz(result_id,quiz_id, user_id) {
+    const [checkexistquiz] = await pool.execute("SELECT quiz_id FROM quizzes WHERE quiz_id = ? AND public", [quiz_id]);
+    isexistscheck(checkexistquiz, "Kvíz", false)
+    pool.execute("INSERT INTO quiz_share (result_id, quiz_id, user_id) VALUES (?, ?, ?)", [result_id, quiz_id, user_id]);
+}
+
 async function quiz_submit(quiz_id, user_id, total_points) {
     const [result] = await pool.execute("INSERT INTO quiz_submit (quiz_id, user_id, total_points) VALUES (?, ?, ?)", [quiz_id, user_id, total_points]);
     return result.insertId;
@@ -539,6 +554,8 @@ async function isexist(data) {
 
 
 module.exports = {
+    loadquizmeta,
+    save_foreign_quiz,
     getFavoriteCount,
     toggleFavorite,
     QnFSearch,

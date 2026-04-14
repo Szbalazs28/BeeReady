@@ -36,6 +36,7 @@ async function load_quizzes() {
             for (let i = 0; i < result.quizzes.length; i++) {
                 quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions, result.quizzes[i].total_points, false));
             }
+            document.getElementById("foreignQuizContainer").innerHTML = "";
             for (let i = 0; i < foreignResult.quizzes.length; i++) {
                 foreignQuizContainer.appendChild(build_quiz(foreignResult.quizzes[i].title, foreignResult.quizzes[i].description, foreignResult.quizzes[i].quiz_id, foreignResult.quizzes[i].question_count, foreignResult.quizzes[i].created_at, foreignResult.quizzes[i].last_result, foreignResult.quizzes[i].created_by, foreignResult.quizzes[i].public, foreignResult.quizzes[i].randomize_questions, foreignResult.quizzes[i].total_points, true));
             }
@@ -527,8 +528,8 @@ function addOrderAnswerToBlock(question_id, answer = null) {
     dragIcon.textContent = '::';
     dragIcon.style.cursor = 'move';
 
-    const ansInput = document.createElement('input');    
-    
+    const ansInput = document.createElement('input');
+
     ansInput.type = 'text';
     ansInput.placeholder = 'Válaszlehetőség';
     ansInput.className = 'ans-input';
@@ -1592,17 +1593,33 @@ function quiz_start_reset() {
     document.getElementById("quizBackBTN").classList.add("dnone");
 }
 
-async function quiz_start(quiz) {
+async function quiz_start(quiz = null, quiz_id = null) {
+    if (quiz_id != null) {
+        const quiz_meta = await apiFetch(`http://127.0.0.1:4000/api/getquizmeta?quiz_id=${quiz_id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+        quiz = quiz_meta.quiz_meta[0];
+        document.getElementById("quizSubmit").setAttribute("data-submit-type", "foreign");
+    }
+    else{
+        document.getElementById("quizSubmit").setAttribute("data-submit-type", "own");
+    }
     sessionStorage.setItem("quiz_started", "true");
     document.querySelector("#start_back_btn").onclick = async () => await show_exit_modal(false);
     quiz_start_reset();
     showstartquiz()
+    document.getElementById("foreignQuizContainer").classList.add("dnone");
     document.getElementById("quiz_title").textContent = quiz.title;
     document.getElementById("quiz_title").setAttribute("data-total-points", quiz.total_points);
     document.getElementById("quiz_description").textContent = quiz.description;
     document.getElementById("author").textContent = quiz.author;
     document.getElementById("total_points").textContent = `Összpontszám: ${quiz.total_points}`;
     document.getElementById("quizSubmit").setAttribute("data-quiz-id", quiz.quiz_id);
+
     const token = localStorage.getItem("token");
     try {
         const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
@@ -1722,7 +1739,7 @@ async function submitQuiz(e) {
             answer_data.push(data);
 
         }
-        await apiFetch("http://127.0.0.1:4000/api/savequizresult", {
+        const result = await apiFetch("http://127.0.0.1:4000/api/savequizresult", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1730,6 +1747,16 @@ async function submitQuiz(e) {
             },
             body: JSON.stringify(answer_data)
         });
+        if (document.getElementById("quizSubmit").getAttribute("data-submit-type") === "foreign") {
+            await apiFetch(`http://127.0.0.1:4000/api/saveForeignquiz?quiz_id=${quiz_id}&result_id=${result.result_id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+        }
         sessionStorage.removeItem("quiz_started");
         quiz_creator_reset();
         await load_quizzes();
@@ -1831,12 +1858,13 @@ async function show_quiz_result_modal(quiz, quiz_id) {
 
 async function load_result_details(quiz, result_id, formattedResult, earned_points) {
     try {
-
+        
         const token = localStorage.getItem("token");
         quiz_start_reset()
         showstartquiz()
         document.querySelector("#start_back_btn").onclick = () => show_exit_modal(true);
         document.getElementById("quiz_title").textContent = quiz.title;
+        document.getElementById("foreignQuizContainer").classList.add("dnone");
         document.getElementById("quiz_title").setAttribute("data-total-points", quiz.total_points);
         document.getElementById("quiz_description").textContent = quiz.description;
         document.getElementById("author").textContent = quiz.author;

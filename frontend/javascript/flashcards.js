@@ -391,7 +391,7 @@ async function save_deck(deck_id) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name })
+            body: JSON.stringify({ deck_id: deck_id, deck_name: deck_name, public: document.getElementById("publicDeckCheckbox").checked })
         })
         cancel_flashcard_modal()
         deck_open(deck_id)
