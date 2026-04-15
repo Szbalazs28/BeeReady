@@ -48,7 +48,7 @@ async function renderHiveCards(data) {
         const desc = document.createElement('p');
         desc.classList.add('hive_card_desc');
         if (qnf.type === 'flashcard') {
-            desc.innerHTML = `${qnf.item_count} db kártya <br>Share code: ${qnf.share_code}`;
+            desc.innerHTML = `${qnf.item_count} db kártya <br>Megosztási kód: ${qnf.share_code}`;
         } else if (qnf.type === 'quiz') {
             desc.innerHTML = `${qnf.item_count} kérdés <br>${qnf.description}`;
         }
