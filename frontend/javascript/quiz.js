@@ -871,6 +871,7 @@ async function save_question(question_text, quiz_id, type, position, points) {
 
 function showcreatequiz() {
     quiz_creator_reset()
+    document.getElementById("foreignQuizContainer").classList.add("dnone");
     document.querySelector(".quiz-create-container").classList.remove("dnone");
     document.querySelector(".quiz-action-div").classList.add("dnone");
     document.querySelector("#quizContainer").classList.add("dnone")

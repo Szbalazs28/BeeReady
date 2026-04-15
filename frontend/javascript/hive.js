@@ -77,7 +77,7 @@ async function renderHiveCards(data) {
             if (qnf.type === 'flashcard') {
                 navbar_click('tanulokartyak', 2);
                 try {
-                    await deck_open(qnf.id);
+                    flashcard_start(qnf.id, true)
                 } catch (error) {
                     console.error('Pakli megnyitási hiba:', error);
                 }

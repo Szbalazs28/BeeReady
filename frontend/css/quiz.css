@@ -659,6 +659,7 @@
     user-select: none;
     gap: 8px;
     color: #444;
+    -webkit-user-select: none;
 }
 
 .checkbox-container input {

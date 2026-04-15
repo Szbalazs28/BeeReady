@@ -77,7 +77,7 @@ async function getdeck(id) {
 }
 
 async function getdeckbydeck_id(deck_id, user_id) {
-    return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
+    return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ? AND (user_id = ? or flashcard_deck.public)", [deck_id, user_id])
 }
 
 async function updatedeck(deck_name, deck_id, public, user_id) {
@@ -89,7 +89,7 @@ async function deletedeck(deck_id, user_id) {
 }
 
 async function getcards(deck_id, user_id) {
-    return await pool.execute("SELECT flashcard_card.front_text, flashcard_card.back_text, flashcard_card.card_id, flashcard_card.position, flashcard_deck.deck_id FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.deck_id = ? AND flashcard_deck.user_id = ? ORDER BY position ASC", [deck_id, user_id])
+    return await pool.execute("SELECT flashcard_card.front_text, flashcard_card.back_text, flashcard_card.card_id, flashcard_card.position, flashcard_deck.deck_id FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.deck_id = ? AND (flashcard_deck.user_id = ? OR flashcard_deck.public) ORDER BY position ASC", [deck_id, user_id])
 }
 
 async function addnewcard(deck_id, front_text, back_text, user_id) {
@@ -288,7 +288,7 @@ FROM flashcard_deck fd
 JOIN users u ON fd.user_id = u.id
 LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
 LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
-WHERE fd.public
+WHERE fd.public and fd.user_id != ?
 GROUP BY fd.deck_id
 
 UNION ALL
@@ -308,10 +308,10 @@ FROM quizzes q
 JOIN users u ON q.user_id = u.id
 LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
 LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
-WHERE q.public
+WHERE q.public and q.user_id != ?
 GROUP BY q.quiz_id
 
-ORDER BY created_at DESC;`, [user_id, user_id])
+ORDER BY created_at DESC;`, [user_id, user_id,user_id, user_id])
 };
 
 // Szavakra bontani!!!
@@ -336,7 +336,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
         JOIN users u ON fd.user_id = u.id
         LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
         LEFT JOIN user_favorites uf_all ON uf_all.item_id = fd.deck_id AND uf_all.item_type = 'flashcard'
-        WHERE fd.public
+        WHERE fd.public and fd.user_id != ?
         GROUP BY fd.deck_id
 
         UNION ALL
@@ -357,7 +357,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
         JOIN users u ON q.user_id = u.id
         LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
         LEFT JOIN user_favorites uf_all ON uf_all.item_id = q.quiz_id AND uf_all.item_type = 'quiz'
-        WHERE q.public
+        WHERE q.public AND q.user_id != ?
         GROUP BY q.quiz_id
     ) AS results
     WHERE 
@@ -369,10 +369,13 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
 
     const params = [
         userId,          
-        userId,          
+        userId,  
+        userId,      
+        userId,  
         type, type,      
         searchPattern, searchPattern, searchPattern, 
-        favoritesOnly    
+        favoritesOnly
+        
     ];
 
     return await pool.execute(query, params);
@@ -414,7 +417,7 @@ async function getquizzes(user_id) {
 }
 
 async function getforeignquizzes(user_id) {
-    const [quizzes] = await pool.execute("select quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quiz_share.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public, quizzes.randomize_questions, quizzes.total_points from quiz_share join quizzes ON quiz_share.quiz_id=quizzes.quiz_id JOIN users on quizzes.user_id=users.id LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.question_id WHERE quiz_share.user_id = ? AND quizzes.user_id != ? AND quizzes.public=1 GROUP BY quizzes.quiz_id ORDER BY quiz_share.position", [user_id, user_id]);
+    const [quizzes] = await pool.execute("select quizzes.quiz_id, quizzes.user_id, quizzes.title,quizzes.description,quizzes.last_modified,quizzes.public,quiz_share.position, COUNT(quiz_questions.question_id) AS question_count, users.username as created_by, quizzes.public, quizzes.randomize_questions, quizzes.total_points from quiz_share join quizzes ON quiz_share.quiz_id=quizzes.quiz_id JOIN users on quizzes.user_id=users.id LEFT JOIN quiz_questions ON quizzes.quiz_id=quiz_questions.quiz_id WHERE quiz_share.user_id = ? AND quizzes.user_id != ? AND quizzes.public=1 GROUP BY quizzes.quiz_id ORDER BY quiz_share.position", [user_id, user_id]);
     return quizzes;
 }
 

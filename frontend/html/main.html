@@ -67,7 +67,7 @@
                             <textarea name="description" id="task_description"
                                 placeholder="A feladat leírása..."></textarea>
                             <div class="section_button">
-                                <select name="importance" id="importance">
+                                <select title="Válasszon prioritást!" name="importance" id="importance">
                                     <option value="high">Magas</option>
                                     <option value="medium" selected>Közepes</option>
                                     <option value="low">Alacsony</option>
@@ -97,7 +97,7 @@
                 <!--idopzito-->
                 <div class="fooldal_maindiv">
                     <div class="timer_div">
-                        <select id="timer_select" class="custom_select">
+                        <select title="Válasszon óra típust:" id="timer_select" class="custom_select">
                             <option value="stopwatch">Stopper</option>
                             <option value="pomodoro">Pomodoro</option>
                             <option value="custom">Egyéni időzítő</option>
@@ -117,7 +117,7 @@
                     <div id="statistics" class="statistics">
                         <div class="stat_header">
                             <h3 id="stat_h3">Statisztika</h3>
-                            <select id="stat_select" class="stat_select">
+                            <select title="Válasszon statisztikát!" id="stat_select" class="stat_select">
                                 <option value="show">Todo - tanulási idő</option>
                                 <option value="hide">...</option>
                             </select>
@@ -167,7 +167,7 @@
                     <div class="modal-content">
                         <h3 id="modalTitle">Esemény hozzáadása</h3>
 
-                        <!-- existing events for selected day will be inserted here -->
+                        
                         <div id="existingEvents"></div>
 
                         <div class="input-group">

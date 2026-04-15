@@ -4,7 +4,7 @@ document.getElementById("flashcard_form").addEventListener("submit", async funct
         const inputvalue = document.getElementById("newDeckName").value
         if (inputvalue[0] == "#" && inputvalue.length == 9) {
             const token = localStorage.getItem('token');
-            const result = await apiFetch("http://localhost:4000/api/copy_deck", {
+            await apiFetch("http://localhost:4000/api/copy_deck", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -54,7 +54,7 @@ function build_deck(name, deck_id, cardcount) {
 }
 
 
-function build_card(front_text, back_text, card_id) {
+function build_card(front_text, back_text, card_id, isForeign = null) {
     const card_item = document.createElement('div');
     card_item.draggable = true
     card_item.setAttribute('data-id', card_id);
@@ -68,26 +68,36 @@ function build_card(front_text, back_text, card_id) {
     const card_back = document.createElement("p");
     card_back.classList.add("card_back");
     card_back.textContent = back_text;
-    const card_actions = document.createElement("div");
-    card_actions.classList.add("card_actions");
-    const edit_button = document.createElement("button");
-    edit_button.classList.add("edit_card_button");
-    edit_button.textContent = "Szerkesztés";
-    edit_button.onclick = () => card_edit(card_id); // CARD EDIT
-    const delete_button = document.createElement("button");
-    delete_button.classList.add("del_card_button");
-    delete_button.textContent = "Törlés";
-    delete_button.onclick = () => card_delete(card_id); // CARD DELETE
     card_info.appendChild(card_front);
     card_info.appendChild(card_back);
-    card_actions.appendChild(edit_button);
-    card_actions.appendChild(delete_button);
+
+
     card_item.appendChild(card_info);
-    card_item.appendChild(card_actions);
+    
+    if (!isForeign) {
+        const card_actions = document.createElement("div");
+        card_actions.classList.add("card_actions");
+
+        const delete_button = document.createElement("button");
+        delete_button.classList.add("del_card_button");
+        delete_button.textContent = "Törlés";
+        delete_button.onclick = () => card_delete(card_id); // CARD DELETE
+        card_actions.appendChild(delete_button);
+
+        const edit_button = document.createElement("button");
+        edit_button.classList.add("edit_card_button");
+        edit_button.textContent = "Szerkesztés";
+        edit_button.onclick = () => card_edit(card_id); // CARD EDIT
+
+        card_actions.appendChild(edit_button);
+        card_actions.appendChild(delete_button);
+        card_item.appendChild(card_actions);
+    }
+
     return card_item
 }
 
-function flashcard_start(deck_id) {
+function flashcard_start(deck_id, isForeign = null) {
     if (document.getElementById("prevCardBtn").disabled == false) {
         document.getElementById("prevCardBtn").classList.add("disabled_game_button");
         document.getElementById("prevCardBtn").classList.remove("activ_game_button");
@@ -100,7 +110,13 @@ function flashcard_start(deck_id) {
     }
     document.getElementById("flashcardGameContainer").classList.remove("dnone");
     const backToCardsButton = document.getElementById("backToCardsButton");
-    backToCardsButton.onclick = () => deck_open(deck_id);
+    if (isForeign) {
+        backToCardsButton.onclick = () => load_deck();
+    }
+    else {
+        backToCardsButton.onclick = () => deck_open(deck_id);
+    }
+
     document.querySelectorAll(".dnone_on_start").forEach(elem => elem.classList.add("dnone"));
     backToCardsButton.classList.remove("dnone");
     document.getElementById("flashcardGameContainer").style.display = "flex"
@@ -140,7 +156,7 @@ async function flashcard_start_ordered(deck_id) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
-        
+
         })
         card_length_test(cards_result.cards, deck_id)
         let cards = []
@@ -369,7 +385,7 @@ async function share_code_change(deck_id) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            
+
         })
         document.getElementById("share_code").textContent = `Megosztási kód: #${result.share_code}`;
     } catch (error) {
@@ -385,7 +401,7 @@ async function save_deck(deck_id) {
 
         lengthtest(deck_name, 1, 200)
 
-        const result = await apiFetch("http://localhost:4000/api/updatedeck", {
+        await apiFetch("http://localhost:4000/api/updatedeck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -422,7 +438,7 @@ async function delete_deck(deck_id) {
 }
 
 
-async function deck_open(deck_id) {
+async function deck_open(deck_id, isForeign = null) {
     try {
         localStorage.removeItem('flashcards');
         localStorage.removeItem('current_flashcard_index');
@@ -430,6 +446,11 @@ async function deck_open(deck_id) {
             document.querySelectorAll(".dnone_on_start").forEach(elem => elem.classList.remove("dnone"));
             document.getElementById("backToCardsButton").classList.add("dnone");
             document.getElementById("flashcardGameContainer").classList.add("dnone");
+        }
+
+        if(isForeign){
+            document.getElementById("addCardButton").classList.add("dnone");
+            document.getElementById("addCardButton").onclick = () => { alertell("Nincs jogosultságod új kártya hozzáadásához!", 2.5) };
         }
 
         const add_new_card_button = document.getElementById("addCardButton")
@@ -467,14 +488,17 @@ async function deck_open(deck_id) {
         }
         document.getElementById("editDeckButton").onclick = () => deck_edit_user(deck_id)
         const el = document.getElementById('cardList');
-        Sortable.create(el, {
-            animation: 150,
-            dataIdAttr: 'data-id',
-            onEnd: function (evt) {
-                const currentorder = Sortable.get(evt.from).toArray();
-                save_new_card_order(deck_id, currentorder);
-            }
-        });
+        if (!isForeign) {
+            Sortable.create(el, {
+                animation: 150,
+                dataIdAttr: 'data-id',
+                onEnd: function (evt) {
+                    const currentorder = Sortable.get(evt.from).toArray();
+                    save_new_card_order(deck_id, currentorder);
+                }
+            });
+        }
+
     } catch (err) {
         console.error(err);
     }
@@ -501,7 +525,7 @@ async function add_deck(deck_name) {
     try {
 
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://localhost:4000/api/add_deck", {
+        await apiFetch("http://localhost:4000/api/add_deck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -621,7 +645,7 @@ async function save_card(deck_id, card_id) {
         const back_text = document.getElementById("newCardBack").value
         lengthtest(front_text, 1, 255)
         lengthtest(back_text, 1, 400)
-        const result = await apiFetch("http://localhost:4000/api/updatecard", {
+        await apiFetch("http://localhost:4000/api/updatecard", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -711,7 +735,7 @@ async function save_new_card(deck_id) {
         const back_text = document.getElementById("newCardBack").value
         lengthtest(front_text, 1, 255)
         lengthtest(back_text, 1, 400)
-        const result = await apiFetch("http://localhost:4000/api/addnewcard", {
+        await apiFetch("http://localhost:4000/api/addnewcard", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
