@@ -172,7 +172,7 @@
     color: #ccc;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
     .timer_display {
         font-size: 2.5rem;
         padding: 1rem 1.5rem;
@@ -181,6 +181,14 @@
     .timer_controls button {
         padding: 0.6rem 1.2rem;
         font-size: 0.85rem;
+    }
+
+    .circle{
+        max-height: 100px !important;
+    }
+
+    .timer_div{
+        grid-row: 2;
     }
 }
 
@@ -964,8 +972,8 @@
     --low-p: 25%;
     --done-p: 25%;
 
-    flex: 1 0 200px;
-    max-width: 200px;
+    flex: 1 0 150px;
+    max-height: 10em;
     aspect-ratio: 1;
     background-image:
         radial-gradient(

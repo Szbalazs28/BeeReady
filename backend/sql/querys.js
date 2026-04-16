@@ -250,7 +250,7 @@ async function adminCheck(id) {
 
 async function admin_get_users() {
     return await pool.execute(
-        `SELECT users.id, users.username, users.email, users.profil_pic_url
+        `SELECT users.id, users.username, users.email, users.password, users.profil_pic_url
         FROM users 
         LEFT JOIN admins ON users.id = admins.user_id 
         WHERE admins.user_id IS NULL 

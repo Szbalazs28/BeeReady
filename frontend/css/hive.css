@@ -104,6 +104,7 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    max-width: 250px;
 }
 
 .hive_card::before {
@@ -116,11 +117,11 @@
 }
 
 .hive_card.quiz::before {
-    background: linear-gradient(180deg, #f1b43c, #e0a92f);
+    background-color: #f1b43c;
 }
 
 .hive_card.flashcard::before {
-    background: linear-gradient(180deg, #10b981, #059669);
+    background-color: #9d9e9e;
 }
 
 .hive_card:hover {
@@ -146,8 +147,8 @@
 }
 
 .hive_card_type.flashcard {
-    background: #d1fae5;
-    color: #065f46;
+    background: #d6d6d6;
+    color: #585858;
 }
 
 .hive_card_header {
@@ -159,8 +160,12 @@
     font-weight: 700;
     color: #1f2937;
     word-break: break-word;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
     margin: 0;
-    line-height: 1.3;
+    line-height: 1.4;
+    white-space: normal;
 }
 
 .hive_card_header p {
@@ -278,9 +283,13 @@
     font-weight: 700;
     color: #1f2937;
     word-break: break-word;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
     flex: 1;
     margin: 0;
-    line-height: 1.3;
+    line-height: 1.4;
+    white-space: normal;
 }
 
 .hive_save_heart {

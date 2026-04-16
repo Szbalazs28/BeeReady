@@ -133,4 +133,58 @@
         padding: 40px 20px !important;
         background-size: 60% !important; 
     }
+
+    .page_header {
+        display: flex;
+        gap: 0.8rem;
+        padding: 1rem;
+        background: #fefbf5;
+        border-bottom: 2px solid #F1B43C;
+        margin-bottom: 1rem;
+        justify-content: center;
+        
+    }
+
+    .page_header h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+        text-align: center;
+    }
+
+    /* 320px kijelzők agresszív optimalizálása */
+    @media (max-width: 320px) {
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Container optimalizálása */
+        .fodiv {
+            margin: 0;
+            padding: 8px;
+            gap: 0.5rem;
+        }
+        
+        .stat_header{
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* Szöveg overflow */
+        h1, h2, h3 {
+            word-break: break-word;
+        }
+
+        .hive_buttons input{
+            max-width: 250px;
+        }
+    }
+}
+
+/* Desktop nézetben rejtve */
+@media (min-width: 769px) {
+    .page_header {
+        display: none;
+    }
 }

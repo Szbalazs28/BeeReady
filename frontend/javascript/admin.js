@@ -37,6 +37,15 @@ async function loadUsers() {
         input_Email.disabled = true;
         td_Email.appendChild(input_Email);
 
+        // Jelszó
+        const td_Password = document.createElement('td');
+        const input_Password = document.createElement('input');
+        input_Password.type = 'text';
+        input_Password.className = 'form-control form-control-sm';
+        input_Password.value = u.password;
+        input_Password.disabled = true;
+        td_Password.appendChild(input_Password);
+
         // Profilkép
         const td_Pic = document.createElement('td');
         const input_Pic = document.createElement('input');
@@ -52,19 +61,25 @@ async function loadUsers() {
         const btn_Edit = document.createElement('button');
         btn_Edit.className = 'btn btn-outline-warning btn-sm me-1';
         btn_Edit.innerHTML = 'Szerkesztés';
-        btn_Edit.onclick = () => {
-            const editing = input_Username.disabled === false;
-            if (!editing) {
-                // szerkesztés mód bekapcsolása
-                input_Username.disabled = false;
-                input_Email.disabled = false;
-                input_Pic.disabled = false;
-                btn_Edit.className = 'btn btn-success btn-sm me-1';
-                btn_Edit.innerHTML = 'Mentés';
-            } else {
-                // mentés
-                saveUser(u.id, input_Username.value.trim(), input_Email.value.trim(), input_Pic.value.trim(), input_Username, input_Email, input_Pic, btn_Edit);
-            }
+        let isSaving = false;
+        btn_Edit.onclick = async () => {
+            if (!isSaving) {
+                const editing = input_Username.disabled === false;
+                if (!editing) {
+                    input_Username.disabled = false;
+                    input_Email.disabled = false;
+                    input_Pic.disabled = false;
+                    input_Password.disabled = false;
+                    btn_Edit.className = 'btn btn-success btn-sm me-1';
+                    btn_Edit.innerHTML = 'Mentés';
+                } else {
+                    isSaving = true;
+                    btn_Edit.disabled = true;
+                    await saveUser(u.id, input_Username.value.trim(), input_Email.value.trim(), input_Pic.value.trim(), input_Username, input_Email, input_Password, input_Pic, btn_Edit);
+                    isSaving = false;
+                    btn_Edit.disabled = false;
+                }
+            };
         };
         td_Edit.appendChild(btn_Edit);
 
@@ -77,14 +92,14 @@ async function loadUsers() {
         btn_Delete.onclick = () => deleteUser(u.id, u.username, tr);
         td_Delete.appendChild(btn_Delete);
 
-        tr.append(tdId, td_Username, td_Email, td_Pic, td_Edit, td_Delete);
+        tr.append(tdId, td_Username, td_Email, td_Password, td_Pic, td_Edit, td_Delete);
         tbody.appendChild(tr);
     });
 
     document.getElementById('user-count').textContent = `${data.users.length} felhasználó`;
 }
 
-async function saveUser(id, username, email, profil_pic_url, input_Username, input_Email, input_Pic, btn_Edit) {
+async function saveUser(id, username, email, profil_pic_url, input_Username, input_Email, input_Password, input_Pic, btn_Edit) {
     try {
         lengthtest(username, 3, 100);
         lengthtest(email, 5, 255);
@@ -98,9 +113,11 @@ async function saveUser(id, username, email, profil_pic_url, input_Username, inp
             body: JSON.stringify({ user_id: id, username, email, profil_pic_url })
         });
 
+        // Vissza a normál módba
         input_Username.disabled = true;
         input_Email.disabled = true;
         input_Pic.disabled = true;
+        input_Password.disabled = true;
         btn_Edit.className = 'btn btn-outline-warning btn-sm me-1';
         btn_Edit.innerHTML = 'Szerkesztés';
     } catch (err) {
