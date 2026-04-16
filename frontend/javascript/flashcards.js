@@ -98,6 +98,8 @@ function build_card(front_text, back_text, card_id, isForeign = null) {
 }
 
 function flashcard_start(deck_id, isForeign = null) {
+    document.getElementById("flashcard_front").textContent = "A kérdés helye:";
+    document.getElementById("flashcard_back").textContent = "A válasz helye:";
     if (document.getElementById("prevCardBtn").disabled == false) {
         document.getElementById("prevCardBtn").classList.add("disabled_game_button");
         document.getElementById("prevCardBtn").classList.remove("activ_game_button");
@@ -110,12 +112,7 @@ function flashcard_start(deck_id, isForeign = null) {
     }
     document.getElementById("flashcardGameContainer").classList.remove("dnone");
     const backToCardsButton = document.getElementById("backToCardsButton");
-    if (isForeign) {
-        backToCardsButton.onclick = () => load_deck();
-    }
-    else {
-        backToCardsButton.onclick = () => deck_open(deck_id);
-    }
+    backToCardsButton.onclick = () => deck_open(deck_id, isForeign);
 
     document.querySelectorAll(".dnone_on_start").forEach(elem => elem.classList.add("dnone"));
     backToCardsButton.classList.remove("dnone");
@@ -449,13 +446,18 @@ async function deck_open(deck_id, isForeign = null) {
         }
 
         if(isForeign){
+            document.getElementById("editDeckButton").classList.add("dnone");
+            document.getElementById("editDeckButton").onclick = () => { alertell("Nincs jogosultságod a pakli szerkesztéséhez!", 2.5) };
             document.getElementById("addCardButton").classList.add("dnone");
             document.getElementById("addCardButton").onclick = () => { alertell("Nincs jogosultságod új kártya hozzáadásához!", 2.5) };
         }
-
-        const add_new_card_button = document.getElementById("addCardButton")
-        add_new_card_button.onclick = () => add_new_card_modal(deck_id)
-        document.getElementById("startStudyButton").onclick = () => flashcard_start(deck_id)
+        else{
+            document.getElementById("editDeckButton").classList.remove("dnone");
+            document.getElementById("editDeckButton").onclick = () => deck_edit_user(deck_id);
+            document.getElementById("addCardButton").classList.remove("dnone");
+            document.getElementById("addCardButton").onclick = () => add_new_card_modal(deck_id);
+        }
+        document.getElementById("startStudyButton").onclick = () => flashcard_start(deck_id, isForeign)
         const token = localStorage.getItem('token');
         document.getElementById("decks").classList.add("dnone")
         document.getElementById("cards").classList.remove("dnone")
@@ -484,9 +486,8 @@ async function deck_open(deck_id, isForeign = null) {
         let card_list = document.getElementById("cardList");
         card_list.innerHTML = ""
         for (let i = 0; i < cards_result.cards.length; i++) {
-            card_list.appendChild(build_card(cards_result.cards[i].front_text, cards_result.cards[i].back_text, cards_result.cards[i].card_id, cards_result.cards[i].deck_id))
-        }
-        document.getElementById("editDeckButton").onclick = () => deck_edit_user(deck_id)
+            card_list.appendChild(build_card(cards_result.cards[i].front_text, cards_result.cards[i].back_text, cards_result.cards[i].card_id, isForeign))
+        }        
         const el = document.getElementById('cardList');
         if (!isForeign) {
             Sortable.create(el, {

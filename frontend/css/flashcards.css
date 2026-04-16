@@ -1,4 +1,4 @@
-.dnone{
+.dnone {
     display: none !important;
 }
 
@@ -77,7 +77,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 12px;    
+    gap: 12px;
     cursor: pointer;
 
 }
@@ -89,13 +89,14 @@
     max-width: 80%;
 }
 
-.deck_item:hover {    
+.deck_item:hover {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 
 .deck_name {
-
+    max-width: 200px;
+    overflow-x: auto;
     width: 90%;
     font-size: 1.1rem;
     font-weight: 700;
@@ -130,12 +131,12 @@
 
 #flashcard_form {
     display: flex;
-    
+
     gap: 10%;
 }
 
 .createDeckButton_div {
-    
+
     display: flex;
     justify-content: center;
 }
@@ -158,6 +159,8 @@
     text-align: center;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    max-width: 24vw;
+    overflow-x: auto;
 }
 
 .deck_header_actions {
@@ -407,7 +410,7 @@
 
 .delete_card_button {
 
-    padding: 8px 14px;    
+    padding: 8px 14px;
     border: none;
     border-radius: 8px;
     background: #000000;
@@ -417,7 +420,7 @@
     transition: background 0.2s;
 }
 
-.share_deck_button {    
+.share_deck_button {
     padding: 8px 14px;
     border: none;
     border-radius: 8px;
@@ -469,20 +472,18 @@
 
 
 .flashcard_game_container {
-    display: none; 
+    display: none;
     justify-content: center;
     align-items: center;
     height: 100%;
     width: 100%;
-    gap: 30px; 
-    
+    gap: 30px;
+
 }
 
 .flashcard_game_card {
-    width: 100%;
-    height: 100%;
-    max-height: 400px;
-    max-width: 300px;
+    width: 30vw;
+    height: 50vh;
     min-width: 100px;
     min-height: 200px;
     position: relative;
@@ -503,30 +504,29 @@
 }
 
 .flashcard-front,
-.flashcard-back {    
+.flashcard-back {
+    
     position: absolute;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    backface-visibility: hidden;  
+    border-radius: 12px;
     text-align: center;
-    padding: 20px;
-    box-sizing: border-box;
-    border-radius: 12px;    
-    overflow-y: auto;          
-    overflow-x: hidden;        
-    word-wrap: break-word;     
-    display: block;            
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-break: break-word;
+    white-space: normal;
+
 }
 
 
-#flashcard_front, #flashcard_back {
+#flashcard_front,
+#flashcard_back {
     margin-top: auto;
     margin-bottom: auto;
     min-height: 100%;
     display: flex;
+    font-size: 1.2rem;
     align-items: center;
     justify-content: center;
 }
@@ -538,6 +538,7 @@
 }
 
 .flashcard-back {
+    
     background-color: #d99c2c;
     color: #fff;
     /* A hátlapot alapból elforgatjuk, hogy ne látszódjon */
@@ -590,10 +591,10 @@
 }
 
 
-.chioice_button_r{
+.chioice_button_r {
     padding: 8px 14px;
     border: none;
-    border-radius: 8px;    
+    border-radius: 8px;
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -601,14 +602,14 @@
     background-color: blue;
 }
 
-.chioice_button_o{
+.chioice_button_o {
     padding: 8px 14px;
     border: none;
-    border-radius: 8px;    
+    border-radius: 8px;
     color: white;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.2s;    
+    transition: background 0.2s;
     background-color: rgb(115, 115, 218);
 }
 
@@ -648,14 +649,21 @@
 }
 
 @media (max-width: 720px) {
-    #flashcard_form{
+    #flashcard_form {
         flex-direction: column;
     }
+
     .createDeckButton_div {
         padding: 5px;
-        
+
+    }
+
+    .flashcard_game_card {
+        width: 50vw;
+        height: 20vh;
     }
 }
+
 @media (max-width: 600px) {
     .flashcard_game_container {
         gap: 10px;
@@ -666,4 +674,6 @@
         height: 45px;
         font-size: 1.2rem;
     }
+
+
 }

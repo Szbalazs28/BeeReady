@@ -127,6 +127,8 @@
 
 .event-title,
 .event-location {
+    max-width: 12vw;
+    overflow-x: auto;
     margin: 0;
     padding: 0;
     font-size: 1rem;
