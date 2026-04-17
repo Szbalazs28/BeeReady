@@ -997,6 +997,59 @@
     height: 220px;
 }
 
+/* A szülő konténer beállítása */
+#caption {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Két egyenlő oszlop */
+    gap: 10px;
+    width: 100%;
+    max-width: 300px; /* Ízlés szerint állítható */
+    margin-top: 1rem;
+}
+
+/* Az alap kártya stílusod (kicsit finomítva a középre igazításhoz) */
+.hive_card_type {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* AZ "ÖSSZES" KÁRTYA: Felül, középen, teljes szélességben */
+.hive_card_type.all {
+    grid-column: 1 / span 2; 
+    background: #e0f2fe; /* Halvány kék hatter */
+    color: #0369a1;      /* Sötétebb kék szöveg */
+    margin-bottom: 5px;  /* Kis extra hely az alsóktól */
+}
+
+/* EGYEDI SZÍNEK A TÖBBIHEZ */
+.hive_card_type.high {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.hive_card_type.medium {
+    background: #fef3c7;
+    color: #F1B43C;
+}
+
+.hive_card_type.low {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.hive_card_type.done {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
 /*Tanulassal toltott ido*/
 .study_time {
     margin-top: 0;

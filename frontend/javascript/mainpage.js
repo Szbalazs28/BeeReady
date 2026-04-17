@@ -266,7 +266,7 @@ function updateDisplay() {
         let input = document.createElement('input')
         input.type = 'number'
         input.id = 'timer_custom_minutes'
-        input.placeholder = '00:00'
+        input.placeholder = '000'
 
         input.addEventListener('input', function () {
             if (this.value.length > 3) {
@@ -591,57 +591,56 @@ async function saveTask(id, card_div, saveBtn) {
 
 //statisztika 
 function updateStatisticsChart() {
-    const tasks = document.querySelectorAll('.task-card')
-
-    let counts = {
-        high: 0,
-        medium: 0,
-        low: 0,
-        done: 0
-    }
+    const tasks = document.querySelectorAll('.task-card');
+    let counts = { high: 0, medium: 0, low: 0, done: 0 };
 
     tasks.forEach(task => {
-        const isCompleted = task.classList.contains('completed')
-
+        const isCompleted = task.classList.contains('completed');
         if (isCompleted) {
-            counts.done++
+            counts.done++;
         } else {
-
-            const importance = task.classList[1]
+            const importance = task.classList[1];
             if (counts.hasOwnProperty(importance)) {
-                counts[importance]++
+                counts[importance]++;
             }
         }
-    })
+    });
 
-    const total = counts.high + counts.medium + counts.low + counts.done
-    const caption = document.getElementById('caption')
+    const total = counts.high + counts.medium + counts.low + counts.done;
+    const caption = document.getElementById('caption');
+    const circleElement = document.querySelector('.circle');
 
-    if (total == 0) {
-        // alapertelmezetten a szurke legyen 100%
-        const circleElement = document.querySelector('.circle')
-        circleElement.style.setProperty('--high-p', '0%')
-        circleElement.style.setProperty('--medium-p', '0%')
-        circleElement.style.setProperty('--low-p', '0%')
-        circleElement.style.setProperty('--done-p', '100%')
+    caption.innerHTML = '';
 
-        caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
+    const add_caption_item = (label, value, typeClass) => {
+        const span = document.createElement('span');
+        span.classList.add('hive_card_type', typeClass);
+        span.textContent = `${label}: ${value}`;
+        caption.appendChild(span);
+    };
+
+    if (total === 0) {
+        circleElement.style.setProperty('--high-p', '0%');
+        circleElement.style.setProperty('--medium-p', '0%');
+        circleElement.style.setProperty('--low-p', '0%');
+        circleElement.style.setProperty('--done-p', '100%');
+    } else {
+        const highP = (counts.high / total * 100).toFixed(1);
+        const mediumP = (counts.medium / total * 100).toFixed(1);
+        const lowP = (counts.low / total * 100).toFixed(1);
+        const doneP = (counts.done / total * 100).toFixed(1);
+
+        circleElement.style.setProperty('--high-p', highP + '%');
+        circleElement.style.setProperty('--medium-p', mediumP + '%');
+        circleElement.style.setProperty('--low-p', lowP + '%');
+        circleElement.style.setProperty('--done-p', doneP + '%');
     }
 
-    // ertekek szamolasa es cssbe helyezes
-    const highP = (counts.high / total * 100).toFixed(1)
-    const mediumP = (counts.medium / total * 100).toFixed(1)
-    const lowP = (counts.low / total * 100).toFixed(1)
-    const doneP = (counts.done / total * 100).toFixed(1)
-
-    const circleElement = document.querySelector('.circle')
-    circleElement.style.setProperty('--high-p', highP + '%')
-    circleElement.style.setProperty('--medium-p', mediumP + '%')
-    circleElement.style.setProperty('--low-p', lowP + '%')
-    circleElement.style.setProperty('--done-p', doneP + '%')
-
-    caption.innerText = `Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
-
+    add_caption_item('Összes', total, 'all');
+    add_caption_item('Magas', counts.high, 'high');
+    add_caption_item('Közepes', counts.medium, 'medium');
+    add_caption_item('Alacsony', counts.low, 'low');
+    add_caption_item('Kész', counts.done, 'done');
 }
 
 updateStatisticsChart()
