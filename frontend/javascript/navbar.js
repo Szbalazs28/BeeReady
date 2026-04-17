@@ -1,4 +1,8 @@
 window.addEventListener('load', load_image);
+window.addEventListener('DOMContentLoaded', () => {
+    start_logout_timer();
+    sessionStorage.removeItem("modal_showed");
+});
 
 function navbar_click(id, index) {
     document.querySelectorAll(".mainelem").forEach(element => {
@@ -19,6 +23,8 @@ function navbar_click(id, index) {
     }
 
 }
+
+
 
 async function show_exit_modal(isresultview) {
     if (!isresultview) {

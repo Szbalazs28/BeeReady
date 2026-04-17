@@ -1,7 +1,10 @@
 function logout() {
+    clearInterval(logoutIntervalId);
+    sessionStorage.removeItem("modal_showed");
     localStorage.removeItem('token');
     window.location.href = "../html/index.html";
 }
+let logoutIntervalId;
 
 function alertell(text, time) {
     if (time < 2.5) {
@@ -16,6 +19,84 @@ function alertell(text, time) {
     setTimeout(() => {
         t.remove();
     }, time * 1000);
+}
+
+async function start_logout_timer() {
+    const result = await index_apiFetch("http://127.0.0.1:4000/api/get_expire_time", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+    });
+
+    let time_left = parseInt(result.time_left);
+    clearInterval(logoutIntervalId);
+    logoutIntervalId = setInterval(() => {
+        time_left--;
+        if (time_left <= 0) {
+            logout();
+        }
+        else {
+            if (time_left <= 60) {
+                if (sessionStorage.getItem("modal_showed") != "true") {
+                    extend_time_modal();
+                    sessionStorage.setItem("modal_showed", "true");
+                }
+            }
+            if (time_left <= 5) {
+                alertell(`A munkamenet ${time_left} másodpercen belül lejár!`, 1);
+            }
+        }
+    }, 1000);
+}
+
+function extend_time_modal() {
+    const modalOverlay = document.createElement("div");
+    modalOverlay.className = "quiz-modal-overlay";
+    const modalContent = document.createElement("div");
+    modalContent.className = "quiz-modal-content quiz-delete-modal-content";
+    const title = document.createElement("h3");
+    title.className = "quiz-delete-modal-title";
+    title.textContent = "Munkamenet meghosszabbítása";
+    const message = document.createElement("p");
+    message.className = "quiz-delete-modal-text";
+    message.textContent = "Figyelem! A munkamenet 60 másodpercen belül lejár, szeretné meghosszabbítani?";
+    const actionDiv = document.createElement("div");
+    actionDiv.className = "quiz-delete-action-div";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.classList.add("quiz-create-button", "quiz-delete-cancel");
+    cancelBtn.textContent = "Nem";
+    cancelBtn.onclick = () => {
+        const modal = document.querySelector(".quiz-modal-overlay");
+        document.body.removeChild(modal);
+    }
+    const confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.id = "extend_time_btn";
+    confirmBtn.classList.add("quiz-create-button", "quiz-delete-confirm");
+    confirmBtn.textContent = "Igen";
+    confirmBtn.onclick = async () => { extend_time(); document.body.removeChild(modalOverlay); };
+
+    actionDiv.append(cancelBtn, confirmBtn);
+    modalContent.append(title, message, actionDiv);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+}
+
+async function extend_time() {
+    try {
+        const result = await apiFetch("http://127.0.0.1:4000/api/get_extended_time", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        })
+        localStorage.setItem("token", result.token);
+        start_logout_timer();
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 function getRandomInt(min, max) {
@@ -50,7 +131,7 @@ function timetest(start, end) {
 
 }
 
-function random_array(array){
+function random_array(array) {
     let random_numbers = [];
     while (random_numbers.length != array.length) {
         let randnumber = getRandomInt(0, array.length);
@@ -65,22 +146,22 @@ async function index_apiFetch(url, options = {}) {
     try {
         const response = await fetch(url, options)
         const data = await response.json().catch(() => ({}))
-        if(!response.ok){
+        if (!response.ok) {
             if (response.status === 429) {
                 alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
             }
 
-            else if(response.status===400){
+            else if (response.status === 400) {
                 alertell(data.message || "Hibás kérés.", 5);
             }
-            else if(response.status===409){
+            else if (response.status === 409) {
                 alertell(data.message || "Hibás adat!", 5);
 
             }
-            else if(response.status===403){
+            else if (response.status === 403) {
                 alertell(data.message || "Hibás jelszó!", 5);
             }
-            else{
+            else {
                 alertell("Szerverhiba történt.", 5)
             }
 
@@ -130,7 +211,7 @@ async function apiFetch(url, options = {}) {
 
 
             }
-            else if(response.status===409){
+            else if (response.status === 409) {
                 alertell(data.message || "Hibás adat!", 5);
 
             }

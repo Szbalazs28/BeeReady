@@ -272,6 +272,9 @@
 
 
 @media (max-width: 1024px) {
+    .event-title{
+        max-width: 60vw;
+    }
     .create_event_container {
         flex-wrap: wrap;
         gap: 8px;

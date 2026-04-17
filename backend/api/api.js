@@ -3,7 +3,7 @@ const rateLimit = require('express-rate-limit');
 const router = express.Router();
 
 
-const { authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
+const {get_time_left, authenticateToken, generateToken } = require("../middleware/jsonwebtoken.js");
 const { admincheck, answer_validation, affectedRowscheck, getuserbyemail, passwordTest, encrypt, compare, emailTest, lengthtest, checkuserexists, getuserbyid, timetest } = require("../data_test.js");
 const {loadquizmeta, save_foreign_quiz, save_current_foreign_quiz_order, getforeignquizzes, loadanswers_withoutright, getuseranswers, getquizresult, restore_task, calcquizpoints, delete_quiz, loadquestions, loadanswers, save_current_quiz_order, save_answer, save_question, save_quiz, getquizzes, getQnF, Insert_calendar_event, delete_calendar_event, get_calendar_events, adminCheck, admin_get_users, admin_update_user, admin_delete_user, add_task, get_tasks, delete_task, update_task, mark_task_done, newuser, updateuser, add_deck, getdeck, getdeckbydeck_id, getcards, addnewcard, deletecard, getcardbyid, updatecard, updatedeck, deletedeck, save_new_card_order, save_new_deck_order, save_new_event, get_events, changeselectedweek, get_saved_weektype, updateevent, delete_event, change_share_code, copy_deck, toggleFavorite, getFavoriteCount, QnFSearch, quiz_submit } = require("../sql/querys.js");
 
@@ -48,9 +48,28 @@ router.post("/login", loginLimiter, async (req, res, next) => {
       expiresInTime = "7d";
     }
     const token = await generateToken(rows[0].id, expiresInTime);
-    res.status(200).json({ token, redirect: isAdmin ? "../html/admin.html" : "../html/main.html" })
+    res.status(200).json({ token, redirect: isAdmin ? "../html/admin.html" : "../html/main.html"})
   } catch (error) {
     next(error);
+  }
+});
+
+router.get("/get_expire_time", authenticateToken, async (req, res, next) => {
+  try {
+    const time_left = await get_time_left(req.headers['authorization'].split(' ')[1]);
+    res.status(200).json({ time_left });
+  } catch (error) {
+    next(error)
+  }
+});
+
+router.get("/get_extended_time", authenticateToken, async (req, res, next) => {
+  try {
+    const id = req.user.id;    
+    const token = await generateToken(id, "1h");
+    res.status(200).json({ write: true, message: "Munkamenet meghosszabbítva 1 órával!", token: token });
+  } catch (error) {
+    next(error)
   }
 });
 
