@@ -176,10 +176,8 @@ function HiveFilters() {
 
 function HiveSearch() {
     const searchInput = document.getElementById('hive_search_input');
-    let timeout;
 
     searchInput.addEventListener('input', (e) => {
-        clearTimeout(timeout);
         timeout = setTimeout(async () => {
             currentFilters.search = e.target.value;
             await loadHiveData();
