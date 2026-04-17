@@ -667,19 +667,19 @@ function updateStatisticsChart() {
 updateStatisticsChart()
 
 // Event listener a statisztika select-re
-document.getElementById('stat_select').addEventListener('change', function () {
-    const selectedValue = this.value
-    const circleStats = document.querySelector('.circle_stats')
-    const studyTime = document.querySelector('.study_time')
-    const headlines = document.querySelector('.h3_statistics_headlines')
+// document.getElementById('stat_select').addEventListener('change', function () {
+//     const selectedValue = this.value
+//     const circleStats = document.querySelector('.circle_stats')
+//     const studyTime = document.querySelector('.study_time')
+//     const headlines = document.querySelector('.h3_statistics_headlines')
 
-    if (selectedValue === 'hide') {
-        circleStats.style.display = 'none'
-        studyTime.style.display = 'none'
-        headlines.style.display = 'none'
-    } else {
-        circleStats.style.display = 'flex'
-        studyTime.style.display = 'flex'
-        headlines.style.display = 'flex'
-    }
-})
+//     if (selectedValue === 'hide') {
+//         circleStats.style.display = 'none'
+//         studyTime.style.display = 'none'
+//         headlines.style.display = 'none'
+//     } else {
+//         circleStats.style.display = 'flex'
+//         studyTime.style.display = 'flex'
+//         headlines.style.display = 'flex'
+//     }
+// })
