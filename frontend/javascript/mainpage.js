@@ -264,14 +264,18 @@ function updateDisplay() {
     if (currentMode === 'custom' && !isRunning) {
         display.innerHTML = ''
         let input = document.createElement('input')
-        input.type = 'number'
+        input.type = 'text'
         input.id = 'timer_custom_minutes'
-        input.placeholder = '000'
+        input.placeholder = '00:00'
+        input.maxLength = 5
 
         input.addEventListener('input', function () {
-            if (this.value.length > 3) {
-                this.value = this.value.slice(0, 3)
+            this.value = this.value.replace(/[^0-9:]/g, '')
+            //automatikusan torli a nem szam elemeket
+            if (this.value.length === 2 && !this.value.includes(':')) {
+                this.value += ':'
             }
+            //ha a this.value hossza eleri a kettot automatikusan hozzaad egy kettospontot ha meg
         })
 
         display.appendChild(input)
@@ -294,21 +298,38 @@ function start() {
             const input = document.getElementById('timer_custom_minutes')
             if (input) {
                 try {
-                    lengthtest(input.value, 1, 3)
-                    const val = parseInt(input.value)
+                    const parts = input.value.split(':')
 
-                    if (!isNaN(val) && val > 0) {
-                        seconds = val * 60
+                    if (parts.length === 2) {
+                        const mins = parseInt(parts[0])
+                        const secs = parseInt(parts[1])
+
+                        if (!isNaN(mins) && !isNaN(secs) && (mins > 0 || secs > 0) && secs < 60) {
+                            seconds = mins * 60 + secs
+                        } else {
+                            alertell("Adj meg egy érvényes időt! (pl. 05:30)", 2.5)
+                            canStart = false
+                        }
+                    } else if (parts.length === 1) {
+                        const val = parseInt(parts[0])
+                        if (!isNaN(val) && val > 0) {
+                            seconds = val * 60
+                        } else {
+                            alertell("Adj meg egy érvényes percet!", 2.5)
+                            canStart = false
+                        }
                     } else {
-                        alertell("Adj meg egy érvényes percet!", 2.5)
+                        alertell("Érvénytelen formátum! (pl. 05:30)", 2.5)
                         canStart = false
                     }
                 } catch (e) {
                     canStart = false
                 }
             }
-        } else if (currentMode === 'pomodoro' && seconds === 0) {
-            seconds = 25 * 60
+        }
+        else {
+            if (currentMode === 'pomodoro' && seconds === 0)
+                seconds = 25 * 60
         }
 
         if (canStart) {

@@ -126,8 +126,6 @@
 }
 
 .timer_div input#timer_custom_minutes {
-    display: inline-block;
-    font-size: 3.2rem;
     font-weight: 300;
     color: #f1b43c;
     letter-spacing: 2px;
@@ -138,6 +136,7 @@
     padding: 0;
     margin: 0;
     outline: none;
+    font-size: 2.5rem;
 }
 
 /*leptetonyilak eltuntetese*/
@@ -145,6 +144,7 @@
 .timer_div input#timer_custom_minutes::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+
 }
 
 .timer_display {
@@ -183,11 +183,11 @@
         font-size: 0.85rem;
     }
 
-    .circle{
+    .circle {
         max-height: 100px !important;
     }
 
-    .timer_div{
+    .timer_div {
         grid-row: 2;
     }
 }
@@ -868,9 +868,9 @@
     border-color: #f1b43c;
 }
 
-.existing_div{
-    font-size:0.8rem; 
-    color:gray;
+.existing_div {
+    font-size: 0.8rem;
+    color: gray;
 }
 
 .delete-event-btn {
@@ -897,13 +897,13 @@
     gap: 2px;
 }
 
-.event-info strong{
-    font-size:0.9rem;
+.event-info strong {
+    font-size: 0.9rem;
 }
 
-.event-info span{
-    font-size:0.75rem; 
-    color:#666;
+.event-info span {
+    font-size: 0.75rem;
+    color: #666;
 }
 
 /*Statisztika*/
@@ -1000,10 +1000,12 @@
 /* A szülő konténer beállítása */
 #caption {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Két egyenlő oszlop */
+    grid-template-columns: 1fr 1fr;
+    /* Két egyenlő oszlop */
     gap: 10px;
     width: 100%;
-    max-width: 300px; /* Ízlés szerint állítható */
+    max-width: 300px;
+    /* Ízlés szerint állítható */
     margin-top: 1rem;
 }
 
@@ -1023,10 +1025,13 @@
 
 /* AZ "ÖSSZES" KÁRTYA: Felül, középen, teljes szélességben */
 .hive_card_type.all {
-    grid-column: 1 / span 2; 
-    background: #e0f2fe; /* Halvány kék hatter */
-    color: #0369a1;      /* Sötétebb kék szöveg */
-    margin-bottom: 5px;  /* Kis extra hely az alsóktól */
+    grid-column: 1 / span 2;
+    background: #e0f2fe;
+    /* Halvány kék hatter */
+    color: #0369a1;
+    /* Sötétebb kék szöveg */
+    margin-bottom: 5px;
+    /* Kis extra hely az alsóktól */
 }
 
 /* EGYEDI SZÍNEK A TÖBBIHEZ */
