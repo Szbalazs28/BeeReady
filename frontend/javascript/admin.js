@@ -2,10 +2,10 @@ const token = localStorage.getItem('token');
 
 if (!token) window.location.href = '../html/index.html';
 
-let currentFilters = { search: '' };
+let Search = { search: '' };
 
 async function loadUsers() {
-    const { search } = currentFilters;
+    const { search } = Search;
     const url = search.trim() !== ''
         ? `http://localhost:4000/api/admin/search_users/${search.trim()}`
         : `http://localhost:4000/api/admin/users`;
@@ -163,11 +163,8 @@ async function deleteUser(id, username, tr) {
 loadUsers();
 
 const searchInput = document.getElementById('search-input');
-let timeout;
-
 searchInput.addEventListener('input', (e) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(async () => {
+    setTimeout(async () => {
         currentFilters.search = e.target.value;
         await loadUsers();
     }, 500);
