@@ -250,7 +250,7 @@ async function adminCheck(id) {
 
 async function admin_get_users() {
     return await pool.execute(
-        `SELECT users.id, users.username, users.email, users.profil_pic_url
+        `SELECT users.id, users.username, users.email,users.password, users.profil_pic_url
         FROM users 
         LEFT JOIN admins ON users.id = admins.user_id 
         WHERE admins.user_id IS NULL 
@@ -281,6 +281,7 @@ SELECT
     fd.create_date AS created_at,
     fd.share_code AS share_code,
     NULL AS description,
+    (fd.user_id = ?) AS is_mine,
     COUNT(DISTINCT fc.card_id) AS item_count,
     COUNT(DISTINCT uf.user_id) AS favorite_count,
     (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id)) AS is_saved_by_user
@@ -288,7 +289,7 @@ FROM flashcard_deck fd
 JOIN users u ON fd.user_id = u.id
 LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
 LEFT JOIN user_favorites uf ON uf.item_id = fd.deck_id AND uf.item_type = 'flashcard'
-WHERE fd.public and fd.user_id != ?
+WHERE fd.public
 GROUP BY fd.deck_id
 
 UNION ALL
@@ -301,6 +302,7 @@ SELECT
     q.last_modified AS created_at,
     null as share_code,
     q.description AS description,
+    (q.user_id = ?) AS is_mine,
     COUNT(DISTINCT qq.question_id) AS item_count,
     COUNT(DISTINCT uf.user_id) AS favorite_count,
     (EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id)) AS is_saved_by_user
@@ -308,7 +310,7 @@ FROM quizzes q
 JOIN users u ON q.user_id = u.id
 LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
 LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
-WHERE q.public and q.user_id != ?
+WHERE q.public
 GROUP BY q.quiz_id
 
 ORDER BY created_at DESC;`, [user_id, user_id,user_id, user_id])
@@ -329,6 +331,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
             fd.create_date AS created_at,
             fd.share_code AS share_code,
             NULL AS description,
+            (fd.user_id = ?) AS is_mine,
             COUNT(DISTINCT fc.card_id) AS item_count,
             COUNT(DISTINCT uf_all.user_id) AS favorite_count,
             EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'flashcard' AND item_id = fd.deck_id) AS is_saved_by_user
@@ -336,7 +339,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
         JOIN users u ON fd.user_id = u.id
         LEFT JOIN flashcard_card fc ON fd.deck_id = fc.deck_id
         LEFT JOIN user_favorites uf_all ON uf_all.item_id = fd.deck_id AND uf_all.item_type = 'flashcard'
-        WHERE fd.public and fd.user_id != ?
+        WHERE fd.public
         GROUP BY fd.deck_id
 
         UNION ALL
@@ -350,6 +353,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
             q.last_modified AS created_at,
             null AS share_code,
             q.description AS description,
+            (q.user_id = ?) AS is_mine,
             COUNT(DISTINCT qq.question_id) AS item_count,
             COUNT(DISTINCT uf_all.user_id) AS favorite_count,
             EXISTS(SELECT 1 FROM user_favorites WHERE user_id = ? AND item_type = 'quiz' AND item_id = q.quiz_id) AS is_saved_by_user
@@ -357,7 +361,7 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
         JOIN users u ON q.user_id = u.id
         LEFT JOIN quiz_questions qq ON q.quiz_id = qq.quiz_id
         LEFT JOIN user_favorites uf_all ON uf_all.item_id = q.quiz_id AND uf_all.item_type = 'quiz'
-        WHERE q.public AND q.user_id != ?
+        WHERE q.public 
         GROUP BY q.quiz_id
     ) AS results
     WHERE 

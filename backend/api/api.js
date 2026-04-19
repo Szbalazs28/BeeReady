@@ -283,7 +283,7 @@ router.post("/save_new_event", authenticateToken, async (req, res, next) => {
     const data = req.body
     timetest(data.start_time, data.end_time)
     lengthtest(data.subject, 1, 100)
-    lengthtest(data.location, 1, 50)
+    lengthtest(data.location, 0, 50)
     await save_new_event(id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type)
     res.status(200).json({ write: true, message: "Sikeres hozzáadás!" })
   }
@@ -322,7 +322,7 @@ router.post("/updateevent", authenticateToken, async (req, res, next) => {
     const data = req.body
     timetest(data.start_time, data.end_time),
       lengthtest(data.subject, 1, 100)
-    lengthtest(data.location, 1, 50)
+    lengthtest(data.location, 0, 50)
     await updateevent(data.event_id, data.day, data.start_time, data.end_time, data.subject, data.location, data.week_type, id)
     res.status(200).json({ write: true, message: "Sikeres frissítés!" })
   }

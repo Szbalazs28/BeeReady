@@ -158,6 +158,11 @@
 }
 
 .quiz-action-div {
+    background-color: rgb(229, 231, 235);
+    padding: 12px 20px;
+    border-radius: 8px;
+    width: 20vw;
+    max-width: 35vw;
     gap: 10px;
     margin: auto;
     display: flex;
@@ -696,9 +701,12 @@
     margin: 0 0 15px 0;
     line-height: 1.2;
     font-weight: 800;
+    max-width: 60vw;
+    word-break: break-word;
 }
 
 #quiz_description {
+    max-width: 60vw;
     font-size: 1.15rem;
     color: #4a5568;
     line-height: 1.6;

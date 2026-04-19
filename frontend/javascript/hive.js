@@ -61,35 +61,42 @@ async function renderHiveCards(data) {
         likes.innerHTML = `<span style="color: #ef4444;">♥</span><span>${qnf.favorite_count}</span>`;
         stats.appendChild(likes);
         qnfCard.appendChild(stats);
-
         const card_footer = document.createElement('div');
         card_footer.classList.add('hive_card_footer');
-
-        const view_button = document.createElement('button');
-        view_button.type = 'button';
-        view_button.classList.add('hive_btn_view');
-        view_button.textContent = 'Indítás';
+        if (qnf.is_mine == 0) {
 
 
-        //masik felhsznalobol nem tudja meghivi az elemet viszont puublikus
-        view_button.addEventListener('click', async (e) => {
-            e.preventDefault();
-            if (qnf.type === 'flashcard') {
-                navbar_click('tanulokartyak', 2);
-                try {
-                    deck_open(qnf.id, true)
-                } catch (error) {
-                    console.error('Pakli megnyitási hiba:', error);
+            const view_button = document.createElement('button');
+            view_button.type = 'button';
+            view_button.classList.add('hive_btn_view');
+            view_button.textContent = 'Indítás';
+
+
+            //masik felhsznalobol nem tudja meghivi az elemet viszont puublikus
+            view_button.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (qnf.type === 'flashcard') {
+                    navbar_click('tanulokartyak', 2);
+                    try {
+                        deck_open(qnf.id, true)
+                    } catch (error) {
+                        console.error('Pakli megnyitási hiba:', error);
+                    }
+                } else {
+                    if (qnf.type === 'quiz') {
+                        navbar_click('quiz', 4);
+                        const quiz_id = qnf.id;
+                        quiz_start(null, quiz_id);
+                    }
                 }
-            } else {
-                if (qnf.type === 'quiz') {
-                    navbar_click('quiz', 4);                    
-                    const quiz_id = qnf.id;                        
-                    quiz_start(null, quiz_id);
-                }
-            }
-        });
+            });
 
+
+
+            card_footer.appendChild(view_button);
+
+
+        }
         const save_button = document.createElement('button');
         save_button.type = 'button';
         save_button.classList.add('hive_btn_save');
@@ -108,10 +115,9 @@ async function renderHiveCards(data) {
             await SaveItem(save_button, qnf.type, qnf.id);
             loadHiveData();
         });
-
-        card_footer.appendChild(view_button);
         card_footer.appendChild(save_button);
         qnfCard.appendChild(card_footer);
+
         qnfContainer.appendChild(qnfCard);
     });
 }
@@ -120,7 +126,7 @@ function load_hive() {
     HiveFilters();
     HiveSearch();
     loadHiveData('all');
-    
+
 }
 
 let currentFilters = {

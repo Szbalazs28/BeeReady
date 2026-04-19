@@ -147,7 +147,7 @@ async function saveNewEvent() {
         const weekType = document.getElementById("weekSelector").value;
         timetest(startTime, endTime);
         lengthtest(subject, 1, 100)
-        lengthtest(location, 1, 50)
+        lengthtest(location, 0, 50)
         const token = localStorage.getItem("token");
         const result = await apiFetch("http://127.0.0.1:4000/api/save_new_event", {
             method: "POST",
@@ -384,7 +384,7 @@ async function updateevent(event_id) {
         const weekType = document.getElementById("weekSelector").value;
         timetest(startTime, endTime);
         lengthtest(subject, 1, 100)
-        lengthtest(location, 1, 50)
+        lengthtest(location, 0, 50)
         const token = localStorage.getItem("token");
         const result = await apiFetch("http://127.0.0.1:4000/api/updateevent", {
             method: "POST",
