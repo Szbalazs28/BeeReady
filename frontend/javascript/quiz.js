@@ -5,7 +5,7 @@ async function load_quizzes() {
         if (pageHeader) {
             pageHeader.classList.remove("dnone");
         }
-        
+
         if (sessionStorage.getItem("quiz_started") !== "true") {
             if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
                 document.querySelector(".quiz-create-container").classList.add("dnone");
@@ -932,6 +932,10 @@ async function save_current_foreign_quiz_order(currentorder) {
 
 
 async function quiz_edit_user(quiz) {
+    const pageHeader = document.querySelector("#quiz .page_header");
+    if (pageHeader) {
+        pageHeader.classList.add("dnone");
+    }
     quiz_creator_reset();
     showcreatequiz()
     document.querySelector(".btn-save-quiz").setAttribute("data-button-option", "edit")
@@ -1606,7 +1610,7 @@ async function quiz_start(quiz = null, quiz_id = null) {
     if (pageHeader) {
         pageHeader.classList.add("dnone");
     }
-    
+
     if (quiz_id != null) {
         const quiz_meta = await apiFetch(`http://127.0.0.1:4000/api/getquizmeta?quiz_id=${quiz_id}`, {
             method: "GET",
@@ -1618,7 +1622,7 @@ async function quiz_start(quiz = null, quiz_id = null) {
         quiz = quiz_meta.quiz_meta[0];
         document.getElementById("quizSubmit").setAttribute("data-submit-type", "foreign");
     }
-    else{
+    else {
         document.getElementById("quizSubmit").setAttribute("data-submit-type", "own");
     }
     sessionStorage.setItem("quiz_started", "true");
@@ -1871,7 +1875,10 @@ async function show_quiz_result_modal(quiz, quiz_id) {
 
 async function load_result_details(quiz, result_id, formattedResult, earned_points) {
     try {
-        
+        const pageHeader = document.querySelector("#quiz .page_header");
+        if (pageHeader) {
+            pageHeader.classList.add("dnone");
+        }
         const token = localStorage.getItem("token");
         quiz_start_reset()
         showstartquiz()

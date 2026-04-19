@@ -1,6 +1,6 @@
 .quiz-container {
     flex: 1;
-    height: 75vh;
+    height: 72vh;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -143,7 +143,7 @@
 
 
 
-.quiz-input{
+.quiz-input {
     width: 50vw;
     padding: 12px 14px;
     border: 1px solid rgb(46, 46, 46);
@@ -163,11 +163,13 @@
     border-radius: 8px;
     width: 20vw;
     max-width: 35vw;
+    height: 8vh;
     gap: 10px;
     margin: auto;
+    margin-bottom: 10px;
     display: flex;
     justify-content: center;
-    
+
 }
 
 .quiz-plus-button {
@@ -194,7 +196,7 @@
 .quiz-create-container {
     width: 100%;
     box-sizing: border-box;
-    
+
 }
 
 .quiz-title-row {
@@ -248,7 +250,7 @@
 }
 
 .quiz-description-input {
-    
+
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #ddd;
@@ -282,9 +284,9 @@
     border-radius: 15px;
     padding: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     border-left: 6px solid #f39c12;
-    
+
 }
 
 .question-header {
@@ -351,7 +353,8 @@
 }
 
 
-.delete-q-btn, .delete-ans-btn {
+.delete-q-btn,
+.delete-ans-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -381,7 +384,7 @@
     display: flex;
     justify-content: space-between;
     margin-top: 40px;
-    
+
 }
 
 .btn-add-q {
@@ -412,9 +415,9 @@
 }
 
 @media (max-width: 480px) {
-    
+
     .quiz-action-div {
-        width: 100%;
+        background-color: white;
         align-items: center;
     }
 
@@ -507,17 +510,17 @@
     flex-direction: column;
     gap: 15px;
     min-width: 300px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.quiz-create-action-div{
+.quiz-create-action-div {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 20px;
 }
 
-.quiz-create-button{
+.quiz-create-button {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
@@ -526,12 +529,12 @@
 
 }
 
-.quiz-exit-result-btn{
+.quiz-exit-result-btn {
     background-color: #e74c3c;
     color: white;
 }
 
-.quiz-create-close{
+.quiz-create-close {
     background-color: #e74c3c;
     color: white;
 }
@@ -671,7 +674,7 @@
     cursor: pointer;
     width: 18px;
     height: 18px;
-    accent-color: #f39c12; 
+    accent-color: #f39c12;
 }
 
 
@@ -679,14 +682,14 @@
 
 .quiz_start_container {
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
 }
 
 
 .quiz_start_header {
     margin-bottom: 1rem;
     padding: 40px;
-    background:  #fef5e2;
+    background: #fef5e2;
     border-radius: 24px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(241, 180, 60, 0.2);
@@ -782,7 +785,7 @@
     border-radius: 10px;
 }
 
-.result-quiz-button{
+.result-quiz-button {
     background-color: #f0c979;
 }
 
@@ -798,18 +801,18 @@
         margin-top: 14px;
         width: 100%;
     }
-    
+
     #quiz_title {
         font-size: 2rem;
     }
-    
+
     .quiz_submit_btn {
         width: 100%;
         padding: 15px;
     }
 }
 
-.quiz-result-row{
+.quiz-result-row {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -834,7 +837,7 @@
 .quiz-result-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;   
+    font-size: 0.95rem;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #f1b43c #f4f4f4;
@@ -899,30 +902,31 @@
     box-shadow: none;
 }
 
-.order-point-label{
+.order-point-label {
     font-size: 0.85rem;
-    color: #555;    
-}
-.order-point-div{
-    display: flex;
-    align-items: center;
-    
+    color: #555;
 }
 
-.wrong_answer{
+.order-point-div {
+    display: flex;
+    align-items: center;
+
+}
+
+.wrong_answer {
     background-color: #ffe5e5;
 }
 
-.correct-answer{
+.correct-answer {
     background-color: #e5ffe5;
 }
 
-.solution-answer{
+.solution-answer {
     background-color: #f0f0f0;
     display: none !important;
 }
 
-.result-back-btn{
+.result-back-btn {
     background-color: rgb(52, 73, 94);
     color: white;
     padding: 10px 20px;
@@ -934,12 +938,12 @@
     width: 10vw;
 }
 
-.foreigndiv{
+.foreigndiv {
     display: flex;
     align-items: center;
-    
+
 }
 
-.fill-ans-input-result{
+.fill-ans-input-result {
     line-height: 1.4;
 }

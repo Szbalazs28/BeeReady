@@ -258,10 +258,14 @@ async function admin_get_users() {
     //left join csak a nem admin felhasznalokat adja vissza
 }
 
-async function admin_update_user(user_id, username, email, profil_pic_url) {
+async function admin_update_user(user_id, username, password, email, profil_pic_url) {
+    const [emailcheck] = await pool.execute("SELECT id FROM users WHERE email = ? AND id != ?", [email, user_id]);
+    const [usernamecheck] = await pool.execute("SELECT id FROM users WHERE username = ? AND id != ?", [username, user_id]);
+    isexistscheck(emailcheck, "E-mail", true)
+    isexistscheck(usernamecheck, "Felhasználónév", true)
     await pool.execute(
-        "UPDATE users SET username=?, email=?, profil_pic_url=? WHERE id=?",
-        [username, email, profil_pic_url, user_id]
+        "UPDATE users SET username=?, password=?, email=?, profil_pic_url=? WHERE id=?",
+        [username, password, email, profil_pic_url, user_id]
     );
 }
 

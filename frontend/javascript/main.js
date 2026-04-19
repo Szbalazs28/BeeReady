@@ -21,7 +21,7 @@ function alertell(text, time) {
     }, time * 1000);
 }
 
-async function start_logout_timer() {
+async function start_logout_timer(wich = false) {
     const result = await index_apiFetch("http://127.0.0.1:4000/api/get_expire_time", {
         method: "GET",
         headers: {
@@ -39,7 +39,13 @@ async function start_logout_timer() {
         else {
             if (time_left <= 60) {
                 if (sessionStorage.getItem("modal_showed") != "true") {
-                    extend_time_modal();
+                    if (wich) {
+                        b_extend_time_modal();
+                    }
+                    else {
+                        extend_time_modal();
+                    }
+
                     sessionStorage.setItem("modal_showed", "true");
                 }
             }
@@ -82,6 +88,78 @@ function extend_time_modal() {
     modalContent.append(title, message, actionDiv);
     modalOverlay.appendChild(modalContent);
     document.body.appendChild(modalOverlay);
+}
+
+function b_extend_time_modal() {
+    const modal = document.createElement("div");
+    modal.className = "modal fade";
+    modal.tabIndex = -1;
+
+    const dialog = document.createElement("div");
+    dialog.className = "modal-dialog modal-dialog-centered";
+
+
+    const content = document.createElement("div");
+    content.className = "modal-content rounded-4 shadow";
+
+
+    const header = document.createElement("div");
+    header.className = "modal-header";
+
+    const title = document.createElement("h5");
+    title.className = "modal-title";
+    title.textContent = "Munkamenet meghosszabbítása";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "btn-close";
+    closeBtn.setAttribute("data-bs-dismiss", "modal");
+
+    header.append(title, closeBtn);
+
+
+    const body = document.createElement("div");
+    body.className = "modal-body";
+    body.innerHTML = `
+        Figyelem! A munkamenet 60 másodpercen belül lejár.<br>
+        Szeretné meghosszabbítani?
+    `;
+
+
+    const footer = document.createElement("div");
+    footer.className = "modal-footer";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "btn btn-outline-secondary";
+    cancelBtn.textContent = "Nem";
+    cancelBtn.setAttribute("data-bs-dismiss", "modal");
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.className = "btn btn-primary";
+    confirmBtn.textContent = "Igen";
+
+
+    confirmBtn.onclick = async () => {
+        await extend_time();
+        bsModal.hide();
+    };
+
+    footer.append(cancelBtn, confirmBtn);
+
+
+    content.append(header, body, footer);
+    dialog.appendChild(content);
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+
+
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+
+
+    modal.addEventListener('hidden.bs.modal', () => {
+        modal.remove();
+    });
 }
 
 async function extend_time() {

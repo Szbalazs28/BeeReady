@@ -43,7 +43,7 @@ router.post("/login", loginLimiter, async (req, res, next) => {
     await compare(data.password, rows[0].password)
     const [adminRows] = await adminCheck(rows[0].id);
     const isAdmin = adminRows.length > 0;
-    let expiresInTime = "1h";
+    let expiresInTime = "70s";
     if (data.stay) {
       expiresInTime = "7d";
     }
@@ -468,15 +468,15 @@ router.post("/admin/update_user", authenticateToken, async (req, res, next) => {
   try {
     const [adminRows] = await adminCheck(req.user.id);
     admincheck(adminRows)
-    const { user_id, username, email, profil_pic_url } = req.body;
+    const { user_id, password, username, email, profil_pic_url } = req.body;
     lengthtest(username, 3, 20);
     emailTest(email);
-    await admin_update_user(user_id, username, email, profil_pic_url);
+    await admin_update_user(user_id, username, password, email, profil_pic_url);
     res.status(200).json({ write: true, message: "Sikeres mentés!" });
   } catch (error) { next(error); }
 });
 
-router.post("/admin/delete_user/:name", authenticateToken, async (req, res, next) => {
+router.delete("/admin/delete_user/:name", authenticateToken, async (req, res, next) => {
   try {
     const [adminRows] = await adminCheck(req.user.id);
     admincheck(adminRows)
@@ -769,6 +769,19 @@ router.get("/getuseranswers", authenticateToken, async (req, res, next) => {
     const question_id = req.query.question_id
     const user_answer = await getuseranswers(id, result_id, question_id)
     res.status(200).json({ write: false, user_answer: user_answer });
+  }
+  catch (error) {
+    next(error);
+  }
+});
+
+
+router.post("/generatehash", authenticateToken, async (req, res, next) => {
+  try {
+    const data = req.body.data
+    passwordTest(data)
+    const hash = await encrypt(data)
+    res.status(200).json({ write: false, hash: hash });
   }
   catch (error) {
     next(error);

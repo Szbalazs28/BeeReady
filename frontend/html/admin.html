@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeeReady – Admin</title>
-    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/chat.css">
     <style>
         body {
@@ -33,12 +33,55 @@
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar navbar-dark bg-dark px-4 mb-4">
         <span class="navbar-brand">BeeReady Admin</span>
-        <button class="btn btn-outline-light btn-sm" onclick="logout()">Kijelentkezés</button>
+        <div class="btn-group">
+            <button class="btn btn-outline-light  btn-sm " onclick="toggleHashContainer()">Hash generátor</button>
+            <button class="btn btn-outline-light btn-sm" onclick="logout()">Kijelentkezés</button>
+        </div>
+
     </nav>
+    <div class="container d-none py-5" id="hash-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-4">
+
+                        <h4 class="text-center mb-4">Hash generálás</h4>
+
+                        <div class="mb-3">
+                            <label for="hash-password" class="form-label">
+                                Jelszó megadása
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">🔒️</span>
+                                <input type="password" id="hash-password" class="form-control"
+                                    placeholder="Írd be a jelszót">
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button class="btn btn-dark btn-lg rounded-3" onclick="generateHash()">
+                                Hash generálása
+                            </button>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="form-label">Eredmény</label>
+                            <div id="hash-result" class="form-control bg-light text-break" style="min-height: 50px;">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <div class="container-fluid px-4">
         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -76,27 +119,9 @@
         </div>
     </div>
 
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-danger">Törlés megerősítése</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    Biztosan törlöd a <strong id="delete-username"></strong> felhasználót? Ez a művelet nem
-                    visszavonható.
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Törlés</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../javascript/main.js"></script>
     <script src="../javascript/admin.js"></script>
 </body>
+
 </html>
