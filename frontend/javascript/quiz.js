@@ -1,5 +1,11 @@
 async function load_quizzes() {
     try {
+        // Header megjelenítése
+        const pageHeader = document.querySelector("#quiz .page_header");
+        if (pageHeader) {
+            pageHeader.classList.remove("dnone");
+        }
+        
         if (sessionStorage.getItem("quiz_started") !== "true") {
             if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
                 document.querySelector(".quiz-create-container").classList.add("dnone");
@@ -1595,6 +1601,12 @@ function quiz_start_reset() {
 }
 
 async function quiz_start(quiz = null, quiz_id = null) {
+    // Header eltuntetese 
+    const pageHeader = document.querySelector("#quiz .page_header");
+    if (pageHeader) {
+        pageHeader.classList.add("dnone");
+    }
+    
     if (quiz_id != null) {
         const quiz_meta = await apiFetch(`http://127.0.0.1:4000/api/getquizmeta?quiz_id=${quiz_id}`, {
             method: "GET",

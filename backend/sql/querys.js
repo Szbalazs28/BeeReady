@@ -250,11 +250,10 @@ async function adminCheck(id) {
 
 async function admin_get_users() {
     return await pool.execute(
-        `SELECT users.id, users.username, users.email,users.password, users.profil_pic_url
+        `SELECT users.id, users.username, users.email,users.password, users.password, users.profil_pic_url
         FROM users 
         LEFT JOIN admins ON users.id = admins.user_id 
-        WHERE admins.user_id IS NULL 
-        ORDER BY users.id DESC;`
+        WHERE admins.user_id IS NULL`
     );
     //left join csak a nem admin felhasznalokat adja vissza
 }
@@ -270,6 +269,16 @@ async function admin_delete_user(user_id) {
     await pool.execute("DELETE FROM users WHERE id=?", [user_id]);
 }
 
+async function admin_search_users(query) {
+    return await pool.execute(
+        `SELECT users.id, users.username, users.email, users.password, users.profil_pic_url
+        FROM users
+        LEFT JOIN admins ON users.id = admins.user_id
+        WHERE admins.user_id IS NULL
+        AND users.username LIKE ?`,
+        [`%${query}%`]
+    );
+}
 
 async function getQnF(user_id) {
     return await pool.execute(`
@@ -571,6 +580,7 @@ module.exports = {
     admin_update_user,
     admin_get_users,
     adminCheck,
+    admin_search_users,
     delete_calendar_event,
     Insert_calendar_event,
     get_calendar_events,

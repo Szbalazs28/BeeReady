@@ -496,9 +496,7 @@
     height: 100%;
     position: absolute;
     transform-style: preserve-3d;
-    /* Létrehozza a 3D teret a gyermek elemek számára */
     transition: transform 0.25s;
-    /* Animáció ideje és sebessége */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 12px;
     cursor: pointer;

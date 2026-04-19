@@ -436,6 +436,12 @@ async function delete_deck(deck_id) {
 
 
 async function deck_open(deck_id, isForeign = null) {
+    // Header eltunese
+    const pageHeader = document.querySelector("#tanulokartyak .page_header");
+    if (pageHeader) {
+        pageHeader.classList.add("dnone");
+    }
+
     try {
         localStorage.removeItem('flashcards');
         localStorage.removeItem('current_flashcard_index');
@@ -543,6 +549,13 @@ async function add_deck(deck_name) {
 
 async function load_deck() {
     try {
+        // Header megjelenítése 
+        const pageHeader = document.querySelector("#tanulokartyak .page_header");
+        if (pageHeader) {
+            pageHeader.classList.remove("dnone");
+        }
+
+
         const decks = document.getElementById("decks")
         const cards = document.getElementById("cards")
         if (decks.classList.contains("dnone")) {

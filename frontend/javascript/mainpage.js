@@ -264,14 +264,18 @@ function updateDisplay() {
     if (currentMode === 'custom' && !isRunning) {
         display.innerHTML = ''
         let input = document.createElement('input')
-        input.type = 'number'
+        input.type = 'text'
         input.id = 'timer_custom_minutes'
         input.placeholder = '00:00'
+        input.maxLength = 5
 
         input.addEventListener('input', function () {
-            if (this.value.length > 3) {
-                this.value = this.value.slice(0, 3)
+            this.value = this.value.replace(/[^0-9:]/g, '')
+            //automatikusan torli a nem szam elemeket
+            if (this.value.length === 2 && !this.value.includes(':')) {
+                this.value += ':'
             }
+            //ha a this.value hossza eleri a kettot automatikusan hozzaad egy kettospontot ha meg
         })
 
         display.appendChild(input)
@@ -294,21 +298,38 @@ function start() {
             const input = document.getElementById('timer_custom_minutes')
             if (input) {
                 try {
-                    lengthtest(input.value, 1, 3)
-                    const val = parseInt(input.value)
+                    const parts = input.value.split(':')
 
-                    if (!isNaN(val) && val > 0) {
-                        seconds = val * 60
+                    if (parts.length === 2) {
+                        const mins = parseInt(parts[0])
+                        const secs = parseInt(parts[1])
+
+                        if (!isNaN(mins) && !isNaN(secs) && (mins > 0 || secs > 0) && secs < 60) {
+                            seconds = mins * 60 + secs
+                        } else {
+                            alertell("Adj meg egy érvényes időt! (pl. 05:30)", 2.5)
+                            canStart = false
+                        }
+                    } else if (parts.length === 1) {
+                        const val = parseInt(parts[0])
+                        if (!isNaN(val) && val > 0) {
+                            seconds = val * 60
+                        } else {
+                            alertell("Adj meg egy érvényes percet!", 2.5)
+                            canStart = false
+                        }
                     } else {
-                        alertell("Adj meg egy érvényes percet!", 2.5)
+                        alertell("Érvénytelen formátum! (pl. 05:30)", 2.5)
                         canStart = false
                     }
                 } catch (e) {
                     canStart = false
                 }
             }
-        } else if (currentMode === 'pomodoro' && seconds === 0) {
-            seconds = 25 * 60
+        }
+        else {
+            if (currentMode === 'pomodoro' && seconds === 0)
+                seconds = 25 * 60
         }
 
         if (canStart) {
@@ -591,75 +612,74 @@ async function saveTask(id, card_div, saveBtn) {
 
 //statisztika 
 function updateStatisticsChart() {
-    const tasks = document.querySelectorAll('.task-card')
-
-    let counts = {
-        high: 0,
-        medium: 0,
-        low: 0,
-        done: 0
-    }
+    const tasks = document.querySelectorAll('.task-card');
+    let counts = { high: 0, medium: 0, low: 0, done: 0 };
 
     tasks.forEach(task => {
-        const isCompleted = task.classList.contains('completed')
-
+        const isCompleted = task.classList.contains('completed');
         if (isCompleted) {
-            counts.done++
+            counts.done++;
         } else {
-
-            const importance = task.classList[1]
+            const importance = task.classList[1];
             if (counts.hasOwnProperty(importance)) {
-                counts[importance]++
+                counts[importance]++;
             }
         }
-    })
+    });
 
-    const total = counts.high + counts.medium + counts.low + counts.done
-    const caption = document.getElementById('caption')
+    const total = counts.high + counts.medium + counts.low + counts.done;
+    const caption = document.getElementById('caption');
+    const circleElement = document.querySelector('.circle');
 
-    if (total == 0) {
-        // alapertelmezetten a szurke legyen 100%
-        const circleElement = document.querySelector('.circle')
-        circleElement.style.setProperty('--high-p', '0%')
-        circleElement.style.setProperty('--medium-p', '0%')
-        circleElement.style.setProperty('--low-p', '0%')
-        circleElement.style.setProperty('--done-p', '100%')
+    caption.innerHTML = '';
 
-        caption.innerText = `Összes: ${total} | Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
+    const add_caption_item = (label, value, typeClass) => {
+        const span = document.createElement('span');
+        span.classList.add('hive_card_type', typeClass);
+        span.textContent = `${label}: ${value}`;
+        caption.appendChild(span);
+    };
+
+    if (total === 0) {
+        circleElement.style.setProperty('--high-p', '0%');
+        circleElement.style.setProperty('--medium-p', '0%');
+        circleElement.style.setProperty('--low-p', '0%');
+        circleElement.style.setProperty('--done-p', '100%');
+    } else {
+        const highP = (counts.high / total * 100).toFixed(1);
+        const mediumP = (counts.medium / total * 100).toFixed(1);
+        const lowP = (counts.low / total * 100).toFixed(1);
+        const doneP = (counts.done / total * 100).toFixed(1);
+
+        circleElement.style.setProperty('--high-p', highP + '%');
+        circleElement.style.setProperty('--medium-p', mediumP + '%');
+        circleElement.style.setProperty('--low-p', lowP + '%');
+        circleElement.style.setProperty('--done-p', doneP + '%');
     }
 
-    // ertekek szamolasa es cssbe helyezes
-    const highP = (counts.high / total * 100).toFixed(1)
-    const mediumP = (counts.medium / total * 100).toFixed(1)
-    const lowP = (counts.low / total * 100).toFixed(1)
-    const doneP = (counts.done / total * 100).toFixed(1)
-
-    const circleElement = document.querySelector('.circle')
-    circleElement.style.setProperty('--high-p', highP + '%')
-    circleElement.style.setProperty('--medium-p', mediumP + '%')
-    circleElement.style.setProperty('--low-p', lowP + '%')
-    circleElement.style.setProperty('--done-p', doneP + '%')
-
-    caption.innerText = `Magas: ${counts.high} | Közepes: ${counts.medium} | Alacsony: ${counts.low} | Kész: ${counts.done}`
-
+    add_caption_item('Összes', total, 'all');
+    add_caption_item('Magas', counts.high, 'high');
+    add_caption_item('Közepes', counts.medium, 'medium');
+    add_caption_item('Alacsony', counts.low, 'low');
+    add_caption_item('Kész', counts.done, 'done');
 }
 
 updateStatisticsChart()
 
 // Event listener a statisztika select-re
-document.getElementById('stat_select').addEventListener('change', function () {
-    const selectedValue = this.value
-    const circleStats = document.querySelector('.circle_stats')
-    const studyTime = document.querySelector('.study_time')
-    const headlines = document.querySelector('.h3_statistics_headlines')
+// document.getElementById('stat_select').addEventListener('change', function () {
+//     const selectedValue = this.value
+//     const circleStats = document.querySelector('.circle_stats')
+//     const studyTime = document.querySelector('.study_time')
+//     const headlines = document.querySelector('.h3_statistics_headlines')
 
-    if (selectedValue === 'hide') {
-        circleStats.style.display = 'none'
-        studyTime.style.display = 'none'
-        headlines.style.display = 'none'
-    } else {
-        circleStats.style.display = 'flex'
-        studyTime.style.display = 'flex'
-        headlines.style.display = 'flex'
-    }
-})
+//     if (selectedValue === 'hide') {
+//         circleStats.style.display = 'none'
+//         studyTime.style.display = 'none'
+//         headlines.style.display = 'none'
+//     } else {
+//         circleStats.style.display = 'flex'
+//         studyTime.style.display = 'flex'
+//         headlines.style.display = 'flex'
+//     }
+// })
