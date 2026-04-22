@@ -147,57 +147,64 @@
     }
 
     .account {
-        position: relative;
-        height: 100%;
+        height: auto;
         width: 100%;
+        overflow-y: auto;
+        display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        padding: 1rem 0;
+        box-sizing: border-box;
     }
 
     .account form {
-        position: absolute;
         width: 100%;
-        height: 100%;
-    }
-
-    .account .account_edit_div {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
+        display: flex;
+        justify-content: center;
     }
 
     .account_div {
-        grid-template-columns: 1fr;
-        position: relative;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
+        width: 92vw;
+        max-width: 480px;
     }
 
     .profil_img_div {
-        position: absolute;
-        margin: auto;
-        max-height: 300px;
-        min-width: 85vw;
-        top: 10%;
+        order: 1;
+        margin: 0 auto;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
-    .profil_img img{
-        width: 100%;
-        height: auto;
-    }
-
-     .profil_img_div .profil_img img {
+    .profil_img_div .profil_img img {
         height: 7rem;
         width: 7rem;
     }
 
-     .input-group {
-        margin-bottom: 16px;
+    .account_edit_div {
+        order: 2;
+        width: 100%;
     }
 
-     button {
+    .input-group {
+        margin-bottom: 12px;
+    }
+
+    .account_inputs {
+        gap: 0.6rem;
+        box-shadow: none;
+        border-top: 1px solid #eee;
+    }
+
+    .account_button {
+        margin-top: 0.8rem;
+    }
+
+    button {
         width: 100%;
     }
 
@@ -299,13 +306,11 @@
     }
 }
 
-/* 320px kijelzők agresszív optimalizálása */
 @media (max-width: 320px) {
     * {
         box-sizing: border-box !important;
     }
 
-    /* Container optimalizálása */
     .fodiv {
         margin: 0;
         padding: 8px;
@@ -318,7 +323,6 @@
     }
 
 
-    /* Szöveg overflow */
     h1,
     h2,
     h3 {
@@ -419,9 +423,47 @@
     .profil_nev {
         font-size: 1.5vw;
     }
+
+    .account {
+        width: 100%;
+        overflow-y: auto;
+        display: flex;
+        padding: 2rem 0;
+        box-sizing: border-box;
+    }
+
+    .account form {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .account_div {
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: unset;
+        width: 70vw;
+        max-width: 600px;
+        height: auto;
+    }
+
+    .profil_img_div {
+        order: 1;
+        width: 100%;
+        padding: 1.5rem 0;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+
+    .account_edit_div {
+        order: 2;
+        width: 100%;
+    }
 }
-
-
 
 @media (max-width: 900px) {
     .todo-grid {
@@ -436,7 +478,6 @@
     #navbar_profil_pic_url {
         height: 4rem;
         width: 4rem;
-
     }
     
     .navbar .logo img {
@@ -444,18 +485,57 @@
         margin: 0;
     }
 
-    .profil_img {
-        height: 4rem;
-        width: 4rem;
-    }
-
-
     .logo h1 {
         display: none;
     }
 
     .profil_nev {
         display: none;
+    }
+
+    .account {
+        width: 100%;
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        box-sizing: border-box;
+    }
+
+    .account form {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .account_div {
+        display: flex;
+        width: 80vw;
+        max-width: 600px;
+        height: auto;
+        border-radius: 1.5rem;
+    }
+
+    .profil_img_div {
+        order: 1;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profil_img_div .profil_img img {
+        height: 8rem;
+        width: 8rem;
+    }
+
+    .account_edit_div {
+        order: 2;
+        width: 100%;
     }
 
 }

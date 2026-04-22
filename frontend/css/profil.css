@@ -84,8 +84,8 @@
 }
 
 .profil_img_div .profil_img img {
-  height: 10rem;
-  width: 10rem;
+  height: 10vw;
+  width: 10vw;
   border-radius: 50%;
   border: 1px solid #ddd;
   object-fit: cover;
