@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken")
-const JWT_SECRET = "d4a6032ff70259360a39313eb29f184462eb5ca200d264f4eb4548b7030c940c"
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "d4a6032ff70259360a39313eb29f184462eb5ca200d264f4eb4548b7030c940c";
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -34,7 +34,7 @@ function tokenexists(token) {
 async function get_time_left(token) {
   try {
     tokenexists(token);
-    const decode = jwt.verify(token, JWT_SECRET)
+    const decode = jwt.verify(token, JWT_SECRET);
     const currentTime = Math.floor(Date.now() / 1000);
     const timeLeft = decode.exp - currentTime;
     return timeLeft;

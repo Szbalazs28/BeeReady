@@ -8,9 +8,9 @@ async function load_user() {
                 "authorization": `Bearer ${token}`
             }
         });
-        document.getElementById("editusername").value = result.username
-        document.getElementById("editemail").value = result.email
-        document.getElementById("editprofilpic").src = result.profil_pic_url
+        document.getElementById("editusername").value = result.username;
+        document.getElementById("editemail").value = result.email;
+        document.getElementById("editprofilpic").src = result.profil_pic_url;
     } catch (err) {
         console.error(err);
     }
@@ -19,7 +19,7 @@ async function load_user() {
 
 
 document.getElementById("edit_user").addEventListener("submit", async function (e) {
-    e.preventDefault()
+    e.preventDefault();
     await mentes();
 });
 
@@ -66,7 +66,7 @@ async function mentes() {
         await load_user();
         await load_image();
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 

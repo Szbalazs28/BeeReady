@@ -230,150 +230,150 @@ document.getElementById('calendar_nextBTN').onclick = () => {
 update_Cal();
 
 //Időzítő
-let timer
-let isRunning = false
-let currentMode = 'stopwatch'
-let seconds = 0
+let timer;
+let isRunning = false;
+let currentMode = 'stopwatch';
+let seconds = 0;
 
-const display = document.getElementById('timer_display')
-const select = document.getElementById('timer_select')
-const startBtn = document.getElementById('start_timer')
-const stopBtn = document.getElementById('stop_timer')
-const resetBtn = document.getElementById('reset_timer')
+const display = document.getElementById('timer_display');
+const select = document.getElementById('timer_select');
+const startBtn = document.getElementById('start_timer');
+const stopBtn = document.getElementById('stop_timer');
+const resetBtn = document.getElementById('reset_timer');
 
-updateDisplay()
-toggleButtons()
+updateDisplay();
+toggleButtons();
 
 select.addEventListener('change', (e) => {
-    pause()
-    currentMode = e.target.value
-    seconds = (currentMode === 'pomodoro') ? 25 * 60 : 0
-    updateDisplay()
-    toggleButtons()
-})
+    pause();
+    currentMode = e.target.value;
+    seconds = (currentMode === 'pomodoro') ? 25 * 60 : 0;
+    updateDisplay();
+    toggleButtons();
+});
 
 function toggleButtons() {
-    stopBtn.disabled = !isRunning
+    stopBtn.disabled = !isRunning;
     const isInitialValue = (currentMode === 'pomodoro' && seconds === 25 * 60) ||
-        (currentMode !== 'pomodoro' && seconds === 0)
-    resetBtn.disabled = !isRunning && isInitialValue
-    startBtn.disabled = isRunning
+        (currentMode !== 'pomodoro' && seconds === 0);
+    resetBtn.disabled = !isRunning && isInitialValue;
+    startBtn.disabled = isRunning;
 }
 
 function updateDisplay() {
     if (currentMode === 'custom' && !isRunning) {
-        display.innerHTML = ''
-        let input = document.createElement('input')
-        input.type = 'text'
-        input.id = 'timer_custom_minutes'
-        input.placeholder = '00:00'
-        input.maxLength = 5
+        display.innerHTML = '';
+        let input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'timer_custom_minutes';
+        input.placeholder = '00:00';
+        input.maxLength = 5;
 
         input.addEventListener('input', function () {
-            this.value = this.value.replace(/[^0-9:]/g, '')
+            this.value = this.value.replace(/[^0-9:]/g, '');
             //automatikusan torli a nem szam elemeket
             if (this.value.length === 2 && !this.value.includes(':')) {
-                this.value += ':'
+                this.value += ':';
             }
             //ha a this.value hossza eleri a kettot automatikusan hozzaad egy kettospontot ha meg
-        })
+        });
 
-        display.appendChild(input)
-        input.focus()
+        display.appendChild(input);
+        input.focus();
     } else {
-        const mins = Math.floor(Math.abs(seconds) / 60)
-        const secs = Math.abs(seconds) % 60
-        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+        const mins = Math.floor(Math.abs(seconds) / 60);
+        const secs = Math.abs(seconds) % 60;
+        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         //padstart azért kell hogy mindig 2 számjegy legyen, ha kevesebb akkor 0-val tölti ki a helyet
     }
 }
 
-let totalSecondsSpent = 0
+let totalSecondsSpent = 0;
 
 function start() {
     if (!isRunning) {
 
-        let canStart = true
+        let canStart = true;
         if (currentMode === 'custom') {
-            const input = document.getElementById('timer_custom_minutes')
+            const input = document.getElementById('timer_custom_minutes');
             if (input) {
                 try {
-                    const parts = input.value.split(':')
+                    const parts = input.value.split(':');
 
                     if (parts.length === 2) {
-                        const mins = parseInt(parts[0])
-                        const secs = parseInt(parts[1])
+                        const mins = parseInt(parts[0]);
+                        const secs = parseInt(parts[1]);
 
                         if (!isNaN(mins) && !isNaN(secs) && (mins > 0 || secs > 0) && secs < 60) {
-                            seconds = mins * 60 + secs
+                            seconds = mins * 60 + secs;
                         } else {
-                            alertell("Adj meg egy érvényes időt! (pl. 05:30)", 2.5)
-                            canStart = false
+                            alertell("Adj meg egy érvényes időt! (pl. 05:30)", 2.5);
+                            canStart = false;
                         }
                     } else if (parts.length === 1) {
-                        const val = parseInt(parts[0])
+                        const val = parseInt(parts[0]);
                         if (!isNaN(val) && val > 0) {
-                            seconds = val * 60
+                            seconds = val * 60;
                         } else {
-                            alertell("Adj meg egy érvényes percet!", 2.5)
-                            canStart = false
+                            alertell("Adj meg egy érvényes percet!", 2.5);
+                            canStart = false;
                         }
                     } else {
-                        alertell("Érvénytelen formátum! (pl. 05:30)", 2.5)
-                        canStart = false
+                        alertell("Érvénytelen formátum! (pl. 05:30)", 2.5);
+                        canStart = false;
                     }
                 } catch (e) {
-                    canStart = false
+                    canStart = false;
                 }
             }
         }
         else {
             if (currentMode === 'pomodoro' && seconds === 0)
-                seconds = 25 * 60
+                seconds = 25 * 60;
         }
 
         if (canStart) {
-            isRunning = true
-            toggleButtons()
-            updateDisplay()
+            isRunning = true;
+            toggleButtons();
+            updateDisplay();
 
             timer = setInterval(() => {
                 totalSecondsSpent++;
                 updateStudyTime();
                 if (currentMode === 'stopwatch') {
-                    seconds++
+                    seconds++;
                 } else {
-                    seconds--
+                    seconds--;
                     if (seconds <= 0) {
-                        clearInterval(timer)
-                        isRunning = false
-                        seconds = 0
-                        alertell("Idő lejárt!", 2.5)
-                        toggleButtons()
+                        clearInterval(timer);
+                        isRunning = false;
+                        seconds = 0;
+                        alertell("Idő lejárt!", 2.5);
+                        toggleButtons();
                     }
                 }
-                updateDisplay()
-            }, 1000)
+                updateDisplay();
+            }, 1000);
         }
     }
 }
 
 
 function pause() {
-    clearInterval(timer)
-    isRunning = false
-    toggleButtons()
+    clearInterval(timer);
+    isRunning = false;
+    toggleButtons();
 }
 
 function reset() {
-    pause()
+    pause();
     if (currentMode === 'pomodoro') {
-        seconds = 25 * 60
+        seconds = 25 * 60;
     } else {
-        seconds = 0
+        seconds = 0;
     }
-    updateDisplay()
-    toggleButtons()
+    updateDisplay();
+    toggleButtons();
 }
 
 /*tanualassal tolott ido*/
@@ -393,9 +393,9 @@ function updateStudyTime() {
 // ToDo
 async function submitTask() {
     try {
-        const task_name = document.getElementById('task_name').value
-        const task_description = document.getElementById('task_description').value
-        const importance = document.getElementById('importance').value
+        const task_name = document.getElementById('task_name').value;
+        const task_description = document.getElementById('task_description').value;
+        const importance = document.getElementById('importance').value;
         const result = await apiFetch('http://127.0.0.1:4000/api/taskadd', {
             method: 'POST',
             headers: {
@@ -403,17 +403,17 @@ async function submitTask() {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({ task_name: task_name, task_description: task_description, importance: importance })
-        })
+        });
 
         // ez ide kell hogy folyamatosan frissitse es ne kelljen rafrissiteni az oldalra hogy megjelenjenek a feladatok
         if (result && result.write) {
-            loadTasks()
-            document.getElementById('task_name').value = ''
-            document.getElementById('task_description').value = ''
-            document.getElementById('importance').value = 'low'
+            loadTasks();
+            document.getElementById('task_name').value = '';
+            document.getElementById('task_description').value = '';
+            document.getElementById('importance').value = 'low';
         }
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 
@@ -424,18 +424,18 @@ async function loadTasks() {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
-        })
-        const container = document.getElementById('todo_tasks')
-        container.innerHTML = ''
+        });
+        const container = document.getElementById('todo_tasks');
+        container.innerHTML = '';
 
         result.tasks.forEach(task => {
-            const taskCard = createTaskElement(task)
-            container.appendChild(taskCard)
-        })
+            const taskCard = createTaskElement(task);
+            container.appendChild(taskCard);
+        });
 
-        updateStatisticsChart()
+        updateStatisticsChart();
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 
@@ -444,76 +444,76 @@ function createTaskElement(task) {
     // Fallback: ha nincs is_completed, akkor a régi logika alapján (importance === 'done')
     const isCompleted = task.is_completed !== undefined ? task.is_completed : (task.importance === 'done');
 
-    const div = document.createElement('div')
-    div.className = `task-card ${task.importance}${isCompleted ? ' completed' : ''}`
-    div.id = `task-${task.id}`
+    const div = document.createElement('div');
+    div.className = `task-card ${task.importance}${isCompleted ? ' completed' : ''}`;
+    div.id = `task-${task.id}`;
 
-    const h4 = document.createElement('h4')
-    h4.innerText = task.task_name
-    h4.classList.add('task-title')
+    const h4 = document.createElement('h4');
+    h4.innerText = task.task_name;
+    h4.classList.add('task-title');
 
-    const desc = document.createElement('textarea')
-    desc.value = task.task_description
-    desc.classList.add('task-desc')
-    desc.readOnly = true
-    desc.setAttribute('spellcheck', 'false')
+    const desc = document.createElement('textarea');
+    desc.value = task.task_description;
+    desc.classList.add('task-desc');
+    desc.readOnly = true;
+    desc.setAttribute('spellcheck', 'false');
 
-    const footer = document.createElement('div')
-    footer.className = 'task-footer'
+    const footer = document.createElement('div');
+    footer.className = 'task-footer';
 
-    const spanImportance = document.createElement('span')
+    const spanImportance = document.createElement('span');
     const importanceHu = {
         'high': 'Magas',
         'medium': 'Közepes',
         'low': 'Alacsony'
-    }
-    spanImportance.innerText = importanceHu[task.importance] || task.importance
-    spanImportance.dataset.value = task.importance
+    };
+    spanImportance.innerText = importanceHu[task.importance] || task.importance;
+    spanImportance.dataset.value = task.importance;
 
-    const btn_group = document.createElement('div')
-    btn_group.className = 'task-actions'
+    const btn_group = document.createElement('div');
+    btn_group.className = 'task-actions';
 
     if (!isCompleted) {
-        const editBtn = document.createElement('button')
-        editBtn.className = 'edit_btn'
-        editBtn.onclick = () => enableEditMode(task.id, div, editBtn)
-        btn_group.appendChild(editBtn)
-        editBtn.innerText = 'Szerkesztés'
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit_btn';
+        editBtn.onclick = () => enableEditMode(task.id, div, editBtn);
+        btn_group.appendChild(editBtn);
+        editBtn.innerText = 'Szerkesztés';
 
-        const doneBtn = document.createElement('button')
-        doneBtn.innerText = 'Kész'
-        doneBtn.className = 'done_btn'
-        doneBtn.title = 'Feladat kész'
-        doneBtn.onclick = () => markTaskDone(task.id)
-        btn_group.appendChild(doneBtn)
+        const doneBtn = document.createElement('button');
+        doneBtn.innerText = 'Kész';
+        doneBtn.className = 'done_btn';
+        doneBtn.title = 'Feladat kész';
+        doneBtn.onclick = () => markTaskDone(task.id);
+        btn_group.appendChild(doneBtn);
 
     } else {
-        const editBtn = document.createElement('button')
-        editBtn.innerText = 'Vissza'
-        editBtn.className = 'takeBack_btn'
-        editBtn.onclick = () => restoreTask(task.id)
-        btn_group.appendChild(editBtn)
-        editBtn.className = 'takeBack_btn'
-        editBtn.onclick = () => restoreTask(task.id)
+        const editBtn = document.createElement('button');
+        editBtn.innerText = 'Vissza';
+        editBtn.className = 'takeBack_btn';
+        editBtn.onclick = () => restoreTask(task.id);
+        btn_group.appendChild(editBtn);
+        editBtn.className = 'takeBack_btn';
+        editBtn.onclick = () => restoreTask(task.id);
 
-        const delBtn = document.createElement('button')
-        delBtn.innerText = 'Törlés'
-        delBtn.className = 'delete_btn'
-        delBtn.onclick = () => deleteTask(task.id)
-        btn_group.appendChild(delBtn)
+        const delBtn = document.createElement('button');
+        delBtn.innerText = 'Törlés';
+        delBtn.className = 'delete_btn';
+        delBtn.onclick = () => deleteTask(task.id);
+        btn_group.appendChild(delBtn);
     }
 
-    footer.appendChild(spanImportance)
-    footer.appendChild(btn_group)
+    footer.appendChild(spanImportance);
+    footer.appendChild(btn_group);
 
-    div.appendChild(h4)
-    div.appendChild(desc)
-    div.appendChild(footer)
+    div.appendChild(h4);
+    div.appendChild(desc);
+    div.appendChild(footer);
 
-    return div
+    return div;
 }
 
-document.addEventListener('DOMContentLoaded', loadTasks)
+document.addEventListener('DOMContentLoaded', loadTasks);
 
 async function markTaskDone(id) {
     try {
@@ -524,11 +524,11 @@ async function markTaskDone(id) {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({ task_id: id })
-        })
-        loadTasks()
+        });
+        loadTasks();
     }
     catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 
@@ -541,11 +541,11 @@ async function restoreTask(id) {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({ task_id: id })
-        })
-        loadTasks()
+        });
+        loadTasks();
     }
     catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 
@@ -558,36 +558,36 @@ async function deleteTask(id) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
-            })
-            loadTasks()
+            });
+            loadTasks();
         }
         catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
 }
 
 function enableEditMode(id, card_div, editBtn) {
-    const titleElement = card_div.querySelector('.task-title')
-    const descElement = card_div.querySelector('.task-desc')
+    const titleElement = card_div.querySelector('.task-title');
+    const descElement = card_div.querySelector('.task-desc');
 
-    titleElement.contentEditable = "true"
-    descElement.readOnly = false
-    descElement.focus()
-    card_div.classList.add('editing')
-    editBtn.innerText = "Mentés"
-    editBtn.classList.add('btn-success')
-    editBtn.onclick = () => saveTask(id, card_div, editBtn)
+    titleElement.contentEditable = "true";
+    descElement.readOnly = false;
+    descElement.focus();
+    card_div.classList.add('editing');
+    editBtn.innerText = "Mentés";
+    editBtn.classList.add('btn-success');
+    editBtn.onclick = () => saveTask(id, card_div, editBtn);
 }
 
 async function saveTask(id, card_div, saveBtn) {
     try {
-        const titleElement = card_div.querySelector('.task-title')
-        const descElement = card_div.querySelector('.task-desc')
-        const importanceSpan = card_div.querySelector('.task-footer span')
-        const newTitle = titleElement.innerText
-        const newDesc = descElement.value
-        const importanceValue = importanceSpan.dataset.value
+        const titleElement = card_div.querySelector('.task-title');
+        const descElement = card_div.querySelector('.task-desc');
+        const importanceSpan = card_div.querySelector('.task-footer span');
+        const newTitle = titleElement.innerText;
+        const newDesc = descElement.value;
+        const importanceValue = importanceSpan.dataset.value;
 
         const response = await apiFetch('http://127.0.0.1:4000/api/updatetask', {
             method: 'POST',
@@ -601,12 +601,12 @@ async function saveTask(id, card_div, saveBtn) {
                 task_description: newDesc,
                 importance: importanceValue
             })
-        })
+        });
 
-        loadTasks()
+        loadTasks();
     }
     catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 
@@ -664,7 +664,7 @@ function updateStatisticsChart() {
     add_caption_item('Kész', counts.done, 'done');
 }
 
-updateStatisticsChart()
+updateStatisticsChart();
 
 // Event listener a statisztika select-re
 // document.getElementById('stat_select').addEventListener('change', function () {

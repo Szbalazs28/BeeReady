@@ -10,12 +10,12 @@ async function load_quizzes() {
             if (!document.querySelector(".quiz-create-container").classList.contains("dnone")) {
                 document.querySelector(".quiz-create-container").classList.add("dnone");
                 document.querySelector(".quiz-action-div").classList.remove("dnone");
-                document.querySelector("#quizContainer").classList.remove("dnone")
+                document.querySelector("#quizContainer").classList.remove("dnone");
             }
             if (!document.getElementById("quizStart").classList.contains("dnone")) {
                 document.getElementById("quizStart").classList.add("dnone");
                 document.querySelector(".quiz-action-div").classList.remove("dnone");
-                document.querySelector("#quizContainer").classList.remove("dnone")
+                document.querySelector("#quizContainer").classList.remove("dnone");
             }
             document.getElementById("foreignQuizContainer").classList.add("dnone");
             document.getElementById("quizContainer").classList.remove("dnone");
@@ -51,7 +51,7 @@ async function load_quizzes() {
                 dataIdAttr: 'data-id',
                 onEnd: function (evt) {
                     const currentorder = Sortable.get(evt.from).toArray();
-                    save_current_quiz_order(currentorder)
+                    save_current_quiz_order(currentorder);
                 }
             });
             Sortable.create(foreignQuizContainer, {
@@ -59,7 +59,7 @@ async function load_quizzes() {
                 dataIdAttr: 'data-id',
                 onEnd: function (evt) {
                     const currentorder = Sortable.get(evt.from).toArray();
-                    save_current_quiz_order(currentorder)
+                    save_current_quiz_order(currentorder);
                 }
             });
         }
@@ -73,114 +73,114 @@ async function load_quizzes() {
 
 
 function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions, total_points, isForeign) {
-    const quiz_element = document.createElement("div")
-    quiz_element.draggable = true
-    quiz_element.setAttribute("data-id", quiz_id)
-    quiz_element.classList.add("quiz-element")
+    const quiz_element = document.createElement("div");
+    quiz_element.draggable = true;
+    quiz_element.setAttribute("data-id", quiz_id);
+    quiz_element.classList.add("quiz-element");
 
-    const quiz_info = document.createElement("div")
-    quiz_info.classList.add("quiz-info")
+    const quiz_info = document.createElement("div");
+    quiz_info.classList.add("quiz-info");
 
-    const quiz_title = document.createElement("h2")
-    quiz_title.classList.add("quiz-title")
-    quiz_title.textContent = title
-
-
+    const quiz_title = document.createElement("h2");
+    quiz_title.classList.add("quiz-title");
+    quiz_title.textContent = title;
 
 
-    const quiz_meta_row = document.createElement("div")
-    quiz_meta_row.classList.add("quiz-meta-row")
+
+
+    const quiz_meta_row = document.createElement("div");
+    quiz_meta_row.classList.add("quiz-meta-row");
 
 
     if (question_count != null && question_count != undefined) {
-        const quiz_count = document.createElement("p")
-        quiz_count.classList.add("quiz-meta", "quiz-count")
-        quiz_count.textContent = `${question_count} kérdés`
-        quiz_meta_row.appendChild(quiz_count)
+        const quiz_count = document.createElement("p");
+        quiz_count.classList.add("quiz-meta", "quiz-count");
+        quiz_count.textContent = `${question_count} kérdés`;
+        quiz_meta_row.appendChild(quiz_count);
     }
-    const quiz_created = document.createElement("p")
-    quiz_created.classList.add("quiz-meta", "quiz-created")
-    quiz_created.textContent = created
+    const quiz_created = document.createElement("p");
+    quiz_created.classList.add("quiz-meta", "quiz-created");
+    quiz_created.textContent = created;
 
 
-    quiz_meta_row.appendChild(quiz_created)
+    quiz_meta_row.appendChild(quiz_created);
 
-    quiz_info.appendChild(quiz_title)
+    quiz_info.appendChild(quiz_title);
     if (description != null && description.length > 0 && description !== "") {
-        const quiz_description = document.createElement("p")
-        quiz_description.classList.add("quiz-meta", "quiz-description")
-        quiz_description.textContent = description
-        quiz_info.appendChild(quiz_description)
+        const quiz_description = document.createElement("p");
+        quiz_description.classList.add("quiz-meta", "quiz-description");
+        quiz_description.textContent = description;
+        quiz_info.appendChild(quiz_description);
     }
-    quiz_info.appendChild(quiz_meta_row)
+    quiz_info.appendChild(quiz_meta_row);
 
     if (last_result !== null && last_result !== undefined && last_result !== "") {
-        const quiz_result = document.createElement("p")
-        quiz_result.classList.add("quiz-meta", "quiz-result")
-        quiz_result.textContent = `Legutóbbi kitöltés eredménye: ${last_result}%`
-        quiz_info.appendChild(quiz_result)
+        const quiz_result = document.createElement("p");
+        quiz_result.classList.add("quiz-meta", "quiz-result");
+        quiz_result.textContent = `Legutóbbi kitöltés eredménye: ${last_result}%`;
+        quiz_info.appendChild(quiz_result);
     }
 
-    const group_div = document.createElement("div")
-    group_div.classList.add("quiz-group")
+    const group_div = document.createElement("div");
+    group_div.classList.add("quiz-group");
 
-    const create_by = document.createElement("p")
-    create_by.classList.add("quiz-meta", "quiz-created")
-    create_by.textContent = `Létrehozva: ${created_by}`
-    group_div.appendChild(create_by)
+    const create_by = document.createElement("p");
+    create_by.classList.add("quiz-meta", "quiz-created");
+    create_by.textContent = `Létrehozva: ${created_by}`;
+    group_div.appendChild(create_by);
 
-    const quiz_actions = document.createElement("div")
-    quiz_actions.classList.add("quiz-actions")
+    const quiz_actions = document.createElement("div");
+    quiz_actions.classList.add("quiz-actions");
 
-    const delete_button = document.createElement("button")
-    delete_button.type = "button"
-    delete_button.classList.add("quiz-button", "delete-quiz-button")
-    delete_button.textContent = "Törlés"
+    const delete_button = document.createElement("button");
+    delete_button.type = "button";
+    delete_button.classList.add("quiz-button", "delete-quiz-button");
+    delete_button.textContent = "Törlés";
 
     if (!isForeign) {
-        delete_button.onclick = () => { show_quiz_delete_modal(quiz_id, false) }
+        delete_button.onclick = () => { show_quiz_delete_modal(quiz_id, false); };
     }
     else {
-        delete_button.onclick = () => { show_quiz_delete_modal(quiz_id, true) }
+        delete_button.onclick = () => { show_quiz_delete_modal(quiz_id, true); };
     }
 
 
-    const result_button = document.createElement("button")
-    result_button.type = "button"
-    result_button.classList.add("quiz-button", "result-quiz-button")
-    result_button.textContent = "Eredmények"
-    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by, randomize_questions: randomize_questions, total_points: total_points }
-    result_button.onclick = () => { show_quiz_result_modal(quiz, quiz_id) }
+    const result_button = document.createElement("button");
+    result_button.type = "button";
+    result_button.classList.add("quiz-button", "result-quiz-button");
+    result_button.textContent = "Eredmények";
+    let quiz = { quiz_id: quiz_id, title: title, description: description, ispublic: public, author: created_by, randomize_questions: randomize_questions, total_points: total_points };
+    result_button.onclick = () => { show_quiz_result_modal(quiz, quiz_id); };
 
-    const start_button = document.createElement("button")
-    start_button.type = "button"
-    start_button.classList.add("quiz-button", "start-quiz-button")
-    start_button.textContent = "Indítás"
+    const start_button = document.createElement("button");
+    start_button.type = "button";
+    start_button.classList.add("quiz-button", "start-quiz-button");
+    start_button.textContent = "Indítás";
 
-    start_button.onclick = () => { quiz_start(quiz) }
+    start_button.onclick = () => { quiz_start(quiz); };
 
 
 
-    quiz_actions.appendChild(start_button)
+    quiz_actions.appendChild(start_button);
     if (!isForeign) {
-        const edit_button = document.createElement("button")
-        edit_button.type = "button"
-        edit_button.classList.add("quiz-button", "edit-quiz-button")
-        edit_button.textContent = "Szerkesztés"
-        edit_button.onclick = () => { quiz_edit_user(quiz) }
-        quiz_actions.appendChild(edit_button)
+        const edit_button = document.createElement("button");
+        edit_button.type = "button";
+        edit_button.classList.add("quiz-button", "edit-quiz-button");
+        edit_button.textContent = "Szerkesztés";
+        edit_button.onclick = () => { quiz_edit_user(quiz); };
+        quiz_actions.appendChild(edit_button);
 
     }
-    quiz_actions.appendChild(result_button)
-    quiz_actions.appendChild(delete_button)
+    quiz_actions.appendChild(result_button);
+    quiz_actions.appendChild(delete_button);
 
-    quiz_element.appendChild(quiz_info)
+    quiz_element.appendChild(quiz_info);
 
-    group_div.appendChild(quiz_actions)
-    quiz_element.appendChild(group_div)
+    group_div.appendChild(quiz_actions);
+    quiz_element.appendChild(group_div);
 
 
-    return quiz_element
+    return quiz_element;
 }
 
 function max_data_id() {
@@ -191,7 +191,7 @@ function max_data_id() {
         if (id > max_id) {
             max_id = id;
         }
-    })
+    });
     return max_id + 1;
 }
 
@@ -211,7 +211,7 @@ function showQuizTypeSelector() {
     standardQuizBtn.onclick = function () {
         addNewStandardQuestionBlock();
         modalOverlay.remove();
-    }
+    };
 
     const shortAnswerBtn = document.createElement("button");
     shortAnswerBtn.className = "quiz-create-button";
@@ -219,7 +219,7 @@ function showQuizTypeSelector() {
     shortAnswerBtn.onclick = function () {
         addNewShortAnswerQuestionBlock();
         modalOverlay.remove();
-    }
+    };
 
     const OrderBtn = document.createElement("button");
     OrderBtn.className = "quiz-create-button";
@@ -227,7 +227,7 @@ function showQuizTypeSelector() {
     OrderBtn.onclick = function () {
         addNewOrderQuestionBlock();
         modalOverlay.remove();
-    }
+    };
 
     const FillBtn = document.createElement("button");
     FillBtn.className = "quiz-create-button";
@@ -235,14 +235,14 @@ function showQuizTypeSelector() {
     FillBtn.onclick = function () {
         addNewFillQuestionBlock();
         modalOverlay.remove();
-    }
+    };
 
     const CloseModal = document.createElement("button");
     CloseModal.classList.add("quiz-create-button", "quiz-create-close");
     CloseModal.textContent = "Bezárás";
     CloseModal.onclick = function () {
         modalOverlay.remove();
-    }
+    };
 
     actionDiv.appendChild(standardQuizBtn);
     actionDiv.appendChild(shortAnswerBtn);
@@ -300,7 +300,7 @@ function createBaseQuestionBlock(type, question = null) {
             if (question && question.points > 0) {
                 const specpoint = specpointtoorder(question_id, question.points);
                 qHeader.children[1].after(specpoint);
-                specpoint.children[1].click()
+                specpoint.children[1].click();
             }
             else {
                 qHeader.children[1].after(specpointtoorder(question_id));
@@ -347,7 +347,7 @@ function specpointtoorder(question_id, points = null) {
         else {
             this.parentElement.parentElement.removeChild(this.parentElement.parentElement.querySelector('.q-points-container'));
         }
-    })
+    });
     div.append(label, checkbox);
 
     return div;
@@ -395,7 +395,7 @@ function addNewOrderQuestionBlock(answers = null, question = null) {
     if (answers && answers.length > 0) {
         answers.forEach(ans => {
             answersContainer.appendChild(addOrderAnswerToBlock(question_id, ans));
-        })
+        });
     }
     else {
         answersContainer.appendChild(addOrderAnswerToBlock(question_id));
@@ -429,7 +429,7 @@ function addNewShortAnswerQuestionBlock(answers = null, question = null) {
     if (answers && answers.length > 0) {
         answers.forEach(ans => {
             answersContainer.appendChild(addShortAnswerToBlock(question_id, ans));
-        })
+        });
     }
     else {
         answersContainer.appendChild(addShortAnswerToBlock(question_id));
@@ -466,7 +466,7 @@ function addNewStandardQuestionBlock(answers = null, question = null) {
     if (answers && answers.length > 0) {
         answers.forEach(ans => {
             answersContainer.appendChild(addStandardAnswerToBlock(question_id, ans));
-        })
+        });
     }
     else {
         answersContainer.appendChild(addStandardAnswerToBlock(question_id));
@@ -685,14 +685,14 @@ async function saveQuiz(e) {
 }
 
 function fill_get_data(ansText) {
-    let text = ""
-    let words = []
-    let word = ""
-    let points = []
-    let found = false
+    let text = "";
+    let words = [];
+    let word = "";
+    let points = [];
+    let found = false;
     for (let index = 0; index < ansText.length; index++) {
         if (!found && ansText[index] != '{' && ansText[index] != '}') {
-            text += ansText[index]
+            text += ansText[index];
         }
         else {
             if (ansText[index] == '{') {
@@ -701,18 +701,18 @@ function fill_get_data(ansText) {
             else {
                 if (found) {
                     if (ansText[index] != '}') {
-                        word += ansText[index]
+                        word += ansText[index];
                     }
                     else {
                         found = false;
                         if (word.length > 0) {
-                            text += "{}"
+                            text += "{}";
                             let search_result = fill_search_points(word);
                             points.push(search_result.points);
                             words.push(search_result.word);
-                            word = ""
+                            word = "";
                         }
-                        specindex = []
+                        specindex = [];
                     }
                 }
             }
@@ -721,20 +721,20 @@ function fill_get_data(ansText) {
     }
     if (found) {
         alertell("Nem zárta le a kitöltendő részt!", 2.5);
-        throw new Error("Nem zárta le a kitöltendő részt!")
+        throw new Error("Nem zárta le a kitöltendő részt!");
     }
 
     return { words: words, text: text, points: points };
 }
 
 function fill_search_points(word) {
-    let i = word.length - 1
-    let number = 1
+    let i = word.length - 1;
+    let number = 1;
     while (i > 0 && word[i] != ';') {
         i--;
     }
     if (i >= 0) {
-        let number_part = word.slice(i + 1).replaceAll(' ', '')
+        let number_part = word.slice(i + 1).replaceAll(' ', '');
         if (!isNaN(number_part) && parseInt(number_part) > 0) {
             number = parseInt(number_part);
             word = word.slice(0, i);
@@ -745,11 +745,11 @@ function fill_search_points(word) {
 }
 
 function fill_give_data(ansText) {
-    let words = JSON.parse(ansText).words
+    let words = JSON.parse(ansText).words;
     let text = JSON.parse(ansText).text;
     let points = JSON.parse(ansText).points;
     let ans = text;
-    let length = 1
+    let length = 1;
     let words_index = 0;
     for (let i = 0; i < text.length; i++) {
         if (text[i] == "{") {
@@ -868,7 +868,7 @@ async function save_question(question_text, quiz_id, type, position, points) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ question_text: question_text, quiz_id: quiz_id, type: type, position: position, points: points })
-        })
+        });
         return result.question_id;
     } catch (err) {
         throw err;
@@ -876,11 +876,11 @@ async function save_question(question_text, quiz_id, type, position, points) {
 }
 
 function showcreatequiz() {
-    quiz_creator_reset()
+    quiz_creator_reset();
     document.getElementById("foreignQuizContainer").classList.add("dnone");
     document.querySelector(".quiz-create-container").classList.remove("dnone");
     document.querySelector(".quiz-action-div").classList.add("dnone");
-    document.querySelector("#quizContainer").classList.add("dnone")
+    document.querySelector("#quizContainer").classList.add("dnone");
     const questionsContainer = document.querySelector("#questionsContainer");
     Sortable.create(questionsContainer, {
         animation: 150,
@@ -906,7 +906,7 @@ async function save_current_quiz_order(currentorder) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ currentorder: currentorder })
-        })
+        });
     } catch (err) {
         console.error(err);
     }
@@ -923,7 +923,7 @@ async function save_current_foreign_quiz_order(currentorder) {
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ currentorder: currentorder })
-        })
+        });
     } catch (err) {
         console.error(err);
     }
@@ -937,9 +937,9 @@ async function quiz_edit_user(quiz) {
         pageHeader.classList.add("dnone");
     }
     quiz_creator_reset();
-    showcreatequiz()
-    document.querySelector(".btn-save-quiz").setAttribute("data-button-option", "edit")
-    document.querySelector(".btn-save-quiz").setAttribute("data-quiz-id", quiz.quiz_id)
+    showcreatequiz();
+    document.querySelector(".btn-save-quiz").setAttribute("data-button-option", "edit");
+    document.querySelector(".btn-save-quiz").setAttribute("data-quiz-id", quiz.quiz_id);
     document.getElementById("quizTitle").value = quiz.title;
     document.getElementById("quizDescription").value = quiz.description;
     document.getElementById("isPublicQuiz").checked = quiz.ispublic;
@@ -952,7 +952,7 @@ async function quiz_edit_user(quiz) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
-        })
+        });
         for (let i = 0; i < result.questions.length; i++) {
             const question = result.questions[i];
             const answers = await getAnswersByQuestionId(question.question_id);
@@ -990,8 +990,8 @@ async function getAnswersByQuestionId(question_id) {
             "Content-Type": "application/json",
             "authorization": `Bearer ${token}`
         }
-    })
-    return result.answers
+    });
+    return result.answers;
 }
 
 async function getStartAnswersByQuestionId(question_id) {
@@ -1002,8 +1002,8 @@ async function getStartAnswersByQuestionId(question_id) {
             "Content-Type": "application/json",
             "authorization": `Bearer ${token}`
         }
-    })
-    return result.answers
+    });
+    return result.answers;
 }
 
 document.getElementById("quizCreateForm").addEventListener("submit", async (e) => {
@@ -1202,7 +1202,7 @@ function start_addNewStandardQuestionBlock(question, answers) {
     if (answers && answers.length > 0) {
         answers.forEach(answer => {
             answersContainer.appendChild(start_addStandardAnswerToBlock(answer));
-        })
+        });
     }
     questionCard.append(answersContainer);
     document.querySelector('#start_question_container').appendChild(questionCard);
@@ -1267,7 +1267,7 @@ function start_addNewShortAnswerQuestionBlock(question) {
     ansInput.required = true;
 
     answerRow.append(ansInput);
-    answersContainer.append(answerRow)
+    answersContainer.append(answerRow);
 
 
     questionCard.append(answersContainer);
@@ -1335,7 +1335,7 @@ function resultBaseQuestionBlock(question, points_earned = null, answers = null)
                 else {
                     answer.classList.add("dnone");
                 }
-            })
+            });
         }
         else {
             answers = checkbox.closest(".question-card").querySelector(".answers-container").querySelector(".answer-row").querySelectorAll(".fill-input");
@@ -1346,9 +1346,9 @@ function resultBaseQuestionBlock(question, points_earned = null, answers = null)
                 else {
                     answer.classList.add("dnone");
                 }
-            })
+            });
         }
-    }
+    };
 
     div.append(label, checkbox);
 
@@ -1377,10 +1377,10 @@ function result_addNewStandardQuestionBlock(question, answers, user_answer) {
     if (answers && answers.length > 0) {
         answers.forEach((answer, index) => {
             answersContainer.appendChild(result_addStandardAnswerToBlock(answer, answers_text[index], false));
-        })
+        });
         answers.forEach((answer, index) => {
             answersContainer.appendChild(result_addStandardAnswerToBlock(answer, answers_text[index], true));
-        })
+        });
 
     }
     questionCard.append(answersContainer);
@@ -1426,7 +1426,7 @@ function result_addNewShortAnswerQuestionBlock(question, answers, user_answer) {
     ansInput.value = answers_text[0].answer;
 
     answerRow.append(ansInput);
-    answersContainer.append(answerRow)
+    answersContainer.append(answerRow);
     if (answers_text[0].correct) {
         answerRow.classList.add('correct-answer');
     }
@@ -1435,7 +1435,7 @@ function result_addNewShortAnswerQuestionBlock(question, answers, user_answer) {
     }
     answers.forEach((answer) => {
         answersContainer.appendChild(result_addShortAnswerToBlock(answer));
-    })
+    });
 
     questionCard.append(answersContainer);
 
@@ -1458,7 +1458,7 @@ function result_addNewOrderQuestionBlock(question, answers, user_answer) {
                 answersContainer.appendChild(result_addOrderAnswerToBlock(answers[i], answers_text[index]));
             }
 
-        })
+        });
     }
     answers.forEach(answer => {
         answersContainer.appendChild(result_addOrderAnswerToBlock(answer));
@@ -1479,7 +1479,7 @@ function result_addShortAnswerToBlock(answer) {
     const ansInput = document.createElement('input');
     ansInput.type = 'text';
     ansInput.className = 'ans-input';
-    answerRow.classList.add("correct-answer", "dnone")
+    answerRow.classList.add("correct-answer", "dnone");
     ansInput.value = answer.answer_text;
     ansInput.disabled = true;
 
@@ -1506,7 +1506,7 @@ function result_addOrderAnswerToBlock(answer, user_answer = null) {
         }
     }
     else {
-        answerRow.classList.add("correct-answer", "dnone")
+        answerRow.classList.add("correct-answer", "dnone");
     }
 
 
@@ -1560,7 +1560,7 @@ function insertinput(ansText) {
         text = text.replace("{}", `<input type="text" class="fill-input" required>(${points[index]} pont)`);
         index++;
     }
-    return text
+    return text;
 }
 
 function resultinsertinput(ansText, user_answer) {
@@ -1579,7 +1579,7 @@ function resultinsertinput(ansText, user_answer) {
         }
         index++;
     }
-    return text
+    return text;
 }
 
 function fill_insert(text, insert, position) {
@@ -1589,7 +1589,7 @@ function fill_insert(text, insert, position) {
 function showstartquiz() {
     document.querySelector(".quiz_start_container").classList.remove("dnone");
     document.querySelector(".quiz-action-div").classList.add("dnone");
-    document.querySelector("#quizContainer").classList.add("dnone")
+    document.querySelector("#quizContainer").classList.add("dnone");
 
 }
 
@@ -1628,7 +1628,7 @@ async function quiz_start(quiz = null, quiz_id = null) {
     sessionStorage.setItem("quiz_started", "true");
     document.querySelector("#start_back_btn").onclick = async () => await show_exit_modal(false);
     quiz_start_reset();
-    showstartquiz()
+    showstartquiz();
     document.getElementById("foreignQuizContainer").classList.add("dnone");
     document.getElementById("quiz_title").textContent = quiz.title;
     document.getElementById("quiz_title").setAttribute("data-total-points", quiz.total_points);
@@ -1645,7 +1645,7 @@ async function quiz_start(quiz = null, quiz_id = null) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
-        })
+        });
         let question_indexes = [];
         if (quiz.randomize_questions) {
             question_indexes = random_array(result.questions);
@@ -1810,7 +1810,7 @@ async function show_quiz_result_modal(quiz, quiz_id) {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
-        })
+        });
         if (result.result.length === 0) {
             const noResultMsg = document.createElement("p");
             noResultMsg.textContent = "Még nincs eredmény a kvíz kitöltésére.";
@@ -1853,7 +1853,7 @@ async function show_quiz_result_modal(quiz, quiz_id) {
                 resRow.onclick = () => {
                     document.body.removeChild(modalOverlay);
                     load_result_details(quiz, res.result_id, formattedResult, res.earned_points);
-                }
+                };
                 resRow.appendChild(score);
 
                 tbody.appendChild(resRow);
@@ -1880,8 +1880,8 @@ async function load_result_details(quiz, result_id, formattedResult, earned_poin
             pageHeader.classList.add("dnone");
         }
         const token = localStorage.getItem("token");
-        quiz_start_reset()
-        showstartquiz()
+        quiz_start_reset();
+        showstartquiz();
         document.querySelector("#start_back_btn").onclick = () => show_exit_modal(true);
         document.getElementById("quiz_title").textContent = quiz.title;
         document.getElementById("foreignQuizContainer").classList.add("dnone");
@@ -1899,7 +1899,7 @@ async function load_result_details(quiz, result_id, formattedResult, earned_poin
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
-        })
+        });
         for (let i = 0; i < result.questions.length; i++) {
             const question = result.questions[i];
             const answers = await getAnswersByQuestionId(question.question_id);
@@ -1939,10 +1939,10 @@ async function load_user_answer(result_id, question_id) {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
-        })
+        });
         return result.user_answer;
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
 }
 

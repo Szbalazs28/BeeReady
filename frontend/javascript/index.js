@@ -70,9 +70,9 @@ document.getElementById("regform").addEventListener("submit", async function (e)
         });
 
         localStorage.setItem("token", result.token);
-        window.location.href =  result.redirect;
+        window.location.href = result.redirect;
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 
 
@@ -93,7 +93,7 @@ document.getElementById("loginform").addEventListener("submit", async function (
         localStorage.setItem("token", result.token);
         window.location.href = result.redirect;
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 });
 

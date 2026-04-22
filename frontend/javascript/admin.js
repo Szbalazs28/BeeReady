@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadUsers(search = null) {
     const token = localStorage.getItem('token');
-    let url = `http://localhost:4000/api/admin/users`
+    let url = `http://localhost:4000/api/admin/users`;
     if (search) {
-        url = `http://localhost:4000/api/admin/search_users/${search}`
+        url = `http://localhost:4000/api/admin/search_users/${search}`;
     }
     const data = await apiFetch(url, {
         method: 'GET',
@@ -170,11 +170,11 @@ function createConfirmModal(id, username, tr) {
     modal.id = "myModal";
     modal.setAttribute("tabindex", "-1");
 
-    
+
     const modalDialog = document.createElement("div");
     modalDialog.className = "modal-dialog modal-dialog-centered";
 
-    
+
     const modalContent = document.createElement("div");
     modalContent.className = "modal-content text-center";
 
@@ -193,16 +193,16 @@ function createConfirmModal(id, username, tr) {
 
     modalHeader.append(title, closeBtn);
 
-    
+
     const modalBody = document.createElement("div");
     modalBody.className = "modal-body";
 
     const message = document.createElement("p");
     message.textContent = "Biztosan törölni szeretné? A művelet nem visszavonható!";
-    
+
     modalBody.appendChild(message);
 
-    
+
     const modalFooter = document.createElement("div");
     modalFooter.className = "modal-footer justify-content-center";
 
@@ -222,12 +222,12 @@ function createConfirmModal(id, username, tr) {
 
     modalFooter.append(confirmBtn, cancelBtn);
 
-    
+
     modalContent.append(modalHeader, modalBody, modalFooter);
     modalDialog.appendChild(modalContent);
     modal.appendChild(modalDialog);
 
-    
+
     document.body.appendChild(modal);
 
     const bsModal = new bootstrap.Modal(modal);
@@ -247,17 +247,17 @@ document.getElementById('search-input').addEventListener("input", (e) => {
 });
 
 
-function toggleHashContainer(){
+function toggleHashContainer() {
     const container = document.getElementById('hash-container');
-    if(container.classList.contains('d-none')){
+    if (container.classList.contains('d-none')) {
         container.classList.remove('d-none');
     }
-    else{
+    else {
         container.classList.add('d-none');
     }
 }
 
-async function generateHash(){
+async function generateHash() {
     const input = document.getElementById('hash-password').value.trim();
     const value = input.trim();
     const token = localStorage.getItem('token');

@@ -76,7 +76,7 @@ function extend_time_modal() {
     cancelBtn.onclick = () => {
         const modal = document.querySelector(".quiz-modal-overlay");
         document.body.removeChild(modal);
-    }
+    };
     const confirmBtn = document.createElement("button");
     confirmBtn.type = "button";
     confirmBtn.id = "extend_time_btn";
@@ -169,7 +169,7 @@ async function extend_time() {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
-        })
+        });
         localStorage.setItem("token", result.token);
         start_logout_timer();
     } catch (error) {
@@ -222,8 +222,8 @@ function random_array(array) {
 
 async function index_apiFetch(url, options = {}) {
     try {
-        const response = await fetch(url, options)
-        const data = await response.json().catch(() => ({}))
+        const response = await fetch(url, options);
+        const data = await response.json().catch(() => ({}));
         if (!response.ok) {
             if (response.status === 429) {
                 alertell("Túl sok kérés. Kérem, várjon egy percet.", 5);
@@ -240,7 +240,7 @@ async function index_apiFetch(url, options = {}) {
                 alertell(data.message || "Hibás jelszó!", 5);
             }
             else {
-                alertell("Szerverhiba történt.", 5)
+                alertell("Szerverhiba történt.", 5);
             }
 
             let err = new Error(`HTTP ${response.status}`);
@@ -281,7 +281,7 @@ async function apiFetch(url, options = {}) {
             }
             else if (response.status === 400) {
                 if (data.message == "Nincs ilyen megosztási kód!") {
-                    alertell(data.message, 5)
+                    alertell(data.message, 5);
                 }
                 else {
                     alertell(data.message || "Hibás kérés.", 5);

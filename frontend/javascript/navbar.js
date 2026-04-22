@@ -7,16 +7,16 @@ window.addEventListener('DOMContentLoaded', () => {
 function navbar_click(id, index) {
     document.querySelectorAll(".mainelem").forEach(element => {
         if (!element.classList.contains("dnone")) {
-            element.classList.add("dnone")
+            element.classList.add("dnone");
         }
-    })
+    });
     document.querySelectorAll(".nav_items").forEach(element => {
         if (element.classList.contains("active")) {
-            element.classList.remove("active")
+            element.classList.remove("active");
         }
-    })
-    document.querySelector(`.nav_items_div > div:nth-child(${index})`).classList.add("active")
-    document.getElementById(id).classList.remove("dnone")
+    });
+    document.querySelector(`.nav_items_div > div:nth-child(${index})`).classList.add("active");
+    document.getElementById(id).classList.remove("dnone");
     document.getElementById("navbar").classList.remove("nav_open");
     if (document.querySelector(".hamburger").classList.contains("dnone")) {
         document.querySelector(".hamburger").classList.remove("dnone");
@@ -68,7 +68,7 @@ async function show_exit_modal(isresultview) {
         document.body.appendChild(modalOverlay);
     }
     else {
-        sessionStorage.removeItem("quiz_started"); 
+        sessionStorage.removeItem("quiz_started");
         await load_quizzes();
     }
 
@@ -83,11 +83,11 @@ async function load_image() {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             }
-        });        
-        document.getElementById("navbar_profil_pic_url").src = result.profil_pic_url
-        document.getElementById("felhasznalonev").textContent = result.username
+        });
+        document.getElementById("navbar_profil_pic_url").src = result.profil_pic_url;
+        document.getElementById("felhasznalonev").textContent = result.username;
     } catch (err) {
-        console.error(err);        
+        console.error(err);
     }
 
 }

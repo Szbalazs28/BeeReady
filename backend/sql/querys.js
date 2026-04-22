@@ -7,7 +7,7 @@ async function userexists(email, username) {
 }
 
 async function newuser(username, email, password, profil_pic_url) {
-    await pool.execute("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url])
+    await pool.execute("INSERT INTO users (username, email, password, profil_pic_url) VALUES (?,?,?,?)", [username, email, password, profil_pic_url]);
     return await pool.execute("SELECT id FROM users WHERE email= ?", [email]);
 }
 
@@ -27,73 +27,73 @@ async function exists_share_code(share_code) {
 async function copy_deck(share_code, user_id) {
     if (await exists_share_code(share_code)) {
         const [deck] = await pool.execute("SELECT deck_name FROM flashcard_deck WHERE share_code = ?", [share_code]);
-        let new_share_code = await uniquesharecode()
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [user_id, deck[0].deck_name, 0, new_share_code])
+        let new_share_code = await uniquesharecode();
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [user_id, deck[0].deck_name, 0, new_share_code]);
         const [cards] = await pool.execute("SELECT front_text, back_text FROM flashcard_card WHERE deck_id = (SELECT deck_id FROM flashcard_deck WHERE share_code = ?)", [share_code]);
         for (let i = 0; i < cards.length; i++) {
-            await pool.execute("INSERT INTO flashcard_card (deck_id, front_text, back_text, position) VALUES ((SELECT deck_id FROM flashcard_deck WHERE share_code = ?), ?, ?, ?)", [new_share_code, cards[i].front_text, cards[i].back_text, i])
+            await pool.execute("INSERT INTO flashcard_card (deck_id, front_text, back_text, position) VALUES ((SELECT deck_id FROM flashcard_deck WHERE share_code = ?), ?, ?, ?)", [new_share_code, cards[i].front_text, cards[i].back_text, i]);
         }
     }
     else {
-        let error = new Error("Nincs ilyen megosztási kód!")
+        let error = new Error("Nincs ilyen megosztási kód!");
         error.status = 400;
-        throw error
+        throw error;
     }
 }
 
 async function uniquesharecode() {
-    let share_code = share_code_generator()
+    let share_code = share_code_generator();
     while (await exists_share_code(share_code)) {
-        share_code = share_code_generator()
+        share_code = share_code_generator();
     }
-    return share_code
+    return share_code;
 }
 
 async function add_deck(id, name) {
-    let share_code = await uniquesharecode()
+    let share_code = await uniquesharecode();
     const [maxposition] = await maxdeckposition(id);
     if (maxposition[0].max_position === null) {
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, 0, ?)", [id, name, share_code])
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, 0, ?)", [id, name, share_code]);
     }
     else {
-        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [id, name, maxposition[0].max_position + 1, share_code])
+        await pool.execute("INSERT INTO flashcard_deck(user_id, deck_name, position, share_code) VALUES(?, ?, ?, ?)", [id, name, maxposition[0].max_position + 1, share_code]);
     }
 
 }
 
 async function change_share_code(id, user_id) {
-    let share_code = share_code_generator()
+    let share_code = share_code_generator();
     let [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
     while (exists.length > 0) {
         share_code = share_code_generator()
         [exists] = await pool.execute("SELECT share_code FROM flashcard_deck WHERE share_code = ?", [share_code]);
     }
-    const rows = await pool.execute("UPDATE flashcard_deck SET share_code = ? WHERE deck_id = ? AND user_id = ?", [share_code, id, user_id])
+    const rows = await pool.execute("UPDATE flashcard_deck SET share_code = ? WHERE deck_id = ? AND user_id = ?", [share_code, id, user_id]);
     return { rows: rows, share_code: share_code };
 }
 
 async function getdeck(id) {
-    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id ORDER BY flashcard_deck.position ASC", [id])
+    return await pool.execute("SELECT flashcard_deck.deck_name, flashcard_deck.deck_id, COUNT(flashcard_card.card_id) AS cardcount FROM flashcard_deck LEFT JOIN flashcard_card ON flashcard_deck.deck_id=flashcard_card.deck_id WHERE flashcard_deck.user_id = ? GROUP BY flashcard_deck.deck_id ORDER BY flashcard_deck.position ASC", [id]);
 }
 
 async function getdeckbydeck_id(deck_id, user_id) {
-    return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ? AND (user_id = ? or flashcard_deck.public)", [deck_id, user_id])
+    return await pool.execute("SELECT deck_name, deck_id, share_code, public FROM flashcard_deck WHERE deck_id = ? AND (user_id = ? or flashcard_deck.public)", [deck_id, user_id]);
 }
 
 async function updatedeck(deck_name, deck_id, public, user_id) {
-    return await pool.execute("UPDATE flashcard_deck SET deck_name=?, public=? WHERE deck_id=? AND user_id = ?", [deck_name, public, deck_id, user_id])
+    return await pool.execute("UPDATE flashcard_deck SET deck_name=?, public=? WHERE deck_id=? AND user_id = ?", [deck_name, public, deck_id, user_id]);
 }
 
 async function deletedeck(deck_id, user_id) {
-    return await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
+    return await pool.execute("DELETE FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id]);
 }
 
 async function getcards(deck_id, user_id) {
-    return await pool.execute("SELECT flashcard_card.front_text, flashcard_card.back_text, flashcard_card.card_id, flashcard_card.position, flashcard_deck.deck_id FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.deck_id = ? AND (flashcard_deck.user_id = ? OR flashcard_deck.public) ORDER BY position ASC", [deck_id, user_id])
+    return await pool.execute("SELECT flashcard_card.front_text, flashcard_card.back_text, flashcard_card.card_id, flashcard_card.position, flashcard_deck.deck_id FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.deck_id = ? AND (flashcard_deck.user_id = ? OR flashcard_deck.public) ORDER BY position ASC", [deck_id, user_id]);
 }
 
 async function addnewcard(deck_id, front_text, back_text, user_id) {
-    const [rows] = await pool.execute("SELECT deck_name FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id])
+    const [rows] = await pool.execute("SELECT deck_name FROM flashcard_deck WHERE deck_id = ? AND user_id = ?", [deck_id, user_id]);
     if (rows.length === 0) {
         const error = new Error("Nincs jogosultságod ehhez a paklihoz!");
         error.status = 403;
@@ -101,10 +101,10 @@ async function addnewcard(deck_id, front_text, back_text, user_id) {
     }
     const [maxposition] = await maxcardposition(deck_id);
     if (maxposition[0].max_position === null) {
-        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, 0);", [deck_id, front_text, back_text])
+        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, 0);", [deck_id, front_text, back_text]);
     }
     else {
-        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, ?);", [deck_id, front_text, back_text, maxposition[0].max_position + 1])
+        await pool.execute("INSERT INTO flashcard_card (`deck_id`, `front_text`, `back_text`, `position`) VALUES(?, ?, ?, ?);", [deck_id, front_text, back_text, maxposition[0].max_position + 1]);
     }
 
 }
@@ -118,24 +118,24 @@ async function maxcardposition(deck_id) {
 }
 
 async function deletecard(card_id, user_id) {
-    return await pool.execute("DELETE flashcard_card FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.card_id = ? AND flashcard_deck.user_id = ?;", [card_id, user_id])
+    return await pool.execute("DELETE flashcard_card FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.card_id = ? AND flashcard_deck.user_id = ?;", [card_id, user_id]);
 }
 
 async function updatecard(front_text, back_text, card_id, user_id) {
-    return await pool.execute("UPDATE flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id SET flashcard_card.front_text=?, flashcard_card.back_text=? WHERE flashcard_card.card_id=? AND flashcard_deck.user_id = ?;", [front_text, back_text, card_id, user_id])
+    return await pool.execute("UPDATE flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id SET flashcard_card.front_text=?, flashcard_card.back_text=? WHERE flashcard_card.card_id=? AND flashcard_deck.user_id = ?;", [front_text, back_text, card_id, user_id]);
 
 }
 
 async function getcardbyid(card_id, user_id) {
-    return await pool.execute("SELECT flashcard_card.card_id, flashcard_card.front_text, flashcard_card.back_text,flashcard_card.deck_id, flashcard_card.position FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.card_id=? AND flashcard_deck.user_id = ?", [card_id, user_id])
+    return await pool.execute("SELECT flashcard_card.card_id, flashcard_card.front_text, flashcard_card.back_text,flashcard_card.deck_id, flashcard_card.position FROM flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id WHERE flashcard_card.card_id=? AND flashcard_deck.user_id = ?", [card_id, user_id]);
 }
 
 async function save_new_card_order(card_id, new_position, user_id) {
-    return await pool.execute("UPDATE flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id SET flashcard_card.position = ? WHERE flashcard_card.card_id = ? AND flashcard_deck.user_id = ?", [new_position, card_id, user_id])
+    return await pool.execute("UPDATE flashcard_card JOIN flashcard_deck ON flashcard_card.deck_id = flashcard_deck.deck_id SET flashcard_card.position = ? WHERE flashcard_card.card_id = ? AND flashcard_deck.user_id = ?", [new_position, card_id, user_id]);
 }
 
 async function save_new_deck_order(deck_id, new_position, user_id) {
-    return await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ? AND user_id = ?", [new_position, deck_id, user_id])
+    return await pool.execute("UPDATE flashcard_deck SET position = ? WHERE deck_id = ? AND user_id = ?", [new_position, deck_id, user_id]);
 }
 
 async function get_events(user_id) {
@@ -261,8 +261,8 @@ async function admin_get_users() {
 async function admin_update_user(user_id, username, password, email, profil_pic_url) {
     const [emailcheck] = await pool.execute("SELECT id FROM users WHERE email = ? AND id != ?", [email, user_id]);
     const [usernamecheck] = await pool.execute("SELECT id FROM users WHERE username = ? AND id != ?", [username, user_id]);
-    isexistscheck(emailcheck, "E-mail", true)
-    isexistscheck(usernamecheck, "Felhasználónév", true)
+    isexistscheck(emailcheck, "E-mail", true);
+    isexistscheck(usernamecheck, "Felhasználónév", true);
     await pool.execute(
         "UPDATE users SET username=?, password=?, email=?, profil_pic_url=? WHERE id=?",
         [username, password, email, profil_pic_url, user_id]
@@ -326,7 +326,7 @@ LEFT JOIN user_favorites uf ON uf.item_id = q.quiz_id AND uf.item_type = 'quiz'
 WHERE q.public
 GROUP BY q.quiz_id
 
-ORDER BY created_at DESC;`, [user_id, user_id,user_id, user_id])
+ORDER BY created_at DESC;`, [user_id, user_id, user_id, user_id]);
 };
 
 // Szavakra bontani!!!
@@ -385,14 +385,14 @@ async function QnFSearch({ userId, type = null, searchTerm = null, favoritesOnly
     `;
 
     const params = [
-        userId,          
-        userId,  
-        userId,      
-        userId,  
-        type, type,      
-        searchPattern, searchPattern, searchPattern, 
+        userId,
+        userId,
+        userId,
+        userId,
+        type, type,
+        searchPattern, searchPattern, searchPattern,
         favoritesOnly
-        
+
     ];
 
     return await pool.execute(query, params);
@@ -440,7 +440,7 @@ async function getforeignquizzes(user_id) {
 
 async function save_quiz(title, description, public, user_id, randomize_questions, total_points) {
     const [data] = await pool.execute("SELECT title FROM quizzes WHERE user_id = ? AND title = ?", [user_id, title]);
-    isexistscheck(data, title, true)
+    isexistscheck(data, title, true);
     const [maxposition] = await pool.execute("SELECT COALESCE(MAX(position) + 1, 0) AS max_position FROM quizzes WHERE user_id = ?", [user_id]);
     const [result] = await pool.execute("INSERT INTO quizzes (user_id, title, description, public, position, randomize_questions, total_points) VALUES (?, ?, ?, ?, ?, ?, ?)", [user_id, title, description, public, maxposition[0].max_position, randomize_questions, total_points]);
     return result.insertId;
@@ -448,40 +448,40 @@ async function save_quiz(title, description, public, user_id, randomize_question
 
 async function save_question(quiz_id, question_text, id, type, position, points) {
     const [checkexistquiz] = await pool.execute("SELECT quiz_id FROM quizzes WHERE quiz_id = ? AND user_id = ?", [quiz_id, id]);
-    isexistscheck(checkexistquiz, "Kvíz", false)
+    isexistscheck(checkexistquiz, "Kvíz", false);
     const [result] = await pool.execute("INSERT INTO quiz_questions (quiz_id, question_text, question_type, position, points) VALUES (?, ?, ?, ?, ?)", [quiz_id, question_text, type, position, points]);
     return result.insertId;
 }
 
 async function save_answer(question_id, answer_text, right_answer, id, points) {
     const [checkexistquestion] = await pool.execute("SELECT question_id FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE question_id = ? AND quizzes.user_id = ?", [question_id, id]);
-    isexistscheck(checkexistquestion, "Kérdés", false)
+    isexistscheck(checkexistquestion, "Kérdés", false);
     await pool.execute("INSERT INTO quiz_answers (question_id, answer_text, right_answer, points) VALUES (?, ?, ?, ?)", [question_id, answer_text, right_answer, points]);
 }
 
 async function save_current_quiz_order(quiz_id, position, user_id) {
-    await pool.execute("UPDATE quizzes SET position = ? WHERE quiz_id = ? AND user_id = ?", [position, quiz_id, user_id])
+    await pool.execute("UPDATE quizzes SET position = ? WHERE quiz_id = ? AND user_id = ?", [position, quiz_id, user_id]);
 }
 async function save_current_foreign_quiz_order(quiz_id, position, user_id) {
-    await pool.execute("UPDATE quiz_share SET position = ? WHERE quiz_id = ? AND user_id = ?", [position, quiz_id, user_id])
+    await pool.execute("UPDATE quiz_share SET position = ? WHERE quiz_id = ? AND user_id = ?", [position, quiz_id, user_id]);
 }
 
-    
+
 
 async function loadquestions(quiz_id, user_id) {
     const [rows] = await pool.execute("SELECT quiz_questions.question_id, quiz_questions.quiz_id, quiz_questions.question_text, quiz_questions.question_type, quiz_questions.position, quiz_questions.points FROM quiz_questions JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.quiz_id = ? AND (quizzes.user_id = ? OR quizzes.public = 1) order by quiz_questions.position", [quiz_id, user_id]);
-    return rows
+    return rows;
 }
 
 
 async function loadanswers_withoutright(question_id, user_id) {
     const [rows] = await pool.execute("SELECT quiz_answers.answer_id, quiz_answers.question_id, quiz_answers.answer_text, quiz_answers.points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND (quizzes.user_id = ? OR quizzes.public = 1)", [question_id, user_id]);
-    return rows
+    return rows;
 }
 
 async function loadanswers(question_id, user_id) {
     const [rows] = await pool.execute("SELECT quiz_questions.points as question_points, quiz_answers.answer_id as answer_id, quiz_answers.question_id as question_id, quiz_answers.answer_text as answer_text, quiz_answers.right_answer as right_answer, quiz_answers.points as points FROM quiz_answers JOIN quiz_questions ON quiz_answers.question_id = quiz_questions.question_id JOIN quizzes ON quiz_questions.quiz_id = quizzes.quiz_id WHERE quiz_questions.question_id = ? AND (quizzes.user_id = ? OR quizzes.public = 1) ", [question_id, user_id]);
-    return rows
+    return rows;
 }
 
 async function delete_quiz(quiz_id, user_id, isForeign) {
@@ -498,9 +498,9 @@ async function loadquizmeta(quiz_id) {
     return row;
 }
 
-async function save_foreign_quiz(result_id,quiz_id, user_id) {
+async function save_foreign_quiz(result_id, quiz_id, user_id) {
     const [checkexistquiz] = await pool.execute("SELECT quiz_id FROM quizzes WHERE quiz_id = ? AND public", [quiz_id]);
-    isexistscheck(checkexistquiz, "Kvíz", false)
+    isexistscheck(checkexistquiz, "Kvíz", false);
     pool.execute("INSERT INTO quiz_share (result_id, quiz_id, user_id) VALUES (?, ?, ?)", [result_id, quiz_id, user_id]);
 }
 
@@ -510,7 +510,7 @@ async function quiz_submit(quiz_id, user_id, total_points) {
 }
 
 async function save_result(result_id, question_id, answer_text, points_earned) {
-    await pool.execute("INSERT INTO quiz_results (result_id, question_id, answer_text, points_earned) VALUES (?, ?, ?, ?)", [result_id, question_id, answer_text, points_earned])
+    await pool.execute("INSERT INTO quiz_results (result_id, question_id, answer_text, points_earned) VALUES (?, ?, ?, ?)", [result_id, question_id, answer_text, points_earned]);
 }
 
 
@@ -551,18 +551,18 @@ async function updateuser(rows, newdata, id) {
 }
 
 function updatebuild(rows, newdata) {
-    let changes = []
+    let changes = [];
     if (rows[0].username != newdata.username) {
-        changes.push(["username", newdata.username])
+        changes.push(["username", newdata.username]);
     }
     if (rows[0].email != newdata.email) {
-        changes.push(["email", newdata.email])
+        changes.push(["email", newdata.email]);
     }
     if (rows[0].profil_pic_url != `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`) {
-        changes.push(["profil_pic_url", `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`])
+        changes.push(["profil_pic_url", `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`]);
     }
     if (newdata.newpassword.length > 0) {
-        changes.push(["password", newdata.newpassword])
+        changes.push(["password", newdata.newpassword]);
     }
     return changes;
 }
@@ -588,7 +588,7 @@ module.exports = {
     delete_calendar_event,
     Insert_calendar_event,
     get_calendar_events,
-     restore_task,
+    restore_task,
     toggle_task_completion,
     save_current_foreign_quiz_order,
     getforeignquizzes,

@@ -2,11 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const errorHandler = require("./middleware/errorHandler.js");
-const path = require("path")
+const path = require("path");
 
 const app = express();
-const router = express.Router()
-const ip = '127.0.0.1'
+const router = express.Router();
+const ip = '127.0.0.1';
 const port = 4000;
 const rateLimit = require('express-rate-limit');
 const globalLimiter = rateLimit({
@@ -16,11 +16,11 @@ const globalLimiter = rateLimit({
         success: false,
         message: "Túl sok kérés. Kérem, várjon egy percet."
     },
-    
-    standardHeaders: true, 
+
+    standardHeaders: true,
     legacyHeaders: false,
-    handler: (req, res, next) => {        
-        console.warn(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] DDOS/Túlterhelés védelem aktiválva! Letiltott IP: ${req.ip} az útvonalon: ${req.originalUrl}`);            
+    handler: (req, res, next) => {
+        console.warn(`[${new Date().toLocaleDateString()}] [${new Date().toLocaleTimeString()}] DDOS/Túlterhelés védelem aktiválva! Letiltott IP: ${req.ip} az útvonalon: ${req.originalUrl}`);
         res.status(429).json({
             success: false,
             message: "Túl sok kérés. Kérem, várjon egy percet."
@@ -64,5 +64,5 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`Szerver fut: http://${ip}:${port}/`);
+    console.log(`Szerver fut: http://${ip}:${port}/`);
 });
