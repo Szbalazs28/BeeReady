@@ -7,13 +7,6 @@
     position: relative;
 }
 
-#fooldal header {
-    background-color: #f1b43c;
-    text-align: center;
-}
-
-
-
 /*Calendar*/
 .calendar_div {
     display: flex;
@@ -64,6 +57,7 @@
     justify-content: center;
     gap: 1.5rem;
     padding: 2rem;
+    min-width: 300px;
 }
 
 .timer_div h3 {
@@ -104,16 +98,14 @@
 
 .timer_controls button {
     padding: 0.7rem 1.5rem;
-    font-size: 0.9rem;
-    font-weight: 500;
     border: 2px solid #f1b43c;
     background-color: transparent;
     color: #f1b43c;
     border-radius: 0.6rem;
     cursor: pointer;
-    transition: all 0.2s ease;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-align: center;
+    min-width: fit-content;
 }
 
 .timer_controls button:hover {
@@ -193,20 +185,7 @@
 }
 
 @media (max-width: 480px) {
-    .timer_display {
-        font-size: 2rem;
-        letter-spacing: 1px;
-    }
-
-    .timer_controls {
-        flex-direction: column;
-        width: 100%;
-        gap: 0.8rem;
-    }
-
-    .timer_controls button {
-        width: 100%;
-    }
+    
 }
 
 /*to-do*/
@@ -216,7 +195,7 @@
 
 .todo-grid {
     display: grid;
-    grid-template-columns: 2fr 8fr;
+    grid-template-columns: 250px 1fr;
     gap: 20px;
     margin: 20px;
     align-items: stretch;
@@ -467,11 +446,7 @@
 }
 
 
-@media (max-width: 900px) {
-    .todo-grid {
-        grid-template-columns: 1fr;
-    }
-}
+
 
 .task-actions {
     display: flex;
@@ -973,7 +948,7 @@
     --done-p: 25%;
 
     flex: 1 0 150px;
-    max-height: 10em;
+    height: 10vw;
     aspect-ratio: 1;
     background-image:
         radial-gradient(
@@ -997,19 +972,15 @@
     height: 220px;
 }
 
-/* A szülő konténer beállítása */
 #caption {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    /* Két egyenlő oszlop */
     gap: 10px;
     width: 100%;
     max-width: 300px;
-    /* Ízlés szerint állítható */
     margin-top: 1rem;
 }
 
-/* Az alap kártya stílusod (kicsit finomítva a középre igazításhoz) */
 .hive_card_type {
     font-size: 0.75rem;
     font-weight: 800;
@@ -1023,15 +994,11 @@
     text-align: center;
 }
 
-/* AZ "ÖSSZES" KÁRTYA: Felül, középen, teljes szélességben */
 .hive_card_type.all {
     grid-column: 1 / span 2;
     background: #e0f2fe;
-    /* Halvány kék hatter */
     color: #0369a1;
-    /* Sötétebb kék szöveg */
     margin-bottom: 5px;
-    /* Kis extra hely az alsóktól */
 }
 
 /* EGYEDI SZÍNEK A TÖBBIHEZ */

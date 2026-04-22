@@ -163,13 +163,13 @@
     border-radius: 8px;
     width: 20vw;
     max-width: 35vw;
-    height: 8vh;
+    height: 6vh;
     gap: 10px;
     margin: auto;
     margin-bottom: 10px;
     display: flex;
     justify-content: center;
-
+    align-items: center;
 }
 
 .quiz-plus-button {
