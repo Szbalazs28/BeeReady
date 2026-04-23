@@ -4,6 +4,7 @@
         box-sizing: border-box;
         overflow-x: hidden;
         width: 100%;
+        grid-column: 1 / span 2;
     }
 
     .logo h1 {
@@ -60,7 +61,7 @@
         width: fit-content;
     }
 
-    .navbar{
+    .navbar {
         position: fixed;
         top: 0;
         left: -290px;
@@ -311,7 +312,7 @@
         box-sizing: border-box !important;
     }
 
-    .navbar{
+    .navbar {
         height: 100% !important;
     }
 
@@ -348,11 +349,11 @@
         width: 100%;
     }
 
-    #currentDeckName{
+    #currentDeckName {
         font-size: 1rem !important;
     }
 
-    .account_div{
+    .account_div {
         width: 100% !important;
         margin: 0 10px !important;
     }
@@ -366,6 +367,12 @@
 }
 
 @media (max-width: 1300px) {
+    .main_grid {
+        display: grid;
+        grid-template-columns: 20vw 1fr !important;
+        height: 100vh;
+    }
+
     .workspace {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
@@ -476,6 +483,8 @@
 }
 
 @media (max-width: 900px) {
+
+
     .todo-grid {
         grid-template-columns: 1fr !important;
     }
@@ -489,12 +498,13 @@
         height: 4rem;
         width: 4rem;
     }
-    
+
     .navbar .logo img {
         height: 4rem;
         margin: 0;
     }
-    .nav_items{
+
+    .nav_items {
         font-size: 1rem;
     }
 
@@ -502,7 +512,8 @@
         display: none;
     }
 
-    .nav_profil, .logo{
+    .nav_profil,
+    .logo {
         justify-content: center;
     }
 
