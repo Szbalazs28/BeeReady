@@ -187,6 +187,11 @@
     line-height: 1.5;
     flex-grow: 1;
     margin: 0;
+    word-break: break-word;
+    max-height: 80px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #FFCC00 #f4f4f400;
 }
 
 .hive_card_stats {
