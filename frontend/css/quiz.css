@@ -46,6 +46,8 @@
     font-weight: 700;
     color: #000;
     word-break: break-word;
+    max-height: 50px;
+    overflow-y: scroll;
 }
 
 .quiz-meta {
