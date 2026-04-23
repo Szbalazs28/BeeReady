@@ -308,6 +308,10 @@
 }
 
 @media (max-width: 320px) {
+    .quiz-element {
+        height: 400px !important;
+    }
+
     * {
         box-sizing: border-box !important;
     }
