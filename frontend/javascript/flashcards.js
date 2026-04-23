@@ -35,7 +35,6 @@ document.getElementById("flashcardGameCard").addEventListener("click", function 
 
 function build_deck(name, deck_id, cardcount) {
     const deck_item = document.createElement('div');
-    deck_item.draggable = true;
     deck_item.setAttribute('data-id', deck_id);
     deck_item.classList.add("deck_item");
     const deck_info = document.createElement("div");
@@ -43,10 +42,25 @@ function build_deck(name, deck_id, cardcount) {
     const deck_name = document.createElement("span");
     deck_name.classList.add("deck_name");
     deck_name.textContent = name;
+
+    const deck_header = document.createElement("div");
+    deck_header.classList.add("deck_build_header");
+
+
+
+    const draggable = document.createElement("p");
+    draggable.textContent = "::";
+    draggable.classList.add("drag-handle");
+    draggable.style.cursor = "move";
+    draggable.draggable = true;
+
+    deck_header.append(draggable, deck_name);
+
+
     const deck_count = document.createElement("span");
     deck_count.classList.add("deck_count");
     deck_count.textContent = `${cardcount} kártya`;
-    deck_info.appendChild(deck_name);
+    deck_info.appendChild(deck_header);
     deck_info.appendChild(deck_count);
     deck_item.appendChild(deck_info);
     deck_item.onclick = () => deck_open(deck_id);
@@ -56,7 +70,6 @@ function build_deck(name, deck_id, cardcount) {
 
 function build_card(front_text, back_text, card_id, isForeign = null) {
     const card_item = document.createElement('div');
-    card_item.draggable = true;
     card_item.setAttribute('data-id', card_id);
     card_item.id = `card_${card_id}`;
     card_item.classList.add("card_item");
@@ -67,8 +80,20 @@ function build_card(front_text, back_text, card_id, isForeign = null) {
     card_front.textContent = front_text;
     const card_back = document.createElement("p");
     card_back.classList.add("card_back");
+    const card_header = document.createElement("div");
+    card_header.classList.add("deck_build_header");
+    if (!isForeign) {
+        const draggable = document.createElement("p");
+        draggable.textContent = "::";
+        draggable.classList.add("drag-handle");
+        draggable.style.cursor = "move";
+        draggable.draggable = true;
+        card_header.appendChild(draggable);
+
+    }
+    card_header.appendChild(card_front);
     card_back.textContent = back_text;
-    card_info.appendChild(card_front);
+    card_info.appendChild(card_header);
     card_info.appendChild(card_back);
 
 
@@ -499,6 +524,7 @@ async function deck_open(deck_id, isForeign = null) {
             Sortable.create(el, {
                 animation: 150,
                 dataIdAttr: 'data-id',
+                handle: ".drag-handle",
                 onEnd: function (evt) {
                     const currentorder = Sortable.get(evt.from).toArray();
                     save_new_card_order(deck_id, currentorder);
@@ -584,6 +610,7 @@ async function load_deck() {
         Sortable.create(el, {
             animation: 150,
             dataIdAttr: 'data-id',
+            handle: ".drag-handle",
             onEnd: function (evt) {
                 const currentorder = Sortable.get(evt.from).toArray();
                 save_new_deck_order(currentorder);

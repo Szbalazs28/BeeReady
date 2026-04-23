@@ -1,6 +1,5 @@
 .quiz-container {
     flex: 1;
-    height: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -17,15 +16,13 @@
 .quiz-element {
     min-width: 200px;
     width: 25%;
-    height: 300px;
+    
     padding: 16px;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 14px;
     transition: box-shadow 0.25s;
 }
 
@@ -46,8 +43,10 @@
     font-weight: 700;
     color: #000;
     word-break: break-word;
-    max-height: 50px;
-    overflow-y: scroll;
+    max-height: 80px;
+    overflow-y: auto;    
+    scrollbar-width: thin;
+    scrollbar-color: #e4b866 rgba(255, 255, 255, 0);
 }
 
 .quiz-meta {
@@ -76,7 +75,7 @@
     font-size: 0.88rem;
     word-break: break-word;
     max-height: 100px;
-    overflow-y: scroll;
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #e4b866 rgba(255, 255, 255, 0);
 }
@@ -110,10 +109,15 @@
     opacity: 1;
 }
 
+.quiz-group{
+    margin-top: auto;
+}
+
 .quiz-actions {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    height: fit-content;
 }
 
 .quiz-button {
@@ -808,9 +812,7 @@
         width: 100%;
     }
 
-    #quiz_title {
-        font-size: 2rem;
-    }
+   
 
     .quiz_submit_btn {
         width: 100%;
@@ -952,4 +954,10 @@
 
 .fill-ans-input-result {
     line-height: 1.4;
+}
+
+.quiz-build-header {
+    display: flex;
+    align-items: start;
+    gap: 10px;
 }

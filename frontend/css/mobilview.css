@@ -1,4 +1,10 @@
 @media (max-width: 768px) {
+    #quizContainer{
+        justify-content: center !important;
+    }
+    .flashcard_container {
+        justify-content: center !important;
+    }
     .fodiv {
         padding: 10px;
         box-sizing: border-box;
@@ -308,10 +314,6 @@
 }
 
 @media (max-width: 320px) {
-    .quiz-element {
-        height: 400px !important;
-    }
-
     * {
         box-sizing: border-box !important;
     }

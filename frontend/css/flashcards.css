@@ -48,7 +48,6 @@
 
 .flashcard_container {
     flex: 1;
-    height: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -59,25 +58,29 @@
     overflow-x: hidden;
     padding: 10px;
     scrollbar-width: thin;
-    scrollbar-color: #FFCC00 #f4f4f4;
+    scrollbar-color: #e4b866 rgba(255, 255, 255, 0);
 }
 
 
 
 
 .deck_item {
-    min-width: 150px;
+    min-width: 200px;
     width: 25%;
     padding: 16px;
     height: 25vh;
     overflow-y: auto;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 12px;
     cursor: pointer;
+
 }
 
 .deck_info {
@@ -93,15 +96,17 @@
 
 
 .deck_name {
-    max-width: 40vw;
+    max-width: 50vw;
     max-height: 20vh;
-    overflow-y: auto;
     overflow-x: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
     width: 90%;
     font-size: 1.1rem;
     font-weight: 700;
     color: #000;
-
+    scrollbar-width: thin;
+    scrollbar-color: #e4b866 rgba(255, 255, 255, 0);
 }
 
 
@@ -284,6 +289,10 @@
     color: #000;
     max-width: 200px;
     overflow-x: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    scrollbar-width: thin;
+    scrollbar-color: #e4b866 rgba(255, 255, 255, 0);
 }
 
 
@@ -504,11 +513,11 @@
 
 .flashcard-front,
 .flashcard-back {
-    
+
     position: absolute;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden;  
+    backface-visibility: hidden;
     border-radius: 12px;
     text-align: center;
     overflow-y: auto;
@@ -537,7 +546,7 @@
 }
 
 .flashcard-back {
-    
+
     background-color: #d99c2c;
     color: #fff;
     /* A hátlapot alapból elforgatjuk, hogy ne látszódjon */
@@ -675,4 +684,10 @@
     }
 
 
+}
+
+.deck_build_header{
+    display: flex;
+    align-items: start;
+    gap: 10px;
 }

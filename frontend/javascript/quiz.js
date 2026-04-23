@@ -49,6 +49,7 @@ async function load_quizzes() {
             Sortable.create(quizContainer, {
                 animation: 150,
                 dataIdAttr: 'data-id',
+                handle: ".drag-handle",
                 onEnd: function (evt) {
                     const currentorder = Sortable.get(evt.from).toArray();
                     save_current_quiz_order(currentorder);
@@ -57,6 +58,7 @@ async function load_quizzes() {
             Sortable.create(foreignQuizContainer, {
                 animation: 150,
                 dataIdAttr: 'data-id',
+                handle: ".drag-handle",
                 onEnd: function (evt) {
                     const currentorder = Sortable.get(evt.from).toArray();
                     save_current_quiz_order(currentorder);
@@ -74,19 +76,25 @@ async function load_quizzes() {
 
 function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions, total_points, isForeign) {
     const quiz_element = document.createElement("div");
-    quiz_element.draggable = true;
     quiz_element.setAttribute("data-id", quiz_id);
     quiz_element.classList.add("quiz-element");
 
+    const draggable = document.createElement("p");
+    draggable.textContent = "::";
+    draggable.classList.add("drag-handle");
+    draggable.style.cursor = "move";
+    draggable.draggable = true;
+
     const quiz_info = document.createElement("div");
     quiz_info.classList.add("quiz-info");
+    const quiz_header = document.createElement("div");
+    quiz_header.classList.add("quiz-build-header");
 
     const quiz_title = document.createElement("h2");
     quiz_title.classList.add("quiz-title");
     quiz_title.textContent = title;
 
-
-
+    quiz_header.append(draggable, quiz_title);
 
     const quiz_meta_row = document.createElement("div");
     quiz_meta_row.classList.add("quiz-meta-row");
@@ -105,7 +113,7 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
 
     quiz_meta_row.appendChild(quiz_created);
 
-    quiz_info.appendChild(quiz_title);
+    quiz_info.appendChild(quiz_header);
     if (description != null && description.length > 0 && description !== "") {
         const quiz_description = document.createElement("p");
         quiz_description.classList.add("quiz-meta", "quiz-description");
@@ -268,6 +276,7 @@ function createBaseQuestionBlock(type, question = null) {
     const grab = document.createElement('p');
     grab.style.cursor = 'move';
     grab.textContent = '::';
+    grab.className = 'drag-handle';
 
     const qInput = document.createElement('input');
     qInput.type = 'text';
@@ -680,7 +689,10 @@ async function saveQuiz(e) {
         quiz_creator_reset();
         await load_quizzes();
     } catch (error) {
+        document.querySelector(".btn-save-quiz").disabled = false;
+        document.querySelector(".btn-save-quiz").classList.remove("disabled-submit-btn");
         console.error(error);
+
     }
 }
 
@@ -885,6 +897,7 @@ function showcreatequiz() {
     Sortable.create(questionsContainer, {
         animation: 150,
         dataIdAttr: 'data-id',
+        handle: '.drag-handle',
         onEnd: function (evt) {
             const questionBlocks = document.querySelectorAll(".question-card");
             questionBlocks.forEach((block, index) => {
@@ -1022,6 +1035,8 @@ document.getElementById("quizCreateForm").addEventListener("submit", async (e) =
         }
 
     } catch (err) {
+        document.querySelector(".btn-save-quiz").disabled = false;
+        document.querySelector(".btn-save-quiz").classList.remove("disabled-submit-btn");
         console.error(err);
     }
 
