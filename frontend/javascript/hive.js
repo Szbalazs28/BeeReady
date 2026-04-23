@@ -185,7 +185,7 @@ function HiveSearch() {
 
     searchInput.addEventListener('input', (e) => {
         timeout = setTimeout(async () => {
-            currentFilters.search = e.target.value;
+            currentFilters.search = e.target.value.trim();
             await loadHiveData();
         }, 500);
     });

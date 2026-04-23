@@ -51,13 +51,15 @@
 
 /*Timer*/
 .timer_div {
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1.5rem;
     padding: 2rem;
-    min-width: 300px;
+    min-width: 200px;
+    justify-self: center;
 }
 
 .timer_div h3 {

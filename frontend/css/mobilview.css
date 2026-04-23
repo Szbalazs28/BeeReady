@@ -344,6 +344,15 @@
         width: 100%;
     }
 
+    #currentDeckName{
+        font-size: 1rem !important;
+    }
+
+    .account_div{
+        width: 100% !important;
+        margin: 0 10px !important;
+    }
+
 }
 
 @media (min-width: 770px) {
@@ -352,7 +361,7 @@
     }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1300px) {
     .workspace {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
@@ -440,9 +449,6 @@
     }
 
     .account_div {
-        display: flex;
-        flex-direction: column;
-        grid-template-columns: unset;
         width: 70vw;
         max-width: 600px;
         height: auto;
@@ -487,6 +493,10 @@
 
     .logo h1 {
         display: none;
+    }
+
+    .nav_profil, .logo{
+        justify-content: center;
     }
 
     .profil_nev {
