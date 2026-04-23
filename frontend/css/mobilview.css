@@ -60,7 +60,7 @@
         width: fit-content;
     }
 
-    .navbar {
+    .navbar{
         position: fixed;
         top: 0;
         left: -290px;
@@ -311,6 +311,10 @@
         box-sizing: border-box !important;
     }
 
+    .navbar{
+        height: 100% !important;
+    }
+
     .fodiv {
         margin: 0;
         padding: 8px;
@@ -489,6 +493,9 @@
     .navbar .logo img {
         height: 4rem;
         margin: 0;
+    }
+    .nav_items{
+        font-size: 1rem;
     }
 
     .logo h1 {

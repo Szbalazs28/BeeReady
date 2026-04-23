@@ -1,6 +1,6 @@
 .quiz-container {
     flex: 1;
-    height: 72vh;
+    height: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -17,11 +17,10 @@
 .quiz-element {
     min-width: 200px;
     width: 25%;
+    height: 300px;
     padding: 16px;
     border-radius: 14px;
     background: rgba(241, 180, 60, 0.35);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
