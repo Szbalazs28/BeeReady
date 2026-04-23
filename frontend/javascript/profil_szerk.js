@@ -70,3 +70,63 @@ async function mentes() {
     }
 }
 
+function delete_profile() {
+    const modalOverlay = document.createElement("div");
+    modalOverlay.className = "confirm-modal-overlay";
+
+    const modalContent = document.createElement("div");
+    modalContent.className = "confirm-modal-content confirm-delete-modal-content";
+
+    const title = document.createElement("h3");
+    title.className = "confirm-delete-modal-title";
+
+    title.textContent = "Profil törlése";
+    const message = document.createElement("p");
+    message.className = "confirm-delete-modal-text";
+    message.textContent = "FIGYELEM: Ez a művelet nem visszavonható!";
+    const input = document.createElement("input");
+    input.type = "password";
+    input.placeholder = "Írja be a jelszavát a megerősítéshez:";
+    input.className = "confirm-delete-input";
+    input.required = true;
+
+    const actionDiv = document.createElement("div");
+    actionDiv.className = "confirm-delete-action-div";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.classList.add("confirm-button", "confirm-delete-cancel");
+    cancelBtn.textContent = "Mégse";
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.classList.add("confirm-button", "confirm-delete-confirm");
+    confirmBtn.textContent = "TÖRLÉS";
+    cancelBtn.onclick = () => { document.body.removeChild(modalOverlay); };
+
+    confirmBtn.onclick = async () => { delete_confirmed(); };
+
+    actionDiv.append(cancelBtn, confirmBtn);
+    modalContent.append(title, message, input, actionDiv);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+}
+
+async function delete_confirmed() {
+    try {
+        const password = document.querySelector(".confirm-delete-input").value;
+        const token = localStorage.getItem('token');
+        lengthtest(password, 6, 255);
+        await index_apiFetch("http://127.0.0.1:4000/api/delete_user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ password: password })
+        });
+        logout();
+    } catch (err) {
+        console.error(err);
+    }
+}

@@ -165,3 +165,9 @@
 .avatar_option:hover {
   transform: scale(1.2);
 }
+
+.delete_profil{
+  color: red;
+  font-size: small;
+  cursor: pointer;
+}
