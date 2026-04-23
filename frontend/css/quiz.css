@@ -72,6 +72,9 @@
     line-height: 1.45;
     color: #333;
     font-size: 0.88rem;
+    word-break: break-word;
+    max-height: 100px;
+    overflow-y: scroll;
 }
 
 .quiz-count {
