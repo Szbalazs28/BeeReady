@@ -14,11 +14,15 @@ hr{
 .navbar .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0;
 }
 
 .navbar img {
-    height: 4rem;
+    height: 4vw;
+}
+
+.logo h1 {
+    font-size: 2vw ;
 }
 
 .nav_items_div {
@@ -29,7 +33,7 @@ hr{
 }
 
 .nav_items {
-    padding: 12px;
+    padding: 10px;
     border-radius: 10px;
     cursor: pointer;
     font-size: 1.3rem;
@@ -50,9 +54,9 @@ hr{
     margin-top: auto;
     display: flex;
     align-items: center;      
-    gap: 12px;                 
+    gap: 10px;                 
     font-size: 1.3rem;
-    padding: 12px;
+    justify-content: center;
     border-radius: 10px;
 }
 

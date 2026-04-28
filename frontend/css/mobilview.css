@@ -1,8 +1,41 @@
 @media (max-width: 768px) {
+    #quizContainer{
+        justify-content: center !important;
+    }
+    .flashcard_container {
+        justify-content: center !important;
+    }
+    .fodiv {
+        padding: 10px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        width: 100%;
+        grid-column: 1 / span 2;
+    }
+
+    .logo h1 {
+        display: grid !important;
+        font-size: 1.5rem !important;
+    }
+
+    .navbar img {
+        margin-right: 0;
+    }
+
+    .profil_nev {
+        display: grid !important;
+        font-size: 1.2rem !important;
+        margin-left: 0;
+    }
+
+    .nav_profil {
+        padding: 5px;
+    }
+
     .hamburger {
         position: fixed;
-        top: 6px;
-        left: 6px;
+        top: 0;
+        left: 0;
         width: 50px;
         height: 50px;
         z-index: 10;
@@ -22,7 +55,7 @@
     .hamburger_border img {
         top: 5px;
         right: 5px;
-        height: 0%;
+        height: 3rem;
     }
 
     .hamburder_padding {
@@ -31,6 +64,7 @@
         margin-right: 4px;
         margin-bottom: 4px;
         background-color: #F1B43C;
+        width: fit-content;
     }
 
     .navbar {
@@ -53,45 +87,132 @@
     }
 
     .workspace {
-        display: flex;
-        flex-direction: column;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: auto auto auto !important;
+
+    }
+
+    .workspace>#task {
+        grid-column: 1 / span 2 !important;
+        grid-row: 1 !important;
+    }
+
+    .workspace>.fooldal_maindiv.children:nth-child(1) {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+        min-height: 0;
+    }
+
+    #fooldal>#calendar {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+    }
+
+    #fooldal>.fooldal_maindiv:has(.statistics) {
+        grid-column: 1 / span 2;
+        grid-row: 3;
+    }
+
+    .statistics {
+        padding: 1.5rem;
         gap: 1rem;
     }
 
-    .account {
-        position: relative;
-        height: 100%;
-        width: 100%;
+    .circle_stats,
+    .study_time {
+        height: auto !important;
+        min-height: 180px;
+    }
+
+    .circle {
+        flex: none !important;
+        width: clamp(80px, 10vw, 160px) !important;
+        height: clamp(80px, 10vw, 160px) !important;
+        max-height: none !important;
+        aspect-ratio: 1;
+    }
+
+    .timer_controls {
+        flex-direction: row;
+        flex-wrap: wrap;
         justify-content: center;
-        align-items: center;
+    }
+
+    .timer_controls button {
+        flex: 1;
+        min-width: 80px;
+    }
+
+    .calendar_div {
+        align-items: flex-start;
+        padding: 1rem;
+    }
+
+    .calendar {
+        width: 100%;
+    }
+
+    .account {
+        height: auto;
+        width: 100%;
+        overflow-y: auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 1rem 0;
+        box-sizing: border-box;
     }
 
     .account form {
-        position: absolute;
         width: 100%;
-        height: 100%;
-    }
-
-    .account .account_edit_div {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
+        display: flex;
+        justify-content: center;
     }
 
     .account_div {
-        grid-template-columns: 1fr;
-        position: relative;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
+        width: 92vw;
+        max-width: 480px;
     }
 
     .profil_img_div {
-        position: absolute;
-        margin: auto;
-        min-width: 100%;
-        top: 10%;
+        order: 1;
+        margin: 0 auto;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .profil_img_div .profil_img img {
+        height: 7rem;
+        width: 7rem;
+    }
+
+    .account_edit_div {
+        order: 2;
+        width: 100%;
+    }
+
+    .input-group {
+        margin-bottom: 12px;
+    }
+
+    .account_inputs {
+        gap: 0.6rem;
+        box-shadow: none;
+        border-top: 1px solid #eee;
+    }
+
+    .account_button {
+        margin-top: 0.8rem;
+    }
+
+    button {
+        width: 100%;
     }
 
     .dnone {
@@ -109,11 +230,11 @@
         display: none !important;
     }
 
-    .circle_stats, 
+    .circle_stats,
     .study_time {
-        padding-top: 40px !important; 
+        padding-top: 40px !important;
         margin-top: 10px !important;
-        position: static !important; 
+        position: static !important;
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 0 20px 0 !important;
@@ -121,7 +242,7 @@
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        transform: none !important; 
+        transform: none !important;
     }
 
     .circle {
@@ -131,6 +252,328 @@
 
     .study_time {
         padding: 40px 20px !important;
-        background-size: 60% !important; 
+        background-size: 60% !important;
     }
+
+    .quiz-back-button{
+        max-width: 50vw;
+    }
+
+    .page_header {
+        display: flex;
+        gap: 0.8rem;
+        padding: 1rem;
+        background: #fefbf5;
+        border-bottom: 2px solid #F1B43C;
+        margin-bottom: 1rem;
+        justify-content: center;
+        margin: 1rem auto;
+        max-width: max-content;
+    }
+
+    .page_header h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+        text-align: center;
+    }
+
+    .hive_buttons input {
+        max-width: 250px;
+    }
+
+    .hive_card {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+    }
+
+    .hive_container {
+        padding: 10px !important;
+        width: 100%;
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+        overflow-x: hidden;
+    }
+
+    .hive_results {
+        width: 100%;
+        box-sizing: border-box !important;
+    }
+
+    .hive_buttons {
+        padding: 0;
+        gap: 0.5rem;
+    }
+
+    .hive_buttons input {
+        min-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .hive_body {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 320px) {
+    * {
+        box-sizing: border-box !important;
+    }
+
+    .navbar {
+        height: 100% !important;
+    }
+
+    .fodiv {
+        margin: 0;
+        padding: 8px;
+        gap: 0.5rem;
+    }
+
+    .stat_header {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    h1,
+    h2,
+    h3 {
+        word-break: break-word;
+    }
+
+    .timer_display {
+        font-size: 2rem !important;
+        letter-spacing: 1px !important;
+    }
+
+    .timer_controls {
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 0.8rem !important;
+    }
+
+    .timer_controls button {
+        width: 100%;
+    }
+
+    #currentDeckName {
+        font-size: 1rem !important;
+    }
+
+    .account_div {
+        width: 100% !important;
+        margin: 0 10px !important;
+    }
+
+}
+
+@media (min-width: 770px) {
+    .page_header {
+        display: none;
+    }
+}
+
+@media (max-width: 1300px) {
+    .main_grid {
+        display: grid;
+        grid-template-columns: 20vw 1fr !important;
+        height: 100vh;
+    }
+
+    .workspace {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: auto auto auto !important;
+
+    }
+
+    .workspace>#task {
+        grid-column: 1 / span 2 !important;
+        grid-row: 1 !important;
+    }
+
+    .workspace>.fooldal_maindiv.children:nth-child(1) {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+        min-height: 0;
+    }
+
+    #fooldal>#calendar {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+    }
+
+    #fooldal>.fooldal_maindiv:has(.statistics) {
+        grid-column: 1 / span 2;
+        grid-row: 3;
+    }
+
+    .statistics {
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .circle_stats,
+    .study_time {
+        height: auto !important;
+        min-height: 180px;
+    }
+
+    .circle {
+        flex: none !important;
+        width: clamp(80px, 10vw, 160px) !important;
+        height: clamp(80px, 10vw, 160px) !important;
+        max-height: none !important;
+        aspect-ratio: 1;
+    }
+
+    .timer_controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .timer_controls button {
+        flex: 1;
+        min-width: 80px;
+    }
+
+    .calendar_div {
+        align-items: flex-start;
+        padding: 1rem;
+    }
+
+    .calendar {
+        width: 100%;
+    }
+
+    .profil_nev {
+        font-size: 1.5vw;
+    }
+
+    .account {
+        width: 100%;
+        overflow-y: auto;
+        display: flex;
+        padding: 2rem 0;
+        box-sizing: border-box;
+    }
+
+    .account form {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .account_div {
+        width: 70vw;
+        max-width: 600px;
+        height: auto;
+    }
+
+    .profil_img_div {
+        order: 1;
+        width: 100%;
+        padding: 1.5rem 0;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+
+    .account_edit_div {
+        order: 2;
+        width: 100%;
+    }
+}
+
+@media (max-width: 900px) {
+
+
+    .todo-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .workspace {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    #navbar_profil_pic_url {
+        height: 4rem;
+        width: 4rem;
+    }
+
+    .navbar .logo img {
+        height: 4rem;
+        margin: 0;
+    }
+
+    .nav_items {
+        font-size: 1rem;
+    }
+
+    .logo h1 {
+        display: none;
+    }
+
+    .nav_profil,
+    .logo {
+        justify-content: center;
+    }
+
+    .profil_nev {
+        display: none;
+    }
+
+    .account {
+        width: 100%;
+        max-height: calc(100vh - 60px);
+        overflow-y: auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        box-sizing: border-box;
+    }
+
+    .account form {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .account_div {
+        display: flex;
+        width: 80vw;
+        max-width: 600px;
+        height: auto;
+        border-radius: 1.5rem;
+    }
+
+    .profil_img_div {
+        order: 1;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profil_img_div .profil_img img {
+        height: 8rem;
+        width: 8rem;
+    }
+
+    .account_edit_div {
+        order: 2;
+        width: 100%;
+    }
+
 }

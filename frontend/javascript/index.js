@@ -63,16 +63,16 @@ document.getElementById("regform").addEventListener("submit", async function (e)
         const username = document.getElementById("regusername").value;
         const profil_pic_url = document.getElementById("profil_pic_url").src.split("/");
 
-        const result = await index_apiFetch("http://localhost:4000/api/registration", {
+        const result = await index_apiFetch("/api/registration", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password, profil_pic_url: `../img/allatos_profilkepek/${profil_pic_url[profil_pic_url.length - 1]}` })
         });
 
         localStorage.setItem("token", result.token);
-        window.location.href =  result.redirect;
+        window.location.href = result.redirect;
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 
 
@@ -85,7 +85,7 @@ document.getElementById("loginform").addEventListener("submit", async function (
         const email = document.getElementById("logemail").value;
         const password = document.getElementById("logpassword").value;
 
-        const result = await index_apiFetch("http://localhost:4000/api/login", {
+        const result = await index_apiFetch("/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password, stay })
@@ -93,7 +93,7 @@ document.getElementById("loginform").addEventListener("submit", async function (
         localStorage.setItem("token", result.token);
         window.location.href = result.redirect;
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 });
 

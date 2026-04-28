@@ -11,6 +11,7 @@
     background-color: #ffffff;
     padding: 12px 20px;
     border-radius: 10px;
+    max-width: 70vw;
     margin-bottom: 5px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #e0e0e0;
@@ -51,7 +52,7 @@
     height: 45px;
     border-radius: 50%;
     border: none;
-    background-color: #28a745;
+    background-color: #f1b43c;
     color: white;
     font-size: 24px;
     font-weight: bold;
@@ -63,7 +64,7 @@
 }
 
 .add_btn:hover {
-    background-color: #218838;
+    background-color: #f1b43c;
     transform: rotate(90deg) scale(1.1);
 }
 
@@ -74,7 +75,7 @@
     display: flex;
     flex-direction: row;
     gap: 12px;
-    padding: 20px;
+    padding: 5px;
     align-items: flex-start;
     overflow-x: auto;
 }
@@ -127,6 +128,8 @@
 
 .event-title,
 .event-location {
+    max-width: 12vw;
+    overflow-x: auto;
     margin: 0;
     padding: 0;
     font-size: 1rem;
@@ -269,16 +272,72 @@
 
 
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+    .event-title{
+        max-width: 60vw;
+    }
+    .create_event_container {
+        flex-wrap: wrap;
+        max-width: 100vw;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .controls_group {
+        flex: 1 1 120px;
+        min-width: 0;
+    }
+
+    .select_wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
     .mobile-day-selector {
         display: flex;
+        order: 3;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        justify-content: stretch;
+    }
+
+    .day-btn {
+        padding: 8px 0;
+        font-size: 12px;
+        min-width: 0;
+        white-space: nowrap;
+    }
+
+    .day-btn.active-day-btn {
+        transform: none;
+    }
+
+    .add_btn {
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+        flex-shrink: 0;
     }
 
     .day-column {
         display: none;
+        min-width: 0;
+        width: 100%;
+        max-height: 64vh;
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: #FFCC00 #f4f4f4;
+    }
+
+    .timetable-flex-container {
+        padding: 10px 0 0;
+        overflow-x: hidden;
+    }
+
+    .event-title,
+    .event-location {
+        overflow-wrap: anywhere;
     }
 
 
@@ -288,6 +347,30 @@
         animation: fadeIn 0.3s ease-in-out;
     }
 
+}
+
+@media (max-width: 380px) {
+    .create_event_container {
+        padding: 8px;
+    }
+
+    .custom_select {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .mobile-day-selector {
+        gap: 3px;
+        padding: 4px;
+    }
+
+    .day-btn {
+        font-size: 11px;
+    }
+
+    .event-card {
+        padding: 10px;
+    }
 }
 
 

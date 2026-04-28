@@ -2,20 +2,20 @@ document.getElementById("weekSelector").onchange = async () => {
     try {
         const weekType = document.getElementById("weekSelector").value;
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/change_selected_week", {
+        const result = await apiFetch("/api/change_selected_week", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ week_type: weekType })
-        })
+        });
 
         await load_events();
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
-}
+};
 
 async function createEventModal() {
 
@@ -41,7 +41,7 @@ async function createEventModal() {
     const daySelect = document.createElement("select");
     daySelect.id = "modal_day_select";
     daySelect.classList.add("timetable-input");
-    const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"]
+    const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"];
     for (let i = 0; i < days.length; i++) {
         const opt = document.createElement("option");
         opt.value = i;
@@ -146,52 +146,61 @@ async function saveNewEvent() {
         const location = document.getElementById("modal_location_input").value;
         const weekType = document.getElementById("weekSelector").value;
         timetest(startTime, endTime);
-        lengthtest(subject, 1, 100)
-        lengthtest(location, 1, 50)
+        lengthtest(subject, 1, 100);
+        lengthtest(location, 0, 50);
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/save_new_event", {
+        const result = await apiFetch("/api/save_new_event", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ day: day, start_time: startTime, end_time: endTime, subject: subject, location: location, week_type: weekType })
-        })
+        });
         load_events();
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 
 }
 
 async function load_events() {
     try {
-        const today = new Date().getDay() -1
-        
+        const today = new Date().getDay() - 1;
+
         if (today >= 0 && today <= 4) {
-            let todaydiv = document.querySelector(`.day${today}`)
+            let todaydiv = document.querySelector(`.day${today}`);
             let selectedbtn = document.querySelectorAll('.day-btn')[today];
             if (!todaydiv.classList.contains("today_highlight")) {
-                todaydiv.classList.add("today_highlight")
-            }            
-            if(!selectedbtn.classList.contains("active-day-btn")){
+                todaydiv.classList.add("today_highlight");
+            }
+            if (!selectedbtn.classList.contains("active-day-btn")) {
                 selectedbtn.classList.add("active-day-btn");
             }
-            if(!todaydiv.classList.contains("active-day")){
+            if (!todaydiv.classList.contains("active-day")) {
                 todaydiv.classList.add("active-day");
             }
 
         }
+        let eventcards = document.querySelectorAll(".day-column");
+        eventcards.forEach((e, index) => {
+            if (e.classList.contains("active-day") && !e.classList.contains("today_highlight")) {
+                e.classList.remove("active-day");
+                document.querySelectorAll('.day-btn')[index].classList.remove("active-day-btn");
+            }
+        });
+
+
 
         document.querySelectorAll(".event-card").forEach(e => e.remove());
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/get_events", {
-            method: "POST",
+        const result = await apiFetch("/api/get_events", {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-        })
+        });
         const currentWeek = result.selected_week_type;
         const selector = document.getElementById("weekSelector");
         if (selector.value !== currentWeek) {
@@ -204,12 +213,9 @@ async function load_events() {
                 build_event(events[i]);
             }
         }
-        else {
-            alertell("Nincsenek események a kiválasztott héten.", 2.5);
-        }
 
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 
@@ -217,7 +223,7 @@ function build_event(event) {
     const eventCard = document.createElement("div");
     eventCard.onclick = () => {
         change_event(event);
-    }
+    };
     eventCard.classList.add("event-card");
     const eventTime = document.createElement("span");
     eventTime.classList.add("event-time");
@@ -258,7 +264,7 @@ async function change_event(event) {
     const daySelect = document.createElement("select");
     daySelect.id = "modal_day_select";
     daySelect.classList.add("timetable-input");
-    const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"]
+    const days = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek"];
     for (let i = 0; i < days.length; i++) {
         const opt = document.createElement("option");
         opt.value = i;
@@ -377,20 +383,20 @@ async function updateevent(event_id) {
         const location = document.getElementById("modal_location_input").value;
         const weekType = document.getElementById("weekSelector").value;
         timetest(startTime, endTime);
-        lengthtest(subject, 1, 100)
-        lengthtest(location, 1, 50)
+        lengthtest(subject, 1, 100);
+        lengthtest(location, 0, 50);
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/updateevent", {
+        const result = await apiFetch("/api/updateevent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ event_id: event_id, day: day, start_time: startTime, end_time: endTime, subject: subject, location: location, week_type: weekType })
-        })
+        });
         load_events();
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 
 }
@@ -398,34 +404,33 @@ async function updateevent(event_id) {
 async function delete_event(event_id) {
     try {
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/delete_event", {
-            method: "POST",
+        await apiFetch(`/api/delete_event?event_id=${event_id}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ event_id: event_id })
-        })
+            }
+        });
         load_events();
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 
 }
 
-function showDay(daynumber){
-    for(let i = 0; i< 5; i++){
+function showDay(daynumber) {
+    for (let i = 0; i < 5; i++) {
         let daydiv = document.querySelector(`.day${i}`);
         const selectedbtn = document.querySelectorAll('.day-btn')[i];
-        if(i == daynumber){
+        if (i == daynumber) {
             daydiv.classList.add("active-day");
             selectedbtn.classList.add("active-day-btn");
         }
-        else{
-            if(selectedbtn.classList.contains("active-day-btn")){
+        else {
+            if (selectedbtn.classList.contains("active-day-btn")) {
                 selectedbtn.classList.remove("active-day-btn");
             }
-            if(daydiv.classList.contains("active-day")){
+            if (daydiv.classList.contains("active-day")) {
                 daydiv.classList.remove("active-day");
             }
             daydiv.classList.remove("active-day");

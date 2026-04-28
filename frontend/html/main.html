@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="../css/flashcards.css">
     <link rel="stylesheet" href="../css/timetable.css">
     <link rel="stylesheet" href="../css/mainpage.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+    <link rel="stylesheet" href="../css/hive.css">
+
     <title>BeeReady</title>
 </head>
 
@@ -38,9 +41,11 @@
                 <div onclick="navbar_click('fooldal',1)" class="nav_items active">Főoldal</div>
                 <div onclick="navbar_click('tanulokartyak',2), load_deck()" class="nav_items">Tanulókártyák</div>
                 <div onclick="navbar_click('timetable',3), load_events()" class="nav_items">Órarend</div>
+                <div onclick="navbar_click('quiz',4), load_quizzes()" class="nav_items">Kvíz</div>
                 <!-- <div onclick="navbar_click('chat',4)" class="nav_items">Chat</div> -->
+                <div onclick="navbar_click('hive',5), load_hive()" class="nav_items">Hive</div>
 
-                <div onclick="navbar_click('felhasznalo',4), load_user()" class="nav_items nav_profil">
+                <div onclick="navbar_click('felhasznalo',6), load_user()" class="nav_items nav_profil">
                     <div class="profil_img">
                         <img id="navbar_profil_pic_url" src="../img/allatos_profilkepek/ures.webp" alt="">
                     </div>
@@ -49,8 +54,10 @@
         </nav>
         <div class="fodiv">
             <!--foooldal-->
-            <!--foooldal-->
             <div class="workspace mainelem" id="fooldal">
+                <div class="page_header">
+                    <h2>📋 Főoldal</h2>
+                </div>
                 <!--feladatok-->
                 <section id="tasks" class="fooldal_maindiv">
                     <div class="todo-grid">
@@ -63,7 +70,7 @@
                             <textarea name="description" id="task_description"
                                 placeholder="A feladat leírása..."></textarea>
                             <div class="section_button">
-                                <select name="importance" id="importance">
+                                <select title="Válasszon prioritást!" name="importance" id="importance">
                                     <option value="high">Magas</option>
                                     <option value="medium" selected>Közepes</option>
                                     <option value="low">Alacsony</option>
@@ -93,7 +100,7 @@
                 <!--idopzito-->
                 <div class="fooldal_maindiv">
                     <div class="timer_div">
-                        <select id="timer_select" class="custom_select">
+                        <select title="Válasszon óra típust:" id="timer_select" class="custom_select">
                             <option value="stopwatch">Stopper</option>
                             <option value="pomodoro">Pomodoro</option>
                             <option value="custom">Egyéni időzítő</option>
@@ -113,10 +120,10 @@
                     <div id="statistics" class="statistics">
                         <div class="stat_header">
                             <h3 id="stat_h3">Statisztika</h3>
-                            <select id="stat_select" class="stat_select">
+                            <!-- <select title="Válasszon statisztikát!" id="stat_select" class="stat_select">
                                 <option value="show">Todo - tanulási idő</option>
                                 <option value="hide">...</option>
-                            </select>
+                            </select> -->
                         </div>
                         <div class="h3_statistics_headlines">
                             <h3>To-Do statisztikák</h3>
@@ -124,7 +131,7 @@
                         </div>
                         <div class="circle_stats">
                             <div class="circle"></div>
-                            <p id="caption"></p>
+                            <div id="caption"></div>
                         </div>
 
                         <div class="study_time">
@@ -163,7 +170,7 @@
                     <div class="modal-content">
                         <h3 id="modalTitle">Esemény hozzáadása</h3>
 
-                        <!-- existing events for selected day will be inserted here -->
+
                         <div id="existingEvents"></div>
 
                         <div class="input-group">
@@ -220,12 +227,17 @@
 
             <!--tanulokartyak-->
             <div class="cards dnone mainelem" id="tanulokartyak">
+                <div class="page_header">
+                    <h2>🎴 Tanulókártyák</h2>
+                </div>
                 <div id="decks">
                     <div class="deck_creator">
                         <form id="flashcard_form">
-                            <input type="text" class="newflashcard_input" id="newDeckName"
-                                placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required>
-                            <button type="submit" id="createDeckButton">Pakli hozzáadása</button>
+                            <div><input type="text" class="newflashcard_input" id="newDeckName"
+                                    placeholder="Új pakli neve vagy '#'-el kezdődő azonosító:" required></div>
+                            <div class="createDeckButton_div"><button type="submit" id="createDeckButton">Pakli
+                                    hozzáadása</button> </div>
+
                         </form>
                     </div>
 
@@ -256,7 +268,7 @@
                         </button>
 
                         <div class="flashcard_game_card" id="flashcardGameCard">
-                            <div class="flashcard" id="flashcard">
+                            <div id="flashcard">
                                 <div class="flashcard-front" id="flashcard_front">
                                     A kérdés helye:
                                 </div>
@@ -293,6 +305,9 @@
             </div>
             <!--Órarend-->
             <div class=" dnone mainelem" id="timetable">
+                <div class="page_header">
+                    <h2>📅 Órarend</h2>
+                </div>
                 <div class="create_event_container">
                     <div class="controls_group">
                         <div class="select_wrapper">
@@ -351,6 +366,249 @@
                 </div>
 
             </div>
+
+            <!--Hive-->
+            <div class="dnone mainelem" id="hive">
+                <div class="page_header">
+                    <h2>🐝 Hive</h2>
+                </div>
+                <div class="hive_container">
+                    <div class="hive_body">
+                        <div class="hive_buttons">
+                            <button type="button" class="hive_btn_all hive_btn_filter active">Összes</button>
+                            <button type="button" class="hive_btn_onlyFlashcard hive_btn_filter">Flashcardok</button>
+                            <button type="button" class="hive_btn_onlyQuiz hive_btn_filter">Kvízek</button>
+                            <button type="button" class="hive_btn_saved hive_btn_filter">Mentett</button>
+                            <input type="text"
+                                placeholder="Keressen egy publikus tanulokártya paklira, quizre vagy személyre..."
+                                id="hive_search_input">
+                        </div>
+                        <hr>
+                        <div class="hive_results">
+                            <!-- <div class="hive_card quiz">
+                                <span class="hive_card_type quiz">Quiz</span>
+                                <div class="hive_card_header">
+                                    <div class="hive_card_title_row">
+                                        <h3 class="hive_card_title">Quiz cím</h3>
+                                        <button type="button" class="hive_save_heart" aria-label="Mentés"
+                                            title="Mentés">♡</button>
+                                    </div>
+                                    <p>Készítő neve</p>
+                                </div>
+                                <hr>
+                                <p class="hive_card_desc">Quiz leírás szövege itt.</p>
+                                <div class="hive_card_stats">
+                                    <div class="hive_card_likes">
+                                        <span style="color: #ef4444;">♥</span>
+                                        <span>124</span>
+                                    </div>
+                                </div>
+                                <div class="hive_card_footer">
+                                    <button type="button" class="hive_btn_view" title="Indítás">Indítás</button>
+                                </div>
+                            </div> -->
+
+                            <!-- <div class="hive_card flashcard" data-card-id="flash-001">
+                                <span class="hive_card_type flashcard">FLASHCARD</span>
+                                <div class="hive_card_header">
+                                    <div class="hive_card_title_row">
+                                        <h3 class="hive_card_title">Flashcard cím</h3>
+                                        <button type="button" class="hive_save_heart" aria-label="Mentés"
+                                            title="Mentés">♡</button>
+                                    </div>
+                                    <p>Készítő neve</p>
+                                </div>
+                                <hr>
+                                <p class="hive_card_desc">34db kártya</p>
+                                <div class="hive_card_stats">
+                                    <div class="hive_card_likes">
+                                        <span style="color: #ef4444;">♥</span>
+                                        <span>87</span>
+                                    </div>
+                                </div>
+                                <div class="hive_card_footer">
+                                    <button type="button" class="hive_btn_view" title="Indítás">Indítás</button>
+                                </div>
+                            </div> -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dnone mainelem" id="quiz">
+                <div class="page_header">
+                    <h2>🎯 Kvíz</h2>
+                </div>
+                <div class="quiz-action-div ">
+                    <button onclick="showcreatequiz()" class="quiz-plus-button">+</button>
+                    <div class="foreigndiv">
+                        <label for="foreignQuizToggle">Idegen kvízek</label>
+                        <input type="checkbox" name="" class="correct-check" id="foreignQuizToggle"
+                            onchange="toggleForeignQuizzes()">
+                    </div>
+                </div>
+
+                <div class="quiz-container dnone" id="foreignQuizContainer">
+
+                </div>
+
+                <div class="quiz-container " id="quizContainer">
+                    <!-- <div class="quiz-element">
+                        <div class="quiz-info">
+                            <h2 class="quiz-title">IT kvíz</h2>
+                            <div class="quiz-meta-row">
+                                <p class="quiz-meta quiz-count">12 kérdés</p>
+                                <p class="quiz-meta quiz-created">2024-06-12</p>
+                            </div>
+                        </div>
+                        <div class="quiz-actions">
+                            <button type="button" class="quiz-button start-quiz-button">Indítás</button>
+                            <button type="button" class="quiz-button edit-quiz-button">Szerkesztés</button>
+                        </div>
+                    </div>
+                    <div class="quiz-element">
+                        <div class="quiz-info">
+                            <h2 class="quiz-title">Programozás alapok</h2>
+                            <div class="quiz-meta-row">
+                                <p class="quiz-meta quiz-count">20 kérdés</p>
+                                <p class="quiz-meta quiz-created">2024-05-30</p>
+                            </div>
+                        </div>
+                        <div class="quiz-actions">
+                            <button type="button" class="quiz-button start-quiz-button">Indítás</button>
+                            <button type="button" class="quiz-button edit-quiz-button">Szerkesztés</button>
+                        </div>
+                    </div>
+                    <div class="quiz-element">
+                        <div class="quiz-info">
+                            <h2 class="quiz-title">Programozás alapok</h2>
+                            <div class="quiz-meta-row">
+                                <p class="quiz-meta quiz-count">20 kérdés</p>
+                                <p class="quiz-meta quiz-created">2024-05-30</p>
+                            </div>
+                        </div>
+                        <div class="quiz-actions">
+                            <button type="button" class="quiz-button start-quiz-button">Indítás</button>
+                            <button type="button" class="quiz-button edit-quiz-button">Szerkesztés</button>
+                        </div>
+                    </div>
+                    <div class="quiz-element">
+                        <div class="quiz-info">
+                            <h2 class="quiz-title">Programozás alapok</h2>
+                            <p class="quiz-meta quiz-description">Alapvető programozási ismeretek</p>
+                            <div class="quiz-meta-row">
+                                <p class="quiz-meta quiz-count">20 kérdés</p>
+                                <p class="quiz-meta quiz-created">2024-05-30</p>
+                            </div>
+                            <p class="quiz-meta quiz-result">Legutóbbi kitöltés eredménye: 85%</p>
+                        </div>
+                        <div class="quiz-actions">
+                            <button type="button" class="quiz-button start-quiz-button">Indítás</button>
+                            <button type="button" class="quiz-button edit-quiz-button">Szerkesztés</button>
+                        </div> 
+                    </div>-->
+                </div>
+
+
+                <form class="quiz-create-container dnone" id="quizCreateForm">
+                    <div class="quiz-create-header">
+                        <div class="quiz-title-row">
+                            <input type="text" id="quizTitle" placeholder="Kvíz címe (pl. Történelem 9. osztály)"
+                                class="quiz-title-input" required>
+                            <button type="button" class="quiz-back-button" onclick="load_quizzes()">Vissza</button>
+                        </div>
+                        <div class="quiz-meta-controls">
+                            <input type="text" id="quizDescription" placeholder="Kvíz leírása"
+                                class="quiz-description-input">
+                            <div class="quiz-settings-row">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="isPublicQuiz">
+                                    <span class="checkmark"></span>
+                                    Publikus kvíz
+                                </label>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="randomOrder">
+                                    <span class="checkmark"></span>
+                                    Véletlenszerű kérdésrend
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="questionsContainer">
+                        <!-- <div class="question-card" id="q_block_1">
+                            <div class="question-header">
+                                <input type="text" placeholder="1. Kérdés szövege" class="q-input">
+                                <div class="q-settings">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" class="is-multiple-choice">
+                                        <span class="checkmark-label">Több helyes válasz</span>
+                                    </label>
+                                    <button class="delete-q-btn" onclick="deletequestion()">
+                                        <img src="../img/icons/trash.png" alt="Törlés" style="width: 26px;">
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="answers-container">
+                                <div class="answer-row">
+                                    <input type="checkbox" name="correct_1" class="correct-check">
+                                    <input type="text" placeholder="Válaszlehetőség" class="ans-input">
+                                    <button class="delete-ans-btn" onclick="this.parentElement.remove()">×</button>
+                                </div>
+                            </div>
+
+                            <div class="question-actions">
+                                <button class="add-ans-btn" onclick="addAnswerToBlock()">+ Válasz hozzáadása</button>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="quiz-creator-footer">
+                        <button type="button" class="btn-add-q" onclick="showQuizTypeSelector()">+ Új kérdés
+                            hozzáadása</button>
+                        <button type="submit" class="btn-save-quiz">Kvíz mentése</button>
+                    </div>
+                </form>
+                <form class="quiz_start_container dnone" id="quizStart">
+                    <div class="quiz_start_header">
+                        <h1 id="quiz_title">Itt lesz a cím</h1>
+                        <p id="quiz_description">Itt lesz a leírás</p>
+                        <p id="author">Szerző</p>
+                        <p id="total_points">Összpontszám: <span id="total_points_value"></span> pont</p>
+                        <button type="button" class="quiz-back-button" id="start_back_btn">Kilépés a kvízből</button>
+                    </div>
+                    <div id="start_question_container" class="quiz_question_container">
+
+                    </div>
+                    <input type="submit" id="quizSubmit" class="quiz_submit_btn">
+                    <button type="button" id="quizBackBTN" class="result-back-btn dnone">Vissza</button>
+                </form>
+            </div>
+
+
+
+
+            <!-- 
+            <div class="hive_card quiz">
+                <span class="hive_card_type quiz">Quiz</span>
+                <div class="hive_card_header">
+                    <div class="hive_card_title_row">
+                        <h3 class="hive_card_title">Quiz cím</h3>
+                        <button type="button" class="hive_save_heart" aria-label="Mentés" id="hive_btn_save">♡</button>
+                    </div>
+                    <p>Készítő neve</p>
+                </div>
+                <hr>
+                <p class="hive_card_desc">Quiz leírás szövege itt.</p>
+                <div class="hive_card_footer">
+                    <button type="button" class="hive_btn_view">Megtekint</button>
+                </div>
+            </div> 
+            -->
+
             <!--profil kezeles-->
             <div class="account dnone mainelem" id="felhasznalo">
                 <form id="edit_user">
@@ -361,8 +619,9 @@
                             </div>
                             <div class="account_buttons">
                                 <button type="submit" class="account_button">Mentés</button>
-                                <a onclick="logout()">Kijelentkezés</a>
+                                <a onclick="logout()">Kijelentkezés</a>                            
                             </div>
+                            <a onclick="delete_profile()" class="delete_profil">Profil törlése</a>
                         </div>
                         <div class="modal" id="profil_modal">
                             <div class="modal_content">
@@ -393,21 +652,21 @@
                                 </div>
                                 <div class="account_border_div">
 
-                                        <label for="jelenlegijelszo">Jelenlegi jelszó</label>
-                                        <input type="password" id="currentpassword" name="jelenlegijelszo"
-                                            placeholder="Jelenlegi jelszó" required>
-                                    </div>
-                                    <div class="account_border_div">
-                                        <label for="ujjelszo">Új jelszó</label>
-                                        <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
-                                    </div>
+                                    <label for="jelenlegijelszo">Jelenlegi jelszó</label>
+                                    <input type="password" id="currentpassword" name="jelenlegijelszo"
+                                        placeholder="Jelenlegi jelszó" required>
+                                </div>
+                                <div class="account_border_div">
+                                    <label for="ujjelszo">Új jelszó</label>
+                                    <input type="password" id="newpassword" name="ujjelszo" placeholder="Új jelszó">
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </form>
             </div>
         </div>
-
+    </div>
 
     </div>
     <script src="../javascript/main.js"></script>
@@ -416,8 +675,9 @@
     <script src="../javascript/flashcards.js"></script>
     <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/timetable.js"></script>
-    <script src="../javascript/libs/Sortable.min.js"></script>
     <script src="../javascript/mainpage.js"></script>
+    <script src="../javascript/hive.js"></script>
+    <script src="../javascript/quiz.js"></script>
 </body>
 
 <!--

@@ -1,13 +1,13 @@
-function errorHandler(err, req, res, next) {    
-    const statusCode = err.status || 500
-    
-    console.error(`---`)
-    console.error(`[HIBA] ${req.method} ${req.url} - IP: ${req.ip}`)
-    console.error(`Üzenet: ${err.message}`)
-    console.error(`---`)
+function errorHandler(err, req, res, next) {
+    const statusCode = err.status || 500;
 
-    
-    res.status(statusCode).json({success: false, message: err.message || "Szerverhiba történt." })
+    console.error(`---`);
+    console.error(`[HIBA] ${req.method} ${req.url} - IP: ${req.ip}`);
+    console.error(`Üzenet: ${err.message}`);
+    console.error(`---`);
+
+
+    res.status(statusCode).json({ success: false, message: err.message || "Szerverhiba történt." });
 }
 
-module.exports = errorHandler
+module.exports = errorHandler;

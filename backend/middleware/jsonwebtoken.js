@@ -1,15 +1,11 @@
-const jwt = require("jsonwebtoken")
-const JWT_SECRET = "d4a6032ff70259360a39313eb29f184462eb5ca200d264f4eb4548b7030c940c"
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "d4a6032ff70259360a39313eb29f184462eb5ca200d264f4eb4548b7030c940c";
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (token == null) {
-    console.log("Hiányzó token!")
-    return res.status(401).json({ message: "Hozzáférés megtagadva." });
-    
-  }
+  tokenexists(token);
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
@@ -24,7 +20,28 @@ function authenticateToken(req, res, next) {
 }
 
 async function generateToken(userId, expiresIn) {
-    return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: expiresIn });
+  return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: expiresIn });
 }
 
-module.exports = { authenticateToken, generateToken };
+function tokenexists(token) {
+  if (token == null) {
+    const err = new Error("Hozzáférés megtagadva!");
+    err.status = 401;
+    throw err;
+  }
+}
+
+async function get_time_left(token) {
+  try {
+    tokenexists(token);
+    const decode = jwt.verify(token, JWT_SECRET);
+    const currentTime = Math.floor(Date.now() / 1000);
+    const timeLeft = decode.exp - currentTime;
+    return timeLeft;
+  }
+  catch (err) {
+    throw err;
+  }
+}
+
+module.exports = { authenticateToken, generateToken, get_time_left };

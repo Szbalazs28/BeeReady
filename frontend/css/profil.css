@@ -1,18 +1,22 @@
 .account {
   margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
 
 .account_div {
   display: grid;
   grid-template-columns: 1fr 4fr;
   height: fit-content;
-  /*border: 1px solid #ddd;*/
   border-radius: 2rem;
   width: 50rem;
   text-align: center;
   align-items: center;
   background-color: #F8F8F8;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+  gap: 0;
 }
 
 .account_inputs {
@@ -23,7 +27,6 @@
   gap: 1rem;
   justify-content: center;
   box-shadow: -5px 0 25px -3px rgba(0, 0, 0, 0.2);
-
 }
 
 .input-group {
@@ -81,8 +84,8 @@
 }
 
 .profil_img_div .profil_img img {
-  height: 10rem;
-  width: 10rem;
+  height: 10vw;
+  width: 10vw;
   border-radius: 50%;
   border: 1px solid #ddd;
   object-fit: cover;
@@ -161,4 +164,10 @@
 
 .avatar_option:hover {
   transform: scale(1.2);
+}
+
+.delete_profil{
+  color: red;
+  font-size: small;
+  cursor: pointer;
 }

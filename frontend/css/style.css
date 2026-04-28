@@ -140,6 +140,45 @@ button {
   object-fit: cover;
 }
 
+/* Mobile view - regisztráció form */
+@media (max-width: 768px) {
+  #regform {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1px;
+  }
+  .card{
+    padding: auto;
+    
+  }
+
+  #regform > div:first-child {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .profil_img_div {
+    width: 9rem;
+    order: -1;
+    padding: 8px;
+  }
+
+  .profil_img_div .profil_img img {
+    height: 7rem;
+    width: 7rem;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  button {
+    padding: 10px 16px;
+  }
+}
+
 a {
   color: #aa802b;
   text-decoration: none;
