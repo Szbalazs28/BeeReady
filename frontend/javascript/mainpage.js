@@ -1,3 +1,11 @@
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
+    update_Cal();
+    updateDisplay();
+    toggleButtons();
+    updateStatisticsChart();
+});
+
 // Naptár 
 const monthYear = document.getElementById('monthYear');
 const datesContainer = document.getElementById('dates');
@@ -227,7 +235,7 @@ document.getElementById('calendar_nextBTN').onclick = () => {
     update_Cal();
 };
 
-update_Cal();
+
 
 //Időzítő
 let timer;
@@ -241,8 +249,7 @@ const startBtn = document.getElementById('start_timer');
 const stopBtn = document.getElementById('stop_timer');
 const resetBtn = document.getElementById('reset_timer');
 
-updateDisplay();
-toggleButtons();
+
 
 select.addEventListener('change', (e) => {
     pause();
@@ -513,7 +520,7 @@ function createTaskElement(task) {
     return div;
 }
 
-document.addEventListener('DOMContentLoaded', loadTasks);
+
 
 async function markTaskDone(id) {
     try {
@@ -550,54 +557,54 @@ async function restoreTask(id) {
 }
 
 function deleteTaskModal(id) {
-        const modalOverlay = document.createElement("div");
-        modalOverlay.className = "quiz-modal-overlay";
-        const modalContent = document.createElement("div");
-        modalContent.className = "quiz-modal-content quiz-delete-modal-content";
-        const title = document.createElement("h3");
-        title.className = "quiz-delete-modal-title";
-        title.textContent = "Feladat törlése:";
-        const message = document.createElement("p");
-        message.className = "quiz-delete-modal-text";
-        message.textContent = "Biztosan törölni szeretnéd ezt a feladatot? Ez a művelet nem visszavonható!";
-        const actionDiv = document.createElement("div");
-        actionDiv.className = "quiz-delete-action-div";
-        const cancelBtn = document.createElement("button");
-        cancelBtn.type = "button";
-        cancelBtn.classList.add("quiz-create-button", "quiz-delete-cancel");0
-        cancelBtn.textContent = "Nem";
-        cancelBtn.onclick = () => {
-            const modal = document.querySelector(".quiz-modal-overlay");
-            document.body.removeChild(modal);
-        };
-        const confirmBtn = document.createElement("button");
-        confirmBtn.type = "button";
-        confirmBtn.id = "extend_time_btn";
-        confirmBtn.classList.add("quiz-create-button", "quiz-delete-confirm");
-        confirmBtn.textContent = "Igen";
-        confirmBtn.onclick = async () => { deleteTask(id); document.body.removeChild(modalOverlay); };
+    const modalOverlay = document.createElement("div");
+    modalOverlay.className = "quiz-modal-overlay";
+    const modalContent = document.createElement("div");
+    modalContent.className = "quiz-modal-content quiz-delete-modal-content";
+    const title = document.createElement("h3");
+    title.className = "quiz-delete-modal-title";
+    title.textContent = "Feladat törlése:";
+    const message = document.createElement("p");
+    message.className = "quiz-delete-modal-text";
+    message.textContent = "Biztosan törölni szeretnéd ezt a feladatot? Ez a művelet nem visszavonható!";
+    const actionDiv = document.createElement("div");
+    actionDiv.className = "quiz-delete-action-div";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.classList.add("quiz-create-button", "quiz-delete-cancel"); 0;
+    cancelBtn.textContent = "Nem";
+    cancelBtn.onclick = () => {
+        const modal = document.querySelector(".quiz-modal-overlay");
+        document.body.removeChild(modal);
+    };
+    const confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.id = "extend_time_btn";
+    confirmBtn.classList.add("quiz-create-button", "quiz-delete-confirm");
+    confirmBtn.textContent = "Igen";
+    confirmBtn.onclick = async () => { deleteTask(id); document.body.removeChild(modalOverlay); };
 
-        actionDiv.append(cancelBtn, confirmBtn);
-        modalContent.append(title, message, actionDiv);
-        modalOverlay.appendChild(modalContent);
-        document.body.appendChild(modalOverlay);
-    
+    actionDiv.append(cancelBtn, confirmBtn);
+    modalContent.append(title, message, actionDiv);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+
 }
 
 async function deleteTask(id) {
-        try {
-            await apiFetch(`/api/deletetask?id=${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            loadTasks();
-        }
-        catch (error) {
-            console.error(error);
-        }
+    try {
+        await apiFetch(`/api/deletetask?id=${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        loadTasks();
+    }
+    catch (error) {
+        console.error(error);
+    }
 }
 
 function enableEditMode(id, card_div, editBtn) {
@@ -697,7 +704,7 @@ function updateStatisticsChart() {
     add_caption_item('Kész', counts.done, 'done');
 }
 
-updateStatisticsChart();
+
 
 // Event listener a statisztika select-re
 // document.getElementById('stat_select').addEventListener('change', function () {
