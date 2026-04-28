@@ -296,7 +296,6 @@
     margin-bottom: 25px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     border-left: 6px solid #f39c12;
-
 }
 
 .question-header {
@@ -314,6 +313,8 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #f9f9f9;
+    max-width: 65vw;
+    word-wrap: break-word;
 }
 
 .q-settings {
@@ -343,6 +344,8 @@
     border: 1px solid #eee;
     border-radius: 6px;
     font-size: 1rem;
+    word-wrap: break-word;
+    max-width: 55vw;
 }
 
 
@@ -453,6 +456,7 @@
     .quiz-description-input {
         min-width: 0;
         width: 80%;
+        word-wrap: break-word;
     }
 
     .question-card {
@@ -461,7 +465,7 @@
 
     .question-header {
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
         gap: 10px;
     }
 
@@ -474,6 +478,7 @@
 
     .answer-row {
         flex-wrap: wrap;
+        flex-direction: column;
         align-items: center;
     }
 
@@ -598,7 +603,7 @@
 }
 
 .fill-input {
-    min-width: 120px;
+    min-width: 1vw;
     padding: 6px 8px;
     margin: 0 4px;
     border: 1px solid #d1d5db;
@@ -943,7 +948,7 @@
     border: none;
     cursor: pointer;
     font-weight: 700;
-    width: 10vw;
+    width: 20vw;
 }
 
 .foreigndiv {
@@ -961,3 +966,8 @@
     align-items: start;
     gap: 10px;
 }
+
+.result-q-input{
+    max-width: 45vw;
+}
+

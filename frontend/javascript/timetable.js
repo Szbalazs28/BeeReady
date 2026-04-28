@@ -2,7 +2,7 @@ document.getElementById("weekSelector").onchange = async () => {
     try {
         const weekType = document.getElementById("weekSelector").value;
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/change_selected_week", {
+        const result = await apiFetch("/api/change_selected_week", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -149,7 +149,7 @@ async function saveNewEvent() {
         lengthtest(subject, 1, 100);
         lengthtest(location, 0, 50);
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/save_new_event", {
+        const result = await apiFetch("/api/save_new_event", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -194,7 +194,7 @@ async function load_events() {
 
         document.querySelectorAll(".event-card").forEach(e => e.remove());
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/get_events", {
+        const result = await apiFetch("/api/get_events", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -386,7 +386,7 @@ async function updateevent(event_id) {
         lengthtest(subject, 1, 100);
         lengthtest(location, 0, 50);
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/updateevent", {
+        const result = await apiFetch("/api/updateevent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -404,7 +404,7 @@ async function updateevent(event_id) {
 async function delete_event(event_id) {
     try {
         const token = localStorage.getItem("token");
-        await apiFetch(`http://127.0.0.1:4000/api/delete_event?event_id=${event_id}`, {
+        await apiFetch(`/api/delete_event?event_id=${event_id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

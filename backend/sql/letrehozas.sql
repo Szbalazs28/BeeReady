@@ -90,7 +90,6 @@ CREATE TABLE IF NOT EXISTS quizzes (
   description TEXT default NULL,
   last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   public BOOLEAN DEFAULT FALSE,
-  last_result INT DEFAULT NULL,
   randomize_questions BOOLEAN DEFAULT FALSE,
   total_points INT DEFAULT 0,
   position INT NOT NULL,
@@ -152,7 +151,7 @@ CREATE TABLE IF NOT EXISTS quiz_share (
 INSERT INTO `users` (username, email, password, profil_pic_url) VALUES
   ('teszt1', 'teszt1@gmail.com', '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC', '../img/allatos_profilkepek/oroszlan.webp'),
   ('admin1', 'admin1@gmail.com', '$2b$12$14cE7UK9Xgcs54wLmJ1t7.CY2fEOONiz.Z1MU3.TIdmFIYZIYucOC', '../img/allatos_profilkepek/oroszlan.webp');
-INSERT INTO admins (user_id) VALUES (2)
+INSERT INTO admins (user_id) VALUES (2);
 -- Teszt1$
 
 USE `BeeReady_db`;

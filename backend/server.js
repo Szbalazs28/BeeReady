@@ -1,17 +1,20 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const errorHandler = require("./middleware/errorHandler.js");
 const path = require("path");
+const fs = require("fs");
+
 
 const app = express();
 const router = express.Router();
-const ip = '127.0.0.1';
-const port = 4000;
+const ip = process.env.SERVER_IP || '127.0.0.1';
+const port = process.env.SERVER_PORT || 4000;
 const rateLimit = require('express-rate-limit');
 const globalLimiter = rateLimit({
-    windowMs: 60 * 1000, // 1 perces időablak
-    max: 300, // Maximum 100 kérés 1 percen belül IP címenként
+    windowMs: process.env.RATE_LIMIT_WINDOW || 60 * 1000, // 1 perces időablak
+    max: process.env.RATE_LIMIT_MAX || 300, // Maximum 300 kérés 1 percen belül IP címenként
     message: {
         success: false,
         message: "Túl sok kérés. Kérem, várjon egy percet."
@@ -37,10 +40,9 @@ morgan.token('hu-time', () => {
 
 const customFormat = '[:hu-date] [:hu-time] :method :url :status :response-time ms - IP: :remote-addr';
 
-
-
+//const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+//app.use(morgan(customFormat, { stream: accessLogStream }));
 app.use(morgan(customFormat));
-
 
 
 app.use(cors());

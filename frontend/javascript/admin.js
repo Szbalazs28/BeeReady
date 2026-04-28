@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadUsers(search = null) {
     const token = localStorage.getItem('token');
-    let url = `http://localhost:4000/api/admin/users`;
+    let url = `/api/admin/users`;
     if (search) {
-        url = `http://localhost:4000/api/admin/search_users/${search}`;
+        url = `/api/admin/search_users/${search}`;
     }
     const data = await apiFetch(url, {
         method: 'GET',
@@ -118,7 +118,7 @@ async function loadUsers(search = null) {
 async function saveUser(id, username, email, password, profil_pic_url, input_Username, input_Email, input_Password, input_Pic, btn_Edit) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch(`http://localhost:4000/api/admin/update_user`, {
+        await apiFetch(`/api/admin/update_user`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -148,7 +148,7 @@ async function saveUser(id, username, email, password, profil_pic_url, input_Use
 async function deleteUser(id, username, tr) {
     const token = localStorage.getItem('token');
     try {
-        await apiFetch(`http://localhost:4000/api/admin/delete_user/${id}`, {
+        await apiFetch(`/api/admin/delete_user/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -262,7 +262,7 @@ async function generateHash() {
     const value = input.trim();
     const token = localStorage.getItem('token');
     try {
-        const result = await apiFetch('http://localhost:4000/api/generatehash', {
+        const result = await apiFetch('/api/generatehash', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

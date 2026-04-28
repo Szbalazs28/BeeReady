@@ -4,7 +4,7 @@ document.getElementById("flashcard_form").addEventListener("submit", async funct
         const inputvalue = document.getElementById("newDeckName").value;
         if (inputvalue[0] == "#" && inputvalue.length == 9) {
             const token = localStorage.getItem('token');
-            await apiFetch("http://localhost:4000/api/copy_deck", {
+            await apiFetch("/api/copy_deck", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,7 +107,7 @@ function build_card(front_text, back_text, card_id, isForeign = null) {
         delete_button.classList.add("del_card_button");
         delete_button.textContent = "Törlés";
         delete_button.onclick = () => card_delete(card_id); // CARD DELETE
-        card_actions.appendChild(delete_button);
+        
 
         const edit_button = document.createElement("button");
         edit_button.classList.add("edit_card_button");
@@ -172,7 +172,7 @@ async function flashcard_start_ordered(deck_id) {
     try {
         document.getElementById("add_card_modal").remove();
         const token = localStorage.getItem('token');
-        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+        const cards_result = await apiFetch(`/api/getcards?deck_id=${deck_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -258,7 +258,7 @@ async function flashcard_start_random(deck_id) {
     try {
         document.getElementById("add_card_modal").remove();
         const token = localStorage.getItem('token');
-        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+        const cards_result = await apiFetch(`/api/getcards?deck_id=${deck_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -295,7 +295,7 @@ async function card_delete(card_id) {
         const card = document.getElementById(`card_${card_id}`);
         const token = localStorage.getItem('token');
 
-        await apiFetch(`http://localhost:4000/api/deletecard?card_id=${card_id}`, {
+        await apiFetch(`/api/deletecard?card_id=${card_id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -313,7 +313,7 @@ async function card_delete(card_id) {
 async function deck_edit_user(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch(`http://localhost:4000/api/getdeckbydeck_id?deck_id=${deck_id}`, {
+        const result = await apiFetch(`/api/getdeckbydeck_id?deck_id=${deck_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -401,7 +401,7 @@ async function deck_edit_user(deck_id) {
 async function share_code_change(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch(`http://localhost:4000/api/change_share_code?deck_id=${deck_id}`, {
+        const result = await apiFetch(`/api/change_share_code?deck_id=${deck_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -423,7 +423,7 @@ async function save_deck(deck_id) {
 
         lengthtest(deck_name, 1, 200);
 
-        await apiFetch("http://localhost:4000/api/updatedeck", {
+        await apiFetch("/api/updatedeck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -443,7 +443,7 @@ async function save_deck(deck_id) {
 async function delete_deck(deck_id) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch(`http://localhost:4000/api/deletedeck?deck_id=${deck_id}`, {
+        await apiFetch(`/api/deletedeck?deck_id=${deck_id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -495,7 +495,7 @@ async function deck_open(deck_id, isForeign = null) {
         const currentDeckName = document.getElementById("currentDeckName");
 
         //Pakli nevének lekérése
-        const deck_result = await apiFetch(`http://localhost:4000/api/getdeckbydeck_id?deck_id=${deck_id}`, {
+        const deck_result = await apiFetch(`/api/getdeckbydeck_id?deck_id=${deck_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -506,7 +506,7 @@ async function deck_open(deck_id, isForeign = null) {
         currentDeckName.textContent = deck_result.decks[0].deck_name;
 
         //Kártyák lekérése
-        const cards_result = await apiFetch(`http://localhost:4000/api/getcards?deck_id=${deck_id}`, {
+        const cards_result = await apiFetch(`/api/getcards?deck_id=${deck_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -540,7 +540,7 @@ async function deck_open(deck_id, isForeign = null) {
 async function save_new_card_order(deck_id, currentorder) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch("http://localhost:4000/api/save_new_card_order", {
+        await apiFetch("/api/save_new_card_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -558,7 +558,7 @@ async function add_deck(deck_name) {
     try {
 
         const token = localStorage.getItem('token');
-        await apiFetch("http://localhost:4000/api/add_deck", {
+        await apiFetch("/api/add_deck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -593,7 +593,7 @@ async function load_deck() {
         const deck_list = document.getElementById("deckList");
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch("http://localhost:4000/api/deck_load", {
+        const result = await apiFetch("/api/deck_load", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -625,7 +625,7 @@ async function load_deck() {
 async function save_new_deck_order(currentorder) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch("http://localhost:4000/api/save_new_deck_order", {
+        await apiFetch("/api/save_new_deck_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -686,7 +686,7 @@ async function save_card(deck_id, card_id) {
         const back_text = document.getElementById("newCardBack").value;
         lengthtest(front_text, 1, 255);
         lengthtest(back_text, 1, 400);
-        await apiFetch("http://localhost:4000/api/updatecard", {
+        await apiFetch("/api/updatecard", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -710,7 +710,7 @@ async function card_edit(card_id) {
     try {
         const token = localStorage.getItem('token');
 
-        const result = await apiFetch(`http://localhost:4000/api/getcardbyid?card_id=${card_id}`, {
+        const result = await apiFetch(`/api/getcardbyid?card_id=${card_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -776,7 +776,7 @@ async function save_new_card(deck_id) {
         const back_text = document.getElementById("newCardBack").value;
         lengthtest(front_text, 1, 255);
         lengthtest(back_text, 1, 400);
-        await apiFetch("http://localhost:4000/api/addnewcard", {
+        await apiFetch("/api/addnewcard", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

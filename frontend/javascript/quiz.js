@@ -25,14 +25,14 @@ async function load_quizzes() {
             const foreignQuizContainer = document.getElementById("foreignQuizContainer");
             quizContainer.innerHTML = "";
             const token = localStorage.getItem("token");
-            const result = await apiFetch("http://127.0.0.1:4000/api/getquizzes", {
+            const result = await apiFetch("/api/getquizzes", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "authorization": `Bearer ${token}`
                 }
             });
-            const foreignResult = await apiFetch("http://127.0.0.1:4000/api/getforeignquizzes", {
+            const foreignResult = await apiFetch("/api/getforeignquizzes", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,11 +40,11 @@ async function load_quizzes() {
                 }
             });
             for (let i = 0; i < result.quizzes.length; i++) {
-                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].last_result, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions, result.quizzes[i].total_points, false));
+                quizContainer.appendChild(build_quiz(result.quizzes[i].title, result.quizzes[i].description, result.quizzes[i].quiz_id, result.quizzes[i].question_count, result.quizzes[i].created_at, result.quizzes[i].created_by, result.quizzes[i].public, result.quizzes[i].randomize_questions, result.quizzes[i].total_points, false));
             }
             document.getElementById("foreignQuizContainer").innerHTML = "";
             for (let i = 0; i < foreignResult.quizzes.length; i++) {
-                foreignQuizContainer.appendChild(build_quiz(foreignResult.quizzes[i].title, foreignResult.quizzes[i].description, foreignResult.quizzes[i].quiz_id, foreignResult.quizzes[i].question_count, foreignResult.quizzes[i].created_at, foreignResult.quizzes[i].last_result, foreignResult.quizzes[i].created_by, foreignResult.quizzes[i].public, foreignResult.quizzes[i].randomize_questions, foreignResult.quizzes[i].total_points, true));
+                foreignQuizContainer.appendChild(build_quiz(foreignResult.quizzes[i].title, foreignResult.quizzes[i].description, foreignResult.quizzes[i].quiz_id, foreignResult.quizzes[i].question_count, foreignResult.quizzes[i].created_at, foreignResult.quizzes[i].created_by, foreignResult.quizzes[i].public, foreignResult.quizzes[i].randomize_questions, foreignResult.quizzes[i].total_points, true));
             }
             Sortable.create(quizContainer, {
                 animation: 150,
@@ -74,7 +74,7 @@ async function load_quizzes() {
 }
 
 
-function build_quiz(title, description, quiz_id, question_count, created, last_result, created_by, public, randomize_questions, total_points, isForeign) {
+function build_quiz(title, description, quiz_id, question_count, created, created_by, public, randomize_questions, total_points, isForeign) {
     const quiz_element = document.createElement("div");
     quiz_element.setAttribute("data-id", quiz_id);
     quiz_element.classList.add("quiz-element");
@@ -122,12 +122,6 @@ function build_quiz(title, description, quiz_id, question_count, created, last_r
     }
     quiz_info.appendChild(quiz_meta_row);
 
-    if (last_result !== null && last_result !== undefined && last_result !== "") {
-        const quiz_result = document.createElement("p");
-        quiz_result.classList.add("quiz-meta", "quiz-result");
-        quiz_result.textContent = `Legutóbbi kitöltés eredménye: ${last_result}%`;
-        quiz_info.appendChild(quiz_result);
-    }
 
     const group_div = document.createElement("div");
     group_div.classList.add("quiz-group");
@@ -838,7 +832,7 @@ async function save_answer(question_id, answer_text, right_answer, position, poi
         if (typeof answer_text === "object") {
             answer_text = JSON.stringify(answer_text);
         }
-        await apiFetch("http://127.0.0.1:4000/api/saveanswer", {
+        await apiFetch("/api/saveanswer", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -855,7 +849,7 @@ async function save_quiz(title, description, public, randomize_questions, total_
     try {
 
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/savequiz", {
+        const result = await apiFetch("/api/savequiz", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -873,7 +867,7 @@ async function save_quiz(title, description, public, randomize_questions, total_
 async function save_question(question_text, quiz_id, type, position, points) {
     try {
         const token = localStorage.getItem("token");
-        const result = await apiFetch("http://127.0.0.1:4000/api/savequestion", {
+        const result = await apiFetch("/api/savequestion", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -912,7 +906,7 @@ function showcreatequiz() {
 async function save_current_quiz_order(currentorder) {
     try {
         const token = localStorage.getItem("token");
-        await apiFetch("http://localhost:4000/api/save_current_quiz_order", {
+        await apiFetch("/api/save_current_quiz_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -929,7 +923,7 @@ async function save_current_quiz_order(currentorder) {
 async function save_current_foreign_quiz_order(currentorder) {
     try {
         const token = localStorage.getItem("token");
-        await apiFetch("http://localhost:4000/api/save_current_foreign_quiz_order", {
+        await apiFetch("/api/save_current_foreign_quiz_order", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -959,7 +953,7 @@ async function quiz_edit_user(quiz) {
     document.getElementById("randomOrder").checked = quiz.randomize_questions;
     const token = localStorage.getItem("token");
     try {
-        const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
+        const result = await apiFetch(`/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -997,7 +991,7 @@ async function quiz_edit_user(quiz) {
 
 async function getAnswersByQuestionId(question_id) {
     const token = localStorage.getItem("token");
-    const result = await apiFetch(`http://127.0.0.1:4000/api/getquestionanswers?question_id=${question_id}`, {
+    const result = await apiFetch(`/api/getquestionanswers?question_id=${question_id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -1009,7 +1003,7 @@ async function getAnswersByQuestionId(question_id) {
 
 async function getStartAnswersByQuestionId(question_id) {
     const token = localStorage.getItem("token");
-    const result = await apiFetch(`http://127.0.0.1:4000/api/getquestionanswersforstart?question_id=${question_id}`, {
+    const result = await apiFetch(`/api/getquestionanswersforstart?question_id=${question_id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -1100,7 +1094,7 @@ function closeModal() {
 async function quiz_delete(quiz_id, isForeign) {
     const token = localStorage.getItem("token");
     try {
-        await apiFetch(`http://127.0.0.1:4000/api/deletequiz?quiz_id=${quiz_id}&isforeign=${isForeign}`, {
+        await apiFetch(`/api/deletequiz?quiz_id=${quiz_id}&isforeign=${isForeign}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -1177,11 +1171,9 @@ function start_addStandardAnswerToBlock(answer) {
     ansCheck.type = 'checkbox';
     ansCheck.className = 'correct-check';
 
-    const ansInput = document.createElement('input');
-    ansInput.type = 'text';
+    const ansInput = document.createElement('p');
     ansInput.className = 'ans-input';
-    ansInput.disabled = true;
-    ansInput.value = answer.answer_text;
+    ansInput.textContent = answer.answer_text;
 
     answerRow.append(ansCheck, ansInput, startpointelement(answer.points));
     return answerRow;
@@ -1194,13 +1186,11 @@ function start_addOrderAnswerToBlock(answer) {
     dragIcon.textContent = '::';
     dragIcon.style.cursor = 'move';
 
-    const ansInput = document.createElement('input');
+    const ansInput = document.createElement('p');
     answerRow.setAttribute("data-id", answer.answer_id);
-    ansInput.type = 'text';
-    ansInput.disabled = true;
     ansInput.className = 'ans-input';
     if (answer) {
-        ansInput.value = answer.answer_text;
+        ansInput.textContent = answer.answer_text;
     }
 
 
@@ -1324,7 +1314,7 @@ function resultBaseQuestionBlock(question, points_earned = null, answers = null)
     qHeader.className = 'question-header';
 
     const qInput = document.createElement('p');
-    qInput.className = 'q-input';
+    qInput.classList.add('q-input', 'result-q-input');
     qInput.textContent = question.question_text;
 
 
@@ -1433,12 +1423,9 @@ function result_addNewShortAnswerQuestionBlock(question, answers, user_answer) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
     answerRow.setAttribute("data-id", question.question_id);
-    const ansInput = document.createElement('input');
-    ansInput.type = 'text';
-    ansInput.placeholder = 'Helyes válasz:';
+    const ansInput = document.createElement('p');
     ansInput.className = 'ans-input';
-    ansInput.disabled = true;
-    ansInput.value = answers_text[0].answer;
+    ansInput.textContent = answers_text[0].answer;
 
     answerRow.append(ansInput);
     answersContainer.append(answerRow);
@@ -1491,12 +1478,10 @@ function result_addNewOrderQuestionBlock(question, answers, user_answer) {
 function result_addShortAnswerToBlock(answer) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
-    const ansInput = document.createElement('input');
-    ansInput.type = 'text';
+    const ansInput = document.createElement('p');
     ansInput.className = 'ans-input';
     answerRow.classList.add("correct-answer", "dnone");
-    ansInput.value = answer.answer_text;
-    ansInput.disabled = true;
+    ansInput.textContent = answer.answer_text;
 
     answerRow.append(ansInput);
     return answerRow;
@@ -1506,12 +1491,10 @@ function result_addOrderAnswerToBlock(answer, user_answer = null) {
     const answerRow = document.createElement('div');
     answerRow.className = 'answer-row';
 
-    const ansInput = document.createElement('input');
+    const ansInput = document.createElement('p');
     answerRow.setAttribute("data-id", answer.answer_id);
-    ansInput.type = 'text';
-    ansInput.disabled = true;
     ansInput.className = 'ans-input';
-    ansInput.value = answer.answer_text;
+    ansInput.textContent = answer.answer_text;
     if (user_answer) {
         if (user_answer.correct) {
             answerRow.classList.add('correct-answer');
@@ -1534,23 +1517,21 @@ function result_addStandardAnswerToBlock(answer, user_answer, solution_view = fa
     answerRow.className = 'answer-row';
     const ansCheck = document.createElement('input');
     ansCheck.type = 'checkbox';
-    ansCheck.className = 'correct-check';
+    ansCheck.classList.add('correct-check', 'result-ans-input');
     ansCheck.disabled = true;
 
 
 
-    const ansInput = document.createElement('input');
-    ansInput.type = 'text';
+    const ansInput = document.createElement('p');
     ansInput.className = 'ans-input';
-    ansInput.disabled = true;
     if (solution_view) {
-        ansInput.value = answer.answer_text;
+        ansInput.textContent = answer.answer_text;
         ansCheck.checked = answer.right_answer;
         answerRow.classList.add('correct-answer', 'dnone');
         answerRow.append(ansCheck, ansInput, startpointelement(answer.points));
     }
     else {
-        ansInput.value = answer.answer_text;
+        ansInput.textContent = answer.answer_text;
         ansCheck.checked = user_answer.answer;
         if (user_answer.correct) {
             answerRow.classList.add('correct-answer');
@@ -1627,7 +1608,7 @@ async function quiz_start(quiz = null, quiz_id = null) {
     }
 
     if (quiz_id != null) {
-        const quiz_meta = await apiFetch(`http://127.0.0.1:4000/api/getquizmeta?quiz_id=${quiz_id}`, {
+        const quiz_meta = await apiFetch(`/api/getquizmeta?quiz_id=${quiz_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -1654,7 +1635,7 @@ async function quiz_start(quiz = null, quiz_id = null) {
 
     const token = localStorage.getItem("token");
     try {
-        const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
+        const result = await apiFetch(`/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -1771,7 +1752,7 @@ async function submitQuiz(e) {
             answer_data.push(data);
 
         }
-        const result = await apiFetch("http://127.0.0.1:4000/api/savequizresult", {
+        const result = await apiFetch("/api/savequizresult", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1780,7 +1761,7 @@ async function submitQuiz(e) {
             body: JSON.stringify(answer_data)
         });
         if (document.getElementById("quizSubmit").getAttribute("data-submit-type") === "foreign") {
-            await apiFetch(`http://127.0.0.1:4000/api/saveForeignquiz?quiz_id=${quiz_id}&result_id=${result.result_id}`, {
+            await apiFetch(`/api/saveForeignquiz?quiz_id=${quiz_id}&result_id=${result.result_id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -1819,7 +1800,7 @@ async function show_quiz_result_modal(quiz, quiz_id) {
         const resultContainer = document.createElement("div");
         resultContainer.className = "quiz-result-container";
 
-        const result = await apiFetch(`http://127.0.0.1:4000/api/getquizresult?quiz_id=${quiz_id}`, {
+        const result = await apiFetch(`/api/getquizresult?quiz_id=${quiz_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -1908,7 +1889,7 @@ async function load_result_details(quiz, result_id, formattedResult, earned_poin
         document.getElementById("quizBackBTN").classList.remove("dnone");
         document.getElementById("quizBackBTN").onclick = () => show_exit_modal(true);
 
-        const result = await apiFetch(`http://127.0.0.1:4000/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
+        const result = await apiFetch(`/api/getquizquestions?quiz_id=${quiz.quiz_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -1948,7 +1929,7 @@ async function load_result_details(quiz, result_id, formattedResult, earned_poin
 async function load_user_answer(result_id, question_id) {
     try {
         const token = localStorage.getItem("token");
-        const result = await apiFetch(`http://127.0.0.1:4000/api/getuseranswers?result_id=${result_id}&question_id=${question_id}`, {
+        const result = await apiFetch(`/api/getuseranswers?result_id=${result_id}&question_id=${question_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

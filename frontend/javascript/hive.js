@@ -143,7 +143,7 @@ async function loadHiveData() {
         const { type, search, favorites } = currentFilters;
 
         const result = await apiFetch(
-            `http://127.0.0.1:4000/api/hive?type=${type}&search=${search}&favorites=${favorites}`,
+            `/api/hive?type=${type}&search=${search}&favorites=${favorites}`,
             {
                 method: 'GET',
                 headers: { 'authorization': `Bearer ${token}` }
@@ -194,7 +194,7 @@ function HiveSearch() {
 async function SaveItem(button, itemType, itemId) {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch('http://127.0.0.1:4000/api/toggleFavorite', {
+        const result = await apiFetch('/api/toggleFavorite', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -222,7 +222,7 @@ async function SaveItem(button, itemType, itemId) {
 
             if (favoriteSpan) {
                 try {
-                    const countResult = await apiFetch('http://127.0.0.1:4000/api/getfavoritecount', {
+                    const countResult = await apiFetch('/api/getfavoritecount', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

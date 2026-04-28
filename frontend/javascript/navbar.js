@@ -77,7 +77,7 @@ async function show_exit_modal(isresultview) {
 async function load_image() {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://localhost:4000/api/edit_user", {
+        const result = await apiFetch("/api/edit_user", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 async function load_user() {
     try {
         const token = localStorage.getItem('token');
-        const result = await apiFetch("http://localhost:4000/api/edit_user", {
+        const result = await apiFetch("/api/edit_user", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -55,7 +55,7 @@ async function mentes() {
         const newprofil_pic_url = document.getElementById("editprofilpic").src.split("/");
 
         const token = localStorage.getItem('token');
-        const result = await index_apiFetch("http://localhost:4000/api/edit_user_save", {
+        const result = await index_apiFetch("/api/edit_user_save", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -117,7 +117,7 @@ async function delete_confirmed() {
         const password = document.querySelector(".confirm-delete-input").value;
         const token = localStorage.getItem('token');
         lengthtest(password, 6, 255);
-        await index_apiFetch("http://127.0.0.1:4000/api/delete_user", {
+        await index_apiFetch("/api/delete_user", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

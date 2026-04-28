@@ -23,7 +23,7 @@ async function update_Cal() {
         const currentY = current_date.getFullYear();
         const currentM = current_date.getMonth();
 
-        const data = await apiFetch('http://127.0.0.1:4000/api/get_calendar_events', {
+        const data = await apiFetch('/api/get_calendar_events', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ year: currentY, month: currentM + 1 })
@@ -126,7 +126,7 @@ async function refreshModalEvents(dateStr) {
         const currentY = new Date(dateStr).getFullYear();
         const currentM = new Date(dateStr).getMonth() + 1;
 
-        const data = await apiFetch('http://127.0.0.1:4000/api/get_calendar_events', {
+        const data = await apiFetch('/api/get_calendar_events', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ year: currentY, month: currentM })
@@ -179,7 +179,7 @@ async function DeleteEvent(eventId, eventTitle, dateStr) {
     if (!confirm(`Biztosan törlöd a(z) "${eventTitle}" eseményt?`)) return;
 
     try {
-        await apiFetch('http://127.0.0.1:4000/api/delete_calendar_event', {
+        await apiFetch('/api/delete_calendar_event', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ event_id: eventId })
@@ -200,7 +200,7 @@ async function saveCalendarEvent() {
     if (!title) return alertell("Kérlek, add meg az esemény nevét!", 2.5);
 
     try {
-        await apiFetch('http://127.0.0.1:4000/api/insert_calendar_event', {
+        await apiFetch('/api/insert_calendar_event', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({
@@ -396,7 +396,7 @@ async function submitTask() {
         const task_name = document.getElementById('task_name').value;
         const task_description = document.getElementById('task_description').value;
         const importance = document.getElementById('importance').value;
-        const result = await apiFetch('http://127.0.0.1:4000/api/taskadd', {
+        const result = await apiFetch('/api/taskadd', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -419,7 +419,7 @@ async function submitTask() {
 
 async function loadTasks() {
     try {
-        const result = await apiFetch('http://127.0.0.1:4000/api/gettasks', {
+        const result = await apiFetch('/api/gettasks', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -499,7 +499,7 @@ function createTaskElement(task) {
         const delBtn = document.createElement('button');
         delBtn.innerText = 'Törlés';
         delBtn.className = 'delete_btn';
-        delBtn.onclick = () => deleteTask(task.id);
+        delBtn.onclick = () => deleteTaskModal(task.id);
         btn_group.appendChild(delBtn);
     }
 
@@ -517,7 +517,7 @@ document.addEventListener('DOMContentLoaded', loadTasks);
 
 async function markTaskDone(id) {
     try {
-        const response = await apiFetch('http://127.0.0.1:4000/api/marktaskdone', {
+        const response = await apiFetch('/api/marktaskdone', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -534,7 +534,7 @@ async function markTaskDone(id) {
 
 async function restoreTask(id) {
     try {
-        const response = await apiFetch('http://127.0.0.1:4000/api/restoretask', {
+        const response = await apiFetch('/api/restoretask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -549,10 +549,44 @@ async function restoreTask(id) {
     }
 }
 
+function deleteTaskModal(id) {
+        const modalOverlay = document.createElement("div");
+        modalOverlay.className = "quiz-modal-overlay";
+        const modalContent = document.createElement("div");
+        modalContent.className = "quiz-modal-content quiz-delete-modal-content";
+        const title = document.createElement("h3");
+        title.className = "quiz-delete-modal-title";
+        title.textContent = "Feladat törlése:";
+        const message = document.createElement("p");
+        message.className = "quiz-delete-modal-text";
+        message.textContent = "Biztosan törölni szeretnéd ezt a feladatot? Ez a művelet nem visszavonható!";
+        const actionDiv = document.createElement("div");
+        actionDiv.className = "quiz-delete-action-div";
+        const cancelBtn = document.createElement("button");
+        cancelBtn.type = "button";
+        cancelBtn.classList.add("quiz-create-button", "quiz-delete-cancel");0
+        cancelBtn.textContent = "Nem";
+        cancelBtn.onclick = () => {
+            const modal = document.querySelector(".quiz-modal-overlay");
+            document.body.removeChild(modal);
+        };
+        const confirmBtn = document.createElement("button");
+        confirmBtn.type = "button";
+        confirmBtn.id = "extend_time_btn";
+        confirmBtn.classList.add("quiz-create-button", "quiz-delete-confirm");
+        confirmBtn.textContent = "Igen";
+        confirmBtn.onclick = async () => { deleteTask(id); document.body.removeChild(modalOverlay); };
+
+        actionDiv.append(cancelBtn, confirmBtn);
+        modalContent.append(title, message, actionDiv);
+        modalOverlay.appendChild(modalContent);
+        document.body.appendChild(modalOverlay);
+    
+}
+
 async function deleteTask(id) {
-    if (confirm("Biztosan törölni szeretnéd ezt a feladatot?")) {
         try {
-            await apiFetch(`http://127.0.0.1:4000/api/deletetask?id=${id}`, {
+            await apiFetch(`/api/deletetask?id=${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -564,7 +598,6 @@ async function deleteTask(id) {
         catch (error) {
             console.error(error);
         }
-    }
 }
 
 function enableEditMode(id, card_div, editBtn) {
@@ -589,7 +622,7 @@ async function saveTask(id, card_div, saveBtn) {
         const newDesc = descElement.value;
         const importanceValue = importanceSpan.dataset.value;
 
-        const response = await apiFetch('http://127.0.0.1:4000/api/updatetask', {
+        const response = await apiFetch('/api/updatetask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

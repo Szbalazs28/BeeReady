@@ -22,38 +22,42 @@ function alertell(text, time) {
 }
 
 async function start_logout_timer(wich = false) {
-    const result = await index_apiFetch("http://127.0.0.1:4000/api/get_expire_time", {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
-    });
+    try {
+        const result = await index_apiFetch("/api/get_expire_time", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        });
 
-    let time_left = parseInt(result.time_left);
-    clearInterval(logoutIntervalId);
-    logoutIntervalId = setInterval(() => {
-        time_left--;
-        if (time_left <= 0) {
-            logout();
-        }
-        else {
-            if (time_left <= 60) {
-                if (sessionStorage.getItem("modal_showed") != "true") {
-                    if (wich) {
-                        b_extend_time_modal();
-                    }
-                    else {
-                        extend_time_modal();
-                    }
+        let time_left = parseInt(result.time_left);
+        clearInterval(logoutIntervalId);
+        logoutIntervalId = setInterval(() => {
+            time_left--;
+            if (time_left <= 0) {
+                logout();
+            }
+            else {
+                if (time_left <= 60) {
+                    if (sessionStorage.getItem("modal_showed") != "true") {
+                        if (wich) {
+                            b_extend_time_modal();
+                        }
+                        else {
+                            extend_time_modal();
+                        }
 
-                    sessionStorage.setItem("modal_showed", "true");
+                        sessionStorage.setItem("modal_showed", "true");
+                    }
+                }
+                if (time_left <= 5) {
+                    alertell(`A munkamenet ${time_left} másodpercen belül lejár!`, 1);
                 }
             }
-            if (time_left <= 5) {
-                alertell(`A munkamenet ${time_left} másodpercen belül lejár!`, 1);
-            }
-        }
-    }, 1000);
+        }, 1000);
+    } catch (error) {
+        console.error("Hiba a munkamenet időzítőjének indításakor:", error);
+    }
 }
 
 function extend_time_modal() {
@@ -164,7 +168,7 @@ function b_extend_time_modal() {
 
 async function extend_time() {
     try {
-        const result = await apiFetch("http://127.0.0.1:4000/api/get_extended_time", {
+        const result = await apiFetch("/api/get_extended_time", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
