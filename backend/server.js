@@ -40,8 +40,8 @@ morgan.token('hu-time', () => {
 
 const customFormat = '[:hu-date] [:hu-time] :method :url :status :response-time ms - IP: :remote-addr';
 
-//const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
-//app.use(morgan(customFormat, { stream: accessLogStream }));
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+app.use(morgan(customFormat, { stream: accessLogStream }));
 app.use(morgan(customFormat));
 
 
