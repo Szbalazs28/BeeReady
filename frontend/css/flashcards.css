@@ -162,9 +162,8 @@
     color: #333;
     font-size: 1.8rem;
     text-align: center;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 24vw;
+    word-wrap: normal;
+    
     overflow-x: auto;
 }
 
@@ -248,6 +247,7 @@
 
     #currentDeckName {
         margin: 0;
+        max-width: 80vw;
     }
 
     .action_button {

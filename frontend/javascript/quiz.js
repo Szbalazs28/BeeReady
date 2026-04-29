@@ -388,6 +388,7 @@ function addNewOrderQuestionBlock(answers = null, question = null) {
     Sortable.create(answersContainer, {
         animation: 150,
         dataIdAttr: 'data-id',
+        handle: ".drag-handle",
         onEnd: function (evt) {
             const currentorder = Sortable.get(evt.from).toArray();
 
@@ -535,6 +536,7 @@ function addOrderAnswerToBlock(question_id, answer = null) {
     answerRow.className = 'answer-row';
     const dragIcon = document.createElement('p');
     dragIcon.textContent = '::';
+    dragIcon.className = 'drag-handle';
     dragIcon.style.cursor = 'move';
 
     const ansInput = document.createElement('input');
@@ -1185,6 +1187,7 @@ function start_addOrderAnswerToBlock(answer) {
     const dragIcon = document.createElement('p');
     dragIcon.textContent = '::';
     dragIcon.style.cursor = 'move';
+    dragIcon.className = 'drag-handle';
 
     const ansInput = document.createElement('p');
     answerRow.setAttribute("data-id", answer.answer_id);
@@ -1243,6 +1246,7 @@ function start_addNewOrderQuestionBlock(question, answers) {
     Sortable.create(answersContainer, {
         animation: 150,
         dataIdAttr: 'data-id',
+        handle: ".drag-handle",
     });
 
     let random_answers = random_array(answers);
