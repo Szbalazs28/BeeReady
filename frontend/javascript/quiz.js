@@ -513,7 +513,7 @@ function addNewFillQuestionBlock(answers = null, question = null) {
 
 
     const ansInput = document.createElement('textarea');
-    ansInput.placeholder = 'Írja be a helyes választ a szövegben, ahol a kitöltendő rész van, használja a {blank; pontszám} jelölést!';
+    ansInput.placeholder = 'Írja be a helyes választ a szövegben, ahol a kitöltendő rész van, használja a {válasz; pontszám} jelölést!';
     ansInput.classList.add('ans-input', 'fill-ans-input');
     ansInput.required = true;
     if (answers) {
