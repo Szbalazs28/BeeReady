@@ -1572,10 +1572,10 @@ function resultinsertinput(ansText, user_answer) {
     let index = 0;
     while (text.includes("{}")) {
         if (words[index].correct) {
-            text = text.replace("{}", `<input type="text" class="fill-input correct-answer" value="${words[index].answer}" disabled><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
+            text = text.replace("{}", `<span class="fill-input correct-answer">${words[index].answer}</span><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
         }
         else {
-            text = text.replace("{}", `<input type="text" class="fill-input wrong_answer" value="${words[index].answer}" disabled><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
+            text = text.replace("{}", `<span class="fill-input wrong_answer">${words[index].answer}</span><span class="fill-input correct-answer dnone">${solution[index]}</span>(${words[index].points}/${points[index]} pont)`);
         }
         index++;
     }
