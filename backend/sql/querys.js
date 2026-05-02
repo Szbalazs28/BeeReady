@@ -250,12 +250,20 @@ async function adminCheck(id) {
 
 async function admin_get_users() {
     return await pool.execute(
-        `SELECT users.id, users.username, users.email,users.password, users.password, users.profil_pic_url
+        `SELECT users.id, users.username, users.email, users.password, users.profil_pic_url
         FROM users 
         LEFT JOIN admins ON users.id = admins.user_id 
         WHERE admins.user_id IS NULL`
     );
     //left join csak a nem admin felhasznalokat adja vissza
+}
+
+async function admin_get_admins() {
+    return await pool.execute(
+        `SELECT users.id, users.username, users.email, users.password, users.profil_pic_url
+        FROM admins
+        JOIN users ON users.id = admins.user_id `
+    );
 }
 
 async function admin_update_user(user_id, username, password, email, profil_pic_url) {
@@ -269,6 +277,18 @@ async function admin_update_user(user_id, username, password, email, profil_pic_
     );
 }
 
+async function save_new_admin(username, password, email) {
+    const [emailcheck] = await pool.execute("SELECT id FROM users WHERE email = ?", [email]);
+    const [usernamecheck] = await pool.execute("SELECT id FROM users WHERE username = ?", [username]);
+    isexistscheck(emailcheck, "E-mail", true);
+    isexistscheck(usernamecheck, "Felhasználónév", true);
+    const [result] = await pool.execute(
+        "INSERT INTO users (username, password, email, profil_pic_url) VALUES (?, ?, ?, ?);",
+        [username, password, email, null]
+    );
+    await pool.execute("INSERT INTO admins (user_id) VALUES (?)", [result.insertId]);
+}
+
 async function admin_delete_user(user_id) {
     await pool.execute("DELETE FROM users WHERE id=?", [user_id]);
 }
@@ -280,6 +300,16 @@ async function admin_search_users(query) {
         LEFT JOIN admins ON users.id = admins.user_id
         WHERE admins.user_id IS NULL
         AND users.username LIKE ?`,
+        [`%${query}%`]
+    );
+}
+
+async function admin_search_admins(query) {
+    return await pool.execute(
+        `SELECT users.id, users.username, users.email, users.password, users.profil_pic_url
+        FROM users
+        join admins ON users.id = admins.user_id
+        where users.username like ?`,
         [`%${query}%`]
     );
 }
@@ -550,6 +580,7 @@ async function isexist(id, email, username) {
 
 
 module.exports = {
+    save_new_admin,
     loadquizmeta,
     save_foreign_quiz,
     getFavoriteCount,
@@ -560,7 +591,9 @@ module.exports = {
     admin_update_user,
     admin_get_users,
     adminCheck,
+    admin_get_admins,
     admin_search_users,
+    admin_search_admins,
     delete_calendar_event,
     Insert_calendar_event,
     get_calendar_events,
