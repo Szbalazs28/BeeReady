@@ -39,12 +39,13 @@
     <nav class="navbar navbar-dark bg-dark px-4 mb-4">
         <span class="navbar-brand">BeeReady Admin</span>
         <div class="btn-group">
-            <button class="btn btn-outline-light  btn-sm " onclick="toggleHashContainer()">Hash generátor</button>
+            <button class="btn btn-outline-light  btn-sm " onclick="toggleAdminContainer()">Adminok</button>
+            <!-- <button class="btn btn-outline-light  btn-sm " onclick="toggleHashContainer()">Hash generátor</button> -->
             <button class="btn btn-outline-light btn-sm" onclick="logout()">Kijelentkezés</button>
         </div>
 
     </nav>
-    <div class="container d-none py-5" id="hash-container">
+    <!-- <div class="container d-none py-5" id="hash-container">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
 
@@ -79,6 +80,64 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div> -->
+
+    <div class="container-fluid d-none px-4 my-2" id="admin-container">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="mb-0 fw-semibold">Adminok</h5>
+            <span class="text-muted small" id="admin-count"></span>
+        </div>
+
+        
+        <div class="table-container">            
+            <h4 class="text-center my-2">Új adminisztrátor hozzáadása:</h4>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 my-2" id="new-admin-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Felhasználónév</th>
+                        <th>E-mail</th>
+                        <th>Jelszó</th>
+                        <th class="text-center">Hozzáadás</th>
+                    </tr>
+                </thead>
+                <tbody id="new-admin-tbody">
+                    <tr>
+                        <td><input class="form-control form-control-sm" id="newUsername" type="text"></td>
+                        <td><input class="form-control form-control-sm" id="newEmail" type="text"></td>
+                        <td><input class="form-control form-control-sm" id="newPassword" type="text"></td>
+                        <td><button class="btn btn-success btn-sm" onclick="newAdmin()">Hozzáadás</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            <div class="mb-3">
+                <input type="text" id="admin-search-input" class="form-control"
+                    placeholder="Keresés felhasználónév alapján...">
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="admin-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Felhasználónév</th>
+                            <th>E-mail</th>
+                            <th>Jelszó</th>
+                            <th class="text-center">Módosítás</th>
+                            <th class="text-center">Törlés</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admins-tbody">
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <div class="spinner-border spinner-border-sm me-2" role="status"></div>Betöltés...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

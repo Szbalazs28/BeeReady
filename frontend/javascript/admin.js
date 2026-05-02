@@ -4,7 +4,109 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionStorage.removeItem("modal_showed");
     if (!token) window.location.href = '../html/index.html';
     loadUsers();
+    loadAdmins();
 });
+
+async function loadAdmins(search = null) {
+    const token = localStorage.getItem('token');
+    let url = `/api/admin/admins`;
+    if (search) {
+        url = `/api/admin/search_admins/${search}`;
+    }
+    const data = await apiFetch(url, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    const tbody = document.getElementById('admins-tbody');
+    tbody.innerHTML = '';
+
+    if (data.admins.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">Nincs találat.</td></tr>`;
+        document.getElementById('admin-count').textContent = `0 admin`;
+    }
+    else {
+
+        data.admins.forEach(u => {
+            const tr = document.createElement('tr');
+            tr.id = `row-${u.id}`;
+
+            // ID
+            const tdId = document.createElement('td');
+            tdId.innerHTML = `<span class="badge bg-secondary">${u.id}</span>`;
+
+            // Username
+            const td_Username = document.createElement('td');
+            const input_Username = document.createElement('input');
+            input_Username.type = 'text';
+            input_Username.className = 'form-control form-control-sm';
+            input_Username.value = u.username;
+            input_Username.disabled = true;
+            td_Username.appendChild(input_Username);
+
+            // Email
+            const td_Email = document.createElement('td');
+            const input_Email = document.createElement('input');
+            input_Email.type = 'email';
+            input_Email.className = 'form-control form-control-sm';
+            input_Email.value = u.email;
+            input_Email.disabled = true;
+            td_Email.appendChild(input_Email);
+
+            // Jelszó
+            const td_Password = document.createElement('td');
+            const input_Password = document.createElement('input');
+            input_Password.type = 'text';
+            input_Password.className = 'form-control form-control-sm';
+            input_Password.value = u.password;
+            input_Password.disabled = true;
+            td_Password.appendChild(input_Password);
+
+
+            // Módosítás
+            const td_Edit = document.createElement('td');
+            td_Edit.className = 'text-center';
+            const btn_Edit = document.createElement('button');
+            btn_Edit.className = 'btn btn-outline-warning btn-sm me-1';
+            btn_Edit.innerHTML = 'Szerkesztés';
+            let isSaving = false;
+            btn_Edit.onclick = async () => {
+                if (!isSaving) {
+                    const editing = input_Username.disabled === false;
+                    if (!editing) {
+                        input_Username.disabled = false;
+                        input_Email.disabled = false;
+                        input_Password.disabled = false;
+                        btn_Edit.className = 'btn btn-success btn-sm me-1';
+                        btn_Edit.innerHTML = 'Mentés';
+                    } else {
+                        isSaving = true;
+                        btn_Edit.disabled = true;
+                        await saveAdmin(u.id, input_Username.value.trim(), input_Email.value.trim(), input_Password.value.trim(), input_Username, input_Email, input_Password, btn_Edit);
+                        isSaving = false;
+                        btn_Edit.disabled = false;
+                    }
+                };
+            };
+            td_Edit.appendChild(btn_Edit);
+
+            // Törlés
+            const td_Delete = document.createElement('td');
+            td_Delete.className = 'text-center';
+            const btn_Delete = document.createElement('button');
+            btn_Delete.className = 'btn btn-outline-danger btn-sm';
+            btn_Delete.innerHTML = 'Törlés';
+            btn_Delete.onclick = () => createConfirmModal(u.id, u.username, tr);
+            td_Delete.appendChild(btn_Delete);
+
+            tr.append(tdId, td_Username, td_Email, td_Password, td_Edit, td_Delete);
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('admin-count').textContent = `${data.admins.length} admin`;
+    }
+}
+
 
 async function loadUsers(search = null) {
     const token = localStorage.getItem('token');
@@ -115,10 +217,34 @@ async function loadUsers(search = null) {
     }
 }
 
+async function newAdmin() {
+    try {
+        const token = localStorage.getItem('token');
+        const username = document.getElementById("newUsername").value;
+        const email = document.getElementById("newEmail").value;
+        const password = document.getElementById("newPassword").value;
+        await apiFetch(`/api/admin/save_new_admin`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: username, email: email, password: password })
+        });
+        document.getElementById("newUsername").value = '';
+        document.getElementById("newEmail").value = '';
+        document.getElementById("newPassword").value = '';
+        await loadAdmins();
+    } catch (err) {
+        console.error(err);
+    }
+
+}
+
 async function saveUser(id, username, email, password, profil_pic_url, input_Username, input_Email, input_Password, input_Pic, btn_Edit) {
     try {
         const token = localStorage.getItem('token');
-        await apiFetch(`/api/admin/update_user`, {
+        const result = await apiFetch(`/api/admin/update_user`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -132,6 +258,7 @@ async function saveUser(id, username, email, password, profil_pic_url, input_Use
         input_Email.disabled = true;
         input_Pic.disabled = true;
         input_Password.disabled = true;
+        input_Password.value = result.hash;
         btn_Edit.className = 'btn btn-outline-warning btn-sm me-1';
         btn_Edit.textContent = 'Szerkesztés';
     } catch (err) {
@@ -139,6 +266,35 @@ async function saveUser(id, username, email, password, profil_pic_url, input_Use
         input_Username.disabled = false;
         input_Email.disabled = false;
         input_Pic.disabled = false;
+        input_Password.disabled = false;
+        btn_Edit.className = 'btn btn-success btn-sm me-1';
+        btn_Edit.textContent = 'Mentés';
+    }
+}
+
+async function saveAdmin(id, username, email, password, input_Username, input_Email, input_Password, btn_Edit) {
+    try {
+        const token = localStorage.getItem('token');
+        const result = await apiFetch(`/api/admin/update_admin`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: id, password: password, username, email })
+        });
+
+        // Vissza a normál módba
+        input_Username.disabled = true;
+        input_Email.disabled = true;
+        input_Password.disabled = true;
+        btn_Edit.className = 'btn btn-outline-warning btn-sm me-1';
+        btn_Edit.textContent = 'Szerkesztés';
+        input_Password.value = result.hash;
+    } catch (err) {
+        console.error(err);
+        input_Username.disabled = false;
+        input_Email.disabled = false;
         input_Password.disabled = false;
         btn_Edit.className = 'btn btn-success btn-sm me-1';
         btn_Edit.textContent = 'Mentés';
@@ -218,7 +374,7 @@ function createConfirmModal(id, username, tr) {
     cancelBtn.setAttribute("data-bs-dismiss", "modal");
     cancelBtn.textContent = "Nem";
 
-    cancelBtn.onclick = () => { document.body.removeChild(modal); };
+    cancelBtn.onclick = () => { bsModal.hide(); };
 
     modalFooter.append(confirmBtn, cancelBtn);
 
@@ -246,9 +402,15 @@ document.getElementById('search-input').addEventListener("input", (e) => {
     }, 500);
 });
 
+document.getElementById('admin-search-input').addEventListener("input", (e) => {
+    e.preventDefault();
+    setTimeout(async () => {
+        await loadAdmins(e.target.value.trim());
+    }, 500);
+});
 
-function toggleHashContainer() {
-    const container = document.getElementById('hash-container');
+function toggleAdminContainer() {
+    const container = document.getElementById('admin-container');
     if (container.classList.contains('d-none')) {
         container.classList.remove('d-none');
     }
@@ -257,22 +419,3 @@ function toggleHashContainer() {
     }
 }
 
-async function generateHash() {
-    const input = document.getElementById('hash-password').value.trim();
-    const value = input.trim();
-    const token = localStorage.getItem('token');
-    try {
-        const result = await apiFetch('/api/generatehash', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ data: value })
-        });
-        const hashResult = document.getElementById('hash-result');
-        hashResult.textContent = result.hash;
-    } catch (err) {
-        console.log(err);
-    }
-}
