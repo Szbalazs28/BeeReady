@@ -96,7 +96,7 @@ async function loadAdmins(search = null) {
             const btn_Delete = document.createElement('button');
             btn_Delete.className = 'btn btn-outline-danger btn-sm';
             btn_Delete.innerHTML = 'Törlés';
-            btn_Delete.onclick = () => createConfirmModal(u.id, u.username, tr);
+            btn_Delete.onclick = () => createConfirmModal(u.id, u.username, tr, "admin");
             td_Delete.appendChild(btn_Delete);
 
             tr.append(tdId, td_Username, td_Email, td_Password, td_Edit, td_Delete);
@@ -206,7 +206,7 @@ async function loadUsers(search = null) {
             const btn_Delete = document.createElement('button');
             btn_Delete.className = 'btn btn-outline-danger btn-sm';
             btn_Delete.innerHTML = 'Törlés';
-            btn_Delete.onclick = () => createConfirmModal(u.id, u.username, tr);
+            btn_Delete.onclick = () => createConfirmModal(u.id, u.username, tr, "user");
             td_Delete.appendChild(btn_Delete);
 
             tr.append(tdId, td_Username, td_Email, td_Password, td_Pic, td_Edit, td_Delete);
@@ -301,7 +301,7 @@ async function saveAdmin(id, username, email, password, input_Username, input_Em
     }
 }
 
-async function deleteUser(id, username, tr) {
+async function deleteUser(id, username, tr, adminoruser) {
     const token = localStorage.getItem('token');
     try {
         await apiFetch(`/api/admin/delete_user/${id}`, {
@@ -312,15 +312,22 @@ async function deleteUser(id, username, tr) {
             }
         });
         tr.remove();
-        const countEl = document.getElementById('user-count');
-        const current = parseInt(countEl.textContent) || 0;
-        countEl.textContent = `${current - 1} felhasználó`;
+        if (adminoruser === "admin") {
+            const countEl = document.getElementById('admin-count');
+            const current = parseInt(countEl.textContent) || 0;
+            countEl.textContent = `${current - 1} admin`;
+        }
+        else{
+            const countEl = document.getElementById('user-count');
+            const current = parseInt(countEl.textContent) || 0;
+            countEl.textContent = `${current - 1} felhasználó`;
+        }
     } catch (err) {
         console.log(err);
     }
 }
 
-function createConfirmModal(id, username, tr) {
+function createConfirmModal(id, username, tr, adminoruser) {
     const modal = document.createElement("div");
     modal.className = "modal fade";
     modal.id = "myModal";
@@ -366,7 +373,7 @@ function createConfirmModal(id, username, tr) {
     confirmBtn.type = "button";
     confirmBtn.className = "btn btn-success";
     confirmBtn.textContent = "Igen";
-    confirmBtn.onclick = () => { bsModal.hide(); deleteUser(id, username, tr); };
+    confirmBtn.onclick = () => { bsModal.hide(); deleteUser(id, username, tr, adminoruser); };
 
     const cancelBtn = document.createElement("button");
     cancelBtn.type = "button";
