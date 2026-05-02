@@ -530,45 +530,21 @@ async function getuseranswers(id, result_id, question_id) {
     return rows;
 }
 
-async function updateuser(rows, newdata, id) {
-    let changes = updatebuild(rows, newdata);
-    for (let i = 0; i < changes.length; i++) {
-        if (changes[i][0] === "username" || changes[i][0] === "email") {
-            const [exists] = await isexist(changes[i]);
+async function updateuser(data, id) {
+            const [exists] = await isexist(id, data.email, data.username);
             if (exists.length > 0) {
-                throw new Error(`A ${changes[i][1]} már foglalt!`);
+                const err = new Error(`Az E-mail cím vagy a felhasználónév már foglalt!`)
+                err.status = 409;
+                throw err;
             }
             else {
-                await pool.query(`UPDATE users SET ${changes[i][0]} = ?  WHERE id=?`, [changes[i][1], id]);
+                await pool.query(`UPDATE users SET username = ?, email = ?, profil_pic_url = ?, password = ? WHERE id = ?`, [data.username, data.email, `../img/allatos_profilkepek/${data.newprofil_pic_url}`, data.newpassword, id]);
             }
-        }
-        else {
-            await pool.query(`UPDATE users SET ${changes[i][0]} = ?  WHERE id=?`, [changes[i][1], id]);
-        }
-
-    }
 
 }
 
-function updatebuild(rows, newdata) {
-    let changes = [];
-    if (rows[0].username != newdata.username) {
-        changes.push(["username", newdata.username]);
-    }
-    if (rows[0].email != newdata.email) {
-        changes.push(["email", newdata.email]);
-    }
-    if (rows[0].profil_pic_url != `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`) {
-        changes.push(["profil_pic_url", `../img/allatos_profilkepek/${newdata.newprofil_pic_url}`]);
-    }
-    if (newdata.newpassword.length > 0) {
-        changes.push(["password", newdata.newpassword]);
-    }
-    return changes;
-}
-
-async function isexist(data) {
-    return await pool.execute(`SELECT ${data[0]} FROM users WHERE ${data[0]} = ?`, [data[1]]);
+async function isexist(id, email, username) {
+    return await pool.execute(`SELECT email, username FROM users WHERE id <> ? AND (email = ? OR username = ?)`, [id, email, username]);
 }
 
 

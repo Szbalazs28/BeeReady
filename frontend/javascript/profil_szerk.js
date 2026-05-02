@@ -50,10 +50,15 @@ async function mentes() {
     try {
         const email = document.getElementById("editemail").value;
         const password = document.getElementById("currentpassword").value;
-        const newpassword = document.getElementById("newpassword").value;
+        let newpassword = document.getElementById("newpassword").value;
         const username = document.getElementById("editusername").value;
         const newprofil_pic_url = document.getElementById("editprofilpic").src.split("/");
-
+        if (newpassword == "") {
+            newpassword = password;
+        }
+        lengthtest(password, 6, 255);
+        lengthtest(username, 3, 20);
+        lengthtest(email, 5, 255);
         const token = localStorage.getItem('token');
         const result = await index_apiFetch("/api/edit_user_save", {
             method: "POST",

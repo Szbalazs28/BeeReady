@@ -91,11 +91,9 @@ router.post("/edit_user_save", authenticateToken, async (req, res, next) => {
     emailTest(data.email);
     const currentdata = await getuserbyid(id);
     await compare(data.password, currentdata[0].password);
-    if (data.newpassword != "") {
-      passwordTest(data.newpassword);
-      data.newpassword = await encrypt(data.newpassword);
-    }
-    await updateuser(currentdata, data, id);
+    passwordTest(data.newpassword);
+    data.newpassword = await encrypt(data.newpassword);
+    await updateuser(data, id);
     res.status(200).json({ write: true, message: "Sikeres módosítás!" });
   } catch (error) {
     next(error);
