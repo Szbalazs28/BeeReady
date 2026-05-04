@@ -1,7 +1,7 @@
 {
   "name": "beeready",
   "version": "1.0.0",
-  "description": "Study project",
+  "description": "Tanulást segítő webalkalmazás kvízekkel, flashcardokkal, órarenddel, időzítővel, teendő listával és közösségi funkciókkal.",
   "main": "server.js",
   "scripts": {
     "test": "jest",
