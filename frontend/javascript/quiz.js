@@ -1589,6 +1589,7 @@ function fill_insert(text, insert, position) {
 function showstartquiz() {
     document.querySelector(".quiz_start_container").classList.remove("dnone");
     document.querySelector(".quiz-action-div").classList.add("dnone");
+    document.querySelector("#quizCreateForm").classList.add("dnone");
     document.querySelector("#quizContainer").classList.add("dnone");
 
 }
